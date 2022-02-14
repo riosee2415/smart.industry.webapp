@@ -242,64 +242,66 @@ const Intro = () => {
                     );
                   })}
             </Wrapper>
-            {faqTypeQuestion && faqTypeQuestion[0].typeId === typeTab ? (
-              <Wrapper>빈칸</Wrapper>
-            ) : (
-              <Wrapper>
-                <Wrapper
-                  bgColor={`#FCFCFC`}
-                  height={`40px`}
-                  borderTop={`1px solid #EBEBEB`}
-                  borderBottom={`1px solid #EBEBEB`}
-                >
-                  <Wrapper width={`6%`}>번호</Wrapper>
-                  <Wrapper width={`14%`}>분류</Wrapper>
-                  <Wrapper width={`80%`}>제목</Wrapper>
-                </Wrapper>
-                {faqTypeQuestion && faqTypeQuestion.length === 0
-                  ? ``
-                  : faqTypeQuestion &&
-                    faqTypeQuestion.reverse().map((data, idx) => {
-                      return (
-                        <Wrapper ju={`flex-start`}>
-                          <Wrapper
-                            dr={`row`}
-                            ju={`flex-start`}
-                            padding={`14px 0px`}
-                            cursor={`pointer`}
-                            borderBottom={`1px solid #EBEBEB`}
-                            onClick={() => onClickToggleHandler(data)}
-                          >
-                            <Wrapper width={`6%`}>{data.id}</Wrapper>
-                            <Wrapper width={`14%`}>{data.type}</Wrapper>
-                            <Wrapper width={`80%`} al={`flex-start`}>
-                              {data.question}
-                            </Wrapper>
-                          </Wrapper>
-
-                          {datum && datum.id === data.id && (
+            <Wrapper margin={`0 0 60px`}>
+              {faqTypeQuestion && faqTypeQuestion[0].typeId === typeTab ? (
+                <Wrapper>빈칸</Wrapper>
+              ) : (
+                <>
+                  <Wrapper
+                    bgColor={`#FCFCFC`}
+                    height={`40px`}
+                    borderTop={`1px solid #EBEBEB`}
+                    borderBottom={`1px solid #EBEBEB`}
+                  >
+                    <Wrapper width={`6%`}>번호</Wrapper>
+                    <Wrapper width={`14%`}>분류</Wrapper>
+                    <Wrapper width={`80%`}>제목</Wrapper>
+                  </Wrapper>
+                  {faqTypeQuestion && faqTypeQuestion.length === 0
+                    ? ``
+                    : faqTypeQuestion &&
+                      faqTypeQuestion.reverse().map((data, idx) => {
+                        return (
+                          <Wrapper ju={`flex-start`}>
                             <Wrapper
                               dr={`row`}
+                              ju={`flex-start`}
+                              padding={`14px 0px`}
+                              cursor={`pointer`}
                               borderBottom={`1px solid #EBEBEB`}
+                              onClick={() => onClickToggleHandler(data)}
                             >
-                              <Wrapper width={`6%`}></Wrapper>
-                              <Wrapper width={`14%`}></Wrapper>
-                              <Wrapper
-                                width={`80%`}
-                                dr={`row`}
-                                ju={`flex-start`}
-                              >
-                                <Wrapper width={`auto`} padding={`24px 0`}>
-                                  {data.answer}
-                                </Wrapper>
+                              <Wrapper width={`6%`}>{data.id}</Wrapper>
+                              <Wrapper width={`14%`}>{data.type}</Wrapper>
+                              <Wrapper width={`80%`} al={`flex-start`}>
+                                {data.question}
                               </Wrapper>
                             </Wrapper>
-                          )}
-                        </Wrapper>
-                      );
-                    })}
-              </Wrapper>
-            )}
+
+                            {datum && datum.id === data.id && (
+                              <Wrapper
+                                dr={`row`}
+                                borderBottom={`1px solid #EBEBEB`}
+                              >
+                                <Wrapper width={`6%`}></Wrapper>
+                                <Wrapper width={`14%`}></Wrapper>
+                                <Wrapper
+                                  width={`80%`}
+                                  dr={`row`}
+                                  ju={`flex-start`}
+                                >
+                                  <Wrapper width={`auto`} padding={`24px 0`}>
+                                    {data.answer}
+                                  </Wrapper>
+                                </Wrapper>
+                              </Wrapper>
+                            )}
+                          </Wrapper>
+                        );
+                      })}
+                </>
+              )}
+            </Wrapper>
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
