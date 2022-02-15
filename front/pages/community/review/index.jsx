@@ -13,56 +13,85 @@ import {
   TextInput,
   WholeWrapper,
   Wrapper,
+  Image,
 } from "../../../components/commonComponents";
 import styled from "styled-components";
 import { useState } from "react";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
-import { useRouter } from "next/dist/client/router";
 
-const Notice = () => {
+const FaqTabBtn = styled(Wrapper)`
+  width: 180px;
+  height: 50px;
+  font-size: 16px;
+  cursor: pointer;
+`;
+
+const Review = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
 
   const width = useWidth();
-  const router = useRouter();
 
   ////// HOOKS //////
+  const [typeTab, setTypeTab] = useState(1);
+
+  const [datum, setDatum] = useState(null);
+
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
-  const moveLinkHandler = useCallback((link) => {
-    router.push(link);
-  }, []);
+  const onClickToggleHandler = useCallback(
+    (data) => {
+      setDatum(data);
+
+      if (datum && datum.id === data.id) {
+        setDatum("");
+      }
+    },
+    [datum]
+  );
   ////// DATAVIEW //////
-  const testNotice = [
+  const testReview = [
+    // {
+    //   type: "전체",
+    // },
     {
       id: 1,
-      title: "공지사항 1번입니다.",
-      createdAt: "2022-02-15-00:00",
-      hit: "322",
+      product: "상품1",
+      title: "상품1에 대한 제목",
+      content: "상품문의답변",
+      user: "사용자",
+      createdAt: "2022-02-13-00:00",
+      hit: "234",
+      thumbnail:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
     },
     {
       id: 2,
-      title: "공지사항 2번입니다.",
-      createdAt: "2022-02-15-00:00",
+      product: "상품2",
+      title: "상품2에 대한 제목",
+      content: "배송문의답변",
+      user: "사용자2",
+      createdAt: "2022-02-14-00:00",
       hit: "123",
+      thumbnail:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
     },
     {
       id: 3,
-      title: "공지사항 3번입니다.",
+      product: "상품3",
+      title: "상품3에 대한 제목",
+      content: "취소/반품/교환답변",
+      user: "사용자3",
       createdAt: "2022-02-15-00:00",
-      hit: "23",
-    },
-    {
-      id: 4,
-      title: "공지사항 4번입니다.",
-      createdAt: "2022-02-15-00:00",
-      hit: "341",
+      hit: "45",
+      thumbnail:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
     },
   ];
 
@@ -112,7 +141,7 @@ const Notice = () => {
         <WholeWrapper>
           <RsWrapper margin={`300px 0 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
-              HOME | 커뮤니티 | 공지사항
+              HOME | 커뮤니티 | 상품후기
             </Wrapper>
             <Wrapper
               fontSize={`20px`}
@@ -120,7 +149,7 @@ const Notice = () => {
               al={`flex-start`}
               margin={`0 0 10px`}
             >
-              공지사항
+              상품후기
             </Wrapper>
             <Wrapper
               borderBottom={`1px solid #EBEBEB`}
@@ -134,39 +163,73 @@ const Notice = () => {
                 borderTop={`1px solid #EBEBEB`}
                 borderBottom={`1px solid #EBEBEB`}
               >
-                <Wrapper width={`5%`}>번호</Wrapper>
-                <Wrapper width={`62%`}>제목</Wrapper>
-                <Wrapper width={`11%`}>작성자</Wrapper>
-                <Wrapper width={`11%`}>작성일</Wrapper>
-                <Wrapper width={`11%`}>조회수</Wrapper>
+                <Wrapper width={`6%`}>번호</Wrapper>
+                <Wrapper width={`14%`}>상품명</Wrapper>
+                <Wrapper width={`50%`}>제목</Wrapper>
+                <Wrapper width={`10%`}>작성자</Wrapper>
+                <Wrapper width={`10%`}>작성일</Wrapper>
+                <Wrapper width={`10%`}>조회수</Wrapper>
               </Wrapper>
-              <Wrapper ju={`flex-start`}>
-                {testNotice && testNotice.length === 0
-                  ? ``
-                  : testNotice &&
-                    testNotice.reverse().map((data) => {
-                      return (
+              {testReview && testReview.length === 0
+                ? ``
+                : testReview &&
+                  testReview.reverse().map((data, idx) => {
+                    return (
+                      <Wrapper ju={`flex-start`}>
                         <Wrapper
                           dr={`row`}
                           ju={`flex-start`}
                           padding={`14px 0px`}
                           cursor={`pointer`}
                           borderBottom={`1px solid #EBEBEB`}
-                          onClick={() =>
-                            moveLinkHandler(`./notice/detail/${data.id}`)
-                          }
+                          onClick={() => onClickToggleHandler(data)}
                         >
-                          <Wrapper width={`5%`}>{data.id}</Wrapper>
-                          <Wrapper width={`62%`}>{data.title}</Wrapper>
-                          <Wrapper width={`11%`}>관리자</Wrapper>
-                          <Wrapper width={`11%`}>
+                          <Wrapper width={`6%`}>{data.id}</Wrapper>
+                          <Wrapper width={`14%`} dr={`row`}>
+                            <Image
+                              width={`50px`}
+                              height={`50px`}
+                              src={data.thumbnail}
+                            />
+                            <Wrapper
+                              width={`calc(100% - 50px)`}
+                              al={`flex-start`}
+                              padding={`0 0 0 10px`}
+                            >
+                              {data.product}
+                            </Wrapper>
+                          </Wrapper>
+                          <Wrapper width={`50%`} al={`flex-start`}>
+                            {data.title}
+                          </Wrapper>
+                          <Wrapper width={`10%`}>{data.user}</Wrapper>
+                          <Wrapper width={`10%`}>
                             {data.createdAt.substring(0, 10)}
                           </Wrapper>
-                          <Wrapper width={`11%`}>{data.hit}</Wrapper>
+                          <Wrapper width={`10%`}>{data.hit}</Wrapper>
                         </Wrapper>
-                      );
-                    })}
-              </Wrapper>
+
+                        {datum && datum.id === data.id && (
+                          <Wrapper borderBottom={`1px solid #EBEBEB`}>
+                            <Wrapper width={`90%`}>
+                              <Image
+                                width={`600px`}
+                                height={`600px`}
+                                src={`${data.thumbnail}`}
+                              />
+                            </Wrapper>
+                            <Wrapper
+                              width={`90%`}
+                              al={`flex-start`}
+                              padding={`60px 0 40px`}
+                            >
+                              {data.content}
+                            </Wrapper>
+                          </Wrapper>
+                        )}
+                      </Wrapper>
+                    );
+                  })}
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
@@ -201,4 +264,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default Notice;
+export default Review;

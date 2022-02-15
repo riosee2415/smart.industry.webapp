@@ -27,7 +27,7 @@ const FaqTabBtn = styled(Wrapper)`
   cursor: pointer;
 `;
 
-const Intro = () => {
+const Faq = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
@@ -192,10 +192,14 @@ const Intro = () => {
               fontSize={`20px`}
               fontWeight={`bold`}
               al={`flex-start`}
-              margin={`0 0 40px`}
+              margin={`0 0 10px`}
             >
               이용안내 FAQ
             </Wrapper>
+            <Wrapper
+              borderBottom={`1px solid #EBEBEB`}
+              margin={`0 0 30px`}
+            ></Wrapper>
 
             <Wrapper
               height={`238px`}
@@ -335,4 +339,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default Intro;
+export default Faq;
