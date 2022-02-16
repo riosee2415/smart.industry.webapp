@@ -84,6 +84,19 @@ const ProductWrapper = styled(Wrapper)`
       height: 170px;
     }
   }
+
+  &:hover img {
+    cursor: pointer;
+    transform: scale(1.1); /*  default */
+    -webkit-transform: scale(1.1); /*  크롬 */
+    -moz-transform: scale(1.1); /* FireFox */
+    -o-transform: scale(1.1);
+
+    transition: transform 0.5s;
+    -o-transition: transform 0.5s;
+    -moz-transition: transform 0.5s;
+    -webkit-transition: transform 0.5s;
+  }
 `;
 
 const MainProductButton = styled(Button)`
@@ -143,6 +156,27 @@ const MainAfterText = styled(Text)`
     bottom: 0;
     left: 0;
   }
+`;
+
+const MainProductTypeBtn = styled(Text)`
+  font-size: 20px;
+  position: relative;
+
+  ${(props) =>
+    props.isCheck &&
+    `
+    font-weight: bold;
+    &::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 14px;
+      background-color: #B7DAF2;
+    }
+  `}
 `;
 
 const Home = ({}) => {
@@ -398,13 +432,13 @@ const Home = ({}) => {
                 {testProductTypeArr &&
                   testProductTypeArr.map((data) => {
                     return (
-                      <Text
-                        fontSize={`20px`}
+                      <MainProductTypeBtn
+                        isCheck={true}
                         lineHeight={`1.24`}
                         margin={`0 39px`}
                       >
                         {data}
-                      </Text>
+                      </MainProductTypeBtn>
                     );
                   })}
               </Wrapper>
