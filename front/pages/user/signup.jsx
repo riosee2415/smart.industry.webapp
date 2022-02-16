@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Router from "next/router";
-import { Input, Button, Form, Radio } from "antd";
+import { Select, Radio } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,22 +13,24 @@ import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
 import {
+  CommonButton,
   RsWrapper,
   TextInput,
   WholeWrapper,
   Wrapper,
 } from "../../components/commonComponents";
 import styled from "styled-components";
+import Theme from "../../components/Theme";
 
 const SignUpWrapper = styled(Wrapper)`
-  height: 50px;
+  height: ${(props) => props.height || `50px`};
   justify-content: flex-start;
   flex-direction: row;
 `;
 
 const TitleWrapper = styled(Wrapper)`
   width: 13%;
-  border-right: 1px solid #ebebeb;
+  border-right: 1px solid ${Theme.grey2_C};
   padding: 0 0 0 20px;
   align-items: flex-start;
   height: 100%;
@@ -40,6 +42,22 @@ const RadioBtn = styled(Radio)`
     margin-right: 0;
   }
 `;
+
+const SignupInput = styled(TextInput)`
+  heigth: 33px;
+`;
+
+const SelectStyle = styled(Select)`
+  &.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    height: 40px;
+  }
+  &.ant-select-single.ant-select-show-arrow .ant-select-selection-item,
+  .ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
+    padding: 5px;
+  }
+`;
+
+const { Option } = Select;
 
 const SignUp = () => {
   ////// GLOBAL STATE //////
@@ -154,14 +172,14 @@ const SignUp = () => {
               회원가입
             </Wrapper>
             <Wrapper
-              borderBottom={`1px solid #EBEBEB`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 30px`}
             ></Wrapper>
             <SignUpWrapper
-              borderBottom={`1px solid #EBEBEB`}
-              borderTop={`1px solid #EBEBEB`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+              borderTop={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 30px`}
-              bgColor={`#FCFCFC`}
+              bgColor={Theme.lightGrey_C}
             >
               <TitleWrapper>회원구분</TitleWrapper>
               <Wrapper width={`auto`}>
@@ -169,68 +187,117 @@ const SignUp = () => {
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper
-              borderBottom={`1px solid #EBEBEB`}
-              borderTop={`1px solid #EBEBEB`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+              borderTop={`1px solid ${Theme.grey2_C}`}
             >
               <TitleWrapper>아이디</TitleWrapper>
               <Wrapper width={`auto`} dr={`row`}>
-                <TextInput width={`206px`} />
+                <SignupInput width={`206px`} />
                 <Wrapper
                   width={`calc(100% - 206px)`}
-                  color={`#999999`}
+                  color={Theme.grey_C}
                   padding={`0 0 0 10px`}
                 >
                   (영문소문자/숫자, 4~16자)
                 </Wrapper>
               </Wrapper>
             </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>비밀번호</TitleWrapper>
               <Wrapper width={`auto`} dr={`row`}>
-                <TextInput width={`206px`} />
+                <SignupInput width={`206px`} />
                 <Wrapper
                   width={`calc(100% - 206px)`}
-                  color={`#999999`}
+                  color={Theme.grey_C}
                   padding={`0 0 0 10px`}
                 >
                   (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자)
                 </Wrapper>
               </Wrapper>
             </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>비밀번호 확인</TitleWrapper>
               <Wrapper width={`auto`}>
-                <TextInput width={`206px`} />
+                <SignupInput width={`206px`} />
               </Wrapper>
             </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>이름</TitleWrapper>
               <Wrapper width={`auto`}>
-                <TextInput width={`206px`} />
+                <SignupInput width={`206px`} />
               </Wrapper>
             </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+            <SignUpWrapper
+              height={`auto`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+            >
               <TitleWrapper>주소</TitleWrapper>
-              <Wrapper width={`auto`}>
-                <TextInput width={`206px`} />
+              <Wrapper width={`auto`} padding={`9px 0`} al={`flex-start`}>
+                <Wrapper dr={`row`} ju={`flex-start`}>
+                  <SignupInput width={`62px`} />
+                  <CommonButton
+                    width={`56px`}
+                    height={`25px`}
+                    margin={`0 0 0 7px`}
+                    fontSize={`12px`}
+                  >
+                    우편번호
+                  </CommonButton>
+                </Wrapper>
+                <Wrapper width={`auto`} dr={`row`} margin={`8px 0`}>
+                  <SignupInput width={`206px`} />
+                  <Wrapper
+                    width={`calc(100% - 206px)`}
+                    color={Theme.grey_C}
+                    padding={`0 0 0 10px`}
+                  >
+                    기본주소
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper width={`auto`} dr={`row`}>
+                  <SignupInput width={`206px`} />
+                  <Wrapper
+                    width={`calc(100% - 206px)`}
+                    color={Theme.grey_C}
+                    padding={`0 0 0 10px`}
+                  >
+                    나머지주소
+                  </Wrapper>
+                </Wrapper>
               </Wrapper>
             </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>일반전화</TitleWrapper>
-              <Wrapper width={`auto`}>
-                <TextInput width={`206px`} />
+              <Wrapper width={`auto`} dr={`row`}>
+                <SelectStyle defaultValue={`02`} style={{ width: 61 }}>
+                  <Option value={`02`}>02</Option>
+                  <Option value={`031`}>031</Option>
+                  <Option value={`032`}>032</Option>
+                </SelectStyle>
+                <Wrapper
+                  fontSize={`12px`}
+                  width={`auto`}
+                  padding={`0 2px 0 3px`}
+                >
+                  -
+                </Wrapper>
+                <SignupInput width={`61px`} />
+                <Wrapper fontSize={`12px`} width={`auto`} padding={`0 2px`}>
+                  -
+                </Wrapper>
+                <SignupInput width={`61px`} />
               </Wrapper>
             </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>휴대전화</TitleWrapper>
               <Wrapper width={`auto`}>
-                <TextInput width={`206px`} />
+                <SignupInput width={`206px`} />
               </Wrapper>
             </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>이메일</TitleWrapper>
               <Wrapper width={`auto`}>
-                <TextInput width={`206px`} />
+                <SignupInput width={`206px`} />
               </Wrapper>
             </SignUpWrapper>
           </RsWrapper>
