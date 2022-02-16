@@ -13,21 +13,27 @@ import {
 import { withResizeDetector } from "react-resize-detector";
 import styled from "styled-components";
 import Theme from "./Theme";
-import { AlignRightOutlined, MenuOutlined } from "@ant-design/icons";
+import {
+  AlignRightOutlined,
+  MenuOutlined,
+  DownloadOutlined,
+} from "@ant-design/icons";
 import { Drawer } from "antd";
 import Link from "next/link";
 
 const WebRow = styled(RowWrapper)`
-  background: transparent;
+  z-index: 10000;
+  transition: 0.5s;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 10000;
-  transition: 0.5s;
+  background: ${Theme.white_C};
 
-  &.background {
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(3px);
+  & .display {
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+    padding: 0;
   }
 
   @media (max-width: 700px) {
@@ -37,8 +43,6 @@ const WebRow = styled(RowWrapper)`
 
 const MobileRow = styled(RowWrapper)`
   display: none;
-
-  background: transparent;
   position: fixed;
   top: 0;
   left: 0;
@@ -46,14 +50,41 @@ const MobileRow = styled(RowWrapper)`
   transition: 0.5s;
   padding: 10px 0;
 
-  &.background {
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(3px);
-  }
-
   @media (max-width: 700px) {
     display: flex;
   }
+`;
+
+const Title = styled(Text)`
+  position: relative;
+  margin: 0 0 20px;
+  color: ${Theme.black_C};
+
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 14px;
+    background-color: ${Theme.subTheme2_C};
+  }
+`;
+
+const AllMenu = styled(RsWrapper)`
+  position: absolute;
+  top: 80px;
+  left: 0;
+  height: auto;
+  border: 1px solid ${Theme.lightGrey_C};
+  background: ${Theme.white_C};
+  padding: 30px 40px;
+  box-shadow: 0px 3px 6px ${Theme.lightGrey_C};
+  flex-direction: row;
+  z-index: 20;
+
+  display: none;
 `;
 
 const MenuCol = styled(ColWrapper)`
@@ -65,27 +96,43 @@ const MenuCol = styled(ColWrapper)`
   position: relative;
 
   &:hover {
-    & .submenu {
+    & ${AllMenu} {
       display: flex;
     }
   }
 `;
 
-const SubMenuCol = styled(ColWrapper)`
+const SubMenuHover = styled(Wrapper)`
   position: absolute;
-  width: 100%;
-  height: auto;
-  background: ${Theme.black_C};
-  padding: 10px 30px;
-  text-align: center;
-  top: 60px;
+  top: 80px;
+  left: 0;
+  border: 1px solid ${Theme.lightGrey_C};
+
+  opacity: 0;
+  visibility: hidden;
+`;
+
+const SubMenuCol = styled(ColWrapper)`
+  cursor: pointer;
+  position: relative;
+  height: 80px;
+
+  &:hover {
+    p {
+      color: ${Theme.basicTheme_C};
+    }
+    ${SubMenuHover} {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
 `;
 
 const SubMenuTextCol = styled(ColWrapper)`
-  color: ${Theme.white_C};
-  font-weight: 300;
   position: relative;
-  padding: 10px 0 3px;
+  font-size: ${(props) => props.fontSize || `14px`};
+  font-weight: 300;
+  cursor: pointer;
 
   &:before {
     content: "";
@@ -94,19 +141,52 @@ const SubMenuTextCol = styled(ColWrapper)`
     left: 0;
     width: 0;
     height: 1px;
-    background: ${Theme.white_C};
+    background: ${(props) => props.bgColorBe || props.theme.grey_C};
     transition: 0.5s;
   }
 
   &:hover {
-    font-weight: 700;
     &:before {
       width: 100%;
     }
   }
 `;
 
-const AppHeader = ({ children, width }) => {
+const MenuWrapper = styled(Wrapper)`
+  .submenu {
+    display: none;
+  }
+
+  &:hover {
+    .submenu {
+      display: flex;
+    }
+  }
+`;
+
+const InMenu = styled(Wrapper)`
+  width: 390px;
+  padding: 30px;
+  background: ${Theme.white_C};
+  position: absolute;
+  top: 0;
+  left: 192px;
+  z-index: 30;
+  border: 1px solid ${Theme.subTheme2_C};
+  align-items: flex-start;
+
+  display: none;
+`;
+
+const SubMenuWrapper = styled(Wrapper)`
+  position: relative;
+
+  &:hover ${InMenu} {
+    display: flex;
+  }
+`;
+
+const AppHeader = () => {
   ////////////// - USE STATE- ///////////////
   const [headerScroll, setHeaderScroll] = useState(false);
   const [pageY, setPageY] = useState(0);
@@ -136,7 +216,7 @@ const AppHeader = ({ children, width }) => {
   }, [pageY]);
   return (
     <WholeWrapper>
-      <WebRow className={headerScroll && "background"}>
+      <WebRow>
         <Wrapper
           borderBottom={`1px solid ${Theme.lightGrey_C}`}
           padding={`10px 0`}
@@ -147,14 +227,50 @@ const AppHeader = ({ children, width }) => {
                 <Text margin={`0 0 0 30px`}>로그인</Text>
               </a>
             </Link>
-            <Text margin={`0 0 0 30px`}>회원가입</Text>
+            <Link href={`/user/signup`}>
+              <a>
+                <Text margin={`0 0 0 30px`}>회원가입</Text>
+              </a>
+            </Link>
             <Text margin={`0 0 0 30px`}>주문조회</Text>
             <Text margin={`0 0 0 30px`}>마이페이지</Text>
+
+            {headerScroll && (
+              <Wrapper
+                width={`290px`}
+                position={`relative`}
+                margin={`0 0 0 30px`}
+              >
+                <TextInput
+                  type={`text`}
+                  width={`100%`}
+                  height={`35px`}
+                  placeholder={`검색어를 입력해주세요.`}
+                  radius={`18px`}
+                  padding={`0 40px 0 20px`}
+                />
+                <Wrapper
+                  width={`auto`}
+                  position={`absolute`}
+                  top={`0`}
+                  right={`15px`}
+                  height={`100%`}
+                >
+                  <Image
+                    width={`14px`}
+                    alt="icon"
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/header/icon_search.png`}
+                  />
+                </Wrapper>
+              </Wrapper>
+            )}
           </RsWrapper>
         </Wrapper>
+
         <Wrapper
           borderBottom={`1px solid ${Theme.lightGrey_C}`}
           padding={`5px 0`}
+          className={headerScroll && "display"}
         >
           <RsWrapper dr={`row`} ju={`space-between`}>
             <ATag width={`auto`} href="/">
@@ -192,16 +308,237 @@ const AppHeader = ({ children, width }) => {
         <Wrapper borderBottom={`1px solid ${Theme.lightGrey_C}`}>
           <RsWrapper>
             <Wrapper dr={`row`}>
-              <MenuCol width={`calc(100% / 7)`} dr={`row`}>
-                <MenuOutlined style={{ margin: `0 10px 0 0` }} />
-                전체 카테고리
-              </MenuCol>
-              <Wrapper width={`calc(100% / 7)`}></Wrapper>
-              <Wrapper width={`calc(100% / 7)`}></Wrapper>
-              <Wrapper width={`calc(100% / 7)`}></Wrapper>
-              <Wrapper width={`calc(100% / 7)`}></Wrapper>
-              <Wrapper width={`calc(100% / 7)`}></Wrapper>
-              <Wrapper width={`calc(100% / 7)`}></Wrapper>
+              <Wrapper
+                width={`calc(100% / 7)`}
+                dr={`row`}
+                position={`relative`}
+              >
+                <MenuCol width={`100%`} dr={`row`}>
+                  <MenuOutlined style={{ margin: `0 10px 0 0` }} />
+                  전체 카테고리
+                  <AllMenu>
+                    <Wrapper
+                      width={`calc(100% / 5 * 3)`}
+                      borderRight={`1px solid ${Theme.lightGrey_C}`}
+                      dr={`row`}
+                      ju={`flex-start`}
+                      al={`flex-start`}
+                    >
+                      <Wrapper
+                        width={`calc(100% / 3)`}
+                        al={`flex-start`}
+                        color={Theme.black_C}
+                      >
+                        <Title>건설기계</Title>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          도로캇타기
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          브로워/분무기
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          엔진톱
+                        </SubMenuTextCol>
+                        <SubMenuTextCol fontSize={`12px`} margin={`0 0 12px`}>
+                          엔진캇타기
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          도로캇타기
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          브로워/분무기
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          엔진톱
+                        </SubMenuTextCol>
+                        <SubMenuTextCol fontSize={`12px`}>
+                          엔진캇타기
+                        </SubMenuTextCol>
+                      </Wrapper>
+                    </Wrapper>
+                    <Wrapper
+                      width={`calc(100% / 5 * 2)`}
+                      dr={`row`}
+                      ju={`flex-start`}
+                      al={`flex-start`}
+                    >
+                      <Wrapper
+                        width={`calc(100% / 2)`}
+                        padding={`0 0 0 20px`}
+                        al={`flex-start`}
+                        color={Theme.black_C}
+                      >
+                        <Title>커뮤니티</Title>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          이용안내 FAQ
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          공지사항
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          1:1 맞춤문의
+                        </SubMenuTextCol>
+                        <SubMenuTextCol fontSize={`12px`}>
+                          상푼문의
+                        </SubMenuTextCol>
+                      </Wrapper>
+                      <Wrapper
+                        width={`calc(100% / 2)`}
+                        padding={`0 0 0 20px`}
+                        color={Theme.black_C}
+                        al={`flex-start`}
+                      >
+                        <Title>마이페이지</Title>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          주문내역 조회
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          회원 정보
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          장바구니
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          관심상품
+                        </SubMenuTextCol>
+                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
+                          1:1 문의 내역
+                        </SubMenuTextCol>
+                      </Wrapper>
+                    </Wrapper>
+                  </AllMenu>
+                </MenuCol>
+                <MenuWrapper
+                  position={`absolute`}
+                  height={`55px`}
+                  top={`80px`}
+                  left={`0`}
+                  bgColor={Theme.basicTheme_C}
+                  color={Theme.white_C}
+                  dr={`row`}
+                >
+                  <DownloadOutlined style={{ margin: `0 10px 0 0` }} />
+                  <Wrapper width={`auto`} al={`flex-start`} fontSize={`12px`}>
+                    <Text>CATEGORY OPEN</Text>
+                    <Text>마우스를 올려주세요.</Text>
+                  </Wrapper>
+
+                  <Wrapper
+                    position={`absolute`}
+                    top={`0`}
+                    left={`0`}
+                    bgColor={Theme.subTheme_C}
+                    color={Theme.white_C}
+                    zIndex={`10`}
+                    className={`submenu`}
+                  >
+                    <SubMenuWrapper
+                      height={`48px`}
+                      borderBottom={`1px solid ${Theme.basicTheme_C}`}
+                    >
+                      <SubMenuTextCol bgColorBe={Theme.white_C}>
+                        건설기계
+                      </SubMenuTextCol>
+                      <InMenu dr={`row`}>
+                        <Wrapper
+                          width={`calc(100% - 194px)`}
+                          al={`flex-start`}
+                          color={Theme.black_C}
+                        >
+                          <SubMenuTextCol margin={`0 0 10px`}>
+                            건설기계
+                          </SubMenuTextCol>
+                          <SubMenuTextCol margin={`0 0 10px`}>
+                            건설기계
+                          </SubMenuTextCol>
+                          <SubMenuTextCol margin={`0 0 10px`}>
+                            건설기계
+                          </SubMenuTextCol>
+                        </Wrapper>
+                        <Wrapper width={`194px`}>
+                          <Image
+                            alt="image"
+                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/main/company_bg.png`}
+                          />
+                        </Wrapper>
+                      </InMenu>
+                    </SubMenuWrapper>
+                    <SubMenuWrapper
+                      height={`48px`}
+                      borderBottom={`1px solid ${Theme.basicTheme_C}`}
+                    >
+                      <SubMenuTextCol bgColorBe={Theme.white_C}>
+                        야마비시
+                      </SubMenuTextCol>
+                      <InMenu dr={`row`}>
+                        <Wrapper
+                          width={`calc(100% - 194px)`}
+                          al={`flex-start`}
+                          color={Theme.black_C}
+                        >
+                          <SubMenuTextCol margin={`0 0 10px`}>
+                            건설기계
+                          </SubMenuTextCol>
+                          <SubMenuTextCol margin={`0 0 10px`}>
+                            건설기계
+                          </SubMenuTextCol>
+                          <SubMenuTextCol margin={`0 0 10px`}>
+                            건설기계
+                          </SubMenuTextCol>
+                        </Wrapper>
+                        <Wrapper width={`194px`}>
+                          <Image
+                            alt="image"
+                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/main/company_bg.png`}
+                          />
+                        </Wrapper>
+                      </InMenu>
+                    </SubMenuWrapper>
+                  </Wrapper>
+                </MenuWrapper>
+              </Wrapper>
+
+              <SubMenuCol width={`calc(100% / 7)`}>
+                <Text>중고장비</Text>
+              </SubMenuCol>
+              <SubMenuCol width={`calc(100% / 7)`}>
+                <Text>특가상품</Text>
+              </SubMenuCol>
+              <SubMenuCol width={`calc(100% / 7)`}>
+                <Text>임대문의</Text>
+              </SubMenuCol>
+              <SubMenuCol width={`calc(100% / 7)`}>
+                <Text>사업자문의</Text>
+              </SubMenuCol>
+              <SubMenuCol width={`calc(100% / 7)`}>
+                <Text>장비판매의뢰</Text>
+              </SubMenuCol>
+              <SubMenuCol width={`calc(100% / 7)`}>
+                <Text>커뮤니티</Text>
+                <SubMenuHover>
+                  <Wrapper
+                    height={`50px`}
+                    borderBottom={`1px solid ${Theme.lightGrey_C}`}
+                  >
+                    <SubMenuTextCol>이용안내 FAQ</SubMenuTextCol>
+                  </Wrapper>
+                  <Wrapper
+                    height={`50px`}
+                    borderBottom={`1px solid ${Theme.lightGrey_C}`}
+                  >
+                    <SubMenuTextCol>공지사항</SubMenuTextCol>
+                  </Wrapper>
+                  <Wrapper
+                    height={`50px`}
+                    borderBottom={`1px solid ${Theme.lightGrey_C}`}
+                  >
+                    <SubMenuTextCol>1:1 맞춤문의</SubMenuTextCol>
+                  </Wrapper>
+                  <Wrapper height={`50px`}>
+                    <SubMenuTextCol>상푼문의</SubMenuTextCol>
+                  </Wrapper>
+                </SubMenuHover>
+              </SubMenuCol>
             </Wrapper>
           </RsWrapper>
         </Wrapper>
