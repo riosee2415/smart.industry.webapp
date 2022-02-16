@@ -8,14 +8,11 @@ import axios from "axios";
 import { END } from "redux-saga";
 import { useSelector } from "react-redux";
 import {
-  CommonButton,
   RsWrapper,
-  TextInput,
   WholeWrapper,
   Wrapper,
   Image,
 } from "../../../components/commonComponents";
-import styled from "styled-components";
 import { useState } from "react";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
@@ -143,19 +140,19 @@ const Review = () => {
               상품후기
             </Wrapper>
             <Wrapper
-              borderBottom={`1px solid #EBEBEB`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 30px`}
             ></Wrapper>
 
             <Wrapper margin={`0 0 60px`}>
               <Wrapper
-                bgColor={`#FCFCFC`}
+                bgColor={Theme.lightGrey2_C}
                 height={`40px`}
-                borderTop={`1px solid #EBEBEB`}
-                borderBottom={`1px solid #EBEBEB`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
               >
-                <Wrapper width={`6%`}>번호</Wrapper>
-                <Wrapper width={`14%`}>상품명</Wrapper>
+                <Wrapper width={`5%`}>번호</Wrapper>
+                <Wrapper width={`15%`}>상품명</Wrapper>
                 <Wrapper width={`50%`}>제목</Wrapper>
                 <Wrapper width={`10%`}>작성자</Wrapper>
                 <Wrapper width={`10%`}>작성일</Wrapper>
@@ -172,11 +169,11 @@ const Review = () => {
                           ju={`flex-start`}
                           padding={`14px 0px`}
                           cursor={`pointer`}
-                          borderBottom={`1px solid #EBEBEB`}
+                          borderBottom={`1px solid ${Theme.grey2_C}`}
                           onClick={() => onClickToggleHandler(data)}
                         >
-                          <Wrapper width={`6%`}>{data.id}</Wrapper>
-                          <Wrapper width={`14%`} dr={`row`}>
+                          <Wrapper width={`5%`}>{data.id}</Wrapper>
+                          <Wrapper width={`15%`} dr={`row`}>
                             <Image
                               width={`50px`}
                               height={`50px`}
@@ -201,7 +198,7 @@ const Review = () => {
                         </Wrapper>
 
                         {datum && datum.id === data.id && (
-                          <Wrapper borderBottom={`1px solid #EBEBEB`}>
+                          <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
                             <Wrapper width={`90%`}>
                               <Image
                                 width={`600px`}

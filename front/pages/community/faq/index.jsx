@@ -198,22 +198,22 @@ const Faq = () => {
               이용안내 FAQ
             </Wrapper>
             <Wrapper
-              borderBottom={`1px solid #EBEBEB`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 30px`}
             ></Wrapper>
 
             <Wrapper
               height={`238px`}
-              border={`1px solid #EBEBEB`}
-              bgColor={`#FCFCFC`}
+              border={`1px solid ${Theme.grey2_C}`}
+              bgColor={Theme.lightGrey2_C}
               margin={`0 0 60px`}
             >
-              <Wrapper color={`#999999`} padding={`0 0 19px`}>
+              <Wrapper color={Theme.grey_C} padding={`0 0 19px`}>
                 FAQ 게시판 내에서 빠르게 검색이 가능합니다.
               </Wrapper>
               <Wrapper dr={`row`}>
                 <TextInput
-                  border={`1px solid #EBEBEB`}
+                  border={`1px solid ${Theme.grey2_C}`}
                   width={`400px`}
                   height={`40px`}
                   margin={`0 6px 0 0`}
@@ -235,11 +235,15 @@ const Faq = () => {
                   faqType.map((data) => {
                     return (
                       <FaqTabBtn
-                        border={`1px solid #EBEBEB`}
+                        border={`1px solid ${Theme.grey2_C}`}
                         bgColor={
-                          typeTab === data.typeId ? `#0075C5` : `#FCFCFC`
+                          typeTab === data.typeId
+                            ? `${Theme.basicTheme_C}`
+                            : `${Theme.lightGrey2_C}`
                         }
-                        color={typeTab === data.typeId ? `#FCFCFC` : ``}
+                        color={
+                          typeTab === data.typeId ? `${Theme.lightGrey2_C}` : ``
+                        }
                         onClick={() => setTypeTab(data.typeId)}
                       >
                         {data.type}
@@ -253,13 +257,13 @@ const Faq = () => {
               ) : (
                 <>
                   <Wrapper
-                    bgColor={`#FCFCFC`}
+                    bgColor={Theme.lightGrey2_C}
                     height={`40px`}
-                    borderTop={`1px solid #EBEBEB`}
-                    borderBottom={`1px solid #EBEBEB`}
+                    borderTop={`1px solid ${Theme.grey2_C}`}
+                    borderBottom={`1px solid ${Theme.grey2_C}`}
                   >
-                    <Wrapper width={`6%`}>번호</Wrapper>
-                    <Wrapper width={`14%`}>분류</Wrapper>
+                    <Wrapper width={`5%`}>번호</Wrapper>
+                    <Wrapper width={`15%`}>분류</Wrapper>
                     <Wrapper width={`80%`}>제목</Wrapper>
                   </Wrapper>
                   {faqTypeQuestion && faqTypeQuestion.length === 0
@@ -273,11 +277,11 @@ const Faq = () => {
                               ju={`flex-start`}
                               padding={`14px 0px`}
                               cursor={`pointer`}
-                              borderBottom={`1px solid #EBEBEB`}
+                              borderBottom={`1px solid ${Theme.grey2_C}`}
                               onClick={() => onClickToggleHandler(data)}
                             >
-                              <Wrapper width={`6%`}>{data.id}</Wrapper>
-                              <Wrapper width={`14%`}>{data.type}</Wrapper>
+                              <Wrapper width={`5%`}>{data.id}</Wrapper>
+                              <Wrapper width={`15%`}>{data.type}</Wrapper>
                               <Wrapper width={`80%`} al={`flex-start`}>
                                 {data.question}
                               </Wrapper>
@@ -286,7 +290,7 @@ const Faq = () => {
                             {datum && datum.id === data.id && (
                               <Wrapper
                                 dr={`row`}
-                                borderBottom={`1px solid #EBEBEB`}
+                                borderBottom={`1px solid ${Theme.grey2_C}`}
                               >
                                 <Wrapper width={`6%`}></Wrapper>
                                 <Wrapper width={`14%`}></Wrapper>
@@ -298,9 +302,9 @@ const Faq = () => {
                                   <Wrapper
                                     width={`20px`}
                                     height={`20px`}
-                                    color={`#FFFFFF`}
+                                    color={Theme.white_C}
                                     radius={`100%`}
-                                    bgColor={`#E22323`}
+                                    bgColor={Theme.red_C}
                                     margin={`23px 26px 0 20px`}
                                   >
                                     A
