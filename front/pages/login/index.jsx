@@ -135,11 +135,44 @@ const Index = () => {
                 height={`40px`}
                 borderTop={`1px solid #EBEBEB`}
                 dr={`row`}
+                ju={`space-between`}
                 al={`flex-end`}
               >
-                <Text fontSize={`14px`} height={`10px`} color={`#999999`}>
+                <Wrapper
+                  width={`auto`}
+                  fontSize={`14px`}
+                  color={`#999999`}
+                  cursor={`pointer`}
+                >
                   아이디찾기
-                </Text>
+                </Wrapper>
+                <Text color={`#707070`}>|</Text>
+                <Wrapper
+                  width={`auto`}
+                  fontSize={`14px`}
+                  color={`#999999`}
+                  cursor={`pointer`}
+                >
+                  비밀번호찾기
+                </Wrapper>
+                <Text color={`#707070`}>|</Text>
+                <Wrapper
+                  width={`auto`}
+                  fontSize={`14px`}
+                  color={`#999999`}
+                  cursor={`pointer`}
+                >
+                  회원가입
+                </Wrapper>
+                <Text color={`#707070`}>|</Text>
+                <Wrapper
+                  width={`auto`}
+                  fontSize={`14px`}
+                  color={`#999999`}
+                  cursor={`pointer`}
+                >
+                  비회원 주문조회
+                </Wrapper>
               </Wrapper>
             </Wrapper>
           </RsWrapper>
