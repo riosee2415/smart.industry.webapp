@@ -222,6 +222,10 @@ export const CommonButton = styled(Button)`
   ${(props) =>
     props.kindOf === `delete` && `border : 1px solid ${props.theme.red_C};`}
 
+  ${(props) => props.kindOf === `basic` && `background : #0075C5;`}
+  ${(props) => props.kindOf === `basic` && `color : ${props.theme.white_C};`}
+  ${(props) => props.kindOf === `basic` && `border : 1px solid #0075C5;`}
+
 
 
 &:hover {
@@ -247,6 +251,11 @@ export const CommonButton = styled(Button)`
     ${(props) => props.kindOf === `delete` && `color : ${props.theme.red_C};`}
     ${(props) =>
       props.kindOf === `delete` && `border : 1px solid ${props.theme.red_C};`}
+
+    ${(props) =>
+      props.kindOf === `basic` && `background : ${props.theme.white_C} ;`}
+    ${(props) => props.kindOf === `basic` && `color : #0075C5;`}
+    ${(props) => props.kindOf === `basic` && `border : 1px solid #0075C5;`}
   }
 `;
 
@@ -278,6 +287,7 @@ export const Text = styled.p`
   z-index: 1;
   white-space: pre-wrap;
   border-bottom: ${(props) => props.borderBottom};
+  border-right: ${(props) => props.borderRight};
   opacity: ${(props) => props.opacity};
   letter-spacing: ${(props) => props.letterSpacing};
 
