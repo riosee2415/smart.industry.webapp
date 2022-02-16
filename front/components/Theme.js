@@ -1,11 +1,9 @@
 export default {
-  basicTheme_C: "#FFB940",
+  basicTheme_C: "#0075C5",
 
-  subTheme_C: "#31A5F0",
-  subTheme2_C: "#106BDC",
-  subTheme3_C: "#2D53A3",
-  subTheme4_C: "#FFD321",
-  subTheme5_C: "#1E5AA9",
+  subTheme_C: "#2793DE",
+  subTheme2_C: "#B7DAF2",
+  subTheme3_C: "#0E4367",
 
   kakao_C: "#FAE100",
   naver_C: "#00C73C",
@@ -14,9 +12,11 @@ export default {
   // black
   black_C: "#000000",
   // red
-  red_C: "#e74c3c",
+  red_C: "#E22323",
   // grey
-  grey_C: "#747474",
-  lightGrey_C: "#E2E2E2",
-  darkGrey_C: "#2d3436",
+  grey_C: "#999999",
+  grey2_C: "#EBEBEB",
+  lightGrey_C: "#F9F9F9",
+  lightGrey2_C: "#FCFCFC",
+  darkGrey_C: "#2F2F2F",
 };
