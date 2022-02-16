@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Router from "next/router";
 import { Select, Radio, Checkbox } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
 import { SIGNUP_REQUEST } from "../../reducers/user";
@@ -23,6 +22,7 @@ import {
 } from "../../components/commonComponents";
 import styled from "styled-components";
 import Theme from "../../components/Theme";
+import useWidth from "../../hooks/useWidth";
 
 const SignUpWrapper = styled(Wrapper)`
   height: ${(props) => props.height || `50px`};
@@ -32,12 +32,18 @@ const SignUpWrapper = styled(Wrapper)`
 
 const TitleWrapper = styled(Wrapper)`
   width: 13%;
-  border-right: 1px solid ${Theme.grey2_C};
+
   padding: 0 0 0 20px;
   align-items: center;
+  justify-content: flex-start;
   height: 100%;
   margin: 0 10px 0 0;
   flex-direction: row;
+  color: ${Theme.darkGrey_C};
+
+  @media (max-width: 700px) {
+    width: 110px;
+  } ;
 `;
 
 const RadioBtn = styled(Radio)`
@@ -47,7 +53,7 @@ const RadioBtn = styled(Radio)`
 `;
 
 const SignupInput = styled(TextInput)`
-  height: 33px;
+  height: 35px;
   background: none;
   border: none;
   border: 1px solid ${Theme.grey2_C};
@@ -61,11 +67,21 @@ const SignupInput = styled(TextInput)`
 
 const SelectStyle = styled(Select)`
   &.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
-    height: 40px;
+    height: 35px;
   }
   &.ant-select-single.ant-select-show-arrow .ant-select-selection-item,
   .ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
     padding: 5px;
+  }
+`;
+
+const SelectStyle2 = styled(Select)`
+  &.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    height: 35px;
+  }
+  &.ant-select-single.ant-select-show-arrow .ant-select-selection-item,
+  .ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
+    padding: 3px;
   }
 `;
 
@@ -77,6 +93,9 @@ const SignUp = () => {
     (state) => state.seo
   );
   ////// HOOKS //////
+
+  const width = useWidth();
+
   const dispatch = useDispatch();
 
   const email = useInput(``);
@@ -86,6 +105,11 @@ const SignUp = () => {
 
   const [passwordCheck, setPasswordCheck] = useState(``);
   const [passwordError, setPasswordError] = useState(false);
+
+  const [isAllCheck, setIsAllCheck] = useState(false);
+  const [isCheck1, setIsCheck1] = useState(false);
+  const [isCheck2, setIsCheck2] = useState(false);
+  const [isCheck3, setIsCheck3] = useState(false);
 
   ////// REDUX //////
   const { st_signUpLoading, st_signUpDone } = useSelector(
@@ -98,6 +122,14 @@ const SignUp = () => {
       Router.replace("/");
     }
   }, [st_signUpDone]);
+
+  useEffect(() => {
+    if (isCheck1 && isCheck2 && isCheck3) {
+      setIsAllCheck(true);
+    } else {
+      setIsAllCheck(false);
+    }
+  }, [isCheck1, isCheck2, isCheck3]);
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -108,6 +140,12 @@ const SignUp = () => {
     },
     [password.value]
   );
+
+  const allCheckHandler = useCallback(() => {
+    setIsCheck1((prev) => !prev);
+    setIsCheck2((prev) => !prev);
+    setIsCheck3((prev) => !prev);
+  }, [isCheck1, isCheck2, isCheck3]);
 
   const onSubmit = useCallback(() => {
     if (password.value !== passwordCheck) {
@@ -172,7 +210,11 @@ const SignUp = () => {
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper margin={`300px 0 0`}>
-            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
+            <Wrapper
+              margin={`40px 0 25px`}
+              al={`flex-start`}
+              color={Theme.darkGrey_C}
+            >
               HOME | 회원가입
             </Wrapper>
             <Wrapper
@@ -180,6 +222,7 @@ const SignUp = () => {
               fontWeight={`bold`}
               al={`flex-start`}
               margin={`0 0 10px`}
+              color={Theme.darkGrey_C}
             >
               회원가입
             </Wrapper>
@@ -194,40 +237,76 @@ const SignUp = () => {
               bgColor={Theme.lightGrey_C}
             >
               <TitleWrapper>
-                회원구분<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                회원구분
+                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
               </TitleWrapper>
-              <Wrapper width={`auto`}>
+              <Wrapper
+                borderLeft={`1px solid ${Theme.grey2_C}`}
+                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                al={`flex-start`}
+                width={
+                  width < 700
+                    ? `calc(100% - 110px - 10px)`
+                    : `calc(100% - 13% - 10px)`
+                }
+              >
                 <RadioBtn>개인회원</RadioBtn>
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper
               borderBottom={`1px solid ${Theme.grey2_C}`}
               borderTop={`1px solid ${Theme.grey2_C}`}
+              height={`auto`}
             >
               <TitleWrapper>
-                아이디<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                아이디
+                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
               </TitleWrapper>
-              <Wrapper width={`auto`} dr={`row`}>
+              <Wrapper
+                borderLeft={`1px solid ${Theme.grey2_C}`}
+                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                width={
+                  width < 700
+                    ? `calc(100% - 110px - 10px)`
+                    : `calc(100% - 13% - 10px)`
+                }
+                dr={width < 700 ? `column` : `row`}
+              >
                 <SignupInput width={`206px`} />
                 <Wrapper
-                  width={`calc(100% - 206px)`}
+                  width={width < 700 ? `206px` : `calc(100% - 206px)`}
                   color={Theme.grey_C}
                   padding={`0 0 0 10px`}
+                  al={`flex-start`}
                 >
                   (영문소문자/숫자, 4~16자)
                 </Wrapper>
               </Wrapper>
             </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
+            <SignUpWrapper
+              height={`auto`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+            >
               <TitleWrapper>
-                비밀번호<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                비밀번호
+                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
               </TitleWrapper>
-              <Wrapper width={`auto`} dr={`row`}>
+              <Wrapper
+                borderLeft={`1px solid ${Theme.grey2_C}`}
+                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                width={
+                  width < 700
+                    ? `calc(100% - 110px - 10px)`
+                    : `calc(100% - 13% - 10px)`
+                }
+                dr={width < 700 ? `column` : `row`}
+              >
                 <SignupInput width={`206px`} />
                 <Wrapper
-                  width={`calc(100% - 206px)`}
+                  width={width < 700 ? `206px` : `calc(100% - 206px)`}
                   color={Theme.grey_C}
                   padding={`0 0 0 10px`}
+                  al={`flex-start`}
                 >
                   (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자)
                 </Wrapper>
@@ -238,15 +317,34 @@ const SignUp = () => {
                 비밀번호 확인
                 <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
               </TitleWrapper>
-              <Wrapper width={`auto`}>
+              <Wrapper
+                borderLeft={`1px solid ${Theme.grey2_C}`}
+                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                width={
+                  width < 700
+                    ? `calc(100% - 110px - 10px)`
+                    : `calc(100% - 13% - 10px)`
+                }
+                al={width < 700 ? `center` : `flex-start`}
+              >
                 <SignupInput width={`206px`} />
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>
-                이름<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                이름
+                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
               </TitleWrapper>
-              <Wrapper width={`auto`}>
+              <Wrapper
+                borderLeft={`1px solid ${Theme.grey2_C}`}
+                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                width={
+                  width < 700
+                    ? `calc(100% - 110px - 10px)`
+                    : `calc(100% - 13% - 10px)`
+                }
+                al={width < 700 ? `center` : `flex-start`}
+              >
                 <SignupInput width={`206px`} />
               </Wrapper>
             </SignUpWrapper>
@@ -255,11 +353,25 @@ const SignUp = () => {
               borderBottom={`1px solid ${Theme.grey2_C}`}
             >
               <TitleWrapper>
-                주소<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                주소
+                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
               </TitleWrapper>
-              <Wrapper width={`auto`} padding={`9px 0`} al={`flex-start`}>
+              <Wrapper
+                borderLeft={`1px solid ${Theme.grey2_C}`}
+                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                width={
+                  width < 700
+                    ? `calc(100% - 110px - 10px)`
+                    : `calc(100% - 13% - 10px)`
+                }
+                al={`flex-start`}
+              >
                 <Wrapper dr={`row`} ju={`flex-start`}>
-                  <SignupInput width={`62px`} />
+                  <SignupInput
+                    margin={width < 700 ? `0 0 0 23px` : `0 0 0 0`}
+                    width={`62px`}
+                    color={Theme.grey_C}
+                  />
                   <CommonButton
                     width={`56px`}
                     height={`25px`}
@@ -272,10 +384,10 @@ const SignUp = () => {
                     우편번호
                   </CommonButton>
                 </Wrapper>
-                <Wrapper width={`auto`} dr={`row`} margin={`8px 0`}>
+                <Wrapper width={`auto`} dr={`row`} margin={`10px 0`}>
                   <SignupInput width={`206px`} />
                   <Wrapper
-                    width={`calc(100% - 206px)`}
+                    width={width < 700 ? `100%` : `calc(100% - 206px)`}
                     color={Theme.grey_C}
                     padding={`0 0 0 10px`}
                   >
@@ -285,7 +397,7 @@ const SignUp = () => {
                 <Wrapper width={`auto`} dr={`row`}>
                   <SignupInput width={`206px`} />
                   <Wrapper
-                    width={`calc(100% - 206px)`}
+                    width={width < 700 ? `100%` : `calc(100% - 206px)`}
                     color={Theme.grey_C}
                     padding={`0 0 0 10px`}
                   >
@@ -296,7 +408,17 @@ const SignUp = () => {
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>일반전화</TitleWrapper>
-              <Wrapper width={`auto`} dr={`row`}>
+              <Wrapper
+                borderLeft={`1px solid ${Theme.grey2_C}`}
+                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                width={
+                  width < 700
+                    ? `calc(100% - 110px - 10px)`
+                    : `calc(100% - 13% - 10px)`
+                }
+                dr={`row`}
+                ju={width < 700 ? `center` : `flex-start`}
+              >
                 <SelectStyle defaultValue={`02`} style={{ width: 61 }}>
                   <Option value={`02`}>02</Option>
                   <Option value={`031`}>031</Option>
@@ -332,13 +454,28 @@ const SignUp = () => {
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>
-                휴대전화<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                휴대전화
+                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
               </TitleWrapper>
-              <Wrapper width={`auto`} dr={`row`}>
-                <SelectStyle defaultValue={`010`} style={{ width: 61 }}>
+              <Wrapper
+                borderLeft={`1px solid ${Theme.grey2_C}`}
+                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                width={
+                  width < 700
+                    ? `calc(100% - 110px - 10px)`
+                    : `calc(100% - 13% - 10px)`
+                }
+                dr={`row`}
+                ju={width < 700 ? `center` : `flex-start`}
+              >
+                <SelectStyle2 defaultValue={`010`} style={{ width: 61 }}>
                   <Option value={`010`}>010</Option>
                   <Option value={`011`}>011</Option>
-                </SelectStyle>
+                  <Option value={`016`}>016</Option>
+                  <Option value={`017`}>017</Option>
+                  <Option value={`018`}>018</Option>
+                  <Option value={`019`}>019</Option>
+                </SelectStyle2>
                 <Wrapper
                   fontSize={`12px`}
                   width={`auto`}
@@ -355,14 +492,37 @@ const SignUp = () => {
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <TitleWrapper>
-                이메일<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                이메일
+                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
               </TitleWrapper>
-              <Wrapper width={`auto`}>
-                <SignupInput width={`206px`} />
+              <Wrapper
+                borderLeft={`1px solid ${Theme.grey2_C}`}
+                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                width={
+                  width < 700
+                    ? `calc(100% - 110px - 10px)`
+                    : `calc(100% - 13% - 10px)`
+                }
+                dr={`row`}
+                ju={width < 700 ? `center` : `flex-start`}
+              >
+                <SignupInput
+                  width={width < 700 ? `100px` : `206px`}
+                  margin={`0 10px 0 0`}
+                />
+                <SelectStyle
+                  defaultValue={`@`}
+                  style={width < 700 ? { width: 100 } : { width: 206 }}
+                >
+                  <Option value={`@naver.com`}>@naver.com</Option>
+                  <Option value={`@hanmail.com`}>@hanmail.com</Option>
+                  <Option value={`@nate.com`}>@nate.com</Option>
+                  <Option value={`@gmail.com`}>@gmail.com</Option>
+                </SelectStyle>
               </Wrapper>
             </SignUpWrapper>
             <Wrapper al={`flex-start`} margin={`40px 0 0 0`}>
-              <Checkbox>
+              <Checkbox checked={isAllCheck} onClick={allCheckHandler}>
                 <Text
                   fontSize={`14px`}
                   color={Theme.black_C}
@@ -373,7 +533,10 @@ const SignUp = () => {
                   필수 약관 모두 동의하기
                 </Text>
               </Checkbox>
-              <Checkbox>
+              <Checkbox
+                checked={isCheck1}
+                onClick={() => setIsCheck1(!isCheck1)}
+              >
                 <Text
                   fontSize={`14px`}
                   color={Theme.black_C}
@@ -383,7 +546,10 @@ const SignUp = () => {
                   회원약관 (필수)
                 </Text>
               </Checkbox>
-              <Checkbox>
+              <Checkbox
+                checked={isCheck2}
+                onClick={() => setIsCheck2(!isCheck2)}
+              >
                 <Text
                   fontSize={`14px`}
                   color={Theme.black_C}
@@ -393,7 +559,10 @@ const SignUp = () => {
                   개인정보처리방침 (필수)
                 </Text>
               </Checkbox>
-              <Checkbox>
+              <Checkbox
+                checked={isCheck3}
+                onClick={() => setIsCheck3(!isCheck3)}
+              >
                 <Text
                   fontSize={`14px`}
                   color={Theme.black_C}
@@ -402,6 +571,18 @@ const SignUp = () => {
                   개인정보의 제 3자의 이용 동의 (필수)
                 </Text>
               </Checkbox>
+            </Wrapper>
+            <Wrapper>
+              <CommonButton
+                width={`150px`}
+                height={`50px`}
+                margin={`60px 0 0 0`}
+                fontSize={`18px`}
+                padding={`0`}
+                radius={`0`}
+              >
+                회원가입
+              </CommonButton>
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
