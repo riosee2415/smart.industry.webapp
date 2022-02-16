@@ -270,7 +270,7 @@ export const Text = styled.p`
   align-items: ${(props) => props.al};
   justify-content: ${(props) => props.ju};
   font-size: ${(props) => props.fontSize};
-  font-weight: ${(props) => props.fontWeight || `500`};
+  font-weight: ${(props) => props.fontWeight};
   line-height: ${(props) => props.lineHeight};
   color: ${(props) => props.color};
   margin: ${(props) => props.margin || `0`};
@@ -435,12 +435,12 @@ export const SpanText = styled.span`
 export const TextInput = styled.input`
   width: ${(props) => props.width};
   height: ${(props) => props.height || `40px`};
-  border: ${(props) => props.border};
+  border: ${(props) => props.border || `none`};
   border-bottom: ${(props) => props.borderBottom};
   padding: ${(props) => props.padding || `10px`};
   transition: ${(props) => props.transition || props.theme.transition};
   margin: ${(props) => props.margin};
-  background-color: ${(props) => props.bgColor};
+  background-color: ${(props) => props.bgColor || props.theme.lightGrey2_C};
   border-radius: ${(props) => props.radius};
   font-size: ${(props) => props.fontSize};
   cursor: ${(props) => props.cursor};
@@ -462,8 +462,8 @@ export const TextInput = styled.input`
   }
 
   &::placeholder {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    color: ${(props) => props.theme.grey_C};
   }
 `;
 

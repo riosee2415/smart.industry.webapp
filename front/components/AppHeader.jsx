@@ -2,14 +2,18 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   RowWrapper,
   ColWrapper,
-  CommonButton,
+  RsWrapper,
+  Wrapper,
   Image,
   ATag,
+  WholeWrapper,
+  Text,
+  TextInput,
 } from "./commonComponents";
 import { withResizeDetector } from "react-resize-detector";
 import styled from "styled-components";
 import Theme from "./Theme";
-import { AlignRightOutlined } from "@ant-design/icons";
+import { AlignRightOutlined, MenuOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import Link from "next/link";
 
@@ -53,22 +57,14 @@ const MobileRow = styled(RowWrapper)`
 `;
 
 const MenuCol = styled(ColWrapper)`
+  height: 80px;
+  background: ${Theme.basicTheme_C};
   color: ${Theme.white_C};
-  width: 170px;
-  height: 60px;
-  background: transparent;
   cursor: pointer;
   transition: 0.5s;
-  font-weight: 700;
   position: relative;
 
-  & .submenu {
-    display: none;
-  }
-
   &:hover {
-    background: ${Theme.white_C};
-    color: ${Theme.black_C};
     & .submenu {
       display: flex;
     }
@@ -139,62 +135,76 @@ const AppHeader = ({ children, width }) => {
     return () => document.removeEventListener("scroll", handleScroll);
   }, [pageY]);
   return (
-    <>
-      <WebRow
-        justify={`center`}
-        position={`fixed`}
-        top={`0`}
-        left={`0`}
-        index={`10000`}
-        className={headerScroll && "background"}
-      >
-        <ColWrapper span={20}>
-          {/* web */}
-          <ColWrapper>
-            <ColWrapper width={`100%`} padding={`10px 0`}>
-              <ATag href="/">
-                <Image
-                  width={`100px`}
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/SOUL/assets/images/logo/soul_logo.png`}
-                />
-              </ATag>
-            </ColWrapper>
+    <WholeWrapper>
+      <WebRow className={headerScroll && "background"}>
+        <Wrapper
+          borderBottom={`1px solid ${Theme.lightGrey_C}`}
+          padding={`10px 0`}
+        >
+          <RsWrapper dr={`row`} ju={`flex-end`} fontSize={`14px`}>
+            <Link href={`/login`}>
+              <a>
+                <Text margin={`0 0 0 30px`}>로그인</Text>
+              </a>
+            </Link>
+            <Text margin={`0 0 0 30px`}>회원가입</Text>
+            <Text margin={`0 0 0 30px`}>주문조회</Text>
+            <Text margin={`0 0 0 30px`}>마이페이지</Text>
+          </RsWrapper>
+        </Wrapper>
+        <Wrapper
+          borderBottom={`1px solid ${Theme.lightGrey_C}`}
+          padding={`5px 0`}
+        >
+          <RsWrapper dr={`row`} ju={`space-between`}>
+            <ATag width={`auto`} href="/">
+              <Image
+                width={`210px`}
+                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/logo/logo.png`}
+              />
+            </ATag>
 
-            <RowWrapper justify={`center`}>
-              <MenuCol>
-                한의원 소개
-                <ATag href="about">
-                  <SubMenuCol className="submenu">
-                    <SubMenuTextCol>의료진 소개 및 진료 시간표</SubMenuTextCol>
-                  </SubMenuCol>
-                </ATag>
+            <Wrapper width={`290px`} position={`relative`}>
+              <TextInput
+                type={`text`}
+                width={`100%`}
+                height={`35px`}
+                placeholder={`검색어를 입력해주세요.`}
+                radius={`18px`}
+                padding={`0 40px 0 20px`}
+              />
+              <Wrapper
+                width={`auto`}
+                position={`absolute`}
+                top={`0`}
+                right={`15px`}
+                height={`100%`}
+              >
+                <Image
+                  width={`14px`}
+                  alt="icon"
+                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/header/icon_search.png`}
+                />
+              </Wrapper>
+            </Wrapper>
+          </RsWrapper>
+        </Wrapper>
+        <Wrapper borderBottom={`1px solid ${Theme.lightGrey_C}`}>
+          <RsWrapper>
+            <Wrapper dr={`row`}>
+              <MenuCol width={`calc(100% / 7)`} dr={`row`}>
+                <MenuOutlined style={{ margin: `0 10px 0 0` }} />
+                전체 카테고리
               </MenuCol>
-              <MenuCol>
-                <Link href="/diagnosis?type=0">진료 과목</Link>
-                <SubMenuCol className="submenu">
-                  <SubMenuTextCol>
-                    <Link href="/diagnosis?type=1">체질 의학</Link>
-                  </SubMenuTextCol>
-                  <SubMenuTextCol>
-                    <Link href="/diagnosis?type=2">소울 다이어트</Link>
-                  </SubMenuTextCol>
-                  <SubMenuTextCol>
-                    <Link href="/diagnosis?type=3">만성 난치 클리닉</Link>
-                  </SubMenuTextCol>
-                  <SubMenuTextCol>
-                    <Link href="/diagnosis?type=4">통증 클리닉</Link>
-                  </SubMenuTextCol>
-                </SubMenuCol>
-              </MenuCol>
-              <ATag width={`auto`} href="/notice">
-                <MenuCol>공지사항</MenuCol>
-              </ATag>
-              <ATag width={`auto`} href="location">
-                <MenuCol>오시는 길</MenuCol>
-              </ATag>
-            </RowWrapper>
-          </ColWrapper>
-        </ColWrapper>
+              <Wrapper width={`calc(100% / 7)`}></Wrapper>
+              <Wrapper width={`calc(100% / 7)`}></Wrapper>
+              <Wrapper width={`calc(100% / 7)`}></Wrapper>
+              <Wrapper width={`calc(100% / 7)`}></Wrapper>
+              <Wrapper width={`calc(100% / 7)`}></Wrapper>
+              <Wrapper width={`calc(100% / 7)`}></Wrapper>
+            </Wrapper>
+          </RsWrapper>
+        </Wrapper>
       </WebRow>
       {/* mobile */}
       <MobileRow justify={`center`} className={headerScroll && "background"}>
@@ -290,7 +300,7 @@ const AppHeader = ({ children, width }) => {
           </Drawer>
         )}
       </MobileRow>
-    </>
+    </WholeWrapper>
   );
 };
 
