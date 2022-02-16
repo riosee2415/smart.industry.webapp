@@ -130,11 +130,19 @@ const Notice = () => {
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
               >
-                <Wrapper width={`5%`}>번호</Wrapper>
-                <Wrapper width={`65%`}>제목</Wrapper>
-                <Wrapper width={`10%`}>작성자</Wrapper>
-                <Wrapper width={`10%`}>작성일</Wrapper>
-                <Wrapper width={`10%`}>조회수</Wrapper>
+                <Wrapper width={width < 500 ? `10%` : `5%`}>번호</Wrapper>
+                <Wrapper width={width < 800 ? `60%` : `65%`}>제목</Wrapper>
+                <Wrapper display={width < 500 ? `none` : `flex`} width={`10%`}>
+                  작성자
+                </Wrapper>
+                <Wrapper
+                  width={width < 500 ? `30%` : width < 800 ? `15%` : `10%`}
+                >
+                  작성일
+                </Wrapper>
+                <Wrapper display={width < 500 ? `none` : `flex`} width={`10%`}>
+                  조회수
+                </Wrapper>
               </Wrapper>
               <Wrapper ju={`flex-start`}>
                 {testNotice && testNotice.length === 0
@@ -152,13 +160,35 @@ const Notice = () => {
                             moveLinkHandler(`./notice/detail/${data.id}`)
                           }
                         >
-                          <Wrapper width={`5%`}>{data.id}</Wrapper>
-                          <Wrapper width={`65%`}>{data.title}</Wrapper>
-                          <Wrapper width={`10%`}>관리자</Wrapper>
-                          <Wrapper width={`10%`}>
+                          <Wrapper width={width < 500 ? `10%` : `5%`}>
+                            {data.id}
+                          </Wrapper>
+                          <Wrapper
+                            al={`flex-start`}
+                            padding={`0 20px`}
+                            width={width < 800 ? `60%` : `65%`}
+                          >
+                            {data.title}
+                          </Wrapper>
+                          <Wrapper
+                            display={width < 500 ? `none` : `flex`}
+                            width={`10%`}
+                          >
+                            관리자
+                          </Wrapper>
+                          <Wrapper
+                            width={
+                              width < 500 ? `30%` : width < 800 ? `15%` : `10%`
+                            }
+                          >
                             {data.createdAt.substring(0, 10)}
                           </Wrapper>
-                          <Wrapper width={`10%`}>{data.hit}</Wrapper>
+                          <Wrapper
+                            display={width < 500 ? `none` : `flex`}
+                            width={`10%`}
+                          >
+                            {data.hit}
+                          </Wrapper>
                         </Wrapper>
                       );
                     })}

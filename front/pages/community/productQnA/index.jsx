@@ -127,12 +127,26 @@ const Notice = () => {
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
               >
-                <Wrapper width={`5%`}>번호</Wrapper>
-                <Wrapper width={`20%`}>상품명</Wrapper>
-                <Wrapper width={`45%`}>제목</Wrapper>
-                <Wrapper width={`10%`}>작성자</Wrapper>
-                <Wrapper width={`10%`}>작성일</Wrapper>
-                <Wrapper width={`10%`}>조회수</Wrapper>
+                <Wrapper width={`5%`} display={width < 500 ? `none` : `flex`}>
+                  번호
+                </Wrapper>
+                <Wrapper width={width < 500 ? `30%` : `20%`}>상품명</Wrapper>
+                <Wrapper
+                  width={width < 500 ? `45%` : width < 800 ? `40%` : `45%`}
+                >
+                  제목
+                </Wrapper>
+                <Wrapper width={`10%`} display={width < 500 ? `none` : `flex`}>
+                  작성자
+                </Wrapper>
+                <Wrapper
+                  width={width < 500 ? `25%` : width < 800 ? `15%` : `10%`}
+                >
+                  작성일
+                </Wrapper>
+                <Wrapper width={`10%`} display={width < 500 ? `none` : `flex`}>
+                  조회수
+                </Wrapper>
               </Wrapper>
               <Wrapper ju={`flex-start`}>
                 {testNotice && testNotice.length === 0
@@ -150,11 +164,19 @@ const Notice = () => {
                             moveLinkHandler(`./productQnA/detail/${data.id}`)
                           }
                         >
-                          <Wrapper width={`5%`}>{data.id}</Wrapper>
-                          <Wrapper width={`20%`} dr={`row`}>
+                          <Wrapper
+                            width={`5%`}
+                            display={width < 500 ? `none` : `flex`}
+                          >
+                            {data.id}
+                          </Wrapper>
+                          <Wrapper
+                            width={width < 500 ? `30%` : `20%`}
+                            dr={`row`}
+                          >
                             <Image
-                              width={`50px`}
-                              height={`50px`}
+                              width={width < 500 ? `40px` : `50px`}
+                              height={width < 500 ? `40px` : `50px`}
                               src={data.thumbnail}
                             />
                             <Wrapper
@@ -165,14 +187,33 @@ const Notice = () => {
                               {data.productName}
                             </Wrapper>
                           </Wrapper>
-                          <Wrapper width={`45%`} al={`flex-start`}>
+                          <Wrapper
+                            width={
+                              width < 500 ? `45%` : width < 800 ? `40%` : `45%`
+                            }
+                            al={`flex-start`}
+                          >
                             {data.title}
                           </Wrapper>
-                          <Wrapper width={`10%`}>관리자</Wrapper>
-                          <Wrapper width={`10%`}>
+                          <Wrapper
+                            width={`10%`}
+                            display={width < 500 ? `none` : `flex`}
+                          >
+                            관리자
+                          </Wrapper>
+                          <Wrapper
+                            width={
+                              width < 500 ? `25%` : width < 800 ? `15%` : `10%`
+                            }
+                          >
                             {data.createdAt.substring(0, 10)}
                           </Wrapper>
-                          <Wrapper width={`10%`}>{data.hit}</Wrapper>
+                          <Wrapper
+                            width={`10%`}
+                            display={width < 500 ? `none` : `flex`}
+                          >
+                            {data.hit}
+                          </Wrapper>
                         </Wrapper>
                       );
                     })}
@@ -183,11 +224,13 @@ const Notice = () => {
                 height={`40px`}
                 ju={`flex-start`}
               >
-                <Wrapper width={`auto`}>검색어</Wrapper>
+                <Wrapper width={`auto`} display={width < 500 ? `none` : `flex`}>
+                  검색어
+                </Wrapper>
                 <TextInput
                   width={`261px`}
                   height={`100%`}
-                  margin={`0 10px 0 26px`}
+                  margin={width < 500 ? `0 10px 0 0` : `0 10px 0 26px`}
                 />
                 <CommonButton width={`74px`} height={`100%`}>
                   찾기

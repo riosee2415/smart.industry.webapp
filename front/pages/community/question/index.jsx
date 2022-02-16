@@ -14,7 +14,6 @@ import {
   TextInput,
   WholeWrapper,
   Wrapper,
-  Text,
 } from "../../../components/commonComponents";
 import styled from "styled-components";
 import { useState } from "react";
@@ -31,9 +30,9 @@ const ContentArea = styled(TextArea)`
   border-radius: 0;
 `;
 
-const CustomLabel = styled.label`
-  cursor: pointer;
-`;
+// const CustomLabel = styled.label`
+//   cursor: pointer;
+// `;
 
 const CommonCheckBox = styled(Checkbox)`
   .ant-checkbox-checked .ant-checkbox-inner {
@@ -160,7 +159,7 @@ const Question = () => {
                             al={`flex-start`}
                             fontSize={`18px`}
                             fontWeight={`bold`}
-                            margin={`0 0 20px`}
+                            margin={width < 500 ? `0 0 10px` : `0 0 20px`}
                           >
                             이름
                           </Wrapper>
@@ -180,13 +179,13 @@ const Question = () => {
                             al={`flex-start`}
                             fontSize={`18px`}
                             fontWeight={`bold`}
-                            margin={`0 0 20px`}
+                            margin={width < 500 ? `0 0 10px` : `0 0 20px 10px`}
                           >
                             연락처
                           </Wrapper>
                           <Wrapper
-                            width={`calc(100% - 10px)`}
-                            margin={`0 0 0 10px`}
+                            width={width < 500 ? `100%` : `calc(100% - 10px)`}
+                            margin={width < 500 ? `0` : `0 0 0 10px`}
                           >
                             <TextInput
                               placeholder={data.mobile}
@@ -200,7 +199,7 @@ const Question = () => {
                             al={`flex-start`}
                             fontSize={`18px`}
                             fontWeight={`bold`}
-                            margin={`0 0 20px`}
+                            margin={width < 500 ? `0 0 10px` : `0 0 20px`}
                           >
                             이메일
                           </Wrapper>
@@ -218,7 +217,7 @@ const Question = () => {
                   al={`flex-start`}
                   fontSize={`18px`}
                   fontWeight={`bold`}
-                  margin={`0 0 20px`}
+                  margin={width < 500 ? `0 0 10px` : `0 0 20px`}
                 >
                   제목
                 </Wrapper>
@@ -233,7 +232,7 @@ const Question = () => {
                   al={`flex-start`}
                   fontSize={`18px`}
                   fontWeight={`bold`}
-                  margin={`0 0 20px`}
+                  margin={width < 500 ? `0 0 10px` : `0 0 20px`}
                 >
                   문의 내용
                 </Wrapper>
@@ -247,7 +246,7 @@ const Question = () => {
                   al={`flex-start`}
                   fontSize={`18px`}
                   fontWeight={`bold`}
-                  margin={`0 0 20px`}
+                  margin={width < 500 ? `0 0 10px` : `0 0 20px`}
                 >
                   비밀번호
                 </Wrapper>
@@ -265,9 +264,11 @@ const Question = () => {
                     checked={isTerms}
                     onChange={TermsHandler}
                     id="check"
-                  />
+                  >
+                    개인정보 제공에 동의합니다
+                  </CommonCheckBox>
                 </Wrapper>
-                <Wrapper width={`auto`} al={`flex-start`}>
+                {/* <Wrapper width={`auto`} al={`flex-start`}>
                   <CustomLabel for="check">
                     <Wrapper
                       dr={`row`}
@@ -279,7 +280,7 @@ const Question = () => {
                       <Text lineHeight={`1`}>개인정보 제공에 동의합니다.</Text>
                     </Wrapper>
                   </CustomLabel>
-                </Wrapper>
+                </Wrapper> */}
               </Wrapper>
               <CommonButton width={`117px`} height={`50px`}>
                 작성하기

@@ -120,18 +120,19 @@ const ProductQnA = () => {
                         height={`50px`}
                         borderTop={`1px solid ${Theme.grey2_C}`}
                         borderBottom={`1px solid ${Theme.grey2_C}`}
+                        dr={`row`}
                       >
                         <Wrapper
-                          width={`10%`}
+                          width={width < 500 ? `20%` : `10%`}
+                          height={`100%`}
                           bgColor={Theme.lightGrey2_C}
-                          height={`50px`}
                           padding={`0 0 0 20px`}
                           al={`flex-start`}
                         >
                           제목
                         </Wrapper>
                         <Wrapper
-                          width={`90%`}
+                          width={width < 500 ? `80%` : `90%`}
                           al={`flex-start`}
                           padding={`0 0 0 20px`}
                         >
@@ -140,20 +141,20 @@ const ProductQnA = () => {
                       </Wrapper>
                       <Wrapper
                         height={`50px`}
-                        borderTop={`1px solid ${Theme.grey2_C}`}
                         borderBottom={`1px solid ${Theme.grey2_C}`}
+                        dr={`row`}
                       >
                         <Wrapper
-                          width={`10%`}
+                          width={width < 500 ? `20%` : `10%`}
                           bgColor={Theme.lightGrey2_C}
-                          height={`50px`}
+                          height={`100%`}
                           padding={`0 0 0 20px`}
                           al={`flex-start`}
                         >
                           작성자
                         </Wrapper>
                         <Wrapper
-                          width={`90%`}
+                          width={width < 500 ? `80%` : `90%`}
                           al={`flex-start`}
                           padding={`0 0 0 20px`}
                         >
@@ -162,36 +163,36 @@ const ProductQnA = () => {
                       </Wrapper>
                       <Wrapper
                         height={`50px`}
-                        borderTop={`1px solid ${Theme.grey2_C}`}
+                        dr={`row`}
                         borderBottom={`1px solid ${Theme.grey2_C}`}
                       >
                         <Wrapper
-                          width={`10%`}
+                          width={width < 500 ? `20%` : `10%`}
                           bgColor={Theme.lightGrey2_C}
-                          height={`50px`}
+                          height={`100%`}
                           padding={`0 0 0 20px`}
                           al={`flex-start`}
                         >
                           작성일
                         </Wrapper>
                         <Wrapper
-                          width={`15%`}
+                          width={width < 500 ? `30%` : `15%`}
                           al={`flex-start`}
                           padding={`0 0 0 20px`}
                         >
                           {data.createdAt.substring(0, 10)}
                         </Wrapper>
                         <Wrapper
-                          width={`10%`}
+                          width={width < 500 ? `25%` : `10%`}
                           bgColor={Theme.lightGrey2_C}
-                          height={`50px`}
+                          height={`100%`}
                           padding={`0 0 0 20px`}
                           al={`flex-start`}
                         >
                           조회수
                         </Wrapper>
                         <Wrapper
-                          width={`65%`}
+                          width={width < 500 ? `25%` : `65%`}
                           al={`flex-start`}
                           padding={`0 0 0 20px`}
                         >
@@ -211,6 +212,7 @@ const ProductQnA = () => {
                         al={`flex-start`}
                         borderTop={`1px solid ${Theme.grey2_C}`}
                         display={data.answer ? `flex` : `none`}
+                        bgColor={Theme.lightGrey2_C}
                       >
                         <Wrapper
                           width={`20px`}
@@ -229,7 +231,6 @@ const ProductQnA = () => {
                           al={`flex-start`}
                           ju={`flex-start`}
                           padding={`23px 10px 0 0`}
-                          bgColor={Theme.lightGrey2_C}
                         >
                           {data.answer}
                         </Wrapper>

@@ -100,68 +100,85 @@ const Notice = () => {
 
             <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <Wrapper
-                height={`50px`}
+                padding={`16px 0`}
+                dr={`row`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
               >
                 <Wrapper
-                  width={`10%`}
+                  width={width < 500 ? `30%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
-                  height={`50px`}
+                  padding={`16px 0`}
                   padding={`0 0 0 20px`}
                   al={`flex-start`}
                 >
                   제목
                 </Wrapper>
-                <Wrapper width={`90%`} al={`flex-start`} padding={`0 0 0 20px`}>
+                <Wrapper
+                  width={width < 500 ? `70%` : `90%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 20px`}
+                >
                   공지사항입니다.
                 </Wrapper>
               </Wrapper>
               <Wrapper
-                height={`50px`}
+                padding={`16px 0`}
+                dr={`row`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
               >
                 <Wrapper
-                  width={`10%`}
+                  width={width < 500 ? `30%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
-                  height={`50px`}
+                  padding={`16px 0`}
                   padding={`0 0 0 20px`}
                   al={`flex-start`}
                 >
                   작성자
                 </Wrapper>
-                <Wrapper width={`90%`} al={`flex-start`} padding={`0 0 0 20px`}>
+                <Wrapper
+                  width={width < 500 ? `70%` : `90%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 20px`}
+                >
                   대한기계공구
                 </Wrapper>
               </Wrapper>
               <Wrapper
-                height={`50px`}
+                padding={`16px 0`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
+                dr={`row`}
               >
                 <Wrapper
-                  width={`10%`}
+                  width={width < 500 ? `25%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
-                  height={`50px`}
                   padding={`0 0 0 20px`}
                   al={`flex-start`}
                 >
                   작성일
                 </Wrapper>
-                <Wrapper width={`15%`} al={`flex-start`} padding={`0 0 0 20px`}>
+                <Wrapper
+                  width={width < 500 ? `30%` : `25%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 20px`}
+                >
                   2022-02-13
                 </Wrapper>
                 <Wrapper
-                  width={`10%`}
+                  width={width < 500 ? `25%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
-                  height={`50px`}
                   padding={`0 0 0 20px`}
                   al={`flex-start`}
                 >
                   조회수
                 </Wrapper>
-                <Wrapper width={`65%`} al={`flex-start`} padding={`0 0 0 20px`}>
+                <Wrapper
+                  width={width < 500 ? `20%` : `55%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 20px`}
+                >
                   123
                 </Wrapper>
               </Wrapper>
@@ -191,29 +208,37 @@ const Notice = () => {
             >
               <Wrapper
                 dr={`row`}
-                height={`40px`}
+                padding={`8px 0`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
               >
                 <Wrapper
-                  width={`10%`}
-                  height={`40px`}
+                  width={width < 500 ? `20%` : `10%`}
+                  height={`100%`}
                   borderRight={`1px solid ${Theme.grey2_C}`}
                 >
                   ▲ 이전글
                 </Wrapper>
-                <Wrapper width={`90%`} al={`flex-start`} padding={`0 0 0 25px`}>
+                <Wrapper
+                  width={width < 500 ? `80%` : `90%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 25px`}
+                >
                   안녕하세요 이전글입니다.
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`} height={`40px`}>
+              <Wrapper dr={`row`} padding={`8px 0`}>
                 <Wrapper
-                  width={`10%`}
-                  height={`40px`}
+                  width={width < 500 ? `20%` : `10%`}
+                  height={`100%`}
                   borderRight={`1px solid ${Theme.grey2_C}`}
                 >
                   ▼ 다음글
                 </Wrapper>
-                <Wrapper width={`90%`} al={`flex-start`} padding={`0 0 0 25px`}>
+                <Wrapper
+                  width={width < 500 ? `80%` : `90%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 25px`}
+                >
                   다음글 입니다.
                 </Wrapper>
               </Wrapper>

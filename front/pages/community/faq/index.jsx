@@ -19,12 +19,19 @@ import { useState } from "react";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
+import { Empty } from "antd";
 
 const FaqTabBtn = styled(Wrapper)`
   width: 180px;
   height: 50px;
   font-size: 16px;
   cursor: pointer;
+
+  @media (max-width: 800px) {
+    width: 150px;
+    height: 40px;
+    font-size: 14px;
+  }
 `;
 
 const Faq = () => {
@@ -214,9 +221,9 @@ const Faq = () => {
               <Wrapper dr={`row`}>
                 <TextInput
                   border={`1px solid ${Theme.grey2_C}`}
-                  width={`400px`}
+                  width={width < 500 ? `300px` : `400px`}
                   height={`40px`}
-                  margin={`0 6px 0 0`}
+                  margin={width < 500 ? `0 0 5px` : `0 6px 0 0`}
                 />
                 <CommonButton width={`80px`} height={`40px`}>
                   검색
@@ -225,7 +232,7 @@ const Faq = () => {
             </Wrapper>
             <Wrapper
               dr={`row`}
-              ju={`space-around`}
+              ju={width < 1100 ? `center` : `space-around`}
               al={`flex-start`}
               margin={`0 0 40px`}
             >
@@ -253,7 +260,7 @@ const Faq = () => {
             </Wrapper>
             <Wrapper margin={`0 0 60px`}>
               {faqTypeQuestion && faqTypeQuestion[0].typeId === typeTab ? (
-                <Wrapper>빈칸</Wrapper>
+                <Empty description="조회된 FAQ가 없습니다." />
               ) : (
                 <>
                   <Wrapper
@@ -262,9 +269,17 @@ const Faq = () => {
                     borderTop={`1px solid ${Theme.grey2_C}`}
                     borderBottom={`1px solid ${Theme.grey2_C}`}
                   >
-                    <Wrapper width={`5%`}>번호</Wrapper>
-                    <Wrapper width={`15%`}>분류</Wrapper>
-                    <Wrapper width={`80%`}>제목</Wrapper>
+                    <Wrapper width={width < 700 ? `15%` : `5%`}>번호</Wrapper>
+                    <Wrapper
+                      width={width < 700 ? `35%` : width < 1100 ? `25%` : `15%`}
+                    >
+                      분류
+                    </Wrapper>
+                    <Wrapper
+                      width={width < 700 ? `50%` : width < 1100 ? `70%` : `80%`}
+                    >
+                      제목
+                    </Wrapper>
                   </Wrapper>
                   {faqTypeQuestion && faqTypeQuestion.length === 0
                     ? ``
@@ -280,9 +295,30 @@ const Faq = () => {
                               borderBottom={`1px solid ${Theme.grey2_C}`}
                               onClick={() => onClickToggleHandler(data)}
                             >
-                              <Wrapper width={`5%`}>{data.id}</Wrapper>
-                              <Wrapper width={`15%`}>{data.type}</Wrapper>
-                              <Wrapper width={`80%`} al={`flex-start`}>
+                              <Wrapper width={width < 700 ? `15%` : `5%`}>
+                                {data.id}
+                              </Wrapper>
+                              <Wrapper
+                                width={
+                                  width < 700
+                                    ? `35%`
+                                    : width < 1100
+                                    ? `25%`
+                                    : `15%`
+                                }
+                              >
+                                {data.type}
+                              </Wrapper>
+                              <Wrapper
+                                width={
+                                  width < 700
+                                    ? `50%`
+                                    : width < 1100
+                                    ? `70%`
+                                    : `80%`
+                                }
+                                al={`flex-start`}
+                              >
                                 {data.question}
                               </Wrapper>
                             </Wrapper>
@@ -292,10 +328,14 @@ const Faq = () => {
                                 dr={`row`}
                                 borderBottom={`1px solid ${Theme.grey2_C}`}
                               >
-                                <Wrapper width={`6%`}></Wrapper>
-                                <Wrapper width={`14%`}></Wrapper>
                                 <Wrapper
-                                  width={`80%`}
+                                  width={width < 700 ? `0%` : `6%`}
+                                ></Wrapper>
+                                <Wrapper
+                                  width={width < 700 ? `0%` : `14%`}
+                                ></Wrapper>
+                                <Wrapper
+                                  width={width < 700 ? `100%` : `80%`}
                                   dr={`row`}
                                   al={`flex-start`}
                                 >
