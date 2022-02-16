@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Router from "next/router";
-import { Select, Radio } from "antd";
+import { Select, Radio, Checkbox } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +16,7 @@ import {
   CommonButton,
   RsWrapper,
   SpanText,
+  Text,
   TextInput,
   WholeWrapper,
   Wrapper,
@@ -33,9 +34,10 @@ const TitleWrapper = styled(Wrapper)`
   width: 13%;
   border-right: 1px solid ${Theme.grey2_C};
   padding: 0 0 0 20px;
-  align-items: flex-start;
+  align-items: center;
   height: 100%;
   margin: 0 10px 0 0;
+  flex-direction: row;
 `;
 
 const RadioBtn = styled(Radio)`
@@ -45,7 +47,16 @@ const RadioBtn = styled(Radio)`
 `;
 
 const SignupInput = styled(TextInput)`
-  heigth: 33px;
+  height: 33px;
+  background: none;
+  border: none;
+  border: 1px solid ${Theme.grey2_C};
+
+  &:focus {
+    outline: none;
+    border: none;
+    border: 1px solid ${Theme.grey_C};
+  }
 `;
 
 const SelectStyle = styled(Select)`
@@ -182,7 +193,9 @@ const SignUp = () => {
               margin={`0 0 30px`}
               bgColor={Theme.lightGrey_C}
             >
-              <TitleWrapper>회원구분</TitleWrapper>
+              <TitleWrapper>
+                회원구분<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+              </TitleWrapper>
               <Wrapper width={`auto`}>
                 <RadioBtn>개인회원</RadioBtn>
               </Wrapper>
@@ -191,7 +204,9 @@ const SignUp = () => {
               borderBottom={`1px solid ${Theme.grey2_C}`}
               borderTop={`1px solid ${Theme.grey2_C}`}
             >
-              <TitleWrapper>아이디</TitleWrapper>
+              <TitleWrapper>
+                아이디<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+              </TitleWrapper>
               <Wrapper width={`auto`} dr={`row`}>
                 <SignupInput width={`206px`} />
                 <Wrapper
@@ -204,7 +219,9 @@ const SignUp = () => {
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>비밀번호</TitleWrapper>
+              <TitleWrapper>
+                비밀번호<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+              </TitleWrapper>
               <Wrapper width={`auto`} dr={`row`}>
                 <SignupInput width={`206px`} />
                 <Wrapper
@@ -217,13 +234,18 @@ const SignUp = () => {
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>비밀번호 확인</TitleWrapper>
+              <TitleWrapper>
+                비밀번호 확인
+                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+              </TitleWrapper>
               <Wrapper width={`auto`}>
                 <SignupInput width={`206px`} />
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>이름</TitleWrapper>
+              <TitleWrapper>
+                이름<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+              </TitleWrapper>
               <Wrapper width={`auto`}>
                 <SignupInput width={`206px`} />
               </Wrapper>
@@ -232,15 +254,20 @@ const SignUp = () => {
               height={`auto`}
               borderBottom={`1px solid ${Theme.grey2_C}`}
             >
-              <TitleWrapper>주소</TitleWrapper>
+              <TitleWrapper>
+                주소<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+              </TitleWrapper>
               <Wrapper width={`auto`} padding={`9px 0`} al={`flex-start`}>
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <SignupInput width={`62px`} />
                   <CommonButton
                     width={`56px`}
                     height={`25px`}
-                    margin={`0 0 0 7px`}
+                    margin={`0 0 0 10px`}
                     fontSize={`12px`}
+                    kindOf={`darkgrey`}
+                    padding={`0`}
+                    radius={`0`}
                   >
                     우편번호
                   </CommonButton>
@@ -304,17 +331,78 @@ const SignUp = () => {
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>휴대전화</TitleWrapper>
-              <Wrapper width={`auto`}>
-                <SignupInput width={`206px`} />
+              <TitleWrapper>
+                휴대전화<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+              </TitleWrapper>
+              <Wrapper width={`auto`} dr={`row`}>
+                <SelectStyle defaultValue={`010`} style={{ width: 61 }}>
+                  <Option value={`010`}>010</Option>
+                  <Option value={`011`}>011</Option>
+                </SelectStyle>
+                <Wrapper
+                  fontSize={`12px`}
+                  width={`auto`}
+                  padding={`0 2px 0 3px`}
+                >
+                  -
+                </Wrapper>
+                <SignupInput width={`61px`} />
+                <Wrapper fontSize={`12px`} width={`auto`} padding={`0 2px`}>
+                  -
+                </Wrapper>
+                <SignupInput width={`61px`} />
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>이메일</TitleWrapper>
+              <TitleWrapper>
+                이메일<SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+              </TitleWrapper>
               <Wrapper width={`auto`}>
                 <SignupInput width={`206px`} />
               </Wrapper>
             </SignUpWrapper>
+            <Wrapper al={`flex-start`} margin={`40px 0 0 0`}>
+              <Checkbox>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.black_C}
+                  cursor={`pointer`}
+                  margin={`0 0 20px 0`}
+                  fontWeight={`700`}
+                >
+                  필수 약관 모두 동의하기
+                </Text>
+              </Checkbox>
+              <Checkbox>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.black_C}
+                  cursor={`pointer`}
+                  margin={`0 0 10px 0`}
+                >
+                  회원약관 (필수)
+                </Text>
+              </Checkbox>
+              <Checkbox>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.black_C}
+                  cursor={`pointer`}
+                  margin={`0 0 10px 0`}
+                >
+                  개인정보처리방침 (필수)
+                </Text>
+              </Checkbox>
+              <Checkbox>
+                <Text
+                  fontSize={`14px`}
+                  color={Theme.black_C}
+                  cursor={`pointer`}
+                >
+                  개인정보의 제 3자의 이용 동의 (필수)
+                </Text>
+              </Checkbox>
+            </Wrapper>
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
