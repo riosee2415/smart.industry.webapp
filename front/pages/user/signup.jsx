@@ -14,6 +14,7 @@ import axios from "axios";
 import { END } from "redux-saga";
 import {
   RsWrapper,
+  SpanText,
   TextInput,
   WholeWrapper,
   Wrapper,

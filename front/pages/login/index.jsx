@@ -26,20 +26,20 @@ import Theme from "../../components/Theme";
 
 const CustomInput = styled(TextInput)`
   border: none;
-  border-bottom: 1px solid #ebebeb;
+  border-bottom: 1px solid ${Theme.grey2_C};
 
   width: 100%;
   height: 40px;
 
   &::placeholder {
-    color: #999999;
+    color: ${Theme.grey_C};
     font-size: 14px;
   }
 
   &:focus {
     outline: none;
     border: none;
-    border-bottom: 1px solid #ebebeb;
+    border-bottom: 1px solid ${Theme.grey2_C};
   }
 `;
 
@@ -109,7 +109,11 @@ const Index = () => {
               <Text fontSize={`22px`} fontWeight={`700`} margin={`0 0 11px`}>
                 LOGIN
               </Text>
-              <Text fontSize={`18px`} margin={`0 0 40px`} color={`#999999`}>
+              <Text
+                fontSize={`18px`}
+                margin={`0 0 40px`}
+                color={`${Theme.grey_C}`}
+              >
                 회원 로그인
               </Text>
               <CustomInput placeholder="아이디" margin={`0 0 6px`} />
@@ -126,14 +130,18 @@ const Index = () => {
 
               <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 41px`}>
                 <Checkbox />
-                <Text fontSize={`14px`} color={`#999999`} margin={`0 0 0 8px`}>
+                <Text
+                  fontSize={`14px`}
+                  color={`${Theme.grey_C}`}
+                  margin={`0 0 0 8px`}
+                >
                   아이디 저장
                 </Text>
               </Wrapper>
 
               <Wrapper
                 height={`40px`}
-                borderTop={`1px solid #EBEBEB`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
                 dr={`row`}
                 ju={`space-between`}
                 al={`flex-end`}
@@ -141,34 +149,34 @@ const Index = () => {
                 <Wrapper
                   width={`auto`}
                   fontSize={`14px`}
-                  color={`#999999`}
+                  color={`${Theme.grey_C}`}
                   cursor={`pointer`}
                 >
                   아이디찾기
                 </Wrapper>
-                <Text color={`#707070`}>|</Text>
+                <Text color={`${Theme.grey3_C}`}>|</Text>
                 <Wrapper
                   width={`auto`}
                   fontSize={`14px`}
-                  color={`#999999`}
+                  color={`${Theme.grey_C}`}
                   cursor={`pointer`}
                 >
                   비밀번호찾기
                 </Wrapper>
-                <Text color={`#707070`}>|</Text>
+                <Text color={`${Theme.grey3_C}`}>|</Text>
                 <Wrapper
                   width={`auto`}
                   fontSize={`14px`}
-                  color={`#999999`}
+                  color={`${Theme.grey_C}`}
                   cursor={`pointer`}
                 >
                   회원가입
                 </Wrapper>
-                <Text color={`#707070`}>|</Text>
+                <Text color={`${Theme.grey3_C}`}>|</Text>
                 <Wrapper
                   width={`auto`}
                   fontSize={`14px`}
-                  color={`#999999`}
+                  color={`${Theme.grey_C}`}
                   cursor={`pointer`}
                 >
                   비회원 주문조회
