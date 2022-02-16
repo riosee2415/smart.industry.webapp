@@ -20,69 +20,44 @@ import { useState } from "react";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
+import { useRouter } from "next/dist/client/router";
 
-const Review = () => {
+const Notice = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
 
   const width = useWidth();
+  const router = useRouter();
 
   ////// HOOKS //////
-  const [datum, setDatum] = useState(null);
-
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
-  const onClickToggleHandler = useCallback(
-    (data) => {
-      setDatum(data);
-
-      if (datum && datum.id === data.id) {
-        setDatum("");
-      }
-    },
-    [datum]
-  );
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
   ////// DATAVIEW //////
-  const testReview = [
-    // {
-    //   type: "전체",
-    // },
+  const testNotice = [
     {
       id: 1,
-      product: "상품1",
-      title: "상품1에 대한 제목",
-      content: "상품문의답변",
-      user: "사용자",
-      createdAt: "2022-02-13-00:00",
-      hit: "234",
+      title: "상품문의",
+      createdAt: "2022-02-15-00:00",
+      hit: "322",
       thumbnail:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
+      productName: "상품명",
     },
     {
       id: 2,
-      product: "상품2",
-      title: "상품2에 대한 제목",
-      content: "배송문의답변",
-      user: "사용자2",
-      createdAt: "2022-02-14-00:00",
+      title: "상품문의[답변완료]",
+      createdAt: "2022-02-15-00:00",
       hit: "123",
       thumbnail:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-    },
-    {
-      id: 3,
-      product: "상품3",
-      title: "상품3에 대한 제목",
-      content: "취소/반품/교환답변",
-      user: "사용자3",
-      createdAt: "2022-02-15-00:00",
-      hit: "45",
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
+      productName: "상품명",
     },
   ];
 
@@ -132,7 +107,7 @@ const Review = () => {
         <WholeWrapper>
           <RsWrapper margin={`300px 0 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
-              HOME | 커뮤니티 | 상품후기
+              HOME | 커뮤니티 | 상품문의
             </Wrapper>
             <Wrapper
               fontSize={`20px`}
@@ -140,7 +115,7 @@ const Review = () => {
               al={`flex-start`}
               margin={`0 0 10px`}
             >
-              상품후기
+              상품문의
             </Wrapper>
             <Wrapper
               borderBottom={`1px solid #EBEBEB`}
@@ -154,29 +129,31 @@ const Review = () => {
                 borderTop={`1px solid #EBEBEB`}
                 borderBottom={`1px solid #EBEBEB`}
               >
-                <Wrapper width={`6%`}>번호</Wrapper>
-                <Wrapper width={`14%`}>상품명</Wrapper>
-                <Wrapper width={`50%`}>제목</Wrapper>
+                <Wrapper width={`8%`}>번호</Wrapper>
+                <Wrapper width={`17%`}>상품명</Wrapper>
+                <Wrapper width={`45%`}>제목</Wrapper>
                 <Wrapper width={`10%`}>작성자</Wrapper>
                 <Wrapper width={`10%`}>작성일</Wrapper>
                 <Wrapper width={`10%`}>조회수</Wrapper>
               </Wrapper>
-              {testReview && testReview.length === 0
-                ? ``
-                : testReview &&
-                  testReview.reverse().map((data, idx) => {
-                    return (
-                      <Wrapper ju={`flex-start`}>
+              <Wrapper ju={`flex-start`}>
+                {testNotice && testNotice.length === 0
+                  ? ``
+                  : testNotice &&
+                    testNotice.reverse().map((data) => {
+                      return (
                         <Wrapper
                           dr={`row`}
                           ju={`flex-start`}
                           padding={`14px 0px`}
                           cursor={`pointer`}
                           borderBottom={`1px solid #EBEBEB`}
-                          onClick={() => onClickToggleHandler(data)}
+                          onClick={() =>
+                            moveLinkHandler(`./productQnA/detail/${data.id}`)
+                          }
                         >
-                          <Wrapper width={`6%`}>{data.id}</Wrapper>
-                          <Wrapper width={`14%`} dr={`row`}>
+                          <Wrapper width={`8%`}>{data.id}</Wrapper>
+                          <Wrapper width={`17%`} dr={`row`}>
                             <Image
                               width={`50px`}
                               height={`50px`}
@@ -187,40 +164,37 @@ const Review = () => {
                               al={`flex-start`}
                               padding={`0 0 0 10px`}
                             >
-                              {data.product}
+                              {data.productName}
                             </Wrapper>
                           </Wrapper>
-                          <Wrapper width={`50%`} al={`flex-start`}>
+                          <Wrapper width={`45%`} al={`flex-start`}>
                             {data.title}
                           </Wrapper>
-                          <Wrapper width={`10%`}>{data.user}</Wrapper>
+                          <Wrapper width={`10%`}>관리자</Wrapper>
                           <Wrapper width={`10%`}>
                             {data.createdAt.substring(0, 10)}
                           </Wrapper>
                           <Wrapper width={`10%`}>{data.hit}</Wrapper>
                         </Wrapper>
-
-                        {datum && datum.id === data.id && (
-                          <Wrapper borderBottom={`1px solid #EBEBEB`}>
-                            <Wrapper width={`90%`}>
-                              <Image
-                                width={`600px`}
-                                height={`600px`}
-                                src={`${data.thumbnail}`}
-                              />
-                            </Wrapper>
-                            <Wrapper
-                              width={`90%`}
-                              al={`flex-start`}
-                              padding={`60px 0 40px`}
-                            >
-                              {data.content}
-                            </Wrapper>
-                          </Wrapper>
-                        )}
-                      </Wrapper>
-                    );
-                  })}
+                      );
+                    })}
+              </Wrapper>
+              <Wrapper
+                margin={`40px 0 0`}
+                dr={`row`}
+                height={`40px`}
+                ju={`flex-start`}
+              >
+                <Wrapper width={`auto`}>검색어</Wrapper>
+                <TextInput
+                  width={`261px`}
+                  height={`100%`}
+                  margin={`0 10px 0 26px`}
+                />
+                <CommonButton width={`74px`} height={`100%`}>
+                  찾기
+                </CommonButton>
+              </Wrapper>
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
@@ -255,4 +229,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default Review;
+export default Notice;

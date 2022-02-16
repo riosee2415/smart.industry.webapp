@@ -136,7 +136,8 @@ const Faq = () => {
       typeId: 7,
       type: "회원/탈퇴",
       question: "회원/탈퇴",
-      answer: "회원/탈퇴답변",
+      answer:
+        "회원/탈퇴답변 sdfsdf asdfasdfa dfasdfasd fasdfasdf asdfasdf asdfasdfas dfasdfasd fasdfasdf asdfasdf asdfasdf asdfasdf asdfasdf wefwefwef wefwefwef wefwefwef wefwefwef fwefwefwef",
     },
   ];
 
@@ -292,9 +293,23 @@ const Faq = () => {
                                 <Wrapper
                                   width={`80%`}
                                   dr={`row`}
-                                  ju={`flex-start`}
+                                  al={`flex-start`}
                                 >
-                                  <Wrapper width={`auto`} padding={`24px 0`}>
+                                  <Wrapper
+                                    width={`20px`}
+                                    height={`20px`}
+                                    color={`#FFFFFF`}
+                                    radius={`100%`}
+                                    bgColor={`#E22323`}
+                                    margin={`23px 26px 0 20px`}
+                                  >
+                                    A
+                                  </Wrapper>
+                                  <Wrapper
+                                    width={`calc(100% - 66px)`}
+                                    padding={`24px 0`}
+                                    al={`flex-start`}
+                                  >
                                     {data.answer}
                                   </Wrapper>
                                 </Wrapper>

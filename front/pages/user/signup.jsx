@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Router from "next/router";
-import { Input, Button, Form } from "antd";
+import { Input, Button, Form, Radio } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +12,34 @@ import wrapper from "../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
+import {
+  RsWrapper,
+  TextInput,
+  WholeWrapper,
+  Wrapper,
+} from "../../components/commonComponents";
+import styled from "styled-components";
+
+const SignUpWrapper = styled(Wrapper)`
+  height: 50px;
+  justify-content: flex-start;
+  flex-direction: row;
+`;
+
+const TitleWrapper = styled(Wrapper)`
+  width: 13%;
+  border-right: 1px solid #ebebeb;
+  padding: 0 0 0 20px;
+  align-items: flex-start;
+  height: 100%;
+  margin: 0 10px 0 0;
+`;
+
+const RadioBtn = styled(Radio)`
+  &.ant-radio-wrapper {
+    margin-right: 0;
+  }
+`;
 
 const SignUp = () => {
   ////// GLOBAL STATE //////
@@ -112,39 +140,101 @@ const SignUp = () => {
       </Head>
 
       <ClientLayout>
-        <div>
-          <Form onFinish={onSubmit}>
-            <div>
-              <label>EMAIL</label>
-              <Input type="email" required {...email} />
-            </div>
-            <div>
-              <label>NICKNAME</label>
-              <Input type="text" required {...nickname} />
-            </div>
-            <div>
-              <label>PASSOWRD</label>
-              <Input.Password type="password" required {...password} />
-            </div>
-            <div>
-              <label>RE-PASSWORD</label>
-              <Input.Password
-                type="password"
-                required
-                value={passwordCheck}
-                onChange={checkPasswordChangeHandler}
-                iconRender={(visible) =>
-                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                }
-              />
-            </div>
-            <div>{passwordError && <p> 비밀번호가 일치하지 않습니다. </p>}</div>
-
-            <Button type="primary" htmlType="submit" loading={st_signUpLoading}>
-              가입하기
-            </Button>
-          </Form>
-        </div>
+        <WholeWrapper>
+          <RsWrapper margin={`300px 0 0`}>
+            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
+              HOME | 회원가입
+            </Wrapper>
+            <Wrapper
+              fontSize={`20px`}
+              fontWeight={`bold`}
+              al={`flex-start`}
+              margin={`0 0 10px`}
+            >
+              회원가입
+            </Wrapper>
+            <Wrapper
+              borderBottom={`1px solid #EBEBEB`}
+              margin={`0 0 30px`}
+            ></Wrapper>
+            <SignUpWrapper
+              borderBottom={`1px solid #EBEBEB`}
+              borderTop={`1px solid #EBEBEB`}
+              margin={`0 0 30px`}
+              bgColor={`#FCFCFC`}
+            >
+              <TitleWrapper>회원구분</TitleWrapper>
+              <Wrapper width={`auto`}>
+                <RadioBtn>개인회원</RadioBtn>
+              </Wrapper>
+            </SignUpWrapper>
+            <SignUpWrapper
+              borderBottom={`1px solid #EBEBEB`}
+              borderTop={`1px solid #EBEBEB`}
+            >
+              <TitleWrapper>아이디</TitleWrapper>
+              <Wrapper width={`auto`} dr={`row`}>
+                <TextInput width={`206px`} />
+                <Wrapper
+                  width={`calc(100% - 206px)`}
+                  color={`#999999`}
+                  padding={`0 0 0 10px`}
+                >
+                  (영문소문자/숫자, 4~16자)
+                </Wrapper>
+              </Wrapper>
+            </SignUpWrapper>
+            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+              <TitleWrapper>비밀번호</TitleWrapper>
+              <Wrapper width={`auto`} dr={`row`}>
+                <TextInput width={`206px`} />
+                <Wrapper
+                  width={`calc(100% - 206px)`}
+                  color={`#999999`}
+                  padding={`0 0 0 10px`}
+                >
+                  (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자)
+                </Wrapper>
+              </Wrapper>
+            </SignUpWrapper>
+            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+              <TitleWrapper>비밀번호 확인</TitleWrapper>
+              <Wrapper width={`auto`}>
+                <TextInput width={`206px`} />
+              </Wrapper>
+            </SignUpWrapper>
+            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+              <TitleWrapper>이름</TitleWrapper>
+              <Wrapper width={`auto`}>
+                <TextInput width={`206px`} />
+              </Wrapper>
+            </SignUpWrapper>
+            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+              <TitleWrapper>주소</TitleWrapper>
+              <Wrapper width={`auto`}>
+                <TextInput width={`206px`} />
+              </Wrapper>
+            </SignUpWrapper>
+            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+              <TitleWrapper>일반전화</TitleWrapper>
+              <Wrapper width={`auto`}>
+                <TextInput width={`206px`} />
+              </Wrapper>
+            </SignUpWrapper>
+            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+              <TitleWrapper>휴대전화</TitleWrapper>
+              <Wrapper width={`auto`}>
+                <TextInput width={`206px`} />
+              </Wrapper>
+            </SignUpWrapper>
+            <SignUpWrapper borderBottom={`1px solid #EBEBEB`}>
+              <TitleWrapper>이메일</TitleWrapper>
+              <Wrapper width={`auto`}>
+                <TextInput width={`206px`} />
+              </Wrapper>
+            </SignUpWrapper>
+          </RsWrapper>
+        </WholeWrapper>
       </ClientLayout>
     </>
   );
