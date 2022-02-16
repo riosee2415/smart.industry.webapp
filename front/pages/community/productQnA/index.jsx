@@ -15,8 +15,6 @@ import {
   Wrapper,
   Image,
 } from "../../../components/commonComponents";
-import styled from "styled-components";
-import { useState } from "react";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
@@ -118,19 +116,19 @@ const Notice = () => {
               상품문의
             </Wrapper>
             <Wrapper
-              borderBottom={`1px solid #EBEBEB`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 30px`}
             ></Wrapper>
 
             <Wrapper margin={`0 0 60px`}>
               <Wrapper
-                bgColor={`#FCFCFC`}
+                bgColor={Theme.lightGrey2_C}
                 height={`40px`}
-                borderTop={`1px solid #EBEBEB`}
-                borderBottom={`1px solid #EBEBEB`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
               >
-                <Wrapper width={`8%`}>번호</Wrapper>
-                <Wrapper width={`17%`}>상품명</Wrapper>
+                <Wrapper width={`5%`}>번호</Wrapper>
+                <Wrapper width={`20%`}>상품명</Wrapper>
                 <Wrapper width={`45%`}>제목</Wrapper>
                 <Wrapper width={`10%`}>작성자</Wrapper>
                 <Wrapper width={`10%`}>작성일</Wrapper>
@@ -147,13 +145,13 @@ const Notice = () => {
                           ju={`flex-start`}
                           padding={`14px 0px`}
                           cursor={`pointer`}
-                          borderBottom={`1px solid #EBEBEB`}
+                          borderBottom={`1px solid ${Theme.grey2_C}`}
                           onClick={() =>
                             moveLinkHandler(`./productQnA/detail/${data.id}`)
                           }
                         >
-                          <Wrapper width={`8%`}>{data.id}</Wrapper>
-                          <Wrapper width={`17%`} dr={`row`}>
+                          <Wrapper width={`5%`}>{data.id}</Wrapper>
+                          <Wrapper width={`20%`} dr={`row`}>
                             <Image
                               width={`50px`}
                               height={`50px`}

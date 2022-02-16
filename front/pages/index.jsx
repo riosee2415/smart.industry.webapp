@@ -174,7 +174,7 @@ const MainProductTypeBtn = styled(Text)`
       left: 0;
       width: 100%;
       height: 14px;
-      background-color: #B7DAF2;
+      background-color: ${Theme.subTheme2_C};
     }
   `}
 `;

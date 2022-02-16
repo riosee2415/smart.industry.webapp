@@ -10,12 +10,9 @@ import { useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
-  TextInput,
   WholeWrapper,
   Wrapper,
 } from "../../../../components/commonComponents";
-import styled from "styled-components";
-import { useState } from "react";
 import { useCallback } from "react";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
@@ -97,19 +94,19 @@ const Notice = () => {
               공지사항
             </Wrapper>
             <Wrapper
-              borderBottom={`1px solid #EBEBEB`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 30px`}
             ></Wrapper>
 
-            <Wrapper borderBottom={`1px solid #EBEBEB`}>
+            <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <Wrapper
                 height={`50px`}
-                borderTop={`1px solid #EBEBEB`}
-                borderBottom={`1px solid #EBEBEB`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
               >
                 <Wrapper
                   width={`10%`}
-                  bgColor={`#FCFCFC`}
+                  bgColor={Theme.lightGrey2_C}
                   height={`50px`}
                   padding={`0 0 0 20px`}
                   al={`flex-start`}
@@ -122,12 +119,12 @@ const Notice = () => {
               </Wrapper>
               <Wrapper
                 height={`50px`}
-                borderTop={`1px solid #EBEBEB`}
-                borderBottom={`1px solid #EBEBEB`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
               >
                 <Wrapper
                   width={`10%`}
-                  bgColor={`#FCFCFC`}
+                  bgColor={Theme.lightGrey2_C}
                   height={`50px`}
                   padding={`0 0 0 20px`}
                   al={`flex-start`}
@@ -140,12 +137,12 @@ const Notice = () => {
               </Wrapper>
               <Wrapper
                 height={`50px`}
-                borderTop={`1px solid #EBEBEB`}
-                borderBottom={`1px solid #EBEBEB`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
               >
                 <Wrapper
                   width={`10%`}
-                  bgColor={`#FCFCFC`}
+                  bgColor={Theme.lightGrey2_C}
                   height={`50px`}
                   padding={`0 0 0 20px`}
                   al={`flex-start`}
@@ -157,7 +154,7 @@ const Notice = () => {
                 </Wrapper>
                 <Wrapper
                   width={`10%`}
-                  bgColor={`#FCFCFC`}
+                  bgColor={Theme.lightGrey2_C}
                   height={`50px`}
                   padding={`0 0 0 20px`}
                   al={`flex-start`}
@@ -189,18 +186,18 @@ const Notice = () => {
             </Wrapper>
 
             <Wrapper
-              borderTop={`1px solid #2F2F2F`}
-              borderBottom={`1px solid #2F2F2F`}
+              borderTop={`1px solid ${Theme.darkGrey_C}`}
+              borderBottom={`1px solid ${Theme.darkGrey_C}`}
             >
               <Wrapper
                 dr={`row`}
                 height={`40px`}
-                borderBottom={`1px solid #EBEBEB`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
               >
                 <Wrapper
                   width={`10%`}
                   height={`40px`}
-                  borderRight={`1px solid #EBEBEB`}
+                  borderRight={`1px solid ${Theme.grey2_C}`}
                 >
                   ▲ 이전글
                 </Wrapper>
@@ -212,7 +209,7 @@ const Notice = () => {
                 <Wrapper
                   width={`10%`}
                   height={`40px`}
-                  borderRight={`1px solid #EBEBEB`}
+                  borderRight={`1px solid ${Theme.grey2_C}`}
                 >
                   ▼ 다음글
                 </Wrapper>

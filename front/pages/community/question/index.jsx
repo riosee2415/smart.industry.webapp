@@ -144,7 +144,7 @@ const Question = () => {
               1:1 문의
             </Wrapper>
             <Wrapper
-              borderBottom={`1px solid #EBEBEB`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 30px`}
             ></Wrapper>
 

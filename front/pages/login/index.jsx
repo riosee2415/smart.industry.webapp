@@ -1,10 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Router from "next/router";
-import { Input, Button, Form, Radio, Checkbox } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import useInput from "../../hooks/useInput";
-import { useDispatch, useSelector } from "react-redux";
-import { SIGNUP_REQUEST } from "../../reducers/user";
+import { React, useState } from "react";
+import { Checkbox } from "antd";
+import { useSelector } from "react-redux";
 import ClientLayout from "../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import Head from "next/head";
@@ -39,7 +35,7 @@ const CustomInput = styled(TextInput)`
   &:focus {
     outline: none;
     border: none;
-    border-bottom: 1px solid ${Theme.grey2_C};
+    border-bottom: 1px solid ${Theme.grey3_C};
   }
 `;
 
@@ -50,6 +46,8 @@ const Index = () => {
   );
   ////// HOOKS //////
   const width = useWidth();
+
+  const [isCheck, setIsCheck] = useState(false);
 
   ////// REDUX //////
 
@@ -106,34 +104,34 @@ const Index = () => {
         <WholeWrapper>
           <RsWrapper height={`100vh`}>
             <Wrapper width={width < 700 ? `100%` : `380px`}>
-              <Text fontSize={`22px`} fontWeight={`700`} margin={`0 0 11px`}>
+              <Text fontSize={`22px`} fontWeight={`700`} margin={`0 0 10px`}>
                 LOGIN
               </Text>
-              <Text
-                fontSize={`18px`}
-                margin={`0 0 40px`}
-                color={`${Theme.grey_C}`}
-              >
+              <Text fontSize={`18px`} margin={`0 0 40px`} color={Theme.grey_C}>
                 회원 로그인
               </Text>
-              <CustomInput placeholder="아이디" margin={`0 0 6px`} />
-              <CustomInput placeholder="비밀번호" margin={`0 0 19px`} />
+              <CustomInput placeholder="아이디" margin={`0 0 5px`} />
+              <CustomInput placeholder="비밀번호" margin={`0 0 20px`} />
               <CommonButton
                 width={`100%`}
                 height={`50px`}
-                kindOf={`basic`}
                 radius={`0`}
-                margin={`0 0 13px`}
+                margin={`0 0 15px`}
               >
                 로그인
               </CommonButton>
 
-              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 41px`}>
-                <Checkbox />
+              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
+                <Checkbox
+                  checked={isCheck}
+                  onClick={() => setIsCheck(!isCheck)}
+                />
                 <Text
                   fontSize={`14px`}
-                  color={`${Theme.grey_C}`}
-                  margin={`0 0 0 8px`}
+                  color={Theme.grey_C}
+                  margin={`0 0 0 10px`}
+                  cursor={`pointer`}
+                  onClick={() => setIsCheck(!isCheck)}
                 >
                   아이디 저장
                 </Text>
@@ -148,35 +146,50 @@ const Index = () => {
               >
                 <Wrapper
                   width={`auto`}
-                  fontSize={`14px`}
-                  color={`${Theme.grey_C}`}
+                  fontSize={width < 700 ? `12px` : `14px`}
+                  color={Theme.grey_C}
                   cursor={`pointer`}
                 >
                   아이디찾기
                 </Wrapper>
-                <Text color={`${Theme.grey3_C}`}>|</Text>
+                <Text
+                  fontSize={width < 700 ? `12px` : `14px`}
+                  color={Theme.grey3_C}
+                >
+                  |
+                </Text>
                 <Wrapper
                   width={`auto`}
-                  fontSize={`14px`}
-                  color={`${Theme.grey_C}`}
+                  fontSize={width < 700 ? `12px` : `14px`}
+                  color={Theme.grey_C}
                   cursor={`pointer`}
                 >
                   비밀번호찾기
                 </Wrapper>
-                <Text color={`${Theme.grey3_C}`}>|</Text>
+                <Text
+                  fontSize={width < 700 ? `12px` : `14px`}
+                  color={Theme.grey3_C}
+                >
+                  |
+                </Text>
                 <Wrapper
                   width={`auto`}
-                  fontSize={`14px`}
-                  color={`${Theme.grey_C}`}
+                  fontSize={width < 700 ? `12px` : `14px`}
+                  color={Theme.grey_C}
                   cursor={`pointer`}
                 >
                   회원가입
                 </Wrapper>
-                <Text color={`${Theme.grey3_C}`}>|</Text>
+                <Text
+                  fontSize={width < 700 ? `12px` : `14px`}
+                  color={Theme.grey3_C}
+                >
+                  |
+                </Text>
                 <Wrapper
                   width={`auto`}
-                  fontSize={`14px`}
-                  color={`${Theme.grey_C}`}
+                  fontSize={width < 700 ? `12px` : `14px`}
+                  color={Theme.grey_C}
                   cursor={`pointer`}
                 >
                   비회원 주문조회

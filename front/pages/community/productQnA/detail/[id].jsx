@@ -10,12 +10,9 @@ import { useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
-  TextInput,
   WholeWrapper,
   Wrapper,
 } from "../../../../components/commonComponents";
-import styled from "styled-components";
-import { useState } from "react";
 import { useCallback } from "react";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
@@ -107,11 +104,11 @@ const ProductQnA = () => {
               상품문의
             </Wrapper>
             <Wrapper
-              borderBottom={`1px solid #EBEBEB`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 30px`}
             ></Wrapper>
 
-            <Wrapper borderBottom={`1px solid #EBEBEB`}>
+            <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               {testData && testData.length === 0 ? (
                 <Wrapper>다시 시도해주세요.</Wrapper>
               ) : (
@@ -121,12 +118,12 @@ const ProductQnA = () => {
                     <>
                       <Wrapper
                         height={`50px`}
-                        borderTop={`1px solid #EBEBEB`}
-                        borderBottom={`1px solid #EBEBEB`}
+                        borderTop={`1px solid ${Theme.grey2_C}`}
+                        borderBottom={`1px solid ${Theme.grey2_C}`}
                       >
                         <Wrapper
                           width={`10%`}
-                          bgColor={`#FCFCFC`}
+                          bgColor={Theme.lightGrey2_C}
                           height={`50px`}
                           padding={`0 0 0 20px`}
                           al={`flex-start`}
@@ -143,12 +140,12 @@ const ProductQnA = () => {
                       </Wrapper>
                       <Wrapper
                         height={`50px`}
-                        borderTop={`1px solid #EBEBEB`}
-                        borderBottom={`1px solid #EBEBEB`}
+                        borderTop={`1px solid ${Theme.grey2_C}`}
+                        borderBottom={`1px solid ${Theme.grey2_C}`}
                       >
                         <Wrapper
                           width={`10%`}
-                          bgColor={`#FCFCFC`}
+                          bgColor={Theme.lightGrey2_C}
                           height={`50px`}
                           padding={`0 0 0 20px`}
                           al={`flex-start`}
@@ -165,12 +162,12 @@ const ProductQnA = () => {
                       </Wrapper>
                       <Wrapper
                         height={`50px`}
-                        borderTop={`1px solid #EBEBEB`}
-                        borderBottom={`1px solid #EBEBEB`}
+                        borderTop={`1px solid ${Theme.grey2_C}`}
+                        borderBottom={`1px solid ${Theme.grey2_C}`}
                       >
                         <Wrapper
                           width={`10%`}
-                          bgColor={`#FCFCFC`}
+                          bgColor={Theme.lightGrey2_C}
                           height={`50px`}
                           padding={`0 0 0 20px`}
                           al={`flex-start`}
@@ -186,7 +183,7 @@ const ProductQnA = () => {
                         </Wrapper>
                         <Wrapper
                           width={`10%`}
-                          bgColor={`#FCFCFC`}
+                          bgColor={Theme.lightGrey2_C}
                           height={`50px`}
                           padding={`0 0 0 20px`}
                           al={`flex-start`}
@@ -212,15 +209,15 @@ const ProductQnA = () => {
                       <Wrapper
                         dr={`row`}
                         al={`flex-start`}
-                        borderTop={`1px solid #EBEBEB`}
+                        borderTop={`1px solid ${Theme.grey2_C}`}
                         display={data.answer ? `flex` : `none`}
                       >
                         <Wrapper
                           width={`20px`}
                           height={`20px`}
-                          color={`#FFFFFF`}
+                          color={Theme.white_C}
                           radius={`100%`}
-                          bgColor={`#E22323`}
+                          bgColor={Theme.red_C}
                           margin={`23px 26px 0 20px`}
                         >
                           A
@@ -232,7 +229,7 @@ const ProductQnA = () => {
                           al={`flex-start`}
                           ju={`flex-start`}
                           padding={`23px 10px 0 0`}
-                          bgColor={`#FCFCFC`}
+                          bgColor={Theme.lightGrey2_C}
                         >
                           {data.answer}
                         </Wrapper>
