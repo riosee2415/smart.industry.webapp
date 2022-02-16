@@ -274,6 +274,20 @@ const SignUp = () => {
                   <Option value={`02`}>02</Option>
                   <Option value={`031`}>031</Option>
                   <Option value={`032`}>032</Option>
+                  <Option value={`033`}>033</Option>
+                  <Option value={`041`}>041</Option>
+                  <Option value={`042`}>042</Option>
+                  <Option value={`043`}>043</Option>
+                  <Option value={`044`}>044</Option>
+                  <Option value={`051`}>051</Option>
+                  <Option value={`052`}>052</Option>
+                  <Option value={`053`}>053</Option>
+                  <Option value={`054`}>054</Option>
+                  <Option value={`055`}>055</Option>
+                  <Option value={`061`}>061</Option>
+                  <Option value={`062`}>062</Option>
+                  <Option value={`063`}>063</Option>
+                  <Option value={`064`}>064</Option>
                 </SelectStyle>
                 <Wrapper
                   fontSize={`12px`}

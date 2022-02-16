@@ -199,7 +199,11 @@ export const CommonButton = styled(Button)`
   color: ${(props) => props.color || props.theme.subTheme2_C};
   border-radius: ${(props) => props.radius || `7px`};
 
-  ${(props) => !props.kindOf && `background : ${props.theme.white_C};`}
+  ${(props) => !props.kindOf && `background : ${props.theme.basicTheme_C};`}
+  ${(props) => !props.kindOf && `color : ${props.theme.white_C};`}
+  ${(props) =>
+    !props.kindOf && `border : 1px solid ${props.theme.basicTheme_C};`}
+
   ${(props) =>
     props.kindOf === `white` && `background : ${props.theme.basicTheme_C};`}
   ${(props) => props.kindOf === `white` && `color : ${props.theme.subTheme_C};`}
@@ -222,17 +226,17 @@ export const CommonButton = styled(Button)`
   ${(props) =>
     props.kindOf === `delete` && `border : 1px solid ${props.theme.red_C};`}
 
-  ${(props) => props.kindOf === `basic` && `background : #0075C5;`}
-  ${(props) => props.kindOf === `basic` && `color : ${props.theme.white_C};`}
-  ${(props) => props.kindOf === `basic` && `border : 1px solid #0075C5;`}
+  
 
 
 
 &:hover {
     background: ${(props) => props.theme.white_C};
     color: ${(props) => props.theme.basicTheme_C};
+    ${(props) => !props.kindOf && `background : ${props.theme.white_C} ;`}
+    ${(props) => !props.kindOf && `color : ${props.theme.basicTheme_C};`}
     ${(props) =>
-      !props.kindOf && `border :1px solid ${props.theme.basicTheme_C};`}
+      !props.kindOf && `border : 1px solid ${props.theme.basicTheme_C};`}
     ${(props) =>
       props.kindOf === `white` && `background ${props.theme.basicTheme_C};`}
     ${(props) => props.kindOf === `white` && `color ${props.theme.white_C};`}
@@ -251,11 +255,6 @@ export const CommonButton = styled(Button)`
     ${(props) => props.kindOf === `delete` && `color : ${props.theme.red_C};`}
     ${(props) =>
       props.kindOf === `delete` && `border : 1px solid ${props.theme.red_C};`}
-
-    ${(props) =>
-      props.kindOf === `basic` && `background : ${props.theme.white_C} ;`}
-    ${(props) => props.kindOf === `basic` && `color : #0075C5;`}
-    ${(props) => props.kindOf === `basic` && `border : 1px solid #0075C5;`}
   }
 `;
 
