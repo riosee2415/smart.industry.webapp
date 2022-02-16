@@ -121,20 +121,19 @@ const Index = () => {
                 로그인
               </CommonButton>
 
-              <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 40px`}>
+              <Wrapper al={`flex-start`} margin={`0 0 40px`}>
                 <Checkbox
                   checked={isCheck}
                   onClick={() => setIsCheck(!isCheck)}
-                />
-                <Text
-                  fontSize={`14px`}
-                  color={Theme.grey_C}
-                  margin={`0 0 0 10px`}
-                  cursor={`pointer`}
-                  onClick={() => setIsCheck(!isCheck)}
                 >
-                  아이디 저장
-                </Text>
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.grey_C}
+                    cursor={`pointer`}
+                  >
+                    아이디 저장
+                  </Text>
+                </Checkbox>
               </Wrapper>
 
               <Wrapper

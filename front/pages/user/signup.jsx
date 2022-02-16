@@ -88,7 +88,7 @@ const SignUp = () => {
     }
   }, [st_signUpDone]);
   ////// TOGGLE //////
-  ////// HANDLER //////\
+  ////// HANDLER //////
 
   const checkPasswordChangeHandler = useCallback(
     (e) => {
