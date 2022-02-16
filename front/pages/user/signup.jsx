@@ -15,6 +15,7 @@ import { END } from "redux-saga";
 import {
   CommonButton,
   RsWrapper,
+  SpanText,
   TextInput,
   WholeWrapper,
   Wrapper,
