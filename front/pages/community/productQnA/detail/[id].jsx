@@ -91,7 +91,7 @@ const ProductQnA = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`300px 0 0`}>
+          <RsWrapper margin={`250px 0 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
               HOME | 커뮤니티 | 상품문의
             </Wrapper>
@@ -239,7 +239,7 @@ const ProductQnA = () => {
               )}
             </Wrapper>
 
-            <Wrapper al={`flex-end`} margin={`20px 0`}>
+            <Wrapper al={`flex-end`} margin={`20px 0 110px`}>
               <CommonButton
                 width={`116px`}
                 height={`50px`}

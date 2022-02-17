@@ -110,7 +110,7 @@ const Order = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`300px 0 0`}>
+          <RsWrapper margin={`250px 0 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
               HOME | 마이페이지 | 주문내역조회
             </Wrapper>
@@ -124,7 +124,7 @@ const Order = () => {
             >
               주문내역조회
             </Wrapper>
-            <Wrapper>
+            <Wrapper margin={`0 0 110px`}>
               {testData && testData.length === 0 ? (
                 <Empty description="주문내역이 없습니다." />
               ) : (

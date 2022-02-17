@@ -133,7 +133,7 @@ const Question = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`300px 0 0`}>
+          <RsWrapper margin={`250px 0 0`}>
             <Wrapper
               fontSize={`20px`}
               fontWeight={`bold`}
@@ -145,7 +145,7 @@ const Question = () => {
               1:1 문의
             </Wrapper>
 
-            <Wrapper margin={`0 0 60px`}>
+            <Wrapper margin={`0 0 110px`}>
               {testUserData && testUserData.length === 0
                 ? ``
                 : testUserData &&

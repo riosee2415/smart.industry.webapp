@@ -80,7 +80,7 @@ const Profile = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`300px 0 0`}>
+          <RsWrapper margin={`250px 0 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
               HOME | 마이페이지 | 회원정보
             </Wrapper>

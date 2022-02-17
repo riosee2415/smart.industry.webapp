@@ -81,7 +81,7 @@ const Notice = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`300px 0 0`}>
+          <RsWrapper margin={`250px 0 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
               HOME | 커뮤니티 | 공지사항
             </Wrapper>
@@ -203,6 +203,7 @@ const Notice = () => {
             <Wrapper
               borderTop={`1px solid ${Theme.darkGrey_C}`}
               borderBottom={`1px solid ${Theme.darkGrey_C}`}
+              margin={`0 0 110px`}
             >
               <Wrapper
                 dr={`row`}

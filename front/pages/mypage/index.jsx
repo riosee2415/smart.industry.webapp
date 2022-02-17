@@ -90,7 +90,7 @@ const Mypage = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`300px 0 0`}>
+          <RsWrapper margin={`250px 0 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
               HOME | 마이페이지
             </Wrapper>
@@ -105,7 +105,7 @@ const Mypage = () => {
               마이페이지
             </Wrapper>
 
-            <Wrapper dr={`row`}>
+            <Wrapper dr={`row`} margin={`0 0 110px`}>
               <MypageBtn onClick={() => moveLinkHandler(`mypage/order`)}>
                 <Wrapper fontSize={`20px`}>주문내역조회</Wrapper>
                 <Wrapper

@@ -127,7 +127,7 @@ const Review = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`300px 0 0`}>
+          <RsWrapper margin={`250px 0 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
               HOME | 커뮤니티 | 상품후기
             </Wrapper>
@@ -142,7 +142,7 @@ const Review = () => {
               상품후기
             </Wrapper>
 
-            <Wrapper margin={`0 0 60px`}>
+            <Wrapper margin={`0 0 180px`}>
               <Wrapper
                 bgColor={Theme.lightGrey2_C}
                 height={`40px`}

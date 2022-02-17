@@ -192,7 +192,7 @@ const Faq = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`300px 0 0`}>
+          <RsWrapper margin={`250px 0 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
               HOME | 커뮤니티 | 이용안내 FAQ
             </Wrapper>
@@ -256,7 +256,7 @@ const Faq = () => {
                     );
                   })}
             </Wrapper>
-            <Wrapper margin={`0 0 60px`}>
+            <Wrapper margin={`0 0 180px`}>
               {faqTypeQuestion && faqTypeQuestion[0].typeId === typeTab ? (
                 <Empty description="조회된 FAQ가 없습니다." />
               ) : (
