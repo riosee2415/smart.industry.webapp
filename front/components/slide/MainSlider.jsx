@@ -11,14 +11,43 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { MAIN_BANNER_REQUEST } from "../../reducers/banner";
 import Theme from "../Theme";
-import { Carousel } from "antd";
+import { Carousel, Button } from "antd";
 import useWidth from "../../hooks/useWidth";
 import { useRouter } from "next/router";
 
 const MainSliderWrapper = styled(RowWrapper)`
+  margin: 192px 0 0;
   & .ant-carousel {
     width: 100%;
   }
+
+  @media (max-width: 700px) {
+    margin: 85px 0 0;
+  }
+`;
+
+const BannerBlackBackWrapper = styled(ColWrapper)`
+  position: relative;
+
+  &::after {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+  }
+`;
+const MainProductButton = styled(Button)`
+  border: 1px solid ${Theme.white_C};
+  color: ${Theme.white_C};
+  font-size: 16px;
+  width: 135px;
+  height: 50px;
+  border-radius: 0;
+  background-color: transparent;
 `;
 
 const MainSlider = () => {
@@ -45,35 +74,38 @@ const MainSlider = () => {
         {banners &&
           banners.map((data, idx) => {
             return (
-              <ColWrapper
+              <BannerBlackBackWrapper
                 key={idx}
                 span={24}
                 height={width < 800 ? `500px` : `720px`}
-                padding={width < 800 ? `59px 0 0` : `110px 0 0`}
                 bgImg={`url(${data.imagePath})`}
                 position={`relative`}
                 display={`flex !important`}
               >
                 <RsWrapper height={`100%`}>
-                  <Wrapper al={`flex-start`}>
+                  <Wrapper zIndex={`2`}>
                     <Wrapper
-                      al={`flex-start`}
-                      color={Theme.basicTheme_C}
+                      color={Theme.white_C}
                       fontSize={width < 700 ? `22px` : `40px`}
-                      lineHeight={`1.3`}
+                      lineHeight={`1.55`}
+                      fontSize={`46px`}
                     >
                       <Text>{data.title}</Text>
                     </Wrapper>
                     <ColWrapper
-                      color={Theme.basicTheme_C}
-                      lineHeight={`1.5`}
-                      margin={`20px 0`}
+                      color={Theme.white_C}
+                      lineHeight={`1.26`}
+                      margin={`25px 0 78px`}
+                      fontSize={`22px`}
                     >
                       <Text fontSize={`1.125rem`}>{data.content}</Text>
                     </ColWrapper>
+                    <Wrapper>
+                      <MainProductButton>더 보기</MainProductButton>
+                    </Wrapper>
                   </Wrapper>
                 </RsWrapper>
-              </ColWrapper>
+              </BannerBlackBackWrapper>
             );
           })}
       </Carousel>

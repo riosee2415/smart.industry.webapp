@@ -1,46 +1,48 @@
 const DataTypes = require("sequelize");
 const { Model } = DataTypes;
 
-module.exports = class Notice extends Model {
+module.exports = class BoughtHistory extends Model {
   static init(sequelize) {
     return super.init(
       {
-        // id가 기본적으로 들어있다.
-        title: {
-          type: DataTypes.STRING(300), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-          allowNull: false, // 필수
+        name: {
+          type: DataTypes.STRING(30), // 주문자
+          allowNull: false,
         },
-        author: {
-          type: DataTypes.STRING(30),
+        mobile: {
+          type: DataTypes.STRING(50), // 전화번호
           allowNull: false,
         },
         content: {
           type: DataTypes.TEXT,
-          allowNull: false, // 필수
-        },
-        hit: {
-          type: DataTypes.INTEGER,
           allowNull: false,
-          defaultValue: 0,
         },
-        isDelete: {
+        isCompleted: {
           type: DataTypes.BOOLEAN,
           allowNull: false,
           defaultValue: false,
         },
-        deletedAt: {
+        completedAt: {
           type: DataTypes.DATE,
           allowNull: true,
         },
+        isCancel: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
       },
       {
-        modelName: "Notice",
-        tableName: "notices",
+        modelName: "BoughtHistory",
+        tableName: "boughtHistorys",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", // 한글 저장
         sequelize,
       }
     );
   }
-  static associate(db) {}
+  static associate(db) {
+    db.BoughtHistory.belongsTo(db.User);
+    db.BoughtHistory.hasMany(db.WishItem);
+  }
 };

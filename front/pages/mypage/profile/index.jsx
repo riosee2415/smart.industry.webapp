@@ -11,11 +11,60 @@ import {
   RsWrapper,
   WholeWrapper,
   Wrapper,
+  Text,
+  TextInput,
+  CommonButton,
+  SpanText,
 } from "../../../components/commonComponents";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
+import styled from "styled-components";
+
+const CustomInput = styled(TextInput)`
+  width: 406px;
+  height: 50px;
+  border: 1px solid ${Theme.grey2_C};
+  background-color: ${Theme.lightGrey2_C};
+
+  &:focus {
+    outline: none;
+    border: 1px solid ${Theme.lightGrey2_C};
+    background-color: ${Theme.grey2_C};
+  }
+
+  @media (max-width: 700px) {
+    width: 350px;
+  }
+`;
+
+//
+const ContentWrapper = styled(Wrapper)`
+  height: ${(props) => props.height || `50px`};
+  justify-content: flex-start;
+  flex-direction: row;
+`;
+
+const TitleWrapper = styled(Wrapper)`
+  width: 13%;
+  font-size: 18px;
+  font-weight: 700;
+
+  padding: 0 0 0 10px;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  margin: 0 10px 0 0;
+  flex-direction: row;
+  color: ${Theme.darkGrey_C};
+
+  @media (max-width: 700px) {
+    width: 98px;
+    font-size: 13px;
+  } ;
+`;
+//
 
 const Profile = () => {
   ////// GLOBAL STATE //////
@@ -39,15 +88,21 @@ const Profile = () => {
   return (
     <>
       <Head>
-        <title>{seo_title.length < 1 ? "ALAL" : seo_title[0].content}</title>
+        <title>
+          {seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content}
+        </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
@@ -59,11 +114,15 @@ const Profile = () => {
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta
           property="og:description"
@@ -80,7 +139,7 @@ const Profile = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`250px 0 0`}>
+          <RsWrapper margin={`250px 0 500px 0`}>
             <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
               HOME | 마이페이지 | 회원정보
             </Wrapper>
@@ -93,6 +152,130 @@ const Profile = () => {
               margin={`0 0 40px`}
             >
               회원정보
+            </Wrapper>
+            <Wrapper width={width < 700 ? `370px` : `600px`}>
+              <Text
+                fontSize={`18px`}
+                fontWeight={`400`}
+                margin={`80px 0 10px 0`}
+                color={Theme.darkGrey_C}
+              >
+                비밀번호 재확인
+              </Text>
+              <Wrapper
+                width={`85%`}
+                dr={width < 700 ? `column` : `row`}
+                margin={`15px 0 55px 0`}
+              >
+                <Text
+                  fontSize={width < 700 ? `14px` : `16px`}
+                  color={Theme.grey_C}
+                >
+                  회원님의 정보를 안전하게 보호하기 위해&nbsp;
+                </Text>
+                <Text
+                  fontSize={width < 700 ? `14px` : `16px`}
+                  color={Theme.grey_C}
+                >
+                  비밀번호를 다시 한번 확인해주세요
+                </Text>
+              </Wrapper>
+              <Wrapper
+                width={`100%`}
+                height={`130px`}
+                dr={`column`}
+                al={`space-between`}
+              >
+                <Wrapper
+                  width={`100%`}
+                  dr={`row`}
+                  ju={`space-between`}
+                  margin={`0 0 30px 0`}
+                >
+                  <Text
+                    fontSize={`18px`}
+                    fontWeight={`700`}
+                    color={`1px solid ${Theme.darkGrey_C}`}
+                    margin={`0 5%`}
+                    display={width < 700 ? `none` : `flex`}
+                  >
+                    아이디
+                  </Text>
+                  <CustomInput
+                    margin={`0 5%`}
+                    placeholder={width < 700 ? `아이디` : ``}
+                  />
+                </Wrapper>
+                <Wrapper width={`100%`} dr={`row`} ju={`space-between`}>
+                  <Text
+                    fontSize={`18px`}
+                    fontWeight={`700`}
+                    color={`1px solid ${Theme.darkGrey_C}`}
+                    margin={`0 5%`}
+                    display={width < 700 ? `none` : `flex`}
+                  >
+                    비밀번호
+                  </Text>
+                  <CustomInput
+                    margin={`0 5%`}
+                    placeholder={width < 700 ? `비밀번호` : ``}
+                  />
+                </Wrapper>
+              </Wrapper>
+              <CommonButton
+                width={`150px`}
+                height={`50px`}
+                radius={`0`}
+                margin={`55px 0 0 15px`}
+              >
+                확인
+              </CommonButton>
+            </Wrapper>
+          </RsWrapper>
+          {/* /////////////////////////////////////////////////////////////////////////////////////////// */}
+          <RsWrapper margin={`30px 0 500px 0`}>
+            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
+              HOME | 마이페이지 | 회원정보
+            </Wrapper>
+            <Wrapper
+              fontSize={`20px`}
+              fontWeight={`bold`}
+              al={`flex-start`}
+              padding={`0 0 10px`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+              margin={`0 0 40px`}
+            >
+              회원정보
+            </Wrapper>
+            <Wrapper
+              width={width < 700 ? `370px` : `800px`}
+              height={`1700px`}
+              border={`1px solid ${Theme.black_C}`}
+              ju={`flex-start`}
+            >
+              <Wrapper>
+                <ContentWrapper height={`auto`}>
+                  <TitleWrapper>아이디</TitleWrapper>
+                  <Wrapper width={`calc(100% - 13%)`}>
+                    <CustomInput width={width < 700 ? `215px` : `406px`} />
+                  </Wrapper>
+                </ContentWrapper>
+              </Wrapper>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  width={`150px`}
+                  height={`50px`}
+                  radius={`0`}
+                  margin={`0 5px 0 0`}
+                  kindOf={`grey`}
+                  bgColor={Theme.grey2_C}
+                >
+                  탈퇴하기
+                </CommonButton>
+                <CommonButton width={`150px`} height={`50px`} radius={`0`}>
+                  회원정보 수정
+                </CommonButton>
+              </Wrapper>
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>

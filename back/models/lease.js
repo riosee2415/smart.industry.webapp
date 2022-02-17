@@ -1,44 +1,43 @@
 const DataTypes = require("sequelize");
 const { Model } = DataTypes;
 
-module.exports = class Question extends Model {
+module.exports = class Lease extends Model {
   static init(sequelize) {
     return super.init(
       {
-        author: {
-          type: DataTypes.STRING(50),
-          allowNull: false,
-        },
-        mobile: {
-          type: DataTypes.STRING(50),
-          allowNull: false,
-        },
-        email: {
-          type: DataTypes.STRING(50),
+        type: {
+          type: DataTypes.STRING(100),
           allowNull: false,
         },
         title: {
           type: DataTypes.STRING(200), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
           allowNull: false, // 필수
         },
+        author: {
+          type: DataTypes.STRING(50),
+          allowNull: false,
+        },
         content: {
           type: DataTypes.TEXT,
           allowNull: false,
         },
-        term: {
-          type: DataTypes.BOOLEAN,
+        hit: {
+          type: DataTypes.INTEGER,
           allowNull: false,
-          defaultValue: false,
+          defaultValue: 0,
+        },
+        email: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
         },
         isCompleted: {
           type: DataTypes.BOOLEAN,
           allowNull: false,
           defaultValue: false,
         },
-        password: {
+        secret: {
           type: DataTypes.STRING(10),
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         answer: {
           type: DataTypes.TEXT, // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
@@ -50,15 +49,13 @@ module.exports = class Question extends Model {
         },
       },
       {
-        modelName: "Question",
-        tableName: "questions",
+        modelName: "Lease",
+        tableName: "leases",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", // 한글 저장
         sequelize,
       }
     );
   }
-  static associate(db) {
-    db.Question.belongsTo(db.QuestionType);
-  }
+  static associate(db) {}
 };

@@ -210,6 +210,13 @@ export const CommonButton = styled(Button)`
     props.kindOf === `darkgrey` && `color : ${props.theme.darkGrey_C};`}
   ${(props) =>
     props.kindOf === `darkgrey` && `border : 1px solid ${props.theme.grey3_C};`}
+
+  ${(props) =>
+    props.kindOf === `grey` && `background : ${props.theme.lightGrey_C};`}
+  ${(props) => props.kindOf === `grey` && `color : ${props.theme.darkGrey_C};`}
+  ${(props) =>
+    props.kindOf === `grey` && `border : 1px solid ${props.theme.grey2_C};`}
+
   ${(props) =>
     props.kindOf === `black` && `background : ${props.theme.black_C};`}
   ${(props) => props.kindOf === `black` && `color : ${props.theme.white_C};`}
@@ -246,6 +253,12 @@ export const CommonButton = styled(Button)`
       props.kindOf === `darkgrey` &&
       `border : 1px solid ${props.theme.grey3_C};`}
     ${(props) =>
+      props.kindOf === `grey` && `background : ${props.theme.darkGrey_C};`}
+    ${(props) => props.kindOf === `grey` && `color : ${props.theme.grey2_C};`}
+    ${(props) =>
+      props.kindOf === `grey` &&
+      `border : 1px solid ${props.theme.darkGrey_C};`}
+    ${(props) =>
       props.kindOf === `black` && `background : ${props.theme.white_C};`}
     ${(props) => props.kindOf === `black` && `color : ${props.theme.black_C};`}
     ${(props) =>
@@ -281,6 +294,7 @@ export const Text = styled.p`
   padding: ${(props) => props.padding};
   background: ${(props) => props.bgColor};
   text-align: ${(props) => props.textAlign};
+  text-decoration: ${(props) => props.textDecoration};
   position: ${(props) => props.position};
   top: ${(props) => props.top};
   bottom: ${(props) => props.bottom};
@@ -491,5 +505,31 @@ export const TextArea = styled.textarea`
   &::placeholder {
     font-size: 14px;
     line-height: 1.6;
+  }
+`;
+
+export const SubTitle = styled.h3`
+  overflow: ${(props) => props.overflow};
+  width: ${(props) => props.width};
+  height: ${(props) => props.height};
+  min-height: ${(props) => props.minHeight};
+  max-height: ${(props) => props.maxHeight};
+  display: ${(props) => props.display};
+  flex-direction: ${(props) => props.dr};
+  align-items: ${(props) => props.al};
+  justify-content: ${(props) => props.ju};
+  color: ${(props) => props.color};
+  background-color: ${(props) => props.bgColor};
+  text-align: ${(props) => props.textAlign};
+  cursor: ${(props) => props.cursor};
+
+  font-size: ${(props) => props.fontSize || `36px`};
+  font-weight: ${(props) => props.fontWeight || `bold`};
+  line-height: ${(props) => props.lineHeight || `1.43`};
+
+  ${(props) => props.isFont && `GongGothicBold`};
+
+  @media (max-width: 700px) {
+    font-size: 28px;
   }
 `;
