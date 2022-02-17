@@ -189,9 +189,18 @@ const Notice = () => {
                             width={
                               width < 500 ? `45%` : width < 800 ? `40%` : `45%`
                             }
-                            al={`flex-start`}
+                            ju={`flex-start`}
+                            dr={`row`}
                           >
-                            {data.title}
+                            <Wrapper width={`auto`} margin={`0 17px 0 0`}>
+                              {data.title}
+                            </Wrapper>
+                            <Wrapper width={`10px`} height={`10px`}>
+                              <Image
+                                height={`100%`}
+                                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
+                              />
+                            </Wrapper>
                           </Wrapper>
                           <Wrapper
                             width={`10%`}

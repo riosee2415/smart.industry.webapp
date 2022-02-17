@@ -13,14 +13,10 @@ import {
   Wrapper,
   Image,
   CommonButton,
-  Text,
 } from "../../../../components/commonComponents";
-import { useCallback } from "react";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { Empty } from "antd";
-import { RightOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 
 const DelTag = styled.del`
@@ -42,9 +38,6 @@ const Order = () => {
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
-  const moveLinkHandler = useCallback((link) => {
-    router.push(link);
-  }, []);
   ////// DATAVIEW //////
   const testData = {
     orderNum: "123443122",
@@ -214,6 +207,7 @@ const Order = () => {
                 borderTop={`1px solid ${Theme.darkGrey_C}`}
                 padding={`60px 20px`}
                 margin={`0 0 65px`}
+                fontSize={`16px`}
               >
                 배송중 단계부터 배송상태 확인이 가능합니다.
               </Wrapper>
@@ -233,9 +227,95 @@ const Order = () => {
                 padding={`32px 20px`}
                 margin={`0 0 65px`}
               >
-                <Wrapper dr={`row`} ju={`space-between`}>
-                  <Wrapper></Wrapper>
-                  <Wrapper></Wrapper>
+                <Wrapper
+                  dr={`row`}
+                  ju={`space-between`}
+                  margin={`0 0 25px`}
+                  fontSize={`16px`}
+                >
+                  <Wrapper width={`auto`}>상품금액</Wrapper>
+                  <Wrapper width={`auto`}>1,200,000원</Wrapper>
+                </Wrapper>
+                <Wrapper
+                  dr={`row`}
+                  ju={`space-between`}
+                  margin={`0 0 25px`}
+                  fontSize={`16px`}
+                >
+                  <Wrapper width={`auto`}>배송비</Wrapper>
+                  <Wrapper width={`auto`}>0원</Wrapper>
+                </Wrapper>
+                <Wrapper
+                  dr={`row`}
+                  ju={`space-between`}
+                  margin={`0 0 25px`}
+                  fontSize={`16px`}
+                >
+                  <Wrapper width={`auto`}>상품할인금액</Wrapper>
+                  <Wrapper width={`auto`}>-83,000원</Wrapper>
+                </Wrapper>
+                <Wrapper
+                  dr={`row`}
+                  ju={`space-between`}
+                  margin={`0 0 25px`}
+                  fontSize={`16px`}
+                >
+                  <Wrapper width={`auto`}>결제금액</Wrapper>
+                  <Wrapper width={`auto`}>1,117,000원</Wrapper>
+                </Wrapper>
+                <Wrapper dr={`row`} ju={`space-between`} fontSize={`16px`}>
+                  <Wrapper width={`auto`}>결제방법</Wrapper>
+                  <Wrapper width={`auto`}>무통장입금</Wrapper>
+                </Wrapper>
+              </Wrapper>
+              <Wrapper
+                al={`flex-start`}
+                margin={`0 0 11px`}
+                fontSize={`18px`}
+                fontWeight={`bold`}
+                ju={`flex-start`}
+              >
+                주문정보
+              </Wrapper>
+              <Wrapper
+                dr={`row`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                borderTop={`1px solid ${Theme.darkGrey_C}`}
+                padding={`32px 20px`}
+                margin={`0 0 110px`}
+                fontSize={`16px`}
+              >
+                <Wrapper dr={`row`} margin={`0 0 25px`}>
+                  <Wrapper width={`142px`} al={`flex-start`}>
+                    주문번호
+                  </Wrapper>
+                  <Wrapper width={`calc(100% - 182px)`} al={`flex-start`}>
+                    1564564948461
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper dr={`row`} margin={`0 0 25px`}>
+                  <Wrapper width={`142px`} al={`flex-start`}>
+                    주문자명
+                  </Wrapper>
+                  <Wrapper width={`calc(100% - 182px)`} al={`flex-start`}>
+                    이름아무개
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper dr={`row`} margin={`0 0 25px`}>
+                  <Wrapper width={`142px`} al={`flex-start`}>
+                    보내는 분
+                  </Wrapper>
+                  <Wrapper width={`calc(100% - 182px)`} al={`flex-start`}>
+                    대한기계공구
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper dr={`row`}>
+                  <Wrapper width={`142px`} al={`flex-start`}>
+                    결제일시
+                  </Wrapper>
+                  <Wrapper width={`calc(100% - 182px)`} al={`flex-start`}>
+                    2022-02-17 14:24:23
+                  </Wrapper>
                 </Wrapper>
               </Wrapper>
             </Wrapper>

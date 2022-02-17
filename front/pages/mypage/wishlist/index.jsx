@@ -8,14 +8,23 @@ import axios from "axios";
 import { END } from "redux-saga";
 import { useSelector } from "react-redux";
 import {
+  CommonButton,
   RsWrapper,
   WholeWrapper,
   Wrapper,
+  Image,
 } from "../../../components/commonComponents";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
+import { Empty } from "antd";
+import styled from "styled-components";
+
+const DelTag = styled.del`
+  color: ${Theme.grey_C};
+  margin: 0 11px 0 14px;
+`;
 
 const WishList = () => {
   ////// GLOBAL STATE //////
@@ -31,10 +40,23 @@ const WishList = () => {
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
-  const moveLinkHandler = useCallback((link) => {
-    router.push(link);
-  }, []);
   ////// DATAVIEW //////
+  const testData = [
+    {
+      productName: "상품명",
+      price: "1,200,000",
+      dcPrice: "1,117,000",
+      productImg:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
+    },
+    {
+      productName: "상품명2",
+      price: "1,440,000",
+      dcPrice: "1,007,000",
+      productImg:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
+    },
+  ];
 
   return (
     <>
@@ -90,9 +112,60 @@ const WishList = () => {
               al={`flex-start`}
               padding={`0 0 10px`}
               borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 40px`}
             >
               관심상품
+            </Wrapper>
+            <Wrapper margin={`0 0 110px`}>
+              {testData && testData.length === 0 ? (
+                <Empty description="조회된 데이터가 없습니다." />
+              ) : (
+                testData &&
+                testData.map((data) => {
+                  return (
+                    <Wrapper
+                      padding={`30px 20px`}
+                      borderBottom={`1px solid ${Theme.grey2_C}`}
+                      ju={`space-between`}
+                      dr={`row`}
+                    >
+                      <Wrapper dr={`row`} width={`auto`}>
+                        <Image
+                          width={`100px`}
+                          height={`100px`}
+                          src={data.productImg}
+                        />
+                        <Wrapper
+                          width={`calc(100% - 100px)`}
+                          padding={`0 0 0 50px`}
+                          fontSize={`16px`}
+                        >
+                          <Wrapper al={`flex-start`}>
+                            {data.productName}
+                          </Wrapper>
+                          <Wrapper al={`flex-start`} dr={`row`}>
+                            <Wrapper width={`auto`}>{data.dcPrice}</Wrapper>
+                            <DelTag>{data.price}</DelTag>
+                            <Wrapper width={`auto`}>| 1개</Wrapper>
+                          </Wrapper>
+                        </Wrapper>
+                      </Wrapper>
+                      <Wrapper width={`auto`}>
+                        <CommonButton
+                          width={`107px`}
+                          height={`44px`}
+                          margin={`0 0 12px`}
+                          kindOf={`white`}
+                        >
+                          삭제
+                        </CommonButton>
+                        <CommonButton width={`107px`} height={`44px`}>
+                          장바구니
+                        </CommonButton>
+                      </Wrapper>
+                    </Wrapper>
+                  );
+                })
+              )}
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>

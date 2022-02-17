@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
+  SpanText,
   TextArea,
   TextInput,
   WholeWrapper,
@@ -28,11 +29,10 @@ const ContentArea = styled(TextArea)`
   width: 100%;
   min-height: 415px;
   border-radius: 0;
+  background-color: ${Theme.lightGrey2_C};
+  border: 1px solid ${Theme.grey2_C};
+  padding: 15px 20px;
 `;
-
-// const CustomLabel = styled.label`
-//   cursor: pointer;
-// `;
 
 const CommonCheckBox = styled(Checkbox)`
   .ant-checkbox-checked .ant-checkbox-inner {
@@ -133,7 +133,7 @@ const Question = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`250px 0 0`}>
+          <RsWrapper margin={`280px 0 0`}>
             <Wrapper
               fontSize={`20px`}
               fontWeight={`bold`}
@@ -146,7 +146,7 @@ const Question = () => {
             </Wrapper>
 
             <Wrapper margin={`0 0 110px`}>
-              {testUserData && testUserData.length === 0
+              {/* {testUserData && testUserData.length === 0
                 ? ``
                 : testUserData &&
                   testUserData.map((data) => {
@@ -224,22 +224,25 @@ const Question = () => {
                   placeholder={`제목을 입력해주세요.`}
                   {...inputTitle}
                 />
-              </Wrapper>
-              <Wrapper al={`flex-start`} margin={`35px 0 0`}>
+              </Wrapper> */}
+              <Wrapper al={`flex-start`}>
                 <Wrapper
                   al={`flex-start`}
                   fontSize={`18px`}
                   fontWeight={`bold`}
                   margin={width < 500 ? `0 0 10px` : `0 0 20px`}
+                  width={`auto`}
+                  dr={`row`}
                 >
                   문의 내용
+                  <SpanText color={Theme.red_C}>*</SpanText>
                 </Wrapper>
                 <ContentArea
                   placeholder={`문의 내용을 작성해주세요.`}
                   {...inputContent}
                 />
               </Wrapper>
-              <Wrapper al={`flex-start`} margin={`35px 0 0`}>
+              {/* <Wrapper al={`flex-start`} margin={`35px 0 0`}>
                 <Wrapper
                   al={`flex-start`}
                   fontSize={`18px`}
@@ -255,7 +258,7 @@ const Question = () => {
                   maxLength={4}
                   {...inputPassword}
                 />
-              </Wrapper>
+              </Wrapper> */}
               <Wrapper dr={`row`} ju={`flex-start`} margin={`25px 0 60px`}>
                 <Wrapper width={`auto`} padding={`0 12px 0 0`}>
                   <CommonCheckBox
@@ -266,19 +269,6 @@ const Question = () => {
                     개인정보 제공에 동의합니다
                   </CommonCheckBox>
                 </Wrapper>
-                {/* <Wrapper width={`auto`} al={`flex-start`}>
-                  <CustomLabel for="check">
-                    <Wrapper
-                      dr={`row`}
-                      ju={`flex-start`}
-                      width={`auto`}
-                      fontSize={width < 500 ? `12px` : `14px`}
-                      padding={`5px 0`}
-                    >
-                      <Text lineHeight={`1`}>개인정보 제공에 동의합니다.</Text>
-                    </Wrapper>
-                  </CustomLabel>
-                </Wrapper> */}
               </Wrapper>
               <CommonButton width={`117px`} height={`50px`}>
                 작성하기
