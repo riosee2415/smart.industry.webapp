@@ -89,14 +89,12 @@ const Notice = () => {
               fontSize={`20px`}
               fontWeight={`bold`}
               al={`flex-start`}
-              margin={`0 0 10px`}
+              padding={`0 0 10px`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+              margin={`0 0 40px`}
             >
               공지사항
             </Wrapper>
-            <Wrapper
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 30px`}
-            ></Wrapper>
 
             <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <Wrapper

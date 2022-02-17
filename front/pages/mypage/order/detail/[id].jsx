@@ -1,9 +1,9 @@
 import React from "react";
-import ClientLayout from "../../../components/ClientLayout";
-import { SEO_LIST_REQUEST } from "../../../reducers/seo";
+import ClientLayout from "../../../../components/ClientLayout";
+import { SEO_LIST_REQUEST } from "../../../../reducers/seo";
 import Head from "next/head";
-import wrapper from "../../../store/configureStore";
-import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
+import wrapper from "../../../../store/configureStore";
+import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
 import { useSelector } from "react-redux";
@@ -13,10 +13,10 @@ import {
   Wrapper,
   Image,
   CommonButton,
-} from "../../../components/commonComponents";
+} from "../../../../components/commonComponents";
 import { useCallback } from "react";
-import useWidth from "../../../hooks/useWidth";
-import Theme from "../../../components/Theme";
+import useWidth from "../../../../hooks/useWidth";
+import Theme from "../../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import { Empty } from "antd";
 import { RightOutlined } from "@ant-design/icons";
@@ -47,22 +47,12 @@ const Order = () => {
   ////// DATAVIEW //////
   const testData = [
     {
-      id: 1,
       productName: "상품명1",
       orderNum: "123443122",
       payment: "1,568,000",
       productImg:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
       createdAt: "2022-02-16-12:45:00",
-    },
-    {
-      id: 2,
-      productName: "상품명2",
-      orderNum: "34532111",
-      payment: "1,958,000",
-      productImg:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-      createdAt: "2022-02-17-15:23:00",
     },
   ];
 
@@ -118,85 +108,51 @@ const Order = () => {
               fontSize={`20px`}
               fontWeight={`bold`}
               al={`flex-start`}
-              padding={`0 0 10px`}
+              margin={`0 0 47px`}
               borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 40px`}
+              padding={`0 0 10px`}
             >
               주문내역조회
             </Wrapper>
             <Wrapper>
-              {testData && testData.length === 0 ? (
-                <Empty description="주문내역이 없습니다." />
-              ) : (
-                testData &&
-                testData.map((data) => {
-                  return (
-                    <>
-                      <Wrapper al={`flex-start`}>
-                        {data.createdAt.substring(0, 10)} (
-                        {data.createdAt.substring(11, 13)}시
-                        {data.createdAt.substring(14, 16)}분)
-                      </Wrapper>
-                      <Wrapper
-                        borderBottom={`1px solid ${Theme.grey2_C}`}
-                        borderTop={`1px solid ${Theme.grey2_C}`}
-                        bgColor={Theme.lightGrey2_C}
-                        fontSize={`16px`}
-                        fontWeight={`bold`}
-                        margin={`10px 0`}
-                        padding={`10px 20px`}
-                        ju={`space-between`}
-                        dr={`row`}
-                        cursor={`pointer`}
-                        onClick={() =>
-                          moveLinkHandler(`./order/detail/${data.id}`)
-                        }
-                      >
-                        <Wrapper al={`flex-start`} width={`auto`}>
-                          {data.productName}
-                        </Wrapper>
-                        <RightArrow />
-                      </Wrapper>
-                      <Wrapper
-                        dr={`row`}
-                        borderBottom={`1px solid ${Theme.grey2_C}`}
-                        padding={`0 20px 10px`}
-                        margin={`0 0 45px`}
-                        ju={`space-between`}
-                      >
-                        <Wrapper
-                          dr={`row`}
-                          ju={`flex-start`}
-                          width={`clac(100% - 134px)`}
-                        >
-                          <Image
-                            width={`100px`}
-                            height={`100px`}
-                            src={data.productImg}
-                          />
-                          <Wrapper
-                            width={`calc(100% - 100px)`}
-                            al={`flex-start`}
-                            padding={`0 0 0 40px`}
-                          >
-                            <Wrapper width={`auto`}>
-                              주문번호 : {data.orderNum}
-                            </Wrapper>
-                            <Wrapper width={`auto`}>
-                              결제금액 : {data.payment}원
-                            </Wrapper>
-                          </Wrapper>
-                        </Wrapper>
-                        <Wrapper width={`134px`} height={`50px`}>
-                          <CommonButton width={`100%`} height={`100%`}>
-                            1:1 문의하기
-                          </CommonButton>
-                        </Wrapper>
-                      </Wrapper>
-                    </>
-                  );
-                })
-              )}
+              <Wrapper al={`flex-start`} margin={`0 0 11px`}></Wrapper>
+              <Wrapper
+                dr={`row`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                borderTop={`1px solid ${Theme.darkGrey_C}`}
+                padding={`30px 20px`}
+                margin={`0 0 45px`}
+                ju={`space-between`}
+              >
+                <Wrapper
+                  dr={`row`}
+                  ju={`flex-start`}
+                  width={`clac(100% - 134px)`}
+                >
+                  <Image
+                    width={`100px`}
+                    height={`100px`}
+                    src={testData && testData.productImg}
+                  />
+                  <Wrapper
+                    width={`calc(100% - 100px)`}
+                    al={`flex-start`}
+                    padding={`0 0 0 40px`}
+                  >
+                    <Wrapper width={`auto`}>
+                      주문번호 : {testData && testData.orderNum}
+                    </Wrapper>
+                    <Wrapper width={`auto`}>
+                      결제금액 : {testData && testData.payment}원
+                    </Wrapper>
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper width={`134px`} height={`50px`}>
+                  <CommonButton width={`100%`} height={`100%`}>
+                    1:1 문의하기
+                  </CommonButton>
+                </Wrapper>
+              </Wrapper>
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>

@@ -98,14 +98,12 @@ const Mypage = () => {
               fontSize={`20px`}
               fontWeight={`bold`}
               al={`flex-start`}
-              margin={`0 0 10px`}
+              padding={`0 0 10px`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+              margin={`0 0 40px`}
             >
               마이페이지
             </Wrapper>
-            <Wrapper
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 30px`}
-            ></Wrapper>
 
             <Wrapper dr={`row`}>
               <MypageBtn onClick={() => moveLinkHandler(`mypage/order`)}>
@@ -119,7 +117,11 @@ const Mypage = () => {
                   ORDER
                 </Wrapper>
                 <Wrapper>
-                  <Image width={`18px`} height={`18px`} src={``} />
+                  <Image
+                    width={`18px`}
+                    height={`18px`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/mypage/icon_order.png`}
+                  />
                 </Wrapper>
                 <Wrapper
                   fontSize={`12px`}
@@ -144,7 +146,11 @@ const Mypage = () => {
                   PROFILE
                 </Wrapper>
                 <Wrapper>
-                  <Image width={`18px`} height={`18px`} src={``} />
+                  <Image
+                    width={`18px`}
+                    height={`18px`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/mypage/icon_profile.png`}
+                  />
                 </Wrapper>
                 <Wrapper
                   fontSize={`12px`}
@@ -169,7 +175,11 @@ const Mypage = () => {
                   CART
                 </Wrapper>
                 <Wrapper>
-                  <Image width={`18px`} height={`18px`} src={``} />
+                  <Image
+                    width={`18px`}
+                    height={`18px`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/mypage/icon_cart.png`}
+                  />
                 </Wrapper>
                 <Wrapper
                   fontSize={`12px`}
@@ -194,7 +204,11 @@ const Mypage = () => {
                   WISHLIST
                 </Wrapper>
                 <Wrapper>
-                  <Image width={`18px`} height={`18px`} src={``} />
+                  <Image
+                    width={`18px`}
+                    height={`18px`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/mypage/icon_wishlist.png`}
+                  />
                 </Wrapper>
                 <Wrapper
                   fontSize={`12px`}
@@ -222,7 +236,11 @@ const Mypage = () => {
                   BOARD
                 </Wrapper>
                 <Wrapper>
-                  <Image width={`18px`} height={`18px`} src={``} />
+                  <Image
+                    width={`18px`}
+                    height={`18px`}
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/mypage/icon_board.png`}
+                  />
                 </Wrapper>
                 <Wrapper
                   fontSize={`12px`}

@@ -138,14 +138,12 @@ const Question = () => {
               fontSize={`20px`}
               fontWeight={`bold`}
               al={`flex-start`}
-              margin={`0 0 10px`}
+              padding={`0 0 10px`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+              margin={`0 0 40px`}
             >
               1:1 문의
             </Wrapper>
-            <Wrapper
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 30px`}
-            ></Wrapper>
 
             <Wrapper margin={`0 0 60px`}>
               {testUserData && testUserData.length === 0
