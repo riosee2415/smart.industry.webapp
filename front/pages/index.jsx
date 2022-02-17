@@ -40,6 +40,7 @@ const ProductWrapper = styled(Wrapper)`
 
   img {
     height: 270px;
+    transition: 0.5s;
   }
 
   @media (max-width: 1100px) {

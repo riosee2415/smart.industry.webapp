@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import {
   RsWrapper,
@@ -6,11 +6,30 @@ import {
   Text,
   Wrapper,
   Image,
+  SpanText,
 } from "../../components/commonComponents";
 import styled from "styled-components";
 import Theme from "../../components/Theme";
-import { Empty } from "antd";
+import { Empty, Select } from "antd";
 import useWidth from "../../hooks/useWidth";
+
+const CustomSelect = styled(Select)`
+  width: 138px;
+
+  & .ant-select-selector {
+    height: 32px;
+    border: none !important;
+    border-bottom: 1px solid ${Theme.basicTheme_C} !important;
+
+    padding: 0 0 0 10px;
+  }
+  & .ant-select {
+    font-size: 13px;
+  }
+  & .ant-select-arrow {
+    color: ${Theme.basicTheme_C};
+  }
+`;
 
 const ProductTypeWrapper = styled(Wrapper)`
   width: calc(100% / 5 - (60px / 5));
@@ -29,20 +48,37 @@ const ProductTypeWrapper = styled(Wrapper)`
 `;
 
 const ProductWrapper = styled(Wrapper)`
-  width: calc(100% / 5 - (100px / 5));
+  width: calc(100% / 5 - (125px / 5));
   margin: 0 25px 37px 0;
   position: relative;
   cursor: pointer;
 
   img {
     height: 270px;
+    transition: 0.5s;
+  }
+
+  @media (max-width: 1280px) {
+    width: calc(100% / 4 - (100px / 4));
+
+    &:nth-child(5n) {
+      margin: 0 25px 30px 0;
+    }
+
+    &:nth-child(4n) {
+      margin-right: 0;
+    }
+
+    img {
+      height: 281px;
+    }
   }
 
   @media (max-width: 1100px) {
-    width: calc(100% / 3 - (54px / 3));
+    width: calc(100% / 3 - (75px / 3));
 
     &:nth-child(4n) {
-      margin: 0 27px 30px 0;
+      margin: 0 25px 30px 0;
     }
 
     &:nth-child(3n) {
@@ -55,10 +91,10 @@ const ProductWrapper = styled(Wrapper)`
   }
 
   @media (max-width: 700px) {
-    width: calc(100% / 2 - (27px / 2));
+    width: calc(100% / 2 - (100px / 2));
 
     &:nth-child(2n + 1) {
-      margin-right: 27px;
+      margin-right: 25px;
     }
 
     &:nth-child(2n) {
@@ -100,6 +136,17 @@ const ProductList = () => {
   ////// HOOKS //////
 
   const width = useWidth();
+
+  const [productType, setProductType] = useState(1);
+
+  ////// HANDLER //////
+
+  const productTypeChangeHandler = useCallback(
+    (type) => {
+      setProductType(type);
+    },
+    [productType]
+  );
 
   ////// DATAVIEW //////
 
@@ -221,25 +268,51 @@ const ProductList = () => {
     },
   ];
 
+  const selectArr = ["상품명", "신상품", "낮은가격", "높은가격", "제조사"];
+
   return (
     <ClientLayout>
       <WholeWrapper>
         <RsWrapper>
           <Wrapper margin={`280px 0 0`}>
             <Wrapper al={`flex-start`}>
-              <Text>도로캇타기</Text>
+              <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 9px`}>
+                {testType &&
+                  testType.find((data) => data.id === productType).name}
+              </Text>
               <Wrapper dr={`row`}>
                 {testType &&
                   testType.map((data) => {
                     return (
-                      <ProductTypeWrapper key={data.id}>
+                      <ProductTypeWrapper
+                        key={data.id}
+                        bgColor={productType === data.id && Theme.subTheme_C}
+                        color={productType === data.id && Theme.white_C}
+                        onClick={() => productTypeChangeHandler(data.id)}
+                      >
                         {data.name}
                       </ProductTypeWrapper>
                     );
                   })}
               </Wrapper>
             </Wrapper>
-            <Wrapper dr={`row`}>
+            <Wrapper dr={`row`} ju={`space-between`} margin={`54px 0 0`}>
+              <Text fontSize={`14px`}>
+                총&nbsp;
+                <SpanText color={Theme.red_C}>
+                  {testProductArr && testProductArr.length < 10
+                    ? `0${testProductArr.length}`
+                    : testProductArr.length}
+                </SpanText>
+                개의 제품
+              </Text>
+              <CustomSelect defaultValue="신상품">
+                {selectArr.map((data) => {
+                  return <Select.Option value={data}>{data}</Select.Option>;
+                })}
+              </CustomSelect>
+            </Wrapper>
+            <Wrapper dr={`row`} ju={`flex-start`}>
               {testProductArr &&
                 (testProductArr.length === 0 ? (
                   <Wrapper>
