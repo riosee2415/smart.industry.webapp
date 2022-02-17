@@ -1,31 +1,30 @@
 const DataTypes = require("sequelize");
 const { Model } = DataTypes;
 
-module.exports = class MainBanner extends Model {
+module.exports = class ProductImage extends Model {
   static init(sequelize) {
     return super.init(
       {
         imagePath: {
           type: DataTypes.STRING(600),
-          allowNull: false, // 필수
-        },
-        mobileImagePath: {
-          type: DataTypes.STRING(600),
-          allowNull: false, // 필수
-        },
-        link: {
-          type: DataTypes.STRING(100),
           allowNull: false,
+        },
+        isDelete: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
         },
       },
       {
-        modelName: "MainBanner",
-        tableName: "mainBanners",
+        modelName: "ProductImage",
+        tableName: "productImages",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", // 한글 저장
         sequelize,
       }
     );
   }
-  static associate(db) {}
+  static associate(db) {
+    db.ProductImage.belongsTo(db.Product);
+  }
 };

@@ -1,7 +1,7 @@
 const DataTypes = require("sequelize");
 const { Model } = DataTypes;
 
-module.exports = class Question extends Model {
+module.exports = class ProdQuestion extends Model {
   static init(sequelize) {
     return super.init(
       {
@@ -18,47 +18,42 @@ module.exports = class Question extends Model {
           allowNull: false,
         },
         title: {
-          type: DataTypes.STRING(200), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-          allowNull: false, // 필수
+          type: DataTypes.STRING(300),
+          allowNull: false,
         },
         content: {
           type: DataTypes.TEXT,
           allowNull: false,
         },
-        term: {
-          type: DataTypes.BOOLEAN,
+        hit: {
+          type: DataTypes.INTEGER,
           allowNull: false,
-          defaultValue: false,
-        },
-        isCompleted: {
-          type: DataTypes.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
-        },
-        password: {
-          type: DataTypes.STRING(10),
-          allowNull: false,
-          defaultValue: false,
+          defaultValue: 0,
         },
         answer: {
-          type: DataTypes.TEXT, // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
+          type: DataTypes.TEXT,
           allowNull: true,
         },
-        answerdAt: {
-          type: DataTypes.DATE,
+        isSecret: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
+        secret: {
+          type: DataTypes.STRING(10),
           allowNull: true,
         },
       },
       {
-        modelName: "Question",
-        tableName: "questions",
+        modelName: "ProdQuestion",
+        tableName: "prodQuestions",
         charset: "utf8mb4",
-        collate: "utf8mb4_general_ci", // 한글 저장
+        collate: "utf8mb4_general_ci",
         sequelize,
       }
     );
   }
   static associate(db) {
-    db.Question.belongsTo(db.QuestionType);
+    db.ProdQuestion.belongsTo(db.Product);
   }
 };

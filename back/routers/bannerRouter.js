@@ -82,11 +82,11 @@ router.post(
 );
 
 router.post("/update", isAdminCheck, async (req, res, next) => {
-  const { id, imagePath, title, content } = req.body;
+  const { id, imagePath, mobileImagePath } = req.body;
 
   try {
     const updateResult = await MainBanner.update(
-      { imagePath, title, content },
+      { imagePath, mobileImagePath },
       {
         where: { id: parseInt(id) },
       }
@@ -106,13 +106,12 @@ router.post("/update", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
-  const { title, content, imagePath } = req.body;
+  const { imagePath, mobileImagePath } = req.body;
 
   try {
     const createResult = await MainBanner.create({
-      title,
-      content,
       imagePath,
+      mobileImagePath,
     });
 
     return res.status(201).json({ result: true });

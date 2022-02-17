@@ -92,7 +92,7 @@ router.get("/signin", async (req, res, next) => {
     if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
         where: { id: req.user.id },
-        attributes: ["id", "nickname", "email", "level"],
+        attributes: ["id", "username", "email", "level"],
       });
 
       console.log("🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀");
@@ -128,7 +128,7 @@ router.post("/signin", (req, res, next) => {
 
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
-        attributes: ["id", "nickname", "email", "level", "username"],
+        attributes: ["id", "username", "email", "level", "username"],
       });
 
       return res.status(200).json(fullUserWithoutPassword);
@@ -161,7 +161,7 @@ router.post("/signin/admin", (req, res, next) => {
 
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
-        attributes: ["id", "nickname", "email", "level", "username"],
+        attributes: ["id", "username", "email", "level", "username"],
       });
 
       return res.status(200).json(fullUserWithoutPassword);
@@ -170,7 +170,7 @@ router.post("/signin/admin", (req, res, next) => {
 });
 
 router.post("/signup", async (req, res, next) => {
-  const { email, username, nickname, mobile, password, terms } = req.body;
+  const { userId, password, username, email, mobile, terms } = req.body;
 
   if (!terms) {
     return res.status(401).send("이용약관에 동의해주세요.");
@@ -188,12 +188,12 @@ router.post("/signup", async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const result = await User.create({
-      email,
+      userId,
+      password: hashedPassword,
       username,
-      nickname,
+      email,
       mobile,
       terms,
-      password: hashedPassword,
     });
 
     res.status(201).send("SUCCESS");
@@ -213,7 +213,11 @@ router.get("/me", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/me/update", isLoggedIn, async (req, res, next) => {
-  const { id, nickname, mobile } = req.body;
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  const { username, mobile, email } = req.body;
 
   try {
     const exUser = await User.findOne({ where: { id: parseInt(id) } });
@@ -223,9 +227,9 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
     }
 
     const updateUser = await User.update(
-      { nickname, mobile },
+      { username, mobile, email },
       {
-        where: { id: parseInt(id) },
+        where: { id: parseInt(req.user.id) },
       }
     );
 
@@ -237,12 +241,12 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/findemail", async (req, res, next) => {
-  const { nickname, mobile } = req.body;
+  const { username, mobile } = req.body;
 
   try {
     const exUser = await User.findOne({
       where: {
-        nickname,
+        username,
         mobile,
       },
     });
@@ -259,16 +263,16 @@ router.post("/findemail", async (req, res, next) => {
 });
 
 router.post("/modifypass", isLoggedIn, async (req, res, next) => {
-  const { email, nickname, mobile } = req.body;
+  const { email, username, mobile } = req.body;
 
   try {
     const cookieEmail = req.user.dataValues.email;
-    const cookieNickname = req.user.dataValues.nickname;
+    const cookieUsername = req.user.dataValues.username;
     const cookieMobile = req.user.dataValues.mobile;
 
     if (
       email === cookieEmail &&
-      nickname === cookieNickname &&
+      username === cookieUsername &&
       mobile === cookieMobile
     ) {
       const currentUserId = req.user.dataValues.id;
