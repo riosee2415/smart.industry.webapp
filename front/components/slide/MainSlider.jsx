@@ -20,6 +20,10 @@ const MainSliderWrapper = styled(RowWrapper)`
   & .ant-carousel {
     width: 100%;
   }
+
+  @media (max-width: 700px) {
+    margin: 85px 0 0;
+  }
 `;
 
 const BannerBlackBackWrapper = styled(ColWrapper)`

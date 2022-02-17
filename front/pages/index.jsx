@@ -177,6 +177,10 @@ const MainProductTypeBtn = styled(Text)`
       background-color: ${Theme.subTheme2_C};
     }
   `}
+
+  @media(max-width: 900px) {
+    font-size: 16px;
+  }
 `;
 
 const Home = ({}) => {
@@ -427,7 +431,7 @@ const Home = ({}) => {
           {/* <Popup /> */}
 
           <RsWrapper>
-            <Wrapper padding={`112px 0 110px`}>
+            <Wrapper padding={width < 900 ? `56px 0 55px` : `112px 0 110px`}>
               <Text fontSize={`36px`} fontWeight={`bold`} lineHeight={`1.43`}>
                 Product
               </Text>
@@ -438,21 +442,24 @@ const Home = ({}) => {
               >
                 최고의 상품을 제공하는 대한기계공구를 만나보세요.
               </Text>
-              <Wrapper dr={`row`}>
+              <Wrapper dr={`row`} ju={width < 900 && `space-between`}>
                 {testProductTypeArr &&
                   testProductTypeArr.map((data) => {
                     return (
                       <MainProductTypeBtn
                         isCheck={true}
                         lineHeight={`1.24`}
-                        margin={`0 39px`}
+                        margin={width < 900 ? `0` : `0 39px`}
                       >
                         {data}
                       </MainProductTypeBtn>
                     );
                   })}
               </Wrapper>
-              <Wrapper dr={`row`} margin={`80px 0 0`}>
+              <Wrapper
+                dr={`row`}
+                margin={width < 900 ? `30px 0 0` : `80px 0 0`}
+              >
                 {testProductArr && testProductArr.length === 0 ? (
                   <Wrapper>
                     <Empty description="상품이 없습니다." />
@@ -490,13 +497,13 @@ const Home = ({}) => {
               </Wrapper>
             </Wrapper>
 
-            <Wrapper padding={`112px 0 110px`}>
+            <Wrapper padding={width < 900 ? `56px 0 55px` : `112px 0 110px`}>
               <Wrapper>
                 <Text fontSize={`36px`} fontWeight={`bold`} lineHeight={`1.43`}>
                   BEST Item
                 </Text>
                 <Text
-                  margin={`24px 0 80px`}
+                  margin={width < 900 ? `24px 0 30px` : `24px 0 80px`}
                   color={Theme.grey_C}
                   lineHeight={`1.19`}
                 >
@@ -505,40 +512,45 @@ const Home = ({}) => {
               </Wrapper>
 
               <Wrapper dr={`row`}>
-                {testBestItem && testBestItem.lenght === 0 ? (
-                  <Wrapper>
-                    <Empty description="베스트상품이 없습니다." />
-                  </Wrapper>
-                ) : (
-                  testBestItem.map((data) => {
-                    return (
-                      <ProductWrapper>
-                        <Wrapper
-                          padding={`20px`}
-                          border={`1px solid ${Theme.lightGrey_C}`}
-                        >
-                          <Image
-                            src={data.thumbnail}
-                            alt="main_product_thumbnail"
-                          />
-                        </Wrapper>
-                        <Text margin={`25px 0 13px`}>{data.name}</Text>
+                {testBestItem &&
+                  (testBestItem.lenght === 0 ? (
+                    <Wrapper>
+                      <Empty description="베스트상품이 없습니다." />
+                    </Wrapper>
+                  ) : (
+                    testBestItem.map((data) => {
+                      return (
+                        <ProductWrapper>
+                          <Wrapper
+                            padding={`20px`}
+                            border={`1px solid ${Theme.lightGrey_C}`}
+                          >
+                            <Image
+                              src={data.thumbnail}
+                              alt="main_product_thumbnail"
+                            />
+                          </Wrapper>
+                          <Text margin={`25px 0 13px`}>{data.name}</Text>
 
-                        <Text
-                          fontSize={`18px`}
-                          fontWeight={`bold`}
-                          margin={`0 0 0 5px`}
-                        >
-                          {data.viewPrice}
-                        </Text>
-                      </ProductWrapper>
-                    );
-                  })
-                )}
+                          <Text
+                            fontSize={`18px`}
+                            fontWeight={`bold`}
+                            margin={`0 0 0 5px`}
+                          >
+                            {data.viewPrice}
+                          </Text>
+                        </ProductWrapper>
+                      );
+                    })
+                  ))}
               </Wrapper>
             </Wrapper>
           </RsWrapper>
-          <Wrapper position={`relative`} padding={`110px 0`} ju={`flex-start`}>
+          <Wrapper
+            position={`relative`}
+            padding={width < 900 ? `55px 0 ` : `110px 0`}
+            ju={`flex-start`}
+          >
             <MainBottomBackWrapper
               position={`absolute`}
               top={`0`}
@@ -557,22 +569,31 @@ const Home = ({}) => {
             </MainBottomBackWrapper>
             <RsWrapper zIndex={`1`} color={Theme.white_C}>
               <Wrapper>
-                <Text fontSize={`26px`} fontWeight={`medium`}>
+                <Text
+                  fontSize={width < 700 ? `24px` : `26px`}
+                  fontWeight={`medium`}
+                >
                   대한기계공구(주)
                 </Text>
-                <Text fontSize={`18px`} margin={`28px 0 80px`}>
+                <Text
+                  fontSize={width < 700 ? `15px` : `18px`}
+                  margin={`28px 0 80px`}
+                >
                   최고의 품질과 정직을 우선으로 생각하는 선두 기업입니다.
                 </Text>
               </Wrapper>
-              <Wrapper dr={`row`}>
+              <Wrapper dr={width < 900 ? `column-reverse` : `row`}>
                 <Wrapper
-                  width={`calc(25% - 15px)`}
-                  height={`576px`}
+                  width={width < 900 ? `100%` : `calc(25% - 15px)`}
+                  height={width < 900 ? `300px` : `576px`}
                   id={`map`}
-                  margin={`0 15px 0 0`}
+                  margin={width < 900 ? `28px 0 0` : `0 15px 0 0`}
                   border={`1px solid ${Theme.white_C}`}
                 ></Wrapper>
-                <Wrapper width={`calc(75% - 15px)`} margin={`0 0 0 15px`}>
+                <Wrapper
+                  width={width < 900 ? `100%` : `calc(75% - 15px)`}
+                  margin={width < 900 ? `0` : `0 0 0 15px`}
+                >
                   <MainBlackBackWrapper
                     margin={`0 0 28px`}
                     bgImg={`url(https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/main/notice_bg.png)`}
