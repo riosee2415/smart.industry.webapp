@@ -65,15 +65,21 @@ const Notice = () => {
   return (
     <>
       <Head>
-        <title>{seo_title.length < 1 ? "ALAL" : seo_title[0].content}</title>
+        <title>
+          {seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content}
+        </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
@@ -85,11 +91,15 @@ const Notice = () => {
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "ALAL" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta
           property="og:description"
