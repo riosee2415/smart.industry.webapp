@@ -515,4 +515,8 @@ export const SubTitle = styled.h3`
   line-height: ${(props) => props.lineHeight || `1.43`};
 
   ${(props) => props.isFont && `GongGothicBold`};
+
+  @media (max-width: 700px) {
+    font-size: 28px;
+  }
 `;

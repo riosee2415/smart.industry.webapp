@@ -494,7 +494,11 @@ const Home = ({}) => {
                           dr={width < 900 ? `column` : `row`}
                           fontSize={width < 900 ? `16px` : `18px`}
                         >
-                          <Text margin={width < 900 ? `0` : `0 5px 0 0`}>
+                          <Text
+                            margin={width < 900 ? `0` : `0 5px 0 0`}
+                            textDecoration={`line-through`}
+                            color={Theme.grey_C}
+                          >
                             {data.originPrice}
                           </Text>
                           <Text
