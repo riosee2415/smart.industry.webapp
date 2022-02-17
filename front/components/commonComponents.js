@@ -493,3 +493,25 @@ export const TextArea = styled.textarea`
     line-height: 1.6;
   }
 `;
+
+export const subTitle = styled.h3`
+  overflow: ${(props) => props.overflow};
+  width: ${(props) => props.width};
+  height: ${(props) => props.height};
+  min-height: ${(props) => props.minHeight};
+  max-height: ${(props) => props.maxHeight};
+  display: ${(props) => props.display};
+  flex-direction: ${(props) => props.dr};
+  align-items: ${(props) => props.al};
+  justify-content: ${(props) => props.ju};
+  color: ${(props) => props.color};
+  background-color: ${(props) => props.bgColor};
+  text-align: ${(props) => props.textAlign};
+  cursor: ${(props) => props.cursor};
+
+  font-size: ${(props) => props.fontSize || `36px`};
+  font-weight: ${(props) => props.fontWeight || `bold`};
+  line-height: ${(props) => props.lineHeight || `1.43`};
+
+  ${(props) => props.isFont && `GongGothicBold`};
+`;

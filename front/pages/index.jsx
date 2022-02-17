@@ -105,6 +105,10 @@ const MainProductButton = styled(Button)`
   width: 135px;
   height: 50px;
   border-radius: 0;
+  @media (max-width: 900px) {
+    width: 115px;
+    height: 40px;
+  }
 `;
 
 const MainBottomButton = styled(Button)`
@@ -115,6 +119,11 @@ const MainBottomButton = styled(Button)`
   border-radius: 0;
   background-color: transparent;
   color: ${Theme.white_C};
+
+  @media (max-width: 900px) {
+    width: 115px;
+    height: 40px;
+  }
 `;
 
 const MainBottomBackWrapper = styled(Wrapper)`
@@ -140,6 +149,10 @@ const MainBlackBackWrapper = styled(Wrapper)`
     height: 100%;
     top: 0;
     left: 0;
+  }
+
+  @media (max-width: 700px) {
+    padding: 25px 15px 20px;
   }
 `;
 
@@ -569,18 +582,23 @@ const Home = ({}) => {
             </MainBottomBackWrapper>
             <RsWrapper zIndex={`1`} color={Theme.white_C}>
               <Wrapper>
-                <Text
-                  fontSize={width < 700 ? `24px` : `26px`}
-                  fontWeight={`medium`}
-                >
+                <Text fontSize={`26px`} fontWeight={`medium`}>
                   대한기계공구(주)
                 </Text>
-                <Text
-                  fontSize={width < 700 ? `15px` : `18px`}
-                  margin={`28px 0 80px`}
-                >
-                  최고의 품질과 정직을 우선으로 생각하는 선두 기업입니다.
-                </Text>
+                {width < 900 ? (
+                  <>
+                    <Text fontSize={`18px`} margin={`28px 0 0`}>
+                      최고의 품질과 정직을 우선으로
+                    </Text>
+                    <Text fontSize={`18px`} margin={`0 0 80px`}>
+                      생각하는 선두기업입니다.
+                    </Text>
+                  </>
+                ) : (
+                  <Text fontSize={`18px`} margin={`28px 0 80px`}>
+                    최고의 품질과 정직을 우선으로 생각하는 선두 기업입니다.
+                  </Text>
+                )}
               </Wrapper>
               <Wrapper dr={width < 900 ? `column-reverse` : `row`}>
                 <Wrapper
@@ -599,7 +617,10 @@ const Home = ({}) => {
                     bgImg={`url(https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/main/notice_bg.png)`}
                   >
                     <Wrapper zIndex={`1`}>
-                      <Wrapper margin={`0 0 84px`} al={`flex-start`}>
+                      <Wrapper
+                        margin={width < 900 ? `0 0 42px` : `0 0 84px`}
+                        al={`flex-start`}
+                      >
                         <MainAfterText lineHeight={`1.24`}>
                           공지사항
                         </MainAfterText>
@@ -620,7 +641,10 @@ const Home = ({}) => {
                     bgImg={`url(https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/main/question_bg.png)`}
                   >
                     <Wrapper zIndex={`1`}>
-                      <Wrapper margin={`0 0 84px`} al={`flex-start`}>
+                      <Wrapper
+                        margin={width < 900 ? `0 0 42px` : `0 0 84px`}
+                        al={`flex-start`}
+                      >
                         <MainAfterText lineHeight={`1.24`}>
                           1:1 문의
                         </MainAfterText>
