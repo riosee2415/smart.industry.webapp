@@ -14,6 +14,7 @@ import {
   Text,
   TextInput,
   CommonButton,
+  SpanText,
 } from "../../../components/commonComponents";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
@@ -37,6 +38,33 @@ const CustomInput = styled(TextInput)`
     width: 350px;
   }
 `;
+
+//
+const ContentWrapper = styled(Wrapper)`
+  height: ${(props) => props.height || `50px`};
+  justify-content: flex-start;
+  flex-direction: row;
+`;
+
+const TitleWrapper = styled(Wrapper)`
+  width: 13%;
+  font-size: 18px;
+  font-weight: 700;
+
+  padding: 0 0 0 10px;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  margin: 0 10px 0 0;
+  flex-direction: row;
+  color: ${Theme.darkGrey_C};
+
+  @media (max-width: 700px) {
+    width: 98px;
+    font-size: 13px;
+  } ;
+`;
+//
 
 const Profile = () => {
   ////// GLOBAL STATE //////
@@ -202,6 +230,52 @@ const Profile = () => {
               >
                 확인
               </CommonButton>
+            </Wrapper>
+          </RsWrapper>
+          {/* /////////////////////////////////////////////////////////////////////////////////////////// */}
+          <RsWrapper margin={`30px 0 500px 0`}>
+            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
+              HOME | 마이페이지 | 회원정보
+            </Wrapper>
+            <Wrapper
+              fontSize={`20px`}
+              fontWeight={`bold`}
+              al={`flex-start`}
+              padding={`0 0 10px`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+              margin={`0 0 40px`}
+            >
+              회원정보
+            </Wrapper>
+            <Wrapper
+              width={width < 700 ? `370px` : `800px`}
+              height={`1700px`}
+              border={`1px solid ${Theme.black_C}`}
+              ju={`flex-start`}
+            >
+              <Wrapper>
+                <ContentWrapper height={`auto`}>
+                  <TitleWrapper>아이디</TitleWrapper>
+                  <Wrapper width={`calc(100% - 13%)`}>
+                    <CustomInput width={width < 700 ? `215px` : `406px`} />
+                  </Wrapper>
+                </ContentWrapper>
+              </Wrapper>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  width={`150px`}
+                  height={`50px`}
+                  radius={`0`}
+                  margin={`0 5px 0 0`}
+                  kindOf={`grey`}
+                  bgColor={Theme.grey2_C}
+                >
+                  탈퇴하기
+                </CommonButton>
+                <CommonButton width={`150px`} height={`50px`} radius={`0`}>
+                  회원정보 수정
+                </CommonButton>
+              </Wrapper>
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
