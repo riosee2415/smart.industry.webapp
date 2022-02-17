@@ -281,6 +281,7 @@ export const Text = styled.p`
   padding: ${(props) => props.padding};
   background: ${(props) => props.bgColor};
   text-align: ${(props) => props.textAlign};
+  text-decoration: ${(props) => props.textDecoration};
   position: ${(props) => props.position};
   top: ${(props) => props.top};
   bottom: ${(props) => props.bottom};

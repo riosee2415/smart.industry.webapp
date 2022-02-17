@@ -19,6 +19,7 @@ import {
   Text,
   RsWrapper,
   CommonButton,
+  SubTitle,
 } from "../components/commonComponents";
 import useWidth from "../hooks/useWidth";
 import Theme from "../components/Theme";
@@ -81,7 +82,7 @@ const ProductWrapper = styled(Wrapper)`
     }
 
     img {
-      height: 170px;
+      height: 130px;
     }
   }
 
@@ -445,9 +446,7 @@ const Home = ({}) => {
 
           <RsWrapper>
             <Wrapper padding={width < 900 ? `56px 0 55px` : `112px 0 110px`}>
-              <Text fontSize={`36px`} fontWeight={`bold`} lineHeight={`1.43`}>
-                Product
-              </Text>
+              <SubTitle>Product</SubTitle>
               <Text
                 margin={`24px 0 41px`}
                 color={Theme.grey_C}
@@ -492,12 +491,18 @@ const Home = ({}) => {
                         </Wrapper>
                         <Text margin={`25px 0 13px`}>{data.name}</Text>
                         <Wrapper
-                          dr={`row`}
-                          fontSize={`18px`}
-                          fontWeight={`bold`}
+                          dr={width < 900 ? `column` : `row`}
+                          fontSize={width < 900 ? `16px` : `18px`}
                         >
-                          <Text margin={`0 5px 0 0`}>{data.originPrice}</Text>
-                          <Text margin={`0 0 0 5px`}>{data.viewPrice}</Text>
+                          <Text margin={width < 900 ? `0` : `0 5px 0 0`}>
+                            {data.originPrice}
+                          </Text>
+                          <Text
+                            margin={width < 900 ? `0` : `0 0 0 5px`}
+                            fontWeight={`bold`}
+                          >
+                            {data.viewPrice}
+                          </Text>
                         </Wrapper>
                       </ProductWrapper>
                     );
@@ -512,9 +517,7 @@ const Home = ({}) => {
 
             <Wrapper padding={width < 900 ? `56px 0 55px` : `112px 0 110px`}>
               <Wrapper>
-                <Text fontSize={`36px`} fontWeight={`bold`} lineHeight={`1.43`}>
-                  BEST Item
-                </Text>
+                <SubTitle>BEST Item</SubTitle>
                 <Text
                   margin={width < 900 ? `24px 0 30px` : `24px 0 80px`}
                   color={Theme.grey_C}
@@ -546,9 +549,8 @@ const Home = ({}) => {
                           <Text margin={`25px 0 13px`}>{data.name}</Text>
 
                           <Text
-                            fontSize={`18px`}
+                            fontSize={width < 900 ? `16px` : `18px`}
                             fontWeight={`bold`}
-                            margin={`0 0 0 5px`}
                           >
                             {data.viewPrice}
                           </Text>
