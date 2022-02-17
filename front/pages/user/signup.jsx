@@ -33,7 +33,7 @@ const SignUpWrapper = styled(Wrapper)`
 const TitleWrapper = styled(Wrapper)`
   width: 13%;
 
-  padding: 0 0 0 20px;
+  padding: 0 0 0 10px;
   align-items: center;
   justify-content: flex-start;
   height: 100%;
@@ -42,7 +42,7 @@ const TitleWrapper = styled(Wrapper)`
   color: ${Theme.darkGrey_C};
 
   @media (max-width: 700px) {
-    width: 110px;
+    width: 98px;
     font-size: 13px;
   } ;
 `;
@@ -76,6 +76,23 @@ const SelectStyle = styled(Select)`
   &.ant-select-single.ant-select-show-arrow .ant-select-selection-item,
   .ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
     padding: 0px;
+  }
+`;
+
+const SelectStyle2 = styled(Select)`
+  &.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    height: 35px;
+
+    align-items: center;
+    justify-content: center;
+  }
+  &.ant-select-single.ant-select-show-arrow .ant-select-selection-item,
+  .ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
+    padding: 0 8px;
+
+    @media (max-width: 700px) {
+      padding: 0px;
+    }
   }
 `;
 
@@ -240,7 +257,7 @@ const SignUp = () => {
                 al={`flex-start`}
                 width={
                   width < 700
-                    ? `calc(100% - 110px - 10px)`
+                    ? `calc(100% - 98px - 10px)`
                     : `calc(100% - 13% - 10px)`
                 }
               >
@@ -261,14 +278,14 @@ const SignUp = () => {
                 padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
                 width={
                   width < 700
-                    ? `calc(100% - 110px - 10px)`
+                    ? `calc(100% - 98px - 10px)`
                     : `calc(100% - 13% - 10px)`
                 }
                 dr={width < 700 ? `column` : `row`}
               >
-                <SignupInput width={`206px`} />
+                <SignupInput width={width < 700 ? `215px` : `206px`} />
                 <Wrapper
-                  width={width < 700 ? `206px` : `calc(100% - 206px)`}
+                  width={width < 700 ? `206px` : `calc(100% - 215px)`}
                   color={Theme.grey_C}
                   padding={`0 0 0 10px`}
                   al={`flex-start`}
@@ -291,14 +308,14 @@ const SignUp = () => {
                 padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
                 width={
                   width < 700
-                    ? `calc(100% - 110px - 10px)`
+                    ? `calc(100% - 98px - 10px)`
                     : `calc(100% - 13% - 10px)`
                 }
                 dr={width < 700 ? `column` : `row`}
               >
-                <SignupInput width={`206px`} />
+                <SignupInput width={width < 700 ? `215px` : `206px`} />
                 <Wrapper
-                  width={width < 700 ? `206px` : `calc(100% - 206px)`}
+                  width={width < 700 ? `206px` : `calc(100% - 215px)`}
                   color={Theme.grey_C}
                   padding={`0 0 0 10px`}
                   al={`flex-start`}
@@ -318,12 +335,12 @@ const SignUp = () => {
                 padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
                 width={
                   width < 700
-                    ? `calc(100% - 110px - 10px)`
+                    ? `calc(100% - 98px - 10px)`
                     : `calc(100% - 13% - 10px)`
                 }
                 al={width < 700 ? `center` : `flex-start`}
               >
-                <SignupInput width={`206px`} />
+                <SignupInput width={width < 700 ? `215px` : `206px`} />
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
@@ -336,12 +353,12 @@ const SignUp = () => {
                 padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
                 width={
                   width < 700
-                    ? `calc(100% - 110px - 10px)`
+                    ? `calc(100% - 98px - 10px)`
                     : `calc(100% - 13% - 10px)`
                 }
                 al={width < 700 ? `center` : `flex-start`}
               >
-                <SignupInput width={`206px`} />
+                <SignupInput width={width < 700 ? `215px` : `206px`} />
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper
@@ -357,15 +374,15 @@ const SignUp = () => {
                 padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
                 width={
                   width < 700
-                    ? `calc(100% - 110px - 10px)`
+                    ? `calc(100% - 98px - 10px)`
                     : `calc(100% - 13% - 10px)`
                 }
                 al={`flex-start`}
               >
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <SignupInput
-                    margin={width < 700 ? `0 0 0 15px` : `0 0 0 0`}
-                    width={`62px`}
+                    margin={width < 700 ? `0 0 0 6%` : `0 0 0 0`}
+                    width={`65px`}
                     color={Theme.grey_C}
                   />
                   <CommonButton
@@ -386,7 +403,7 @@ const SignUp = () => {
                   margin={`10px 0`}
                 >
                   <SignupInput
-                    width={`206px`}
+                    width={width < 700 ? `215px` : `206px`}
                     placeholder={width < 700 ? `기본주소` : ``}
                   />
                   <Wrapper
@@ -400,7 +417,7 @@ const SignUp = () => {
                 </Wrapper>
                 <Wrapper width={width < 700 ? `100%` : `auto`} dr={`row`}>
                   <SignupInput
-                    width={`206px`}
+                    width={width < 700 ? `215px` : `206px`}
                     placeholder={width < 700 ? `나머지주소` : ``}
                   />
                   <Wrapper
@@ -421,13 +438,13 @@ const SignUp = () => {
                 padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
                 width={
                   width < 700
-                    ? `calc(100% - 110px - 10px)`
+                    ? `calc(100% - 98px - 10px)`
                     : `calc(100% - 13% - 10px)`
                 }
                 dr={`row`}
                 ju={width < 700 ? `center` : `flex-start`}
               >
-                <SelectStyle defaultValue={`02`} style={{ width: 61 }}>
+                <SelectStyle defaultValue={`02`} style={{ width: 65 }}>
                   <Option value={`02`}>02</Option>
                   <Option value={`031`}>031</Option>
                   <Option value={`032`}>032</Option>
@@ -453,11 +470,11 @@ const SignUp = () => {
                 >
                   -
                 </Wrapper>
-                <SignupInput width={`61px`} />
+                <SignupInput width={`67px`} />
                 <Wrapper fontSize={`12px`} width={`auto`} padding={`0 2px`}>
                   -
                 </Wrapper>
-                <SignupInput width={`61px`} />
+                <SignupInput width={`67px`} />
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
@@ -470,13 +487,13 @@ const SignUp = () => {
                 padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
                 width={
                   width < 700
-                    ? `calc(100% - 110px - 10px)`
+                    ? `calc(100% - 98px - 10px)`
                     : `calc(100% - 13% - 10px)`
                 }
                 dr={`row`}
                 ju={width < 700 ? `center` : `flex-start`}
               >
-                <SelectStyle defaultValue={`010`} style={{ width: 61 }}>
+                <SelectStyle defaultValue={`010`} style={{ width: 65 }}>
                   <Option value={`010`}>010</Option>
                   <Option value={`011`}>011</Option>
                   <Option value={`016`}>016</Option>
@@ -491,11 +508,11 @@ const SignUp = () => {
                 >
                   -
                 </Wrapper>
-                <SignupInput width={`61px`} />
+                <SignupInput width={`67px`} />
                 <Wrapper fontSize={`12px`} width={`auto`} padding={`0 2px`}>
                   -
                 </Wrapper>
-                <SignupInput width={`61px`} />
+                <SignupInput width={`67px`} />
               </Wrapper>
             </SignUpWrapper>
             <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
@@ -508,25 +525,25 @@ const SignUp = () => {
                 padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
                 width={
                   width < 700
-                    ? `calc(100% - 110px - 10px)`
+                    ? `calc(100% - 98px - 10px)`
                     : `calc(100% - 13% - 10px)`
                 }
                 dr={`row`}
                 ju={width < 700 ? `center` : `flex-start`}
               >
                 <SignupInput
-                  width={width < 700 ? `100px` : `206px`}
+                  width={width < 700 ? `95px` : `206px`}
                   margin={`0 10px 0 0`}
                 />
-                <SelectStyle
+                <SelectStyle2
                   defaultValue={`@`}
-                  style={width < 700 ? { width: 100 } : { width: 206 }}
+                  style={width < 700 ? { width: 115 } : { width: 206 }}
                 >
                   <Option value={`@naver.com`}>@naver.com</Option>
                   <Option value={`@hanmail.com`}>@hanmail.com</Option>
                   <Option value={`@nate.com`}>@nate.com</Option>
                   <Option value={`@gmail.com`}>@gmail.com</Option>
-                </SelectStyle>
+                </SelectStyle2>
               </Wrapper>
             </SignUpWrapper>
             <Wrapper al={`flex-start`} margin={`40px 0 0 0`}>
