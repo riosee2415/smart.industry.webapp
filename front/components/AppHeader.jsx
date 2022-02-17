@@ -17,6 +17,9 @@ import {
   AlignRightOutlined,
   MenuOutlined,
   DownloadOutlined,
+  UserOutlined,
+  DownOutlined,
+  PhoneOutlined,
 } from "@ant-design/icons";
 import { Drawer } from "antd";
 import Link from "next/link";
@@ -48,7 +51,8 @@ const MobileRow = styled(RowWrapper)`
   left: 0;
   z-index: 10000;
   transition: 0.5s;
-  padding: 10px 0;
+  border-bottom: 1px solid ${Theme.lightGrey_C};
+  background: ${Theme.white_C};
 
   @media (max-width: 700px) {
     display: flex;
@@ -233,7 +237,11 @@ const AppHeader = () => {
               </a>
             </Link>
             <Text margin={`0 0 0 30px`}>주문조회</Text>
-            <Text margin={`0 0 0 30px`}>마이페이지</Text>
+            <Link href={`/mypage`}>
+              <a>
+                <Text margin={`0 0 0 30px`}>마이페이지</Text>
+              </a>
+            </Link>
 
             {headerScroll && (
               <Wrapper
@@ -545,23 +553,63 @@ const AppHeader = () => {
       </WebRow>
       {/* mobile */}
       <MobileRow justify={`center`} className={headerScroll && "background"}>
-        <ColWrapper span={11} al={`flex-start`}>
+        <ColWrapper
+          span={4}
+          al={`flex-start`}
+          fontSize={`1.6rem`}
+          padding={`0 10px`}
+        >
+          <Link href={`/login`}>
+            <a>
+              <UserOutlined />
+            </a>
+          </Link>
+        </ColWrapper>
+        <ColWrapper span={16}>
           <ATag width={`auto`} href="/">
             <Image
-              width={`110px`}
-              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/SOUL/assets/images/logo/logo_long_white.png`}
+              width={`160px`}
+              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/logo/logo.png`}
             />
           </ATag>
         </ColWrapper>
         <ColWrapper
-          span={11}
+          span={4}
           al={`flex-end`}
-          fontSize={`2rem`}
-          color={Theme.white_C}
+          fontSize={`1.6rem`}
+          padding={`0 10px`}
         >
           <AlignRightOutlined onClick={drawarToggle} />
         </ColWrapper>
-
+        <Wrapper
+          height={`40px`}
+          bgColor={Theme.basicTheme_C}
+          color={Theme.white_C}
+          overflow={`auto`}
+          wrap={`nowrap`}
+          dr={`row`}
+          ju={`flex-start`}
+          padding={`0 10px`}
+        >
+          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+            건설기계
+          </Wrapper>
+          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+            중고장비
+          </Wrapper>
+          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+            특가상품
+          </Wrapper>
+          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+            임대문의
+          </Wrapper>
+          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+            사업자문의
+          </Wrapper>
+          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+            장비판매의뢰
+          </Wrapper>
+        </Wrapper>
         {drawar && (
           <Drawer
             placement="right"
@@ -570,69 +618,154 @@ const AppHeader = () => {
             visible={drawarToggle}
             getContainer={false}
           >
+            <Wrapper
+              dr={`row`}
+              ju={`flex-start`}
+              borderBottom={`1px solid ${Theme.lightGrey_C}`}
+              padding={`0 0 15px`}
+            >
+              <Link href={`/login`}>
+                <a>
+                  <Text fontSize={`12px`}>로그인</Text>
+                </a>
+              </Link>
+              <Link href={`/user/signup`}>
+                <a>
+                  <Text fontSize={`12px`} margin={`0 0 0 20px`}>
+                    회원가입
+                  </Text>
+                </a>
+              </Link>
+              <Text fontSize={`12px`} margin={`0 0 0 20px`}>
+                주문조회
+              </Text>
+              <Link href={`/mypage`}>
+                <a>
+                  <Text fontSize={`12px`} margin={`0 0 0 20px`}>
+                    마이페이지
+                  </Text>
+                </a>
+              </Link>
+            </Wrapper>
+            <Wrapper width={`100%`} position={`relative`} margin={`20px 0`}>
+              <TextInput
+                type={`text`}
+                width={`100%`}
+                height={`35px`}
+                placeholder={`검색어를 입력해주세요.`}
+                radius={`18px`}
+                padding={`0 40px 0 20px`}
+              />
+              <Wrapper
+                width={`auto`}
+                position={`absolute`}
+                top={`0`}
+                right={`15px`}
+                height={`100%`}
+              >
+                <Image
+                  width={`14px`}
+                  alt="icon"
+                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/header/icon_search.png`}
+                />
+              </Wrapper>
+            </Wrapper>
             <ColWrapper al={`flex-start`}>
-              <ColWrapper
+              <Wrapper
+                dr={`row`}
+                ju={`space-between`}
+                borderBottom={`1px solid ${Theme.lightGrey_C}`}
+                padding={`10px 0`}
                 fontSize={`1.2rem`}
                 onClick={() => {
                   setSubMenu(0);
                 }}
               >
-                한의원 소개
-              </ColWrapper>
+                카테고리
+                <DownOutlined style={{ color: Theme.basicTheme_C }} />
+              </Wrapper>
               {subMenu === 0 && (
-                <>
-                  <ATag href="about" width={`auto`} color={`initial`}>
-                    <ColWrapper margin={`5px 10px 20px`}>
-                      의료진 소개 및 진료 시간표
-                    </ColWrapper>
-                  </ATag>
-                </>
+                <Wrapper bgColor={Theme.lightGrey_C}>
+                  <Wrapper al={`flex-start`} padding={`5px`}>
+                    건설기계
+                  </Wrapper>
+                  <Wrapper al={`flex-start`} padding={`5px`}>
+                    건설기계
+                  </Wrapper>
+                  <Wrapper al={`flex-start`} padding={`5px`}>
+                    건설기계
+                  </Wrapper>
+                </Wrapper>
               )}
-              <ColWrapper
+              <Wrapper
+                dr={`row`}
+                ju={`space-between`}
+                borderBottom={`1px solid ${Theme.lightGrey_C}`}
+                padding={`10px 0`}
                 fontSize={`1.2rem`}
                 onClick={() => {
                   setSubMenu(1);
                 }}
               >
-                진료 과목
-              </ColWrapper>
+                커뮤니티
+                <DownOutlined style={{ color: Theme.basicTheme_C }} />
+              </Wrapper>
               {subMenu === 1 && (
-                <>
-                  <ColWrapper margin={`5px 10px 0`}>
-                    <Link href="/diagnosis?type=1">체질 의학</Link>
-                  </ColWrapper>
-
-                  <ColWrapper margin={`5px 10px 0`}>
-                    <Link href="/diagnosis?type=2">소울 다이어트</Link>
-                  </ColWrapper>
-                  <ColWrapper margin={`5px 10px 0`}>
-                    <Link href="/diagnosis?type=3">만성 난치 클리닉</Link>
-                  </ColWrapper>
-                  <ColWrapper margin={`5px 10px 20px`}>
-                    <Link href="/diagnosis?type=4">통증 클리닉</Link>
-                  </ColWrapper>
-                </>
+                <Wrapper bgColor={Theme.lightGrey_C}>
+                  <Wrapper al={`flex-start`} padding={`5px`}>
+                    이용안내 FAQ
+                  </Wrapper>
+                  <Wrapper al={`flex-start`} padding={`5px`}>
+                    공지사항
+                  </Wrapper>
+                  <Wrapper al={`flex-start`} padding={`5px`}>
+                    1:1 맞춤문의
+                  </Wrapper>
+                  <Wrapper al={`flex-start`} padding={`5px`}>
+                    상푼문의
+                  </Wrapper>
+                </Wrapper>
               )}
-              <ATag width={`auto`} href="notice" color={`initial`}>
-                <ColWrapper
-                  fontSize={`1.2rem`}
-                  onClick={() => {
-                    setSubMenu(2);
-                  }}
+              <Wrapper al={`flex-start`}>
+                <Wrapper al={`flex-start`} margin={`20px 0 5px`}>
+                  고객센터
+                </Wrapper>
+                <Wrapper
+                  width={`30px`}
+                  height={`1px`}
+                  bgColor={Theme.basicTheme_C}
+                ></Wrapper>
+                <Wrapper
+                  dr={`row`}
+                  margin={`10px 0`}
+                  ju={`flex-start`}
+                  fontSize={`20px`}
                 >
-                  공지사항
-                </ColWrapper>
-              </ATag>
-              <ATag href="location" width={`auto`} color={`initial`}>
-                <ColWrapper
-                  fontSize={`1.2rem`}
-                  onClick={() => {
-                    setSubMenu(3);
-                  }}
-                >
-                  오시는 길
-                </ColWrapper>
-              </ATag>
+                  <Wrapper
+                    width={`35px`}
+                    height={`35px`}
+                    bgColor={Theme.basicTheme_C}
+                    color={Theme.white_C}
+                    radius={`100%`}
+                    margin={`0 5px 0 0`}
+                  >
+                    <PhoneOutlined />
+                  </Wrapper>
+                  0000-0000
+                </Wrapper>
+                <Text color={Theme.grey_C} fontSize={`13px`}>
+                  평일 오전 09:00 ~ 오후 6:00{" "}
+                </Text>
+                <Text color={Theme.grey_C} fontSize={`13px`}>
+                  토요일 오전 09:00 ~ 오후 5:00
+                </Text>
+                <Text color={Theme.grey_C} fontSize={`13px`}>
+                  일, 공휴일 휴무
+                </Text>
+                <Text color={Theme.grey_C} fontSize={`13px`}>
+                  점심시간 12:00 ~ 13:00
+                </Text>
+              </Wrapper>
             </ColWrapper>
           </Drawer>
         )}

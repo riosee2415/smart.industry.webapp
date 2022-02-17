@@ -36,6 +36,10 @@ const GlobalStyles = createGlobalStyle`
   a:hover {
     color : inherit;
   }
+
+  .ant-drawer-left .ant-drawer-content-wrapper, .ant-drawer-right .ant-drawer-content-wrapper{
+    width: 85% !important;
+  }
   
   @media (max-width : 576px) {
     html { 
