@@ -43,6 +43,7 @@ const TitleWrapper = styled(Wrapper)`
 
   @media (max-width: 700px) {
     width: 110px;
+    font-size: 13px;
   } ;
 `;
 
@@ -68,20 +69,13 @@ const SignupInput = styled(TextInput)`
 const SelectStyle = styled(Select)`
   &.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     height: 35px;
-  }
-  &.ant-select-single.ant-select-show-arrow .ant-select-selection-item,
-  .ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
-    padding: 5px;
-  }
-`;
 
-const SelectStyle2 = styled(Select)`
-  &.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
-    height: 35px;
+    align-items: center;
+    justify-content: center;
   }
   &.ant-select-single.ant-select-show-arrow .ant-select-selection-item,
   .ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
-    padding: 3px;
+    padding: 0px;
   }
 `;
 
@@ -209,7 +203,7 @@ const SignUp = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`300px 0 0`}>
+          <RsWrapper margin={width < 700 ? `50px 0 0` : `250px 0 0`}>
             <Wrapper
               margin={`40px 0 25px`}
               al={`flex-start`}
@@ -242,7 +236,7 @@ const SignUp = () => {
               </TitleWrapper>
               <Wrapper
                 borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                padding={`9px 0 9px 20px`}
                 al={`flex-start`}
                 width={
                   width < 700
@@ -278,6 +272,7 @@ const SignUp = () => {
                   color={Theme.grey_C}
                   padding={`0 0 0 10px`}
                   al={`flex-start`}
+                  fontSize={width < 700 ? `12px` : `14px`}
                 >
                   (영문소문자/숫자, 4~16자)
                 </Wrapper>
@@ -307,6 +302,7 @@ const SignUp = () => {
                   color={Theme.grey_C}
                   padding={`0 0 0 10px`}
                   al={`flex-start`}
+                  fontSize={width < 700 ? `12px` : `14px`}
                 >
                   (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자)
                 </Wrapper>
@@ -368,7 +364,7 @@ const SignUp = () => {
               >
                 <Wrapper dr={`row`} ju={`flex-start`}>
                   <SignupInput
-                    margin={width < 700 ? `0 0 0 23px` : `0 0 0 0`}
+                    margin={width < 700 ? `0 0 0 15px` : `0 0 0 0`}
                     width={`62px`}
                     color={Theme.grey_C}
                   />
@@ -384,22 +380,34 @@ const SignUp = () => {
                     우편번호
                   </CommonButton>
                 </Wrapper>
-                <Wrapper width={`auto`} dr={`row`} margin={`10px 0`}>
-                  <SignupInput width={`206px`} />
+                <Wrapper
+                  width={width < 700 ? `100%` : `auto`}
+                  dr={`row`}
+                  margin={`10px 0`}
+                >
+                  <SignupInput
+                    width={`206px`}
+                    placeholder={width < 700 ? `기본주소` : ``}
+                  />
                   <Wrapper
                     width={width < 700 ? `100%` : `calc(100% - 206px)`}
                     color={Theme.grey_C}
                     padding={`0 0 0 10px`}
+                    display={width < 700 ? `none` : `flex`}
                   >
                     기본주소
                   </Wrapper>
                 </Wrapper>
-                <Wrapper width={`auto`} dr={`row`}>
-                  <SignupInput width={`206px`} />
+                <Wrapper width={width < 700 ? `100%` : `auto`} dr={`row`}>
+                  <SignupInput
+                    width={`206px`}
+                    placeholder={width < 700 ? `나머지주소` : ``}
+                  />
                   <Wrapper
                     width={width < 700 ? `100%` : `calc(100% - 206px)`}
                     color={Theme.grey_C}
                     padding={`0 0 0 10px`}
+                    display={width < 700 ? `none` : `flex`}
                   >
                     나머지주소
                   </Wrapper>
@@ -468,14 +476,14 @@ const SignUp = () => {
                 dr={`row`}
                 ju={width < 700 ? `center` : `flex-start`}
               >
-                <SelectStyle2 defaultValue={`010`} style={{ width: 61 }}>
+                <SelectStyle defaultValue={`010`} style={{ width: 61 }}>
                   <Option value={`010`}>010</Option>
                   <Option value={`011`}>011</Option>
                   <Option value={`016`}>016</Option>
                   <Option value={`017`}>017</Option>
                   <Option value={`018`}>018</Option>
                   <Option value={`019`}>019</Option>
-                </SelectStyle2>
+                </SelectStyle>
                 <Wrapper
                   fontSize={`12px`}
                   width={`auto`}
@@ -576,7 +584,7 @@ const SignUp = () => {
               <CommonButton
                 width={`150px`}
                 height={`50px`}
-                margin={`60px 0 0 0`}
+                margin={`60px 0 110px 0`}
                 fontSize={`18px`}
                 padding={`0`}
                 radius={`0`}
