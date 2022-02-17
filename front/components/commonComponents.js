@@ -494,7 +494,7 @@ export const TextArea = styled.textarea`
   }
 `;
 
-export const subTitle = styled.h3`
+export const SubTitle = styled.h3`
   overflow: ${(props) => props.overflow};
   width: ${(props) => props.width};
   height: ${(props) => props.height};
