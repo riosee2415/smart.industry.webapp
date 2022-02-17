@@ -23,6 +23,7 @@ import {
 } from "@ant-design/icons";
 import { Drawer } from "antd";
 import Link from "next/link";
+import { useRouter } from "next/dist/client/router";
 
 const WebRow = styled(RowWrapper)`
   z-index: 10000;
@@ -111,6 +112,7 @@ const SubMenuHover = styled(Wrapper)`
   top: 80px;
   left: 0;
   border: 1px solid ${Theme.lightGrey_C};
+  background: ${Theme.white_C};
 
   opacity: 0;
   visibility: hidden;
@@ -199,6 +201,8 @@ const AppHeader = () => {
   const [drawar, setDrawar] = useState(false);
   const [subMenu, setSubMenu] = useState(``);
 
+  const router = useRouter();
+
   ///////////// - EVENT HANDLER- ////////////
 
   const drawarToggle = useCallback(() => {
@@ -212,6 +216,10 @@ const AppHeader = () => {
     setHeaderScroll(headerScroll);
     setPageY(pageYOffset);
   });
+
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
 
   ////////////// - USE EFFECT- //////////////
   useEffect(() => {
@@ -377,18 +385,43 @@ const AppHeader = () => {
                         color={Theme.black_C}
                       >
                         <Title>커뮤니티</Title>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          이용안내 FAQ
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          공지사항
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          1:1 맞춤문의
-                        </SubMenuTextCol>
-                        <SubMenuTextCol fontSize={`12px`}>
-                          상푼문의
-                        </SubMenuTextCol>
+                        <Link href={`/community/faq`}>
+                          <a>
+                            <SubMenuTextCol
+                              margin={`0 0 12px`}
+                              fontSize={`12px`}
+                            >
+                              이용안내 FAQ
+                            </SubMenuTextCol>
+                          </a>
+                        </Link>
+                        <Link href={`/community/notice`}>
+                          <a>
+                            <SubMenuTextCol
+                              margin={`0 0 12px`}
+                              fontSize={`12px`}
+                            >
+                              공지사항
+                            </SubMenuTextCol>
+                          </a>
+                        </Link>
+                        <Link href={`/community/question`}>
+                          <a>
+                            <SubMenuTextCol
+                              margin={`0 0 12px`}
+                              fontSize={`12px`}
+                            >
+                              1:1 맞춤문의
+                            </SubMenuTextCol>
+                          </a>
+                        </Link>
+                        <Link href={`/community/productQnA`}>
+                          <a>
+                            <SubMenuTextCol fontSize={`12px`}>
+                              상푼문의
+                            </SubMenuTextCol>
+                          </a>
+                        </Link>
                       </Wrapper>
                       <Wrapper
                         width={`calc(100% / 2)`}
@@ -397,21 +430,56 @@ const AppHeader = () => {
                         al={`flex-start`}
                       >
                         <Title>마이페이지</Title>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          주문내역 조회
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          회원 정보
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          장바구니
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          관심상품
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          1:1 문의 내역
-                        </SubMenuTextCol>
+                        <Link href={`/mypage/order`}>
+                          <a>
+                            <SubMenuTextCol
+                              margin={`0 0 12px`}
+                              fontSize={`12px`}
+                            >
+                              주문내역 조회
+                            </SubMenuTextCol>
+                          </a>
+                        </Link>
+                        <Link href={`/mypage/profile`}>
+                          <a>
+                            <SubMenuTextCol
+                              margin={`0 0 12px`}
+                              fontSize={`12px`}
+                            >
+                              회원 정보
+                            </SubMenuTextCol>
+                          </a>
+                        </Link>
+                        <Link href={`/mypage/cart`}>
+                          <a>
+                            <SubMenuTextCol
+                              margin={`0 0 12px`}
+                              fontSize={`12px`}
+                            >
+                              장바구니
+                            </SubMenuTextCol>
+                          </a>
+                        </Link>
+                        <Link href={`/mypage/wishlist`}>
+                          <a>
+                            <SubMenuTextCol
+                              margin={`0 0 12px`}
+                              fontSize={`12px`}
+                            >
+                              관심상품
+                            </SubMenuTextCol>
+                          </a>
+                        </Link>
+                        <Link href={`/mypage/board`}>
+                          <a>
+                            <SubMenuTextCol
+                              margin={`0 0 12px`}
+                              fontSize={`12px`}
+                            >
+                              1:1 문의 내역
+                            </SubMenuTextCol>
+                          </a>
+                        </Link>
                       </Wrapper>
                     </Wrapper>
                   </AllMenu>
@@ -524,27 +592,43 @@ const AppHeader = () => {
               <SubMenuCol width={`calc(100% / 7)`}>
                 <Text>커뮤니티</Text>
                 <SubMenuHover>
-                  <Wrapper
-                    height={`50px`}
-                    borderBottom={`1px solid ${Theme.lightGrey_C}`}
-                  >
-                    <SubMenuTextCol>이용안내 FAQ</SubMenuTextCol>
-                  </Wrapper>
-                  <Wrapper
-                    height={`50px`}
-                    borderBottom={`1px solid ${Theme.lightGrey_C}`}
-                  >
-                    <SubMenuTextCol>공지사항</SubMenuTextCol>
-                  </Wrapper>
-                  <Wrapper
-                    height={`50px`}
-                    borderBottom={`1px solid ${Theme.lightGrey_C}`}
-                  >
-                    <SubMenuTextCol>1:1 맞춤문의</SubMenuTextCol>
-                  </Wrapper>
-                  <Wrapper height={`50px`}>
-                    <SubMenuTextCol>상푼문의</SubMenuTextCol>
-                  </Wrapper>
+                  <Link href={`/community/faq`}>
+                    <a>
+                      <Wrapper
+                        height={`50px`}
+                        borderBottom={`1px solid ${Theme.lightGrey_C}`}
+                      >
+                        <SubMenuTextCol>이용안내 FAQ</SubMenuTextCol>
+                      </Wrapper>
+                    </a>
+                  </Link>
+                  <Link href={`/community/notice`}>
+                    <a>
+                      <Wrapper
+                        height={`50px`}
+                        borderBottom={`1px solid ${Theme.lightGrey_C}`}
+                      >
+                        <SubMenuTextCol>공지사항</SubMenuTextCol>
+                      </Wrapper>
+                    </a>
+                  </Link>
+                  <Link href={`/community/question`}>
+                    <a>
+                      <Wrapper
+                        height={`50px`}
+                        borderBottom={`1px solid ${Theme.lightGrey_C}`}
+                      >
+                        <SubMenuTextCol>1:1 맞춤문의</SubMenuTextCol>
+                      </Wrapper>
+                    </a>
+                  </Link>
+                  <Link href={`/community/productQnA`}>
+                    <a>
+                      <Wrapper height={`50px`}>
+                        <SubMenuTextCol>상푼문의</SubMenuTextCol>
+                      </Wrapper>
+                    </a>
+                  </Link>
                 </SubMenuHover>
               </SubMenuCol>
             </Wrapper>
@@ -712,18 +796,34 @@ const AppHeader = () => {
               </Wrapper>
               {subMenu === 1 && (
                 <Wrapper bgColor={Theme.lightGrey_C}>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    이용안내 FAQ
-                  </Wrapper>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    공지사항
-                  </Wrapper>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    1:1 맞춤문의
-                  </Wrapper>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    상푼문의
-                  </Wrapper>
+                  <Link href={`/community/faq`}>
+                    <a>
+                      <Wrapper al={`flex-start`} padding={`5px`}>
+                        이용안내 FAQ
+                      </Wrapper>
+                    </a>
+                  </Link>
+                  <Link href={`/community/notice`}>
+                    <a>
+                      <Wrapper al={`flex-start`} padding={`5px`}>
+                        공지사항
+                      </Wrapper>
+                    </a>
+                  </Link>
+                  <Link href={`/community/question`}>
+                    <a>
+                      <Wrapper al={`flex-start`} padding={`5px`}>
+                        1:1 맞춤문의
+                      </Wrapper>
+                    </a>
+                  </Link>
+                  <Link href={`/community/productQnA`}>
+                    <a>
+                      <Wrapper al={`flex-start`} padding={`5px`}>
+                        상푼문의
+                      </Wrapper>
+                    </a>
+                  </Link>
                 </Wrapper>
               )}
               <Wrapper al={`flex-start`}>
@@ -754,7 +854,7 @@ const AppHeader = () => {
                   0000-0000
                 </Wrapper>
                 <Text color={Theme.grey_C} fontSize={`13px`}>
-                  평일 오전 09:00 ~ 오후 6:00{" "}
+                  평일 오전 09:00 ~ 오후 6:00
                 </Text>
                 <Text color={Theme.grey_C} fontSize={`13px`}>
                   토요일 오전 09:00 ~ 오후 5:00
