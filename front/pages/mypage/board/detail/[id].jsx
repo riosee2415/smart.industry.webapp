@@ -236,15 +236,11 @@ const Notice = () => {
               borderBottom={`1px solid ${Theme.darkGrey_C}`}
               margin={`0 0 110px`}
             >
-              <Wrapper
-                dr={`row`}
-                padding={`8px 0`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-              >
+              <Wrapper dr={`row`} borderBottom={`1px solid ${Theme.grey2_C}`}>
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
-                  height={`100%`}
                   borderRight={`1px solid ${Theme.grey2_C}`}
+                  padding={`8px 0`}
                 >
                   ▲ 이전글
                 </Wrapper>
@@ -256,11 +252,11 @@ const Notice = () => {
                   안녕하세요 이전글입니다.
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`} padding={`8px 0`}>
+              <Wrapper dr={`row`}>
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
-                  height={`100%`}
                   borderRight={`1px solid ${Theme.grey2_C}`}
+                  padding={`8px 0`}
                 >
                   ▼ 다음글
                 </Wrapper>

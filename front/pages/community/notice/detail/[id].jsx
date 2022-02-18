@@ -137,7 +137,6 @@ const Notice = () => {
 
             <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
               <Wrapper
-                padding={`16px 0`}
                 dr={`row`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
@@ -145,8 +144,7 @@ const Notice = () => {
                 <Wrapper
                   width={width < 500 ? `30%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
-                  padding={`16px 0`}
-                  padding={`0 0 0 20px`}
+                  padding={`16px 20px`}
                   al={`flex-start`}
                 >
                   제목
@@ -159,17 +157,11 @@ const Notice = () => {
                   공지사항입니다.
                 </Wrapper>
               </Wrapper>
-              <Wrapper
-                padding={`16px 0`}
-                dr={`row`}
-                borderTop={`1px solid ${Theme.grey2_C}`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-              >
+              <Wrapper dr={`row`} borderBottom={`1px solid ${Theme.grey2_C}`}>
                 <Wrapper
                   width={width < 500 ? `30%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
-                  padding={`16px 0`}
-                  padding={`0 0 0 20px`}
+                  padding={`16px 20px`}
                   al={`flex-start`}
                 >
                   작성자
@@ -182,16 +174,11 @@ const Notice = () => {
                   대한기계공구
                 </Wrapper>
               </Wrapper>
-              <Wrapper
-                padding={`16px 0`}
-                borderTop={`1px solid ${Theme.grey2_C}`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-                dr={`row`}
-              >
+              <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`} dr={`row`}>
                 <Wrapper
                   width={width < 500 ? `25%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
-                  padding={`0 0 0 20px`}
+                  padding={`16px 20px`}
                   al={`flex-start`}
                 >
                   작성일
@@ -206,7 +193,7 @@ const Notice = () => {
                 <Wrapper
                   width={width < 500 ? `25%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
-                  padding={`0 0 0 20px`}
+                  padding={`16px 20px`}
                   al={`flex-start`}
                 >
                   조회수
@@ -245,14 +232,10 @@ const Notice = () => {
               borderBottom={`1px solid ${Theme.darkGrey_C}`}
               margin={`0 0 110px`}
             >
-              <Wrapper
-                dr={`row`}
-                padding={`8px 0`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-              >
+              <Wrapper dr={`row`} borderBottom={`1px solid ${Theme.grey2_C}`}>
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
-                  height={`100%`}
+                  padding={`10px 0`}
                   borderRight={`1px solid ${Theme.grey2_C}`}
                 >
                   ▲ 이전글
@@ -265,10 +248,10 @@ const Notice = () => {
                   안녕하세요 이전글입니다.
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`} padding={`8px 0`}>
+              <Wrapper dr={`row`}>
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
-                  height={`100%`}
+                  padding={`10px 0`}
                   borderRight={`1px solid ${Theme.grey2_C}`}
                 >
                   ▼ 다음글
