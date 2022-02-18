@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   KAKAO_LOGIN_REQUEST,
@@ -31,6 +31,7 @@ import Mainslider from "../components/slide/MainSlider";
 import ToastEditorComponent from "../components/editor/ToastEditorComponent";
 import { useRef } from "react";
 import { Empty, Button } from "antd";
+import { HeartFilled, PlusOutlined } from "@ant-design/icons";
 
 const ProductWrapper = styled(Wrapper)`
   width: calc(100% / 4 - (100px / 4));
@@ -87,17 +88,13 @@ const ProductWrapper = styled(Wrapper)`
     }
   }
 
-  &:hover img {
-    cursor: pointer;
-    transform: scale(1.1); /*  default */
-    -webkit-transform: scale(1.1); /*  크롬 */
-    -moz-transform: scale(1.1); /* FireFox */
-    -o-transform: scale(1.1);
+  &:hover .whiteBack {
+    opacity: 1;
+  }
 
-    transition: transform 0.5s;
-    -o-transition: transform 0.5s;
-    -moz-transition: transform 0.5s;
-    -webkit-transition: transform 0.5s;
+  & .whiteBack div div:nth-child(1):hover p,
+  & .whiteBack div div:nth-child(2):hover p {
+    display: flex;
   }
 `;
 
@@ -205,6 +202,8 @@ const Home = ({}) => {
     (state) => state.seo
   );
 
+  const [isHeart, setIsHeart] = useState(false);
+
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -261,6 +260,11 @@ const Home = ({}) => {
   }, []);
 
   ////// TOGGLE //////
+
+  const isHeartToggle = useCallback(() => {
+    setIsHeart(!isHeart);
+  }, [isHeart]);
+
   ////// HANDLER //////
   ////// DATAVIEW //////
 
@@ -484,11 +488,81 @@ const Home = ({}) => {
                         <Wrapper
                           padding={`20px`}
                           border={`1px solid ${Theme.lightGrey_C}`}
+                          position={`relative`}
                         >
                           <Image
                             src={data.thumbnail}
                             alt="main_product_thumbnail"
                           />
+                          <Wrapper
+                            className="whiteBack"
+                            opacity={`0`}
+                            position={`absolute`}
+                            top={`0`}
+                            left={`0`}
+                            width={`100%`}
+                            height={`100%`}
+                            padding={`20px`}
+                            bgColor={`rgba(255, 255, 255, 0.6)`}
+                          >
+                            <Wrapper
+                              height={`100%`}
+                              ju={`flex-end`}
+                              al={`flex-end`}
+                            >
+                              <Wrapper width={`auto`} dr={`row`}>
+                                <Text
+                                  fontSize={`12px`}
+                                  color={Theme.white_C}
+                                  bgColor={`rgba(0, 0, 0, 0.5)`}
+                                  width={`62px`}
+                                  height={`20px`}
+                                  lineHeight={`1.14`}
+                                  display={`none`}
+                                  ju={`center`}
+                                  al={`center`}
+                                >
+                                  장바구니
+                                </Text>
+                                <Image
+                                  width={`34px`}
+                                  height={`auto !important`}
+                                  src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_cart.png"
+                                  alt="cart_icon"
+                                />
+                              </Wrapper>
+                              <Wrapper
+                                width={`auto`}
+                                dr={`row`}
+                                margin={`8px 0 0`}
+                              >
+                                <Text
+                                  fontSize={`12px`}
+                                  color={Theme.white_C}
+                                  bgColor={`rgba(0, 0, 0, 0.5)`}
+                                  width={`62px`}
+                                  height={`20px`}
+                                  lineHeight={`1.14`}
+                                  display={`none`}
+                                  ju={`center`}
+                                  al={`center`}
+                                >
+                                  관심상품
+                                </Text>
+                                <Image
+                                  onClick={isHeartToggle}
+                                  width={`34px`}
+                                  height={`auto !important`}
+                                  src={
+                                    isHeart
+                                      ? "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart_red.png"
+                                      : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart.png"
+                                  }
+                                  alt="heart_icon"
+                                />
+                              </Wrapper>
+                            </Wrapper>
+                          </Wrapper>
                         </Wrapper>
                         <Text margin={`25px 0 13px`}>{data.name}</Text>
                         <Wrapper
@@ -545,11 +619,81 @@ const Home = ({}) => {
                           <Wrapper
                             padding={`20px`}
                             border={`1px solid ${Theme.lightGrey_C}`}
+                            position={`relative`}
                           >
                             <Image
                               src={data.thumbnail}
                               alt="main_product_thumbnail"
                             />
+                            <Wrapper
+                              className="whiteBack"
+                              opacity={`0`}
+                              position={`absolute`}
+                              top={`0`}
+                              left={`0`}
+                              width={`100%`}
+                              height={`100%`}
+                              padding={`20px`}
+                              bgColor={`rgba(255, 255, 255, 0.6)`}
+                            >
+                              <Wrapper
+                                height={`100%`}
+                                ju={`flex-end`}
+                                al={`flex-end`}
+                              >
+                                <Wrapper width={`auto`} dr={`row`}>
+                                  <Text
+                                    fontSize={`12px`}
+                                    color={Theme.white_C}
+                                    bgColor={`rgba(0, 0, 0, 0.5)`}
+                                    width={`62px`}
+                                    height={`20px`}
+                                    lineHeight={`1.14`}
+                                    display={`none`}
+                                    ju={`center`}
+                                    al={`center`}
+                                  >
+                                    장바구니
+                                  </Text>
+                                  <Image
+                                    width={`34px`}
+                                    height={`auto !important`}
+                                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_cart.png"
+                                    alt="cart_icon"
+                                  />
+                                </Wrapper>
+                                <Wrapper
+                                  width={`auto`}
+                                  dr={`row`}
+                                  margin={`8px 0 0`}
+                                >
+                                  <Text
+                                    fontSize={`12px`}
+                                    color={Theme.white_C}
+                                    bgColor={`rgba(0, 0, 0, 0.5)`}
+                                    width={`62px`}
+                                    height={`20px`}
+                                    lineHeight={`1.14`}
+                                    display={`none`}
+                                    ju={`center`}
+                                    al={`center`}
+                                  >
+                                    관심상품
+                                  </Text>
+                                  <Image
+                                    onClick={isHeartToggle}
+                                    width={`34px`}
+                                    height={`auto !important`}
+                                    src={
+                                      isHeart
+                                        ? "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart_red.png"
+                                        : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart.png"
+                                    }
+                                    alt="heart_icon"
+                                  />
+                                </Wrapper>
+                              </Wrapper>
+                            </Wrapper>
                           </Wrapper>
                           <Text margin={`25px 0 13px`}>{data.name}</Text>
 
