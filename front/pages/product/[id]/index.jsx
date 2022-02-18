@@ -14,6 +14,7 @@ import Theme from "../../../components/Theme";
 import useWidth from "../../../hooks/useWidth";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import styled from "styled-components";
+import Inquiry from "../../../components/product/inquiry";
 
 const DetailButton = styled.button`
   width: calc(100% / 3);
@@ -319,7 +320,7 @@ const DetailProduct = () => {
 
           {tab === 1 && <Wrapper>상품상세정보</Wrapper>}
           {tab === 2 && <Wrapper>상품구매안내</Wrapper>}
-          {tab === 3 && <Wrapper>상품문의</Wrapper>}
+          {tab === 3 && <Inquiry />}
         </RsWrapper>
       </WholeWrapper>
     </ClientLayout>
