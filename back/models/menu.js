@@ -9,6 +9,10 @@ module.exports = class Menu extends Model {
           type: DataTypes.STRING(50),
           allowNull: false,
         },
+        imagePath: {
+          type: DataTypes.STRING(600),
+          allowNull: false,
+        },
         isDelete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,

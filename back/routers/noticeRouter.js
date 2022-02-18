@@ -109,15 +109,13 @@ router.post(
   isAdminCheck,
   upload.single("file"),
   async (req, res, next) => {
-    const { title, content, type, isTop } = req.body;
+    const { title, author, content } = req.body;
 
     try {
       const createResult = await Notice.create({
         title,
+        author,
         content,
-        type,
-        isTop: Boolean(isTop),
-        file: req.file ? req.file.location : null,
       });
 
       if (!createResult) {
@@ -137,7 +135,7 @@ router.patch(
   upload.single("file"),
   isAdminCheck,
   async (req, res, next) => {
-    const { id, title, content, type, isTop } = req.body;
+    const { id, title, author, content } = req.body;
 
     try {
       const exNotice = await Notice.findOne({ where: { id: parseInt(id) } });
@@ -149,10 +147,8 @@ router.patch(
       const updateResult = await Notice.update(
         {
           title,
+          author,
           content,
-          type,
-          isTop: Boolean(isTop),
-          file: req.file ? req.file.path : exNotice.dataValues.file,
         },
         {
           where: { id: parseInt(id) },

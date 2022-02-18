@@ -17,6 +17,14 @@ module.exports = class MainBanner extends Model {
           type: DataTypes.STRING(100),
           allowNull: false,
         },
+        title: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
+        content: {
+          type: DataTypes.STRING(300),
+          allowNull: false,
+        },
       },
       {
         modelName: "MainBanner",

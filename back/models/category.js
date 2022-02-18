@@ -5,10 +5,6 @@ module.exports = class Category extends Model {
   static init(sequelize) {
     return super.init(
       {
-        imagePath: {
-          type: DataTypes.STRING(600),
-          allowNull: false,
-        },
         value: {
           type: DataTypes.STRING(50),
           allowNull: false,
