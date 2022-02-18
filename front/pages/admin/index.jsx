@@ -44,7 +44,7 @@ const AdminHome = () => {
   const onLoginHandler = () => {
     dispatch({
       type: LOGIN_ADMIN_REQUEST,
-      data: { email: inputId.value, password: inputPw.value },
+      data: { userId: inputId.value, password: inputPw.value },
     });
   };
 
@@ -81,7 +81,7 @@ const AdminHome = () => {
           <Wrapper height={`100%`} padding={`30px`}>
             <Image
               alt="logo"
-              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/SOUL/assets/images/logo/logo_long_black_W.jpg`}
+              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/logo/logo.png`}
               width={`300px`}
             />
             <Wrapper width={`80%`}>

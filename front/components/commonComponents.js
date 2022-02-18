@@ -197,7 +197,7 @@ export const CommonButton = styled(Button)`
   padding: ${(props) => props.padding};
   font-size: ${(props) => props.fontSize || `1rem`};
   color: ${(props) => props.color || props.theme.subTheme2_C};
-  border-radius: ${(props) => props.radius || `7px`};
+  border-radius: ${(props) => props.radius};
 
   ${(props) => !props.kindOf && `background : ${props.theme.basicTheme_C};`}
   ${(props) => !props.kindOf && `color : ${props.theme.white_C};`}
