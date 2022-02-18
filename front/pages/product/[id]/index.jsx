@@ -214,9 +214,9 @@ const DetailProduct = () => {
                           ju={`space-between`}
                           margin={`0 10px 0 0`}
                         >
-                          <MinusOutlined />
-                          <Text fontWeight={`bold`}>0</Text>
-                          <PlusOutlined />
+                          <MinusOutlined style={{ cursor: `pointer` }} />
+                          <Text fontWeight={`bold`}>1</Text>
+                          <PlusOutlined style={{ cursor: `pointer` }} />
                         </Wrapper>
                       </Wrapper>
                     </Wrapper>
