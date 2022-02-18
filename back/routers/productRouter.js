@@ -60,8 +60,7 @@ router.get("/cat/list", async (req, res, next) => {
             DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
             DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
             A.MenuId,
-            B.value 																		    AS	menuValue,
-            B.isShow
+            B.value 																		    AS	menuValue
     FROM	categorys				A
    INNER
     JOIN	menus 					B
@@ -69,7 +68,6 @@ router.get("/cat/list", async (req, res, next) => {
    WHERE	1 = 1
      AND	A.isDelete = FALSE
      AND	B.isDelete = FALSE
-     AND	B.isShow = TRUE
       `;
 
     const lists = await models.sequelize.query(selectQuery);

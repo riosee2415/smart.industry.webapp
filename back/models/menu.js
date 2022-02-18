@@ -18,11 +18,6 @@ module.exports = class Menu extends Model {
           allowNull: false,
           defaultValue: false,
         },
-        isShow: {
-          type: DataTypes.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
-        },
       },
       {
         modelName: "Menu",

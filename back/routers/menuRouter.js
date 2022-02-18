@@ -9,8 +9,6 @@ const isNanCheck = require("../middlewares/isNanCheck");
 const { Menu } = require("../models");
 const models = require("../models");
 
-const router = express.Router();
-
 try {
   fs.accessSync("uploads");
 } catch (error) {
@@ -42,6 +40,8 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
+const router = express.Router();
+
 router.post(
   "/image",
   isAdminCheck,
@@ -51,14 +51,11 @@ router.post(
   }
 );
 
-const router = express.Router();
-
 router.get("/list", async (req, res, next) => {
   try {
     const selectQuery = `
     SELECT	id,
             value,
-            isShow,
             imagePath
       FROM	menus
      WHERE	1 = 1
@@ -80,12 +77,10 @@ router.get("/showList", async (req, res, next) => {
     const selectQuery = `
     SELECT	id,
             value,
-            isShow,
             imagePath
      FROM	menus
     WHERE	1 = 1
       AND	isDelete = FALSE
-      AND   isShow = TRUE
     ORDER   BY createdAt DESC
     `;
 
@@ -118,37 +113,6 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("메뉴를 추가할 수 없습니다.");
-  }
-});
-
-router.patch("/showToggle", isAdminCheck, async (req, res, next) => {
-  const { id, isShow } = req.body;
-  try {
-    const exMenu = await Menu.findOne({
-      where: { id: parseInt(id) },
-    });
-
-    if (!exMenu) {
-      return res.status(401).send("존재하지 않는 메뉴입니다.");
-    }
-
-    const updateResult = await Menu.update(
-      {
-        isShow,
-      },
-      {
-        where: { id: parseInt(id) },
-      }
-    );
-
-    if (updateResult[0] > 0) {
-      return res.status(200).json({ result: true });
-    } else {
-      return res.status(200).json({ result: false });
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("메뉴 노출을 수정할 수 없습니다.");
   }
 });
 
