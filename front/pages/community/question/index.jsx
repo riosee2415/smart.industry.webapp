@@ -36,13 +36,13 @@ const ContentArea = styled(TextArea)`
 
 const CommonCheckBox = styled(Checkbox)`
   .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: ${(props) => props.theme.basicTheme_C};
-    border-color: ${(props) => props.theme.basicTheme_C};
+    background-color: ${Theme.basicTheme_C};
+    border-color: ${Theme.basicTheme_C};
   }
   .ant-checkbox-wrapper:hover .ant-checkbox-inner,
   .ant-checkbox:hover .ant-checkbox-inner,
   .ant-checkbox-input:focus + .ant-checkbox-inner {
-    border-color: ${(props) => props.theme.basicTheme_C};
+    border-color: ${Theme.basicTheme_C};
   }
 
   .ant-checkbox-checked::after {
