@@ -4,6 +4,7 @@ import {
   RsWrapper,
   WholeWrapper,
   Text,
+  Wrapper,
 } from "../../../components/commonComponents";
 
 const DetailProduct = () => {
@@ -11,7 +12,7 @@ const DetailProduct = () => {
     <ClientLayout>
       <WholeWrapper>
         <RsWrapper>
-          <Text></Text>
+          <Wrapper margin={`280px 0 0`}></Wrapper>
         </RsWrapper>
       </WholeWrapper>
     </ClientLayout>
