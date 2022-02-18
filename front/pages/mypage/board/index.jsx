@@ -35,6 +35,26 @@ const Board = () => {
     router.push(link);
   }, []);
   ////// DATAVIEW //////
+  const testData = [
+    {
+      id: 1,
+      title: "문의내역 1번입니다.",
+      createdAt: "2022-02-15-00:00",
+      answer: true,
+    },
+    {
+      id: 2,
+      title: "문의내역 2번입니다.",
+      createdAt: "2022-02-15-00:00",
+      answer: false,
+    },
+    {
+      id: 3,
+      title: "문의내역 3번입니다.",
+      createdAt: "2022-02-15-00:00",
+      answer: true,
+    },
+  ];
 
   return (
     <>
@@ -103,6 +123,51 @@ const Board = () => {
               margin={`0 0 40px`}
             >
               1:1문의내역
+            </Wrapper>
+            <Wrapper margin={`0 0 60px`}>
+              <Wrapper
+                bgColor={Theme.lightGrey2_C}
+                height={`40px`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
+                <Wrapper width={`70%`}>제목</Wrapper>
+                <Wrapper width={`15%`}>작성일</Wrapper>
+                <Wrapper width={`15%`}>답변여부</Wrapper>
+              </Wrapper>
+              <Wrapper ju={`flex-start`} margin={`0 0 180px`}>
+                {testData && testData.length === 0
+                  ? ``
+                  : testData &&
+                    testData.reverse().map((data) => {
+                      return (
+                        <Wrapper
+                          dr={`row`}
+                          ju={`flex-start`}
+                          padding={`14px 0px`}
+                          cursor={`pointer`}
+                          borderBottom={`1px solid ${Theme.grey2_C}`}
+                          onClick={() =>
+                            moveLinkHandler(`./board/detail/${data.id}`)
+                          }
+                        >
+                          <Wrapper
+                            al={`flex-start`}
+                            padding={`0 20px`}
+                            width={`70%`}
+                          >
+                            {data.title}
+                          </Wrapper>
+                          <Wrapper width={`15%`}>
+                            {data.createdAt.substring(0, 10)}
+                          </Wrapper>
+                          <Wrapper width={`15%`}>
+                            {data.answer ? "답변완료" : "답변대기"}
+                          </Wrapper>
+                        </Wrapper>
+                      );
+                    })}
+              </Wrapper>
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
