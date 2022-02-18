@@ -1,6 +1,6 @@
 import { Table } from "antd";
 import React from "react";
-import { Wrapper } from "../commonComponents";
+import { Wrapper, CommonButton } from "../commonComponents";
 import styled from "styled-components";
 import Theme from "../Theme";
 
@@ -49,9 +49,30 @@ const Inquiry = () => {
       width: `10%`,
     },
   ];
+
+  const testData = [
+    {
+      id: 1,
+      title: "상품문의",
+      aouthor: "",
+    },
+  ];
+
   return (
     <Wrapper>
       <CustomTable style={{ width: `100%` }} size="middle" columns={columns} />
+
+      <Wrapper al={`flex-end`}>
+        <CommonButton
+          radius={`0`}
+          width={`106px`}
+          height={`40px`}
+          fontSize={`15px`}
+          padding={`0`}
+        >
+          상품 문의하기
+        </CommonButton>
+      </Wrapper>
     </Wrapper>
   );
 };
