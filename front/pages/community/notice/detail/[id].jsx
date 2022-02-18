@@ -32,8 +32,8 @@ const Notice = () => {
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
-  const moveHandler = useCallback(() => {
-    router.push(`/community/notice`);
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
   }, []);
   ////// DATAVIEW //////
 
@@ -92,8 +92,37 @@ const Notice = () => {
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper margin={`250px 0 0`}>
-            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
-              HOME | 커뮤니티 | 공지사항
+            <Wrapper margin={`40px 0 25px`} ju={`flex-start`} dr={`row`}>
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px 0 0`}
+                onClick={() => moveLinkHandler(`/`)}
+                cursor={`pointer`}
+              >
+                HOME
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/faq`)}
+                cursor={`pointer`}
+              >
+                커뮤니티
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/notice`)}
+                cursor={`pointer`}
+              >
+                공지사항
+              </Wrapper>
+              |
+              <Wrapper width={`auto`} margin={`0 0 0 8px`}>
+                공지사항상세
+              </Wrapper>
             </Wrapper>
             <Wrapper
               fontSize={`20px`}
@@ -204,7 +233,8 @@ const Notice = () => {
               <CommonButton
                 width={`116px`}
                 height={`50px`}
-                onClick={moveHandler}
+                onClick={() => moveLinkHandler(`/community/notice`)}
+                radius={`0`}
               >
                 목록
               </CommonButton>

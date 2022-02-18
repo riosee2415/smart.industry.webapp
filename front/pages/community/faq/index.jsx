@@ -20,6 +20,7 @@ import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { Empty } from "antd";
+import { useRouter } from "next/dist/client/router";
 
 const FaqTabBtn = styled(Wrapper)`
   width: 180px;
@@ -34,6 +35,21 @@ const FaqTabBtn = styled(Wrapper)`
   }
 `;
 
+const SearchBtn = styled(CommonButton)`
+  width: 80px;
+  height: 40px;
+  background-color: ${Theme.darkGrey_C};
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+
+  &:hover {
+    background-color: ${Theme.white_C};
+    border: 1px solid ${Theme.darkGrey_C};
+    color: ${Theme.darkGrey_C};
+  }
+`;
+
 const Faq = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
@@ -41,6 +57,7 @@ const Faq = () => {
   );
 
   const width = useWidth();
+  const router = useRouter();
 
   ////// HOOKS //////
   const [typeTab, setTypeTab] = useState(1);
@@ -51,6 +68,10 @@ const Faq = () => {
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
   const onClickToggleHandler = useCallback(
     (data) => {
       setDatum(data);
@@ -203,8 +224,33 @@ const Faq = () => {
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper margin={`250px 0 0`}>
-            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
-              HOME | 커뮤니티 | 이용안내 FAQ
+            <Wrapper margin={`40px 0 25px`} ju={`flex-start`} dr={`row`}>
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px 0 0`}
+                onClick={() => moveLinkHandler(`/`)}
+                cursor={`pointer`}
+              >
+                HOME
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/faq`)}
+                cursor={`pointer`}
+              >
+                커뮤니티
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/faq`)}
+                cursor={`pointer`}
+              >
+                이용안내 FAQ
+              </Wrapper>
             </Wrapper>
             <Wrapper
               fontSize={`20px`}
@@ -232,10 +278,9 @@ const Faq = () => {
                   width={width < 500 ? `300px` : `400px`}
                   height={`40px`}
                   margin={width < 500 ? `0 0 5px` : `0 6px 0 0`}
+                  bgColor={Theme.white_C}
                 />
-                <CommonButton width={`80px`} height={`40px`}>
-                  검색
-                </CommonButton>
+                <SearchBtn>검색</SearchBtn>
               </Wrapper>
             </Wrapper>
             <Wrapper

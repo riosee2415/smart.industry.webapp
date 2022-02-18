@@ -114,8 +114,33 @@ const Notice = () => {
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper margin={`250px 0 0`}>
-            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
-              HOME | 커뮤니티 | 상품문의
+            <Wrapper margin={`40px 0 25px`} ju={`flex-start`} dr={`row`}>
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px 0 0`}
+                onClick={() => moveLinkHandler(`/`)}
+                cursor={`pointer`}
+              >
+                HOME
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/faq`)}
+                cursor={`pointer`}
+              >
+                커뮤니티
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/productQnA`)}
+                cursor={`pointer`}
+              >
+                상품문의
+              </Wrapper>
             </Wrapper>
             <Wrapper
               fontSize={`20px`}
@@ -248,8 +273,9 @@ const Notice = () => {
                   width={`261px`}
                   height={`100%`}
                   margin={width < 500 ? `0 10px 0 0` : `0 10px 0 26px`}
+                  border={`1px solid ${Theme.grey2_C}`}
                 />
-                <CommonButton width={`74px`} height={`100%`}>
+                <CommonButton width={`74px`} height={`100%`} radius={`0`}>
                   찾기
                 </CommonButton>
               </Wrapper>

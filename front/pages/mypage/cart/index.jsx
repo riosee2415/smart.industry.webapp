@@ -91,8 +91,33 @@ const Cart = () => {
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper margin={`250px 0 0`}>
-            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
-              HOME | 마이페이지 | 장바구니
+            <Wrapper margin={`40px 0 25px`} ju={`flex-start`} dr={`row`}>
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px 0 0`}
+                onClick={() => moveLinkHandler(`/`)}
+                cursor={`pointer`}
+              >
+                HOME
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/mypage`)}
+                cursor={`pointer`}
+              >
+                마이페이지
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/mypage/cart`)}
+                cursor={`pointer`}
+              >
+                장바구니
+              </Wrapper>
             </Wrapper>
             <Wrapper
               fontSize={`20px`}

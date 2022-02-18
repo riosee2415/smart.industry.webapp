@@ -17,6 +17,7 @@ import { useState } from "react";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
+import { useRouter } from "next/dist/client/router";
 
 const Review = () => {
   ////// GLOBAL STATE //////
@@ -25,6 +26,7 @@ const Review = () => {
   );
 
   const width = useWidth();
+  const router = useRouter();
 
   ////// HOOKS //////
   const [datum, setDatum] = useState(null);
@@ -33,6 +35,10 @@ const Review = () => {
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
   const onClickToggleHandler = useCallback(
     (data) => {
       setDatum(data);
@@ -138,8 +144,33 @@ const Review = () => {
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper margin={`250px 0 0`}>
-            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
-              HOME | 커뮤니티 | 상품후기
+            <Wrapper margin={`40px 0 25px`} ju={`flex-start`} dr={`row`}>
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px 0 0`}
+                onClick={() => moveLinkHandler(`/`)}
+                cursor={`pointer`}
+              >
+                HOME
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/faq`)}
+                cursor={`pointer`}
+              >
+                커뮤니티
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/review`)}
+                cursor={`pointer`}
+              >
+                상품후기
+              </Wrapper>
             </Wrapper>
             <Wrapper
               fontSize={`20px`}

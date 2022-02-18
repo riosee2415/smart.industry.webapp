@@ -32,20 +32,18 @@ const ProductQnA = () => {
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
-  const moveHandler = useCallback(() => {
-    router.push(`/community/productQnA`);
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
   }, []);
   ////// DATAVIEW //////
-  const testData = [
-    {
-      title: "상품문의[답변완료]",
-      write: "user",
-      createdAt: "2022-02-16-00:00",
-      hit: "123",
-      question: "문의내용 입니다.",
-      answer: "문의내용에 대한 답변입니다.",
-    },
-  ];
+  const testData = {
+    title: "상품문의[답변완료]",
+    write: "user",
+    createdAt: "2022-02-16-00:00",
+    hit: "123",
+    question: "문의내용 입니다.",
+    answer: "문의내용에 대한 답변입니다.",
+  };
 
   return (
     <>
@@ -102,8 +100,37 @@ const ProductQnA = () => {
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper margin={`250px 0 0`}>
-            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
-              HOME | 커뮤니티 | 상품문의
+            <Wrapper margin={`40px 0 25px`} ju={`flex-start`} dr={`row`}>
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px 0 0`}
+                onClick={() => moveLinkHandler(`/`)}
+                cursor={`pointer`}
+              >
+                HOME
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/faq`)}
+                cursor={`pointer`}
+              >
+                커뮤니티
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() => moveLinkHandler(`/community/productQnA`)}
+                cursor={`pointer`}
+              >
+                상품문의
+              </Wrapper>
+              |
+              <Wrapper width={`auto`} margin={`0 0 0 8px`}>
+                상품문의 상세보기
+              </Wrapper>
             </Wrapper>
             <Wrapper
               fontSize={`20px`}
@@ -113,147 +140,137 @@ const ProductQnA = () => {
               borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 40px`}
             >
-              상품문의
+              상품문의 상세보기
             </Wrapper>
 
             <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              {testData && testData.length === 0 ? (
-                <Wrapper>다시 시도해주세요.</Wrapper>
-              ) : (
-                testData &&
-                testData.map((data) => {
-                  return (
-                    <>
-                      <Wrapper
-                        height={`50px`}
-                        borderTop={`1px solid ${Theme.grey2_C}`}
-                        borderBottom={`1px solid ${Theme.grey2_C}`}
-                        dr={`row`}
-                      >
-                        <Wrapper
-                          width={width < 500 ? `20%` : `10%`}
-                          height={`100%`}
-                          bgColor={Theme.lightGrey2_C}
-                          padding={`0 0 0 20px`}
-                          al={`flex-start`}
-                        >
-                          제목
-                        </Wrapper>
-                        <Wrapper
-                          width={width < 500 ? `80%` : `90%`}
-                          al={`flex-start`}
-                          padding={`0 0 0 20px`}
-                        >
-                          {data.title}
-                        </Wrapper>
-                      </Wrapper>
-                      <Wrapper
-                        height={`50px`}
-                        borderBottom={`1px solid ${Theme.grey2_C}`}
-                        dr={`row`}
-                      >
-                        <Wrapper
-                          width={width < 500 ? `20%` : `10%`}
-                          bgColor={Theme.lightGrey2_C}
-                          height={`100%`}
-                          padding={`0 0 0 20px`}
-                          al={`flex-start`}
-                        >
-                          작성자
-                        </Wrapper>
-                        <Wrapper
-                          width={width < 500 ? `80%` : `90%`}
-                          al={`flex-start`}
-                          padding={`0 0 0 20px`}
-                        >
-                          {data.write}
-                        </Wrapper>
-                      </Wrapper>
-                      <Wrapper
-                        height={`50px`}
-                        dr={`row`}
-                        borderBottom={`1px solid ${Theme.grey2_C}`}
-                      >
-                        <Wrapper
-                          width={width < 500 ? `20%` : `10%`}
-                          bgColor={Theme.lightGrey2_C}
-                          height={`100%`}
-                          padding={`0 0 0 20px`}
-                          al={`flex-start`}
-                        >
-                          작성일
-                        </Wrapper>
-                        <Wrapper
-                          width={width < 500 ? `30%` : `15%`}
-                          al={`flex-start`}
-                          padding={`0 0 0 20px`}
-                        >
-                          {data.createdAt.substring(0, 10)}
-                        </Wrapper>
-                        <Wrapper
-                          width={width < 500 ? `25%` : `10%`}
-                          bgColor={Theme.lightGrey2_C}
-                          height={`100%`}
-                          padding={`0 0 0 20px`}
-                          al={`flex-start`}
-                        >
-                          조회수
-                        </Wrapper>
-                        <Wrapper
-                          width={width < 500 ? `25%` : `65%`}
-                          al={`flex-start`}
-                          padding={`0 0 0 20px`}
-                        >
-                          {data.hit}
-                        </Wrapper>
-                      </Wrapper>
-                      <Wrapper
-                        minHeight={`140px`}
-                        al={`flex-start`}
-                        ju={`flex-start`}
-                        padding={`23px 0 0 20px`}
-                      >
-                        {data.question}
-                      </Wrapper>
-                      <Wrapper
-                        dr={`row`}
-                        al={`flex-start`}
-                        borderTop={`1px solid ${Theme.grey2_C}`}
-                        display={data.answer ? `flex` : `none`}
-                        bgColor={Theme.lightGrey2_C}
-                      >
-                        <Wrapper
-                          width={`20px`}
-                          height={`20px`}
-                          color={Theme.white_C}
-                          radius={`100%`}
-                          bgColor={Theme.red_C}
-                          margin={`23px 26px 0 20px`}
-                        >
-                          A
-                        </Wrapper>
+              <Wrapper
+                height={`50px`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                dr={`row`}
+              >
+                <Wrapper
+                  width={width < 500 ? `20%` : `10%`}
+                  height={`100%`}
+                  bgColor={Theme.lightGrey2_C}
+                  padding={`0 0 0 20px`}
+                  al={`flex-start`}
+                >
+                  제목
+                </Wrapper>
+                <Wrapper
+                  width={width < 500 ? `80%` : `90%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 20px`}
+                >
+                  {testData && testData.title}
+                </Wrapper>
+              </Wrapper>
+              <Wrapper
+                height={`50px`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                dr={`row`}
+              >
+                <Wrapper
+                  width={width < 500 ? `20%` : `10%`}
+                  bgColor={Theme.lightGrey2_C}
+                  height={`100%`}
+                  padding={`0 0 0 20px`}
+                  al={`flex-start`}
+                >
+                  작성자
+                </Wrapper>
+                <Wrapper
+                  width={width < 500 ? `80%` : `90%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 20px`}
+                >
+                  {testData && testData.write}
+                </Wrapper>
+              </Wrapper>
+              <Wrapper
+                height={`50px`}
+                dr={`row`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
+                <Wrapper
+                  width={width < 500 ? `20%` : `10%`}
+                  bgColor={Theme.lightGrey2_C}
+                  height={`100%`}
+                  padding={`0 0 0 20px`}
+                  al={`flex-start`}
+                >
+                  작성일
+                </Wrapper>
+                <Wrapper
+                  width={width < 500 ? `30%` : `15%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 20px`}
+                >
+                  {testData && testData.createdAt.substring(0, 10)}
+                </Wrapper>
+                <Wrapper
+                  width={width < 500 ? `25%` : `10%`}
+                  bgColor={Theme.lightGrey2_C}
+                  height={`100%`}
+                  padding={`0 0 0 20px`}
+                  al={`flex-start`}
+                >
+                  조회수
+                </Wrapper>
+                <Wrapper
+                  width={width < 500 ? `25%` : `65%`}
+                  al={`flex-start`}
+                  padding={`0 0 0 20px`}
+                >
+                  {testData && testData.hit}
+                </Wrapper>
+              </Wrapper>
+              <Wrapper
+                minHeight={`140px`}
+                al={`flex-start`}
+                ju={`flex-start`}
+                padding={`23px 0 0 20px`}
+              >
+                {testData && testData.question}
+              </Wrapper>
+              <Wrapper
+                dr={`row`}
+                al={`flex-start`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                display={testData && testData.answer ? `flex` : `none`}
+                bgColor={Theme.lightGrey2_C}
+              >
+                <Wrapper
+                  width={`20px`}
+                  height={`20px`}
+                  color={Theme.white_C}
+                  radius={`100%`}
+                  bgColor={Theme.red_C}
+                  margin={`23px 26px 0 20px`}
+                >
+                  A
+                </Wrapper>
 
-                        <Wrapper
-                          width={`calc(100% - 66px)`}
-                          minHeight={`140px`}
-                          al={`flex-start`}
-                          ju={`flex-start`}
-                          padding={`23px 10px 0 0`}
-                        >
-                          {data.answer}
-                        </Wrapper>
-                      </Wrapper>
-                    </>
-                  );
-                })
-              )}
+                <Wrapper
+                  width={`calc(100% - 66px)`}
+                  minHeight={`140px`}
+                  al={`flex-start`}
+                  ju={`flex-start`}
+                  padding={`23px 10px 0 0`}
+                >
+                  {testData && testData.answer}
+                </Wrapper>
+              </Wrapper>
             </Wrapper>
 
             <Wrapper al={`flex-end`} margin={`20px 0 110px`}>
               <CommonButton
                 width={`116px`}
                 height={`50px`}
-                onClick={moveHandler}
+                radius={`0`}
+                onClick={() => moveLinkHandler(`/community/productQnA`)}
               >
                 목록
               </CommonButton>

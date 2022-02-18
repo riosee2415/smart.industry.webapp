@@ -280,7 +280,7 @@ const Question = () => {
                   </CommonCheckBox>
                 </Wrapper>
               </Wrapper>
-              <CommonButton width={`117px`} height={`50px`}>
+              <CommonButton width={`117px`} height={`50px`} radius={`0`}>
                 작성하기
               </CommonButton>
             </Wrapper>
