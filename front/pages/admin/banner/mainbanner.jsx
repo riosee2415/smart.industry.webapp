@@ -14,6 +14,7 @@ import {
   BANNER_UPDATE_REQUEST,
   BANNER_CREATE_REQUEST,
   BANNER_DELETE_REQUEST,
+  BANNER_MOBILE_UPLOAD_REQUEST,
 } from "../../../reducers/banner";
 import useInput from "../../../hooks/useInput";
 import wrapper from "../../../store/configureStore";
@@ -25,6 +26,9 @@ import { Wrapper } from "../../../components/commonComponents";
 
 const BANNER_WIDTH = `1200`;
 const BANNER_HEIGHT = `440`;
+
+const BANNER_MOBILE_WIDTH = `360`;
+const BANNER_MOBILE_HEIGHT = `262`;
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -42,6 +46,12 @@ const BannerWrapper = styled.div`
 const BannerImage = styled.img`
   width: 1200px;
   height: 440px;
+  object-fit: cover;
+`;
+
+const BannerMobileImage = styled.img`
+  width: 360px;
+  height: 262px;
   object-fit: cover;
 `;
 
@@ -108,14 +118,18 @@ const Mainbanner = () => {
 
   ////// HOOKS //////
   const [currentViewImagePath, setCurrentViewImagePath] = useState(``);
+  const [currentViewMobileImagePath, setCurrentViewMobileImagePath] =
+    useState(``);
   const [deletePopVisible, setDeletePopVisible] = useState(false);
   const [currentId, setCurrentId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
   const title = useInput(``);
   const content = useInput(``);
+  const link = useInput(``);
 
   const imageInput = useRef();
+  const imageMobileInput = useRef();
 
   const dispatch = useDispatch();
 
@@ -133,6 +147,10 @@ const Mainbanner = () => {
     st_bannerDeleteLoading,
     st_bannerDeleteDone,
     st_bannerDeleteError,
+    //
+    uploadMobileBannerPath,
+    st_bannerMobileUploadLoading,
+    st_bannerMobileUploadError,
   } = useSelector((state) => state.banner);
 
   ////// USEEFFECT //////
@@ -208,6 +226,15 @@ const Mainbanner = () => {
   }, [st_bannerUpdateError]);
 
   useEffect(() => {
+    if (st_bannerMobileUploadError) {
+      bannerUploadNotification(
+        "ADMIN SYSTEM ERROR",
+        st_bannerMobileUploadError
+      );
+    }
+  }, [st_bannerMobileUploadError]);
+
+  useEffect(() => {
     if (st_bannerDeleteError) {
       bannerUploadNotification("ADMIN SYSTEM ERROR", st_bannerDeleteError);
     }
@@ -238,8 +265,10 @@ const Mainbanner = () => {
         if (!viewModal) {
           setCurrentId(data.id);
           setCurrentViewImagePath(data.imagePath);
+          setCurrentViewMobileImagePath(data.mobileImagePath);
           title.setValue(data.title);
           content.setValue(data.content);
+          link.setValue(data.link);
         }
       },
 
@@ -287,20 +316,43 @@ const Mainbanner = () => {
         id: currentId,
         title: title.value,
         imagePath: uploadBannerPath ? uploadBannerPath : currentViewImagePath,
+        mobileImagePath: uploadMobileBannerPath
+          ? uploadMobileBannerPath
+          : currentViewMobileImagePath,
         content: content.value,
+        link: link.value,
       },
     });
-  }, [currentId, title, content, uploadBannerPath]);
+  }, [
+    currentId,
+    title,
+    content,
+    link,
+    uploadBannerPath,
+    uploadMobileBannerPath,
+    currentViewImagePath,
+    currentViewMobileImagePath,
+  ]);
 
   const clickImageUpload = useCallback(() => {
     imageInput.current.click();
   }, [imageInput.current]);
+
+  const clickMobileImageUpload = useCallback(() => {
+    imageMobileInput.current.click();
+  }, [imageMobileInput.current]);
 
   const bannerCreate = useCallback(() => {
     if (!uploadBannerPath) {
       return bannerUploadNotification(
         "ADMIN SYSTEM ERROR",
         "이미지는 필수등록 사항 입니다."
+      );
+    }
+    if (!uploadMobileBannerPath) {
+      return bannerUploadNotification(
+        "ADMIN SYSTEM ERROR",
+        "모바일 이미지는 필수등록 사항 입니다."
       );
     }
 
@@ -310,9 +362,11 @@ const Mainbanner = () => {
         title: title.value,
         content: content.value,
         imagePath: uploadBannerPath,
+        mobileImagePath: uploadMobileBannerPath,
+        link: link.value,
       },
     });
-  }, [title, uploadBannerPath, content]);
+  }, [title, uploadBannerPath, uploadMobileBannerPath, content, link]);
 
   const onChangeImages = useCallback((e) => {
     const formData = new FormData();
@@ -325,7 +379,20 @@ const Mainbanner = () => {
       type: BANNER_UPLOAD_REQUEST,
       data: formData,
     });
-  });
+  }, []);
+
+  const onChangeMobileImages = useCallback((e) => {
+    const formData = new FormData();
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("image", file);
+    });
+
+    dispatch({
+      type: BANNER_MOBILE_UPLOAD_REQUEST,
+      data: formData,
+    });
+  }, []);
 
   ////// DATAVIEW //////
   const columns = [
@@ -400,9 +467,6 @@ const Mainbanner = () => {
               이미지 사이즈가 상이할 경우 화면에 올바르지 않게 보일 수 있으니
               이미지 사이즈를 확인해주세요.
             </GuideText>
-            <GuideText>
-              BANNER TITLE과 BANNER CONTENT는 값을 지정하지 않을 수 있습니다.
-            </GuideText>
           </GuideWrapper>
 
           <BannerImage
@@ -434,12 +498,55 @@ const Mainbanner = () => {
               UPLOAD
             </Button>
           </UploadWrapper>
+          <GuideWrapper>
+            <GuideText>
+              모바일 메인베너 이미지 사이즈는 가로 {BANNER_MOBILE_WIDTH}px 과
+              세로
+              {BANNER_MOBILE_HEIGHT}px을 기준으로 합니다.
+            </GuideText>
+            <GuideText>
+              이미지 사이즈가 상이할 경우 화면에 올바르지 않게 보일 수 있으니
+              이미지 사이즈를 확인해주세요.
+            </GuideText>
+          </GuideWrapper>
+
+          <BannerMobileImage
+            src={
+              uploadMobileBannerPath
+                ? `${uploadMobileBannerPath}`
+                : `${currentViewMobileImagePath}`
+            }
+            alt="main_banner_mobile_image"
+          />
+          <PreviewGuide>
+            {uploadMobileBannerPath && `이미지 미리보기 입니다.`}
+          </PreviewGuide>
+          <UploadWrapper>
+            <input
+              type="file"
+              name="image"
+              accept=".png, .jpg"
+              // multiple
+              hidden
+              ref={imageMobileInput}
+              onChange={onChangeMobileImages}
+            />
+            <Button
+              type="primary"
+              onClick={clickMobileImageUpload}
+              loading={st_bannerMobileUploadLoading}
+            >
+              UPLOAD
+            </Button>
+          </UploadWrapper>
 
           <br />
           <br />
           <BannerInput allowClear placeholder="Banner Title" {...title} />
           <br />
           <BannerInput allowClear placeholder="Banner Content" {...content} />
+          <br />
+          <BannerInput allowClear placeholder="Banner Link" {...link} />
         </BannerWrapper>
       </Modal>
 
@@ -460,9 +567,6 @@ const Mainbanner = () => {
             <GuideText>
               이미지 사이즈가 상이할 경우 화면에 올바르지 않게 보일 수 있으니
               이미지 사이즈를 확인해주세요.
-            </GuideText>
-            <GuideText>
-              BANNER TITLE과 BANNER CONTENT는 값을 지정하지 않을 수 있습니다.
             </GuideText>
           </GuideWrapper>
 
@@ -495,12 +599,55 @@ const Mainbanner = () => {
               UPLOAD
             </Button>
           </UploadWrapper>
+          <GuideWrapper>
+            <GuideText>
+              모바일 메인베너 이미지 사이즈는 가로 {BANNER_MOBILE_WIDTH}px 과
+              세로
+              {BANNER_MOBILE_HEIGHT}px을 기준으로 합니다.
+            </GuideText>
+            <GuideText>
+              이미지 사이즈가 상이할 경우 화면에 올바르지 않게 보일 수 있으니
+              이미지 사이즈를 확인해주세요.
+            </GuideText>
+          </GuideWrapper>
+
+          <BannerMobileImage
+            src={
+              uploadMobileBannerPath
+                ? `${uploadMobileBannerPath}`
+                : `https://via.placeholder.com/${BANNER_MOBILE_WIDTH}x${BANNER_MOBILE_HEIGHT}`
+            }
+            alt="main_banner_mobile_image"
+          />
+          <PreviewGuide>
+            {uploadMobileBannerPath && `이미지 미리보기 입니다.`}
+          </PreviewGuide>
+          <UploadWrapper>
+            <input
+              type="file"
+              name="image"
+              accept=".png, .jpg"
+              // multiple
+              hidden
+              ref={imageMobileInput}
+              onChange={onChangeMobileImages}
+            />
+            <Button
+              type="primary"
+              onClick={clickMobileImageUpload}
+              loading={st_bannerMobileUploadLoading}
+            >
+              UPLOAD
+            </Button>
+          </UploadWrapper>
 
           <br />
           <br />
           <BannerInput allowClear placeholder="Banner Title" {...title} />
           <br />
           <BannerInput allowClear placeholder="Banner Content" {...content} />
+          <br />
+          <BannerInput allowClear placeholder="Banner Link" {...link} />
         </BannerWrapper>
       </Modal>
 

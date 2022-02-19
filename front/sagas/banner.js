@@ -9,6 +9,10 @@ import {
   BANNER_UPLOAD_SUCCESS,
   BANNER_UPLOAD_FAILURE,
   /////////////////////////////
+  BANNER_MOBILE_UPLOAD_REQUEST,
+  BANNER_MOBILE_UPLOAD_SUCCESS,
+  BANNER_MOBILE_UPLOAD_FAILURE,
+  /////////////////////////////
   BANNER_UPDATE_REQUEST,
   BANNER_UPDATE_SUCCESS,
   BANNER_UPDATE_FAILURE,
@@ -67,6 +71,33 @@ function* bannerUpload(action) {
     console.error(err);
     yield put({
       type: BANNER_UPLOAD_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function bannerMobileUploadAPI(data) {
+  return axios.post(`/api/banner/image`, data);
+}
+
+function* bannerMobileUpload(action) {
+  try {
+    const result = yield call(bannerMobileUploadAPI, action.data);
+
+    yield put({
+      type: BANNER_MOBILE_UPLOAD_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BANNER_MOBILE_UPLOAD_FAILURE,
       error: err.response.data,
     });
   }
@@ -171,6 +202,10 @@ function* watchBannerUpload() {
   yield takeLatest(BANNER_UPLOAD_REQUEST, bannerUpload);
 }
 
+function* watchBannerMobileUpload() {
+  yield takeLatest(BANNER_MOBILE_UPLOAD_REQUEST, bannerMobileUpload);
+}
+
 function* watchBannerCreate() {
   yield takeLatest(BANNER_CREATE_REQUEST, bannerCreate);
 }
@@ -184,6 +219,7 @@ export default function* bannerSaga() {
   yield all([
     fork(watchMainBanner),
     fork(watchBannerUpload),
+    fork(watchBannerMobileUpload),
     fork(watchMainBannerUpdate),
     fork(watchBannerCreate),
     fork(watchBannerDelete),

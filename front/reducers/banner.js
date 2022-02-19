@@ -5,6 +5,7 @@ export const initailState = {
   viewModal: false,
   createModal: false,
   uploadBannerPath: null,
+  uploadMobileBannerPath: null,
   //
   st_mainBannerLoading: false, // 메인배너 가져오기
   st_mainBannerDone: false,
@@ -13,6 +14,10 @@ export const initailState = {
   st_bannerUploadLoading: false, // 메인베너 이미지 업로드
   st_bannerUploadDone: false,
   st_bannerUploadError: null,
+  //
+  st_bannerMobileUploadLoading: false, // 메인베너 모바일 이미지 업로드
+  st_bannerMobileUploadDone: false,
+  st_bannerMobileUploadError: null,
   //
   st_bannerUpdateLoading: false, // 메인베너 정보 수정
   st_bannerUpdateDone: false,
@@ -34,6 +39,10 @@ export const MAIN_BANNER_FAILURE = "MAIN_BANNER_FAILURE";
 export const BANNER_UPLOAD_REQUEST = "BANNER_UPLOAD_REQUEST";
 export const BANNER_UPLOAD_SUCCESS = "BANNER_UPLOAD_SUCCESS";
 export const BANNER_UPLOAD_FAILURE = "BANNER_UPLOAD_FAILURE";
+
+export const BANNER_MOBILE_UPLOAD_REQUEST = "BANNER_MOBILE_UPLOAD_REQUEST";
+export const BANNER_MOBILE_UPLOAD_SUCCESS = "BANNER_MOBILE_UPLOAD_SUCCESS";
+export const BANNER_MOBILE_UPLOAD_FAILURE = "BANNER_MOBILE_UPLOAD_FAILURE";
 
 export const BANNER_UPDATE_REQUEST = "BANNER_UPDATE_REQUEST";
 export const BANNER_UPDATE_SUCCESS = "BANNER_UPDATE_SUCCESS";
@@ -92,6 +101,26 @@ const reducer = (state = initailState, action) =>
         draft.st_bannerUploadLoading = false;
         draft.st_bannerUploadDone = false;
         draft.st_bannerUploadError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case BANNER_MOBILE_UPLOAD_REQUEST: {
+        draft.st_bannerMobileUploadLoading = true;
+        draft.st_bannerMobileUploadDone = null;
+        draft.st_bannerMobileUploadError = false;
+        break;
+      }
+      case BANNER_MOBILE_UPLOAD_SUCCESS: {
+        draft.st_bannerMobileUploadLoading = false;
+        draft.st_bannerMobileUploadDone = true;
+        draft.uploadMobileBannerPath = action.data.path;
+        break;
+      }
+      case BANNER_MOBILE_UPLOAD_FAILURE: {
+        draft.st_bannerMobileUploadLoading = false;
+        draft.st_bannerMobileUploadDone = false;
+        draft.st_bannerMobileUploadError = action.error;
         break;
       }
       //////////////////////////////////////////////
