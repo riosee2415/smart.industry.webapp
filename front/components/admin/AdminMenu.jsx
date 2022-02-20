@@ -111,6 +111,9 @@ const AdminMenu = () => {
           <Menu.Item key="/admin/info/popup">
             <MenuName>팝업 관리</MenuName>
           </Menu.Item>
+          <Menu.Item key="/admin/info/menu">
+            <MenuName>메뉴 관리</MenuName>
+          </Menu.Item>
 
           {/* <SubMenu key="sub3" title="Submenu">
             <Menu.Item key="7">Option 7</Menu.Item>
