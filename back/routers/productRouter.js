@@ -6,7 +6,7 @@ const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { Category, Menu } = require("../models");
+const { Category, Menu, ProductImage, Product } = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -191,7 +191,14 @@ router.delete("/cat/:catId", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/list", async (req, res, next) => {
-  const { categoryId, isUsed, isSale, isPrice, isName } = req.body;
+  const { categoryId, isUsed, isSale, isPrice, isName, page } = req.body;
+
+  const LIMIT = 10;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 10;
 
   let _categoryId = categoryId || null;
   let _isUsed = isUsed || null;
@@ -218,9 +225,393 @@ router.post("/list", async (req, res, next) => {
   }
 
   try {
+    const lengthQuery = `
+    SELECT	A.id,
+            A.thumbnail,
+            A.title,
+            A.youtubeLink,
+            A.price,
+            A.discount,
+            A.deliveryPay,
+            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+            DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
+            A.CategoryId,
+            A.isDelete,
+            A.isUsed,
+            A.isSale,
+            B.value,
+            B.MenuId,
+            C.imagePath
+    FROM	products 				A
+   INNER
+    JOIN	categorys 				B
+      ON	A.CategoryId = B.id
+   INNER
+    JOIN	menus					C
+      ON	B.MenuId = C.id
+   WHERE	1 = 1
+     AND    A.isDelete = FALSE
+     ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}    
+     ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
+     ${_isSale ? `AND A.isSale = TRUE` : ``}    
+    `;
+
+    const selectQuery = `
+    SELECT	A.id,
+            A.thumbnail,
+            A.title,
+            A.youtubeLink,
+            A.price,
+            A.discount,
+            A.deliveryPay,
+            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+            DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
+            A.CategoryId,
+            A.isDelete,
+            A.isUsed,
+            A.isSale,
+            B.value,
+            B.MenuId,
+            C.imagePath
+    FROM	products 				A
+   INNER
+    JOIN	categorys 				B
+      ON	A.CategoryId = B.id
+   INNER
+    JOIN	menus					C
+      ON	B.MenuId = C.id
+   WHERE	1 = 1
+     AND    A.isDelete = FALSE
+     ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}    
+     ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
+     ${_isSale ? `AND A.isSale = TRUE` : ``}
+   ORDER    BY  ${orderName} ${orderSc}
+   LIMIT    ${LIMIT}
+  OFFSET    ${OFFSET}  
+    `;
+
+    const length = await models.sequelize.query(lengthQuery);
+
+    const lists = await models.sequelize.query(selectQuery);
+
+    const noticeLen = length[0].length;
+
+    const lastPage =
+      noticeLen % LIMIT > 0 ? noticeLen / LIMIT + 1 : noticeLen / LIMIT;
+
+    return res.status(200).json({
+      lists: lists[0],
+      lastPage: parseInt(lastPage),
+      noticeLen: parseInt(noticeLen),
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("상품 목록을 불러올 수 없습니다.");
   }
 });
+
+router.get("/detail/:productId", async (req, res, next) => {
+  const { productId } = req.params;
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(productId) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const selectQuery = `
+    SELECT	A.id,
+            A.thumbnail,
+            A.title,
+            A.youtubeLink,
+            A.price,
+            A.discount,
+            A.deliveryPay,
+            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+            DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
+            A.CategoryId,
+            A.isDelete,
+            A.isUsed,
+            A.isSale,
+            B.value,
+            B.MenuId,
+            C.imagePath
+    FROM	products 				A
+   INNER
+    JOIN	categorys 				B
+      ON	A.CategoryId = B.id
+   INNER
+    JOIN	menus					C
+      ON	B.MenuId = C.id
+   WHERE	1 = 1
+     AND    A.isDelete = FALSE
+     AND    A.id = ${productId}
+    `;
+
+    const imageQuery = `
+    SELECT	A.id,
+            A.imagePath,
+            A.ProductId,
+            B.title
+    FROM	productImages		A
+   INNER
+    JOIN	products 			B
+      ON	A.ProductId = B.id
+   WHERE    A.ProductId = ${productId}
+    `;
+
+    const lists = await models.sequelize.query(selectQuery);
+
+    const images = await models.sequelize.query(imageQuery);
+
+    return res.status(200).json({
+      lists: lists[0],
+      images: images[0],
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품 정보를 불러올 수 없습니다.");
+  }
+});
+
+router.post("/create", isAdminCheck, async (req, res, next) => {
+  const {
+    thumbnail,
+    title,
+    youtubeLink,
+    price,
+    discount,
+    deliveryPay,
+    isUsed,
+    isSale,
+  } = req.body;
+  try {
+    const createResult = await Product.create({
+      thumbnail,
+      title,
+      youtubeLink,
+      price,
+      discount,
+      deliveryPay,
+      isUsed,
+      isSale,
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품을 추가할 수 없습니다.");
+  }
+});
+
+router.patch("/update", isAdminCheck, async (req, res, next) => {
+  const {
+    id,
+    thumbnail,
+    title,
+    youtubeLink,
+    price,
+    discount,
+    deliveryPay,
+    isUsed,
+    isSale,
+  } = req.body;
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const updateResult = await Product.update(
+      {
+        thumbnail,
+        title,
+        youtubeLink,
+        price,
+        discount,
+        deliveryPay,
+        isUsed,
+        isSale,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품을 수정할 수 없습니다.");
+  }
+});
+
+router.delete("/delete/:productId", isAdminCheck, async (req, res, next) => {
+  const { productId } = req.params;
+
+  if (isNanCheck(productId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(productId) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const deleteResult = await Product.update(
+      {
+        isDelete: true,
+      },
+      {
+        where: { id: parseInt(productId) },
+      }
+    );
+
+    if (deleteResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품을 삭제할 수 없습니다.");
+  }
+});
+
+router.post("/image/list", async (req, res, next) => {
+  const { prodId } = req.body;
+  try {
+    const lists = await ProductImage.findAll({
+      where: {
+        isDelete: false,
+        ProductId: parseInt(prodId),
+      },
+      include: [
+        {
+          model: Product,
+        },
+      ],
+    });
+
+    return res.status(200).json(lists ? lists : []);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품 이미지를 불러올 수 없습니다.");
+  }
+});
+
+router.post("/image/create", isAdminCheck, async (req, res, next) => {
+  const { imagePath, prodId } = req.body;
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(prodId) },
+    });
+
+    if (!exProd) {
+      return res
+        .status(401)
+        .send("존재하지 않는 상품입니다. 확인 후 다시 시도하여 주십시오.");
+    }
+
+    const createResult = await ProductImage.create({
+      imagePath,
+      ProductId: parseInt(prodId),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품 이미지를 추가할 수 없습니다.");
+  }
+});
+
+router.patch("/image/update", isAdminCheck, async (req, res, next) => {
+  const { id, imagePath } = req.body;
+  try {
+    const exImage = await ProductImage.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exImage) {
+      return res.status(401).send("존재하지 않는 상품이미지 입니다.");
+    }
+
+    const updateResult = await ProductImage.update(
+      {
+        imagePath,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품 이미지를 수정할 수 없습니다.");
+  }
+});
+
+router.delete(
+  "/image/delete/:imageId",
+  isAdminCheck,
+  async (req, res, next) => {
+    const { imageId } = req.params;
+
+    if (isNanCheck(imageId)) {
+      return res.status(401).send("잘못된 요청입니다.");
+    }
+
+    try {
+      const exImage = await ProductImage.findOne({
+        where: { id: parseInt(imageId) },
+      });
+
+      if (!exImage) {
+        return res.status(401).send("존재하지 않는 상품이미지 입니다.");
+      }
+
+      const deleteResult = await ProductImage.update(
+        {
+          isDelete: true,
+        },
+        {
+          where: { id: parseInt(imageId) },
+        }
+      );
+
+      if (deleteResult[0] > 0) {
+        return res.status(200).json({ result: true });
+      } else {
+        return res.status(200).json({ result: false });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(401).send("상품 이미지를 삭제할 수 없습니다.");
+    }
+  }
+);
 module.exports = router;

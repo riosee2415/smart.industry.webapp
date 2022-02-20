@@ -104,68 +104,58 @@ router.get("/list", async (req, res, next) => {
   }
 });
 
-router.post(
-  "/create",
-  isAdminCheck,
-  upload.single("file"),
-  async (req, res, next) => {
-    const { title, author, content } = req.body;
+router.post("/create", isAdminCheck, async (req, res, next) => {
+  const { title, author, content } = req.body;
 
-    try {
-      const createResult = await Notice.create({
+  try {
+    const createResult = await Notice.create({
+      title,
+      author,
+      content,
+    });
+
+    if (!createResult) {
+      return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 076]");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");
+  }
+});
+
+router.patch("/update", isAdminCheck, async (req, res, next) => {
+  const { id, title, author, content } = req.body;
+
+  try {
+    const exNotice = await Notice.findOne({ where: { id: parseInt(id) } });
+
+    if (!exNotice) {
+      return res.status(401).send("존재하지 않는 게시글 입니다.");
+    }
+
+    const updateResult = await Notice.update(
+      {
         title,
         author,
         content,
-      });
-
-      if (!createResult) {
-        return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 076]");
+      },
+      {
+        where: { id: parseInt(id) },
       }
+    );
 
-      return res.status(201).json({ result: true });
-    } catch (error) {
-      console.error(error);
-      return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
     }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("게시글을 수정할 수 없습니다. [CODE 087]");
   }
-);
-
-router.patch(
-  "/update",
-  upload.single("file"),
-  isAdminCheck,
-  async (req, res, next) => {
-    const { id, title, author, content } = req.body;
-
-    try {
-      const exNotice = await Notice.findOne({ where: { id: parseInt(id) } });
-
-      if (!exNotice) {
-        return res.status(401).send("존재하지 않는 게시글 입니다.");
-      }
-
-      const updateResult = await Notice.update(
-        {
-          title,
-          author,
-          content,
-        },
-        {
-          where: { id: parseInt(id) },
-        }
-      );
-
-      if (updateResult[0] > 0) {
-        return res.status(200).json({ result: true });
-      } else {
-        return res.status(200).json({ result: false });
-      }
-    } catch (error) {
-      console.error(error);
-      return res.status(401).send("게시글을 수정할 수 없습니다. [CODE 087]");
-    }
-  }
-);
+});
 
 router.delete("/delete/:noticeId", isAdminCheck, async (req, res, next) => {
   const { noticeId } = req.params;
