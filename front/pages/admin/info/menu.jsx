@@ -302,10 +302,7 @@ const MenuList = () => {
         <Image width={`200px`} src={data.imagePath} alt="menu_image" />
       ),
     },
-    {
-      title: "카테고리",
-      render: (data) => <Button size="small">카테고리</Button>,
-    },
+
     {
       title: "수정",
       render: (data) => (
@@ -360,6 +357,7 @@ const MenuList = () => {
         />
       </AdminContent>
 
+      {/* MENU CREATE / UPDATE MODAL */}
       <Modal
         width={`650px`}
         title={updateMenuData ? "메뉴 수정" : "메뉴 생성"}
