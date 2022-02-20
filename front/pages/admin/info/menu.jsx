@@ -9,6 +9,7 @@ import {
   Table,
   notification,
   message,
+  Popconfirm,
 } from "antd";
 import { END } from "redux-saga";
 import axios from "axios";
@@ -23,9 +24,13 @@ import { Wrapper } from "../../../components/commonComponents";
 import {
   CREATE_MODAL_TOGGLE,
   MENU_CREATE_REQUEST,
+  MENU_DELETE_REQUEST,
+  MENU_IMAGE_PATH,
   MENU_LIST_REQUEST,
+  MENU_UPDATE_REQUEST,
   MENU_UPLOAD_REQUEST,
 } from "../../../reducers/menu";
+import { useState } from "react";
 
 const MENU_WIDTH = `194`;
 const MENU_HEIGHT = `296`;
@@ -106,11 +111,22 @@ const MenuList = () => {
     //
     st_menuCreateDone,
     st_menuCreateError,
+    //
+    st_menuUpdateDone,
+    st_menuUpdateError,
+    //
+    st_menuDeleteDone,
+    st_menuDeleteError,
   } = useSelector((state) => state.menu);
+
+  const [updateMenuData, setUpdateMenuData] = useState(null);
 
   const dispatch = useDispatch();
 
   const imageRef = useRef();
+
+  const [menuForm] = Form.useForm();
+  const menuFormRef = useRef();
 
   ////// USEEFFECT //////
 
@@ -126,9 +142,7 @@ const MenuList = () => {
         type: MENU_LIST_REQUEST,
       });
 
-      dispatch({
-        type: CREATE_MODAL_TOGGLE,
-      });
+      createModalToggle(null);
 
       return message.success("생성되었습니다.");
     }
@@ -140,13 +154,74 @@ const MenuList = () => {
     }
   }, [st_menuCreateError]);
 
+  useEffect(() => {
+    if (st_menuUpdateDone) {
+      dispatch({
+        type: MENU_LIST_REQUEST,
+      });
+      createModalToggle(null);
+
+      return message.success("수정되었습니다.");
+    }
+  }, [st_menuUpdateDone]);
+
+  useEffect(() => {
+    if (st_menuUpdateError) {
+      return message.error(st_menuUpdateError);
+    }
+  }, [st_menuUpdateError]);
+
+  useEffect(() => {
+    if (st_menuDeleteDone) {
+      dispatch({
+        type: MENU_LIST_REQUEST,
+      });
+
+      return message.success("삭제되었습니다.");
+    }
+  }, [st_menuDeleteDone]);
+
+  useEffect(() => {
+    if (st_menuDeleteError) {
+      return message.error(st_menuDeleteError);
+    }
+  }, [st_menuDeleteError]);
+
+  useEffect(() => {
+    if (createModal) {
+      if (updateMenuData) {
+        menuFormRef.current.setFieldsValue({
+          value: updateMenuData.value,
+        });
+
+        dispatch({
+          type: MENU_IMAGE_PATH,
+          data: updateMenuData.imagePath,
+        });
+      }
+    }
+  }, [updateMenuData]);
+
   ////// TOGGLE //////
 
-  const createModalToggle = useCallback(() => {
-    dispatch({
-      type: CREATE_MODAL_TOGGLE,
-    });
-  }, [createModal]);
+  const createModalToggle = useCallback(
+    (data) => {
+      if (data) {
+        setUpdateMenuData(data);
+      } else {
+        setUpdateMenuData(null);
+        menuForm.resetFields();
+        dispatch({
+          type: MENU_IMAGE_PATH,
+          data: null,
+        });
+      }
+      dispatch({
+        type: CREATE_MODAL_TOGGLE,
+      });
+    },
+    [createModal]
+  );
 
   ////// HANDLER //////
 
@@ -184,6 +259,33 @@ const MenuList = () => {
     [menuImagePath]
   );
 
+  const menuUpdateSubmit = useCallback(
+    (data) => {
+      if (!menuImagePath) {
+        return LoadNotification("ADMIN SYSTEM ERROR", "이미지를 등록해주세요");
+      }
+
+      dispatch({
+        type: MENU_UPDATE_REQUEST,
+        data: {
+          id: updateMenuData.id,
+          imagePath: menuImagePath,
+          value: data.value,
+        },
+      });
+    },
+    [menuImagePath, updateMenuData]
+  );
+
+  const menuDeleteSubmit = useCallback((data) => {
+    dispatch({
+      type: MENU_DELETE_REQUEST,
+      data: {
+        menuId: data.id,
+      },
+    });
+  }, []);
+
   ////// DATAVIEW //////
   const columns = [
     {
@@ -207,7 +309,11 @@ const MenuList = () => {
     {
       title: "수정",
       render: (data) => (
-        <Button size="small" type="primary">
+        <Button
+          size="small"
+          type="primary"
+          onClick={() => createModalToggle(data)}
+        >
           수정
         </Button>
       ),
@@ -215,9 +321,16 @@ const MenuList = () => {
     {
       title: "삭제",
       render: (data) => (
-        <Button size="small" type="danger">
-          삭제
-        </Button>
+        <Popconfirm
+          title="삭제하시겠습니까?"
+          onConfirm={() => menuDeleteSubmit(data)}
+          okText="삭제"
+          cancelText="취소"
+        >
+          <Button size="small" type="danger">
+            삭제
+          </Button>
+        </Popconfirm>
       ),
     },
   ];
@@ -232,7 +345,11 @@ const MenuList = () => {
 
       <AdminContent>
         <Wrapper al={`flex-end`} margin={`0 0 8px`}>
-          <Button size="small" type="primary" onClick={createModalToggle}>
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => createModalToggle(null)}
+          >
             + 생성
           </Button>
         </Wrapper>
@@ -245,10 +362,10 @@ const MenuList = () => {
 
       <Modal
         width={`650px`}
-        title="메뉴 생성"
+        title={updateMenuData ? "메뉴 수정" : "메뉴 생성"}
         visible={createModal}
         footer={null}
-        onCancel={createModalToggle}
+        onCancel={() => createModalToggle(null)}
       >
         <GuideWrapper>
           <GuideText>
@@ -294,7 +411,11 @@ const MenuList = () => {
           </Button>
         </UploadWrapper>
 
-        <Form onFinish={menuCreateSubmit}>
+        <Form
+          form={menuForm}
+          ref={menuFormRef}
+          onFinish={updateMenuData ? menuUpdateSubmit : menuCreateSubmit}
+        >
           <Form.Item
             label="이름"
             name="value"
@@ -304,7 +425,7 @@ const MenuList = () => {
           </Form.Item>
           <Wrapper al={`flex-end`}>
             <Button size="small" htmlType="submit" type="primary">
-              생성
+              {updateMenuData ? "수정" : "생성"}
             </Button>
           </Wrapper>
         </Form>

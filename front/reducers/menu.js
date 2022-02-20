@@ -50,6 +50,8 @@ export const MENU_UPLOAD_FAILURE = "MENU_UPLOAD_FAILURE";
 //
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
+export const MENU_IMAGE_PATH = "MENU_IMAGE_PATH";
+
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -150,6 +152,10 @@ const reducer = (state = initailState, action) =>
 
       case CREATE_MODAL_TOGGLE: {
         draft.createModal = !draft.createModal;
+      }
+
+      case MENU_IMAGE_PATH: {
+        draft.menuImagePath = action.data;
       }
     }
   });
