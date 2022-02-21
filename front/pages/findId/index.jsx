@@ -5,7 +5,11 @@ import ClientLayout from "../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
-import { LOAD_MY_INFO_REQUEST, LOGIN_REQUEST } from "../../reducers/user";
+import {
+  FIND_USER_ID_REQUEST,
+  LOAD_MY_INFO_REQUEST,
+  LOGIN_REQUEST,
+} from "../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
 import {
@@ -58,56 +62,51 @@ const Index = () => {
   const width = useWidth();
   const router = useRouter();
 
-  const [isCheck, setIsCheck] = useState(false);
-  const inputUserId = useInput("");
-  const inputPassword = useInput("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const inputUserName = useInput("");
+  const inputEmail = useInput("");
 
   ////// REDUX //////
   const dispatch = useDispatch();
-  const { st_loginDone, st_loginError } = useSelector((state) => state.user);
+  const { st_findUserIdDone, st_findUserIdError, foundID } = useSelector(
+    (state) => state.user
+  );
   ////// USEEFFECT //////
-  useEffect(() => {
-    const data = localStorage.getItem("DKDLELWJWKD");
-    if (data) {
-      inputUserId.setValue(data);
-    }
-  }, []);
 
   useEffect(() => {
-    if (st_loginDone) {
-      LoadNotification("로그인되었습니다.");
-      return router.push(`/`);
+    if (st_findUserIdDone) {
+      console.log(st_findUserIdDone);
+      setIsSuccess(true);
+      LoadNotification("아이디찾기에 성공하였습니다.");
     }
-  }, [st_loginDone]);
+  }, [st_findUserIdDone]);
 
   useEffect(() => {
-    if (st_loginError) {
-      return LoadNotification(st_loginError);
+    if (st_findUserIdError) {
+      console.log(st_findUserIdError);
+      return LoadNotification(st_findUserIdError);
     }
-  }, [st_loginError]);
+  }, [st_findUserIdError]);
 
   ////// TOGGLE //////
 
   ////// HANDLER //////
   const loginHandler = useCallback(() => {
-    if (!inputUserId.value || inputUserId.value.trim() === "") {
-      return LoadNotification("아이디를 입력해주세요.");
+    if (!inputUserName.value || inputUserName.value.trim() === "") {
+      return LoadNotification("이름을 입력해주세요.");
     }
-    if (!inputPassword.value || inputPassword.value.trim() === "") {
-      return LoadNotification("비밀번호를 입력해주세요.");
+    if (!inputEmail.value || inputEmail.value.trim() === "") {
+      return LoadNotification("이메일을 입력해주세요.");
     }
-    if (isCheck) {
-      console.log(isCheck);
-      localStorage.setItem("DKDLELWJWKD", inputUserId.value);
-    }
+
     dispatch({
-      type: LOGIN_REQUEST,
+      type: FIND_USER_ID_REQUEST,
       data: {
-        userId: inputUserId.value,
-        password: inputPassword.value,
+        userId: inputUserName.value,
+        password: inputEmail.value,
       },
     });
-  }, [inputUserId, inputPassword, isCheck]);
+  }, [inputUserName, inputEmail]);
 
   const moveLinkHandler = (link) => {
     router.push(link);
@@ -172,47 +171,40 @@ const Index = () => {
           <RsWrapper height={`100vh`}>
             <Wrapper width={width < 700 ? `100%` : `380px`}>
               <Text fontSize={`22px`} fontWeight={`700`} margin={`0 0 10px`}>
-                LOGIN
+                FIND YOUR ID
               </Text>
               <Text fontSize={`18px`} margin={`0 0 40px`} color={Theme.grey_C}>
-                회원 로그인
+                아이디 찾기
               </Text>
-              <CustomInput
-                {...inputUserId}
-                placeholder="아이디"
-                margin={`0 0 5px`}
-              />
-              <CustomInput
-                {...inputPassword}
-                placeholder="비밀번호"
-                margin={`0 0 20px`}
-                type={`password`}
-              />
-              <CommonButton
-                width={`100%`}
-                height={`50px`}
-                radius={`0`}
-                margin={`0 0 15px`}
-                onClick={loginHandler}
-              >
-                로그인
-              </CommonButton>
-
-              <Wrapper al={`flex-start`} margin={`0 0 40px`}>
-                <Checkbox
-                  checked={isCheck}
-                  onClick={() => setIsCheck(!isCheck)}
-                >
-                  <Text
-                    fontSize={`14px`}
-                    color={Theme.grey_C}
-                    cursor={`pointer`}
+              {!isSuccess ? (
+                <>
+                  <CustomInput
+                    {...inputUserName}
+                    placeholder="이름을 입력해주세요."
+                    margin={`0 0 5px`}
+                  />
+                  <CustomInput
+                    {...inputEmail}
+                    placeholder="이메일을 입력해주세요."
+                    margin={`0 0 20px`}
+                  />
+                  <CommonButton
+                    width={`100%`}
+                    height={`50px`}
+                    radius={`0`}
+                    margin={`0 0 15px`}
+                    onClick={loginHandler}
                   >
-                    아이디 저장
+                    아이디 찾기
+                  </CommonButton>
+                </>
+              ) : (
+                <Wrapper height={`150px`} ju={`flex-start`}>
+                  <Text fontSize={`18px`} margin={`30px 0 0 0`}>
+                    아이디 : {foundID}
                   </Text>
-                </Checkbox>
-              </Wrapper>
-
+                </Wrapper>
+              )}
               <Wrapper
                 height={`40px`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
@@ -226,7 +218,7 @@ const Index = () => {
                   color={Theme.grey_C}
                   cursor={`pointer`}
                 >
-                  아이디찾기
+                  로그인
                 </Wrapper>
                 <Text
                   fontSize={width < 700 ? `12px` : `14px`}

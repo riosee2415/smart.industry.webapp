@@ -28,6 +28,10 @@ import {
   KAKAO_LOGIN_REQUEST,
   KAKAO_LOGIN_SUCCESS,
   KAKAO_LOGIN_FAILURE,
+  /////////////////////////////
+  FIND_USER_ID_REQUEST,
+  FIND_USER_ID_SUCCESS,
+  FIND_USER_ID_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -215,6 +219,33 @@ function* kakaoLogin() {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function findUserIdByEmailAPI() {
+  return axios.post(`/api/user/findUserIdByEmail`);
+}
+
+function* findUserIdByEmail() {
+  try {
+    const result = yield call(findUserIdByEmailAPI);
+
+    yield put({
+      type: FIND_USER_ID_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: FIND_USER_ID_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -245,6 +276,10 @@ function* watchKakaoLogin() {
   yield takeLatest(KAKAO_LOGIN_REQUEST, kakaoLogin);
 }
 
+function* watchFindUserIdByEmail() {
+  yield takeLatest(FIND_USER_ID_REQUEST, findUserIdByEmail);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -255,6 +290,7 @@ export default function* userSaga() {
     fork(watchUserList),
     fork(watchUserListUpdate),
     fork(watchKakaoLogin),
+    fork(watchFindUserIdByEmail),
     //
   ]);
 }

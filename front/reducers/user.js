@@ -35,6 +35,10 @@ export const initailState = {
   st_kakaoLoginLoading: false,
   st_kakaoLoginDone: false,
   st_kakaoLoginError: null,
+  //
+  st_findUserIdLoading: false,
+  st_findUserIdDone: false,
+  st_findUserIdError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -64,6 +68,10 @@ export const LOAD_MY_INFO_FAILURE = "LOAD_MY_INFO_FAILURE";
 export const KAKAO_LOGIN_REQUEST = "KAKAO_LOGIN_REQUEST";
 export const KAKAO_LOGIN_SUCCESS = "KAKAO_LOGIN_SUCCESS";
 export const KAKAO_LOGIN_FAILURE = "KAKAO_LOGIN_FAILURE";
+
+export const FIND_USER_ID_REQUEST = "FIND_USER_ID_REQUEST";
+export const FIND_USER_ID_SUCCESS = "FIND_USER_ID_SUCCESS";
+export const FIND_USER_ID_FAILURE = "FIND_USER_ID_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -207,6 +215,27 @@ const reducer = (state = initailState, action) =>
       case KAKAO_LOGIN_FAILURE: {
         draft.st_kakaoLoginLoading = false;
         draft.st_kakaoLoginDone = false;
+        draft.st_kakaoLoginError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case FIND_USER_ID_REQUEST: {
+        draft.st_findUserIdLoading = true;
+        draft.st_findUserIdDone = null;
+        draft.st_findUserIdError = false;
+        break;
+      }
+      case FIND_USER_ID_SUCCESS: {
+        draft.st_findUserIdLoading = false;
+        draft.st_findUserIdDone = true;
+        draft.st_findUserIdError = null;
+        draft.foundID = action.data;
+        break;
+      }
+      case FIND_USER_ID_FAILURE: {
+        draft.st_findUserIdLoading = false;
+        draft.st_findUserIdDone = false;
         draft.st_kakaoLoginError = action.error;
         break;
       }
