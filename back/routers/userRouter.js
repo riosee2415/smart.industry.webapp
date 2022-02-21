@@ -92,7 +92,9 @@ router.get("/signin", async (req, res, next) => {
     if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
         where: { id: req.user.id },
-        attributes: ["id", "username", "email", "level"],
+        attributes: {
+          exclude: ["level, secret, password"],
+        },
       });
 
       console.log("🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀");
@@ -128,7 +130,9 @@ router.post("/signin", (req, res, next) => {
 
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
-        attributes: ["id", "username", "email", "level", "username"],
+        attributes: {
+          exclude: ["level, secret, password"],
+        },
       });
 
       return res.status(200).json(fullUserWithoutPassword);
@@ -161,7 +165,9 @@ router.post("/signin/admin", (req, res, next) => {
 
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
-        attributes: ["id", "username", "email", "level", "username"],
+        attributes: {
+          exclude: ["level, secret, password"],
+        },
       });
 
       return res.status(200).json(fullUserWithoutPassword);
@@ -240,18 +246,51 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
-  const { username, mobile, email, zoneCode, address, detailAddress } =
-    req.body;
+  const {
+    username,
+    password,
+    newPassword,
+    mobile,
+    normalMobile,
+    email,
+    gender,
+    birth,
+    isEmail,
+    isSns,
+  } = req.body;
 
   try {
-    const exUser = await User.findOne({ where: { id: parseInt(id) } });
+    const exUser = await User.findOne({ where: { id: parseInt(req.user.id) } });
 
     if (!exUser) {
       return res.status(401).send("존재하지 않는 사용자 입니다.");
     }
 
+    let beforepass = "";
+    let hashedPassword = "";
+
+    if (newPassword) {
+      beforepass = await bcrypt.compare(password, exUser.password);
+
+      if (beforepass !== exUser.password) {
+        return res.status(401).send("기존 비밀번호가 일치하지 않습니다.");
+      }
+
+      hashedPassword = await bcrypt.hash(newPassword, 12);
+    }
+
     const updateUser = await User.update(
-      { username, mobile, email, zoneCode, address, detailAddress },
+      {
+        username,
+        password: newPassword ? hashedPassword : exUser.password,
+        mobile,
+        normalMobile: normalMobile ? normalMobile : null,
+        email,
+        gender,
+        birth,
+        isEmail,
+        isSns,
+      },
       {
         where: { id: parseInt(req.user.id) },
       }

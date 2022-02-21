@@ -29,22 +29,38 @@ module.exports = class User extends Model {
           type: DataTypes.STRING(30),
           allowNull: true,
         },
+        gender: {
+          type: DataTypes.STRING(50),
+          allowNull: true,
+        },
+        birth: {
+          type: DataTypes.STRING(50),
+          allowNull: true,
+        },
         zoneCode: {
           type: DataTypes.STRING(30), // 우편번호
-          allowNull: false,
+          allowNull: true,
         },
         address: {
           type: DataTypes.STRING(200), // 배달 주소
-          allowNull: false,
+          allowNull: true,
         },
         detailAddress: {
           type: DataTypes.STRING(300), // 상세 주소
-          allowNull: false,
+          allowNull: true,
         },
         terms: {
           // 이용약관동의
           type: DataTypes.BOOLEAN,
           allowNull: false,
+        },
+        isEmail: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
+        },
+        isSns: {
+          type: DataTypes.BOOLEAN,
+          allowNull: true,
         },
         level: {
           // 사용자 권한 [1 : 일반회원, 2 : 비어있음, 3: 운영자, 4: 최고관리자, 5: 개발사]
