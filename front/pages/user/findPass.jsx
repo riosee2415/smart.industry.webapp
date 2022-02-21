@@ -63,7 +63,7 @@ const FindPass = () => {
   const width = useWidth();
   const router = useRouter();
 
-  const inputUserName = useInput("");
+  const inputUserId = useInput("");
   const inputEmail = useInput("");
   const inputMobile = useInput("");
 
@@ -90,25 +90,21 @@ const FindPass = () => {
 
   ////// HANDLER //////
   const passwordHandler = useCallback(() => {
-    if (!inputUserName.value || inputUserName.value.trim() === "") {
+    if (!inputUserId.value || inputUserId.value.trim() === "") {
       return LoadNotification("이름을 입력해주세요.");
     }
     if (!inputEmail.value || inputEmail.value.trim() === "") {
-      return LoadNotification("이메일을 입력해주세요.");
-    }
-    if (!inputMobile.value || inputMobile.value.trim() === "") {
       return LoadNotification("이메일을 입력해주세요.");
     }
 
     dispatch({
       type: FIND_USER_PASS_REQUEST,
       data: {
+        userId: inputUserId.value,
         email: inputEmail.value,
-        username: inputUserName.value,
-        mobile: inputMobile.value,
       },
     });
-  }, [inputUserName, inputEmail, inputMobile]);
+  }, [inputUserId, inputEmail]);
 
   const moveLinkHandler = (link) => {
     router.push(link);
@@ -181,20 +177,16 @@ const FindPass = () => {
               {!st_findUserPassDone ? (
                 <>
                   <CustomInput
-                    {...inputUserName}
+                    {...inputUserId}
                     placeholder="이름을 입력해주세요."
                     margin={`0 0 5px`}
                   />
                   <CustomInput
                     {...inputEmail}
                     placeholder="이메일을 입력해주세요."
-                    margin={`0 0 5px`}
-                  />
-                  <CustomInput
-                    {...inputMobile}
-                    placeholder="전화번호를 입력해주세요."
                     margin={`0 0 20px`}
                   />
+
                   <CommonButton
                     width={`100%`}
                     height={`50px`}

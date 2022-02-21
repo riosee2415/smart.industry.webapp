@@ -256,13 +256,14 @@ function* findUserIdByEmail() {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function findUserPassAPI() {
-  return axios.post(`/api/user/modifypass`);
+function findUserPassAPI(data) {
+  console.log(data);
+  return axios.post(`/api/user/modifypass`, data);
 }
 
-function* findUserPass() {
+function* findUserPass(action) {
   try {
-    const result = yield call(findUserPassAPI);
+    const result = yield call(findUserPassAPI, action.data);
 
     yield put({
       type: FIND_USER_PASS_SUCCESS,
@@ -283,13 +284,13 @@ function* findUserPass() {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function findUserPassUpdateAPI() {
-  return axios.patch(`/api/user/modifypass/update`);
+function findUserPassUpdateAPI(data) {
+  return axios.patch(`/api/user/modifypass/update`, data);
 }
 
-function* findUserPassUpdate() {
+function* findUserPassUpdate(action) {
   try {
-    const result = yield call(findUserPassUpdateAPI);
+    const result = yield call(findUserPassUpdateAPI, action.data);
 
     yield put({
       type: FIND_USER_PASS_UPDATE_SUCCESS,

@@ -7,6 +7,8 @@ export const initailState = {
 
   updateModal: false,
 
+  postcodeModal: false,
+
   //
   st_loginLoading: false,
   st_loginDone: false,
@@ -91,6 +93,8 @@ export const FIND_USER_PASS_UPDATE_FAILURE = "FIND_USER_PASS_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
+
+export const POST_CODE_MODAL_TOGGLE = "POST_CODE_MODAL_TOGGLE";
 
 export const CURRENT_ADMINMENU_STATUS = "CURRENT_ADMINMENU_STATUS";
 
@@ -321,6 +325,10 @@ const reducer = (state = initailState, action) =>
 
       case UPDATE_MODAL_CLOSE_REQUEST:
         draft.updateModal = false;
+        break;
+
+      case POST_CODE_MODAL_TOGGLE:
+        draft.postcodeModal = !draft.postcodeModal;
         break;
 
       default:
