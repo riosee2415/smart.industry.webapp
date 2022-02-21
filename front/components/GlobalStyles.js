@@ -90,6 +90,10 @@ const GlobalStyles = createGlobalStyle`
    height:12px;
    background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')
   }
+  
+  .ant-notification{
+    z-index: 10000 !important;
+  }
 `;
 
 export default GlobalStyles;
