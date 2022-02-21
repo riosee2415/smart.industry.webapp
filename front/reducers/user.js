@@ -39,6 +39,14 @@ export const initailState = {
   st_findUserIdLoading: false,
   st_findUserIdDone: false,
   st_findUserIdError: null,
+  //
+  st_findUserPassLoading: false, // 비밀번호찾기
+  st_findUserPassDone: false,
+  st_findUserPassError: null,
+  //
+  st_findUserPassUpdateLoading: false, // 비밀번호수정
+  st_findUserPassUpdateDone: false,
+  st_findUserPassUpdateError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -72,6 +80,14 @@ export const KAKAO_LOGIN_FAILURE = "KAKAO_LOGIN_FAILURE";
 export const FIND_USER_ID_REQUEST = "FIND_USER_ID_REQUEST";
 export const FIND_USER_ID_SUCCESS = "FIND_USER_ID_SUCCESS";
 export const FIND_USER_ID_FAILURE = "FIND_USER_ID_FAILURE";
+
+export const FIND_USER_PASS_REQUEST = "FIND_USER_PASS_REQUEST";
+export const FIND_USER_PASS_SUCCESS = "FIND_USER_PASS_SUCCESS";
+export const FIND_USER_PASS_FAILURE = "FIND_USER_PASS_FAILURE";
+
+export const FIND_USER_PASS_UPDATE_REQUEST = "FIND_USER_PASS_UPDATE_REQUEST";
+export const FIND_USER_PASS_UPDATE_SUCCESS = "FIND_USER_PASS_UPDATE_SUCCESS";
+export const FIND_USER_PASS_UPDATE_FAILURE = "FIND_USER_PASS_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -237,6 +253,46 @@ const reducer = (state = initailState, action) =>
         draft.st_findUserIdLoading = false;
         draft.st_findUserIdDone = false;
         draft.st_kakaoLoginError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case FIND_USER_PASS_REQUEST: {
+        draft.st_findUserPassLoading = true;
+        draft.st_findUserPassDone = null;
+        draft.st_findUserPassError = false;
+        break;
+      }
+      case FIND_USER_PASS_SUCCESS: {
+        draft.st_findUserPassLoading = false;
+        draft.st_findUserPassDone = true;
+        draft.st_findUserPassError = null;
+        break;
+      }
+      case FIND_USER_PASS_FAILURE: {
+        draft.st_findUserPassLoading = false;
+        draft.st_findUserPassDone = false;
+        draft.st_findUserPassError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case FIND_USER_PASS_UPDATE_REQUEST: {
+        draft.st_findUserPassUpdateLoading = true;
+        draft.st_findUserPassUpdateDone = null;
+        draft.st_findUserPassUpdateError = false;
+        break;
+      }
+      case FIND_USER_PASS_UPDATE_SUCCESS: {
+        draft.st_findUserPassUpdateLoading = false;
+        draft.st_findUserPassUpdateDone = true;
+        draft.st_findUserPassUpdateError = null;
+        break;
+      }
+      case FIND_USER_PASS_UPDATE_FAILURE: {
+        draft.st_findUserPassUpdateLoading = false;
+        draft.st_findUserPassUpdateDone = false;
+        draft.st_findUserPassUpdateError = action.error;
         break;
       }
       //////////////////////////////////////////////

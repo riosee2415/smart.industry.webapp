@@ -195,7 +195,7 @@ const FindPass = () => {
                     margin={`0 0 15px`}
                     onClick={loginHandler}
                   >
-                    아이디 찾기
+                    비밀번호 찾기
                   </CommonButton>
                 </>
               ) : (
@@ -232,7 +232,7 @@ const FindPass = () => {
                   color={Theme.grey_C}
                   cursor={`pointer`}
                 >
-                  비밀번호찾기
+                  아이디찾기
                 </Wrapper>
                 <Text
                   fontSize={width < 700 ? `12px` : `14px`}
