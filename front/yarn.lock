@@ -1571,13 +1571,6 @@
     "eventemitter2" "^6.3.1"
     "ws" "^7.0.0"
 
-"@pm2/pm2-version-check@latest":
-  "integrity" "sha512-SXsM27SGH3yTWKc2fKR4SYNxsmnvuBQ9dd6QHtEWmiZ/VqaOYPAIlS8+vMcn27YLtAEBGvNRSh3TPNvtjZgfqA=="
-  "resolved" "https://registry.npmjs.org/@pm2/pm2-version-check/-/pm2-version-check-1.0.4.tgz"
-  "version" "1.0.4"
-  dependencies:
-    "debug" "^4.3.1"
-
 "@polka/url@^1.0.0-next.17":
   "integrity" "sha512-0p1rCgM3LLbAdwBnc7gqgnvjHg9KpbhcSphergHShlkWz8EdPawoMJ3/VbezI0mGC5eKCDzMaPgF9Yca6cKvrg=="
   "resolved" "https://registry.npmjs.org/@polka/url/-/url-1.0.0-next.17.tgz"

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
@@ -36,7 +36,7 @@ const CustomInput = styled(TextInput)`
     background-color: ${Theme.grey2_C};
   }
 
-  @media (max-width: 700px) {
+  @media (max-width: 900px) {
     width: 350px;
   }
 `;
@@ -53,15 +53,14 @@ const TitleWrapper = styled(Wrapper)`
   font-size: 18px;
   font-weight: 700;
 
-  padding: 0 0 0 10px;
   align-items: flex-start;
   justify-content: flex-start;
   height: 100%;
   flex-direction: row;
   color: ${Theme.darkGrey_C};
 
-  @media (max-width: 700px) {
-    width: 100px;
+  @media (max-width: 900px) {
+    width: 120px;
     font-size: 13px;
   } ;
 `;
@@ -89,6 +88,8 @@ const Profile = () => {
   const router = useRouter();
 
   ////// HOOKS //////
+
+  const [isModifyForm, setIsModifyForm] = useState(false);
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
@@ -152,442 +153,513 @@ const Profile = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`250px 0 500px 0`}>
-            <Wrapper margin={`40px 0 25px`} ju={`flex-start`} dr={`row`}>
-              <Wrapper
-                width={`auto`}
-                margin={`0 8px 0 0`}
-                onClick={() => moveLinkHandler(`/`)}
-                cursor={`pointer`}
-              >
-                HOME
-              </Wrapper>
-              |
-              <Wrapper
-                width={`auto`}
-                margin={`0 8px`}
-                onClick={() => moveLinkHandler(`/mypage`)}
-                cursor={`pointer`}
-              >
-                마이페이지
-              </Wrapper>
-              |
-              <Wrapper
-                width={`auto`}
-                margin={`0 8px`}
-                onClick={() => moveLinkHandler(`/mypage/profile`)}
-                cursor={`pointer`}
-              >
-                회원정보
-              </Wrapper>
-            </Wrapper>
-            <Wrapper
-              fontSize={`20px`}
-              fontWeight={`bold`}
-              al={`flex-start`}
-              padding={`0 0 10px`}
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 40px`}
+          {!isModifyForm ? (
+            <RsWrapper
+              margin={width < 700 ? `100px 0 80px 0` : `250px 0 80px 0`}
             >
-              회원정보
-            </Wrapper>
-            <Wrapper width={width < 700 ? `370px` : `600px`}>
-              <Text
-                fontSize={`18px`}
-                fontWeight={`400`}
-                margin={`80px 0 10px 0`}
-                color={Theme.darkGrey_C}
-              >
-                비밀번호 재확인
-              </Text>
-              <Wrapper
-                width={`85%`}
-                dr={width < 700 ? `column` : `row`}
-                margin={`15px 0 55px 0`}
-              >
-                <Text
-                  fontSize={width < 700 ? `14px` : `16px`}
-                  color={Theme.grey_C}
+              <Wrapper margin={`45px 0 25px`} ju={`flex-start`} dr={`row`}>
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 8px 0 0`}
+                  onClick={() => moveLinkHandler(`/`)}
+                  cursor={`pointer`}
                 >
-                  회원님의 정보를 안전하게 보호하기 위해&nbsp;
-                </Text>
-                <Text
-                  fontSize={width < 700 ? `14px` : `16px`}
-                  color={Theme.grey_C}
+                  HOME
+                </Wrapper>
+                |
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 8px`}
+                  onClick={() => moveLinkHandler(`/mypage`)}
+                  cursor={`pointer`}
                 >
-                  비밀번호를 다시 한번 확인해주세요
-                </Text>
+                  마이페이지
+                </Wrapper>
+                |
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 8px`}
+                  onClick={() => moveLinkHandler(`/mypage/profile`)}
+                  cursor={`pointer`}
+                >
+                  개인 정보 수정
+                </Wrapper>
               </Wrapper>
               <Wrapper
-                width={`100%`}
-                height={`130px`}
-                dr={`column`}
-                al={`space-between`}
+                fontSize={`20px`}
+                fontWeight={`bold`}
+                al={`flex-start`}
+                padding={`0 0 10px`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                margin={`0 0 80px`}
               >
+                개인 정보 수정
+              </Wrapper>
+              <Wrapper width={width < 900 ? `370px` : `600px`}>
+                <Text
+                  fontSize={`18px`}
+                  fontWeight={`400`}
+                  margin={`0 0 15px 0`}
+                  color={Theme.darkGrey_C}
+                >
+                  비밀번호 재확인
+                </Text>
+                <Wrapper
+                  width={`85%`}
+                  dr={width < 900 ? `column` : `row`}
+                  margin={`0px 0 55px 0`}
+                >
+                  <Text
+                    fontSize={width < 900 ? `14px` : `16px`}
+                    color={Theme.grey_C}
+                  >
+                    회원님의 정보를 안전하게 보호하기 위해&nbsp;
+                  </Text>
+                  <Text
+                    fontSize={width < 900 ? `14px` : `16px`}
+                    color={Theme.grey_C}
+                  >
+                    비밀번호를 다시 한번 확인해주세요
+                  </Text>
+                </Wrapper>
                 <Wrapper
                   width={`100%`}
-                  dr={`row`}
-                  ju={`space-between`}
-                  margin={`0 0 30px 0`}
+                  height={`130px`}
+                  dr={`column`}
+                  al={`space-between`}
                 >
-                  <Text
-                    fontSize={`18px`}
-                    fontWeight={`700`}
-                    color={`1px solid ${Theme.darkGrey_C}`}
-                    margin={`0 5%`}
-                    display={width < 700 ? `none` : `flex`}
-                  >
-                    아이디
-                  </Text>
-                  <CustomInput
-                    margin={`0 5%`}
-                    placeholder={width < 700 ? `아이디` : ``}
-                  />
-                </Wrapper>
-                <Wrapper width={`100%`} dr={`row`} ju={`space-between`}>
-                  <Text
-                    fontSize={`18px`}
-                    fontWeight={`700`}
-                    color={`1px solid ${Theme.darkGrey_C}`}
-                    margin={`0 5%`}
-                    display={width < 700 ? `none` : `flex`}
-                  >
-                    비밀번호
-                  </Text>
-                  <CustomInput
-                    margin={`0 5%`}
-                    placeholder={width < 700 ? `비밀번호` : ``}
-                  />
-                </Wrapper>
-              </Wrapper>
-              <CommonButton
-                width={`150px`}
-                height={`50px`}
-                radius={`0`}
-                margin={`55px 0 0 15px`}
-              >
-                확인
-              </CommonButton>
-            </Wrapper>
-          </RsWrapper>
-          {/* /////////////////////////////////////////////////////////////////////////////////////////// */}
-          <RsWrapper margin={`30px 0 500px 0`}>
-            <Wrapper margin={`40px 0 25px`} al={`flex-start`}>
-              HOME | 마이페이지 | 회원정보
-            </Wrapper>
-            <Wrapper
-              fontSize={`20px`}
-              fontWeight={`bold`}
-              al={`flex-start`}
-              padding={`0 0 10px`}
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 40px`}
-            >
-              회원정보
-            </Wrapper>
-            <Wrapper
-              width={width < 700 ? `100%` : `80%`}
-              ju={`flex-start`}
-              al={`space-between`}
-              padding={`30px 0 110px 0`}
-            >
-              <Wrapper width={`100%`}>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>아이디</TitleWrapper>
                   <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    al={`flex-start`}
-                  >
-                    <CustomConInput width={width < 700 ? `100%` : `70%`} />
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>현재 비밀번호</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    al={`flex-start`}
-                  >
-                    <CustomConInput width={width < 700 ? `100%` : `70%`} />
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>새 비밀번호</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    al={`flex-start`}
-                  >
-                    <CustomConInput width={width < 700 ? `100%` : `70%`} />
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>새 비밀번호 확인</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    al={`flex-start`}
-                  >
-                    <CustomConInput width={width < 700 ? `100%` : `70%`} />
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>현재 비밀번호</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    al={`flex-start`}
-                  >
-                    <CustomConInput width={width < 700 ? `100%` : `70%`} />
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>이름</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    al={`flex-start`}
-                  >
-                    <CustomConInput width={width < 700 ? `100%` : `70%`} />
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>이메일</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    ju={`flex-start`}
+                    width={`100%`}
                     dr={`row`}
+                    ju={`space-between`}
+                    margin={`0 0 30px 0`}
                   >
-                    <CustomConInput width={width < 700 ? `50%` : `70%`} />
-                    <CommonButton
-                      width={width < 700 ? `110px` : `150px`}
-                      height={`50px`}
-                      radius={`0`}
-                      margin={`0 0 0 10px`}
-                    >
-                      중복확인
-                    </CommonButton>
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>휴대폰</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    ju={`flex-start`}
-                    dr={`row`}
-                  >
-                    <CustomConInput width={width < 700 ? `50%` : `70%`} />
-                    <CommonButton
-                      width={width < 700 ? `110px` : `150px`}
-                      height={`50px`}
-                      radius={`0`}
-                      margin={`0 0 0 10px`}
-                    >
-                      다른번호 인증
-                    </CommonButton>
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>성별</TitleWrapper>
-                  <Wrapper width={`60%`} ju={`space-between`} dr={`row`}>
-                    <Wrapper width={`55%`} ju={`space-between`} dr={`row`}>
-                      <Checkbox>
-                        <Text
-                          fontSize={width < 700 ? `13px` : `18px`}
-                          color={Theme.black_C}
-                          cursor={`pointer`}
-                          fontWeight={`700`}
-                        >
-                          남자
-                        </Text>
-                      </Checkbox>
-                      <Checkbox>
-                        <Text
-                          fontSize={width < 700 ? `13px` : `18px`}
-                          color={Theme.black_C}
-                          cursor={`pointer`}
-                          fontWeight={`700`}
-                        >
-                          여자
-                        </Text>
-                      </Checkbox>
-                    </Wrapper>
-                    <Checkbox>
-                      <Text
-                        fontSize={width < 700 ? `13px` : `18px`}
-                        color={Theme.black_C}
-                        cursor={`pointer`}
-                        fontWeight={`700`}
-                      >
-                        선택안함
-                      </Text>
-                    </Checkbox>
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>생년월일</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    al={`flex-start`}
-                  >
-                    <CustomConInput width={width < 700 ? `100%` : `70%`} />
-                  </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>선택약관 동의</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    ju={`flex-start`}
-                    dr={`row`}
-                  >
-                    <Checkbox>
-                      <Text
-                        fontSize={width < 700 ? `13px` : `18px`}
-                        color={Theme.black_C}
-                        cursor={`pointer`}
-                        fontWeight={`700`}
-                      >
-                        개인정보 수집 · 이용 동의
-                        <SpanText color={Theme.grey_C}>
-                          &nbsp;&nbsp;&nbsp;(선택)
-                        </SpanText>
-                      </Text>
-                    </Checkbox>
                     <Text
-                      margin={width < 700 ? `0` : `0 0 20px 30%`}
-                      color={Theme.basicTheme_C}
-                      fontSize={width < 700 ? `14px` : `16px`}
-                      cursor={`pointer`}
+                      fontSize={`18px`}
+                      fontWeight={`700`}
+                      color={`1px solid ${Theme.darkGrey_C}`}
+                      margin={`0 5%`}
+                      display={width < 900 ? `none` : `flex`}
                     >
-                      약관보기
+                      아이디
                     </Text>
+                    <CustomInput
+                      margin={`0 5%`}
+                      placeholder={width < 900 ? `아이디` : ``}
+                    />
                   </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <TitleWrapper>이용약관 동의</TitleWrapper>
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    ju={`flex-start`}
-                    dr={`row`}
-                  >
-                    <Checkbox>
-                      <Text
-                        fontSize={width < 700 ? `13px` : `18px`}
-                        color={Theme.black_C}
-                        fontWeight={`700`}
-                      >
-                        정보 수신 동의
-                        <SpanText color={Theme.grey_C}>
-                          &nbsp;&nbsp;&nbsp;(선택)
-                        </SpanText>
-                      </Text>
-                    </Checkbox>
+                  <Wrapper width={`100%`} dr={`row`} ju={`space-between`}>
+                    <Text
+                      fontSize={`18px`}
+                      fontWeight={`700`}
+                      color={`1px solid ${Theme.darkGrey_C}`}
+                      margin={`0 5%`}
+                      display={width < 900 ? `none` : `flex`}
+                    >
+                      비밀번호
+                    </Text>
+                    <CustomInput
+                      margin={`0 5%`}
+                      placeholder={width < 900 ? `비밀번호` : ``}
+                    />
                   </Wrapper>
-                </ContentWrapper>
-                <ContentWrapper
-                  width={`100%`}
-                  height={`auto`}
-                  dr={`row`}
-                  padding={`15px 0`}
-                >
-                  <Wrapper
-                    width={width < 700 ? `calc(100% - 100px)` : "80%"}
-                    ju={width < 700 ? `felx-start` : `center`}
-                    dr={`row`}
-                    margin={width < 700 ? `0 0 70px 100px` : `0 0 70px`}
-                  >
-                    <Checkbox>
-                      <Text
-                        fontSize={width < 700 ? `13px` : `18px`}
-                        color={Theme.black_C}
-                        fontWeight={`700`}
-                      >
-                        이메일
-                      </Text>
-                    </Checkbox>
-                    <Checkbox style={{ margin: `0 0 0 50px` }}>
-                      <Text
-                        fontSize={width < 700 ? `13px` : `18px`}
-                        color={Theme.black_C}
-                        fontWeight={`700`}
-                      >
-                        SNS
-                      </Text>
-                    </Checkbox>
-                  </Wrapper>
-                </ContentWrapper>
-              </Wrapper>
-              <Wrapper dr={`row`}>
+                </Wrapper>
                 <CommonButton
+                  fontSize={width < 900 ? `13px` : `18px`}
                   width={`150px`}
                   height={`50px`}
                   radius={`0`}
-                  margin={`0 5px 0 0`}
-                  kindOf={`grey`}
+                  margin={`55px 0 0 15px`}
+                  onClick={() => setIsModifyForm(true)}
                 >
-                  탈퇴하기
-                </CommonButton>
-                <CommonButton width={`150px`} height={`50px`} radius={`0`}>
-                  회원정보 수정
+                  확인
                 </CommonButton>
               </Wrapper>
-            </Wrapper>
-          </RsWrapper>
+            </RsWrapper>
+          ) : (
+            <RsWrapper
+              margin={width < 700 ? `100px 0 80px 0` : `250px 0 80px 0`}
+            >
+              <Wrapper margin={`45px 0 25px`} ju={`flex-start`} dr={`row`}>
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 8px 0 0`}
+                  onClick={() => moveLinkHandler(`/`)}
+                  cursor={`pointer`}
+                >
+                  HOME
+                </Wrapper>
+                |
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 8px`}
+                  onClick={() => moveLinkHandler(`/mypage`)}
+                  cursor={`pointer`}
+                >
+                  마이페이지
+                </Wrapper>
+                |
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 8px`}
+                  onClick={() => moveLinkHandler(`/mypage/profile`)}
+                  cursor={`pointer`}
+                >
+                  개인 정보 수정
+                </Wrapper>
+              </Wrapper>
+              <Wrapper
+                fontSize={`20px`}
+                fontWeight={`bold`}
+                al={`flex-start`}
+                padding={`0 0 10px`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
+                개인 정보 수정
+              </Wrapper>
+              <Wrapper
+                width={width < 900 ? `100%` : `80%`}
+                ju={`flex-start`}
+                al={`space-between`}
+                padding={`30px 0 110px 0`}
+              >
+                <Wrapper width={`100%`}>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`0 0 15px 0`}
+                  >
+                    <TitleWrapper>아이디</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      al={`flex-start`}
+                    >
+                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <TitleWrapper>현재 비밀번호</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      al={`flex-start`}
+                    >
+                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <TitleWrapper>새 비밀번호</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      al={`flex-start`}
+                    >
+                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <TitleWrapper>새 비밀번호 확인</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      al={`flex-start`}
+                    >
+                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <TitleWrapper>현재 비밀번호</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      al={`flex-start`}
+                    >
+                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <TitleWrapper>이름</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      al={`flex-start`}
+                    >
+                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <TitleWrapper>이메일</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      ju={`flex-start`}
+                      dr={`row`}
+                    >
+                      <CustomConInput
+                        width={width < 900 ? `calc(100% - 90px - 10px)` : `70%`}
+                      />
+                      <CommonButton
+                        fontSize={width < 900 ? `13px` : `18px`}
+                        width={width < 900 ? `90px` : `150px`}
+                        padding={`0`}
+                        height={`50px`}
+                        radius={`0`}
+                        margin={`0 0 0 10px`}
+                      >
+                        중복확인
+                      </CommonButton>
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <TitleWrapper>휴대폰</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      ju={`flex-start`}
+                      dr={`row`}
+                    >
+                      <CustomConInput
+                        width={width < 900 ? `calc(100% - 90px - 10px)` : `70%`}
+                      />
+                      <CommonButton
+                        fontSize={width < 900 ? `13px` : `18px`}
+                        width={width < 900 ? `90px` : `150px`}
+                        padding={`0`}
+                        height={`50px`}
+                        radius={`0`}
+                        margin={`0 0 0 10px`}
+                      >
+                        다른번호 인증
+                      </CommonButton>
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                    al={width < 900 ? `flex-start` : `center`}
+                  >
+                    <TitleWrapper>성별</TitleWrapper>
+                    <Wrapper
+                      width={`55%`}
+                      ju={`space-between`}
+                      dr={width < 900 ? `column` : `row`}
+                      al={width < 900 ? `flex-start` : `center`}
+                    >
+                      <Wrapper
+                        width={width < 900 ? `100%` : `55%`}
+                        ju={`space-between`}
+                        dr={`row`}
+                        margin={width < 900 ? `0 0 10px` : `0`}
+                      >
+                        <Checkbox>
+                          <Text
+                            margin={`0 0 0 12px`}
+                            fontSize={width < 900 ? `13px` : `18px`}
+                            color={Theme.black_C}
+                            cursor={`pointer`}
+                            fontWeight={`700`}
+                          >
+                            남자
+                          </Text>
+                        </Checkbox>
+                        <Checkbox>
+                          <Text
+                            margin={`0 0 0 12px`}
+                            fontSize={width < 900 ? `13px` : `18px`}
+                            color={Theme.black_C}
+                            cursor={`pointer`}
+                            fontWeight={`700`}
+                          >
+                            여자
+                          </Text>
+                        </Checkbox>
+                      </Wrapper>
+                      <Checkbox>
+                        <Text
+                          margin={`0 0 0 12px`}
+                          fontSize={width < 900 ? `13px` : `18px`}
+                          color={Theme.black_C}
+                          cursor={`pointer`}
+                          fontWeight={`700`}
+                        >
+                          선택안함
+                        </Text>
+                      </Checkbox>
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <TitleWrapper>생년월일</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      al={`flex-start`}
+                    >
+                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                    al={width < 900 ? `flex-start` : `center`}
+                  >
+                    <TitleWrapper>선택약관 동의</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      ju={width < 900 ? `center` : `flex-start`}
+                      al={width < 900 ? `flex-start` : `center`}
+                      dr={width < 900 ? `column` : `row`}
+                    >
+                      <Checkbox>
+                        <Text
+                          margin={`0 0 0 12px`}
+                          fontSize={width < 900 ? `13px` : `18px`}
+                          color={Theme.black_C}
+                          cursor={`pointer`}
+                          fontWeight={`700`}
+                        >
+                          개인정보 수집 · 이용 동의
+                          <SpanText color={Theme.grey_C}>
+                            &nbsp;&nbsp;&nbsp;(선택)
+                          </SpanText>
+                        </Text>
+                      </Checkbox>
+                      <Text
+                        margin={width < 900 ? `5px 0 0 36px` : `0 0 0 60px`}
+                        color={Theme.basicTheme_C}
+                        fontSize={width < 900 ? `14px` : `16px`}
+                        cursor={`pointer`}
+                      >
+                        약관보기
+                      </Text>
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <TitleWrapper>이용약관 동의</TitleWrapper>
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      ju={`flex-start`}
+                      dr={`row`}
+                    >
+                      <Checkbox>
+                        <Text
+                          margin={`0 0 0 12px`}
+                          fontSize={width < 900 ? `13px` : `18px`}
+                          color={Theme.black_C}
+                          fontWeight={`700`}
+                        >
+                          정보 수신 동의
+                          <SpanText color={Theme.grey_C}>
+                            &nbsp;&nbsp;&nbsp;(선택)
+                          </SpanText>
+                        </Text>
+                      </Checkbox>
+                    </Wrapper>
+                  </ContentWrapper>
+                  <ContentWrapper
+                    width={`100%`}
+                    height={`auto`}
+                    dr={`row`}
+                    padding={`15px 0`}
+                  >
+                    <Wrapper
+                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
+                      ju={width < 900 ? `felx-start` : `center`}
+                      dr={`row`}
+                      margin={width < 900 ? `0 0 60px 120px` : `0 0 60px`}
+                    >
+                      <Checkbox>
+                        <Text
+                          margin={`0 0 0 12px`}
+                          fontSize={width < 900 ? `13px` : `18px`}
+                          color={Theme.black_C}
+                          fontWeight={`700`}
+                        >
+                          이메일
+                        </Text>
+                      </Checkbox>
+                      <Checkbox
+                        style={
+                          width < 700
+                            ? { margin: `0 0 0 20px` }
+                            : { margin: `0 0 0 50px` }
+                        }
+                      >
+                        <Text
+                          fontSize={width < 900 ? `13px` : `18px`}
+                          color={Theme.black_C}
+                          fontWeight={`700`}
+                        >
+                          SNS
+                        </Text>
+                      </Checkbox>
+                    </Wrapper>
+                  </ContentWrapper>
+                </Wrapper>
+                <Wrapper dr={`row`}>
+                  <CommonButton
+                    fontSize={width < 900 ? `13px` : `18px`}
+                    width={`150px`}
+                    height={`50px`}
+                    radius={`0`}
+                    margin={`0 5px 0 0`}
+                    kindOf={`grey`}
+                  >
+                    탈퇴하기
+                  </CommonButton>
+                  <CommonButton
+                    fontSize={width < 900 ? `13px` : `18px`}
+                    width={`150px`}
+                    height={`50px`}
+                    radius={`0`}
+                  >
+                    회원정보 수정
+                  </CommonButton>
+                </Wrapper>
+              </Wrapper>
+            </RsWrapper>
+          )}
         </WholeWrapper>
       </ClientLayout>
     </>
