@@ -1,11 +1,11 @@
-import { React, useState } from "react";
-import { Checkbox } from "antd";
-import { useSelector } from "react-redux";
+import { React, useCallback, useEffect, useState } from "react";
+import { Checkbox, notification } from "antd";
+import { useDispatch, useSelector } from "react-redux";
 import ClientLayout from "../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
-import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
+import { LOAD_MY_INFO_REQUEST, LOGIN_REQUEST } from "../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
 import {
@@ -19,6 +19,15 @@ import {
 import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import Theme from "../../components/Theme";
+import useInput from "../../hooks/useInput";
+
+const LoadNotification = (msg, content) => {
+  notification.open({
+    message: msg,
+    description: content,
+    onClick: () => {},
+  });
+};
 
 const CustomInput = styled(TextInput)`
   border: none;
@@ -48,13 +57,54 @@ const Index = () => {
   const width = useWidth();
 
   const [isCheck, setIsCheck] = useState(false);
+  const inputUserId = useInput("");
+  const inputPassword = useInput("");
 
   ////// REDUX //////
-
+  const dispatch = useDispatch();
+  const { st_loginDone, st_loginError } = useSelector((state) => state.user);
   ////// USEEFFECT //////
+  useEffect(() => {
+    const data = localStorage.getItem("DKDLELWJWKD");
+    if (data) {
+      inputUserId.setValue(data);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (st_loginDone) {
+      return LoadNotification("로그인되었습니다.");
+    }
+  });
+
+  useEffect(() => {
+    if (st_loginError) {
+      return LoadNotification(st_loginError);
+    }
+  });
 
   ////// TOGGLE //////
+
   ////// HANDLER //////
+  const loginHandler = useCallback(() => {
+    if (!inputUserId.value || inputUserId.value.trim() === "") {
+      return LoadNotification("아이디를 입력해주세요.");
+    }
+    if (!inputPassword.value || inputPassword.value.trim() === "") {
+      return LoadNotification("비밀번호를 입력해주세요.");
+    }
+    if (isCheck) {
+      console.log(isCheck);
+      localStorage.setItem("DKDLELWJWKD", inputUserId.value);
+    }
+    dispatch({
+      type: LOGIN_REQUEST,
+      data: {
+        userId: inputUserId.value,
+        password: inputPassword.value,
+      },
+    });
+  }, [inputUserId, inputPassword, isCheck]);
 
   ////// DATAVIEW //////
 
@@ -120,13 +170,22 @@ const Index = () => {
               <Text fontSize={`18px`} margin={`0 0 40px`} color={Theme.grey_C}>
                 회원 로그인
               </Text>
-              <CustomInput placeholder="아이디" margin={`0 0 5px`} />
-              <CustomInput placeholder="비밀번호" margin={`0 0 20px`} />
+              <CustomInput
+                {...inputUserId}
+                placeholder="아이디"
+                margin={`0 0 5px`}
+              />
+              <CustomInput
+                {...inputPassword}
+                placeholder="비밀번호"
+                margin={`0 0 20px`}
+              />
               <CommonButton
                 width={`100%`}
                 height={`50px`}
                 radius={`0`}
                 margin={`0 0 15px`}
+                onClick={loginHandler}
               >
                 로그인
               </CommonButton>
