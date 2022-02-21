@@ -7,6 +7,7 @@ import Head from "next/head";
 import wrapper from "../../store/configureStore";
 import {
   FIND_USER_ID_REQUEST,
+  FIND_USER_PASS_REQUEST,
   LOAD_MY_INFO_REQUEST,
   LOGIN_REQUEST,
 } from "../../reducers/user";
@@ -62,51 +63,52 @@ const FindPass = () => {
   const width = useWidth();
   const router = useRouter();
 
-  const [isSuccess, setIsSuccess] = useState(false);
   const inputUserName = useInput("");
   const inputEmail = useInput("");
+  const inputMobile = useInput("");
 
   ////// REDUX //////
   const dispatch = useDispatch();
-  const { st_findUserIdDone, st_findUserIdError, foundID } = useSelector(
+  const { st_findUserPassDone, st_findUserPassError, foundID } = useSelector(
     (state) => state.user
   );
   ////// USEEFFECT //////
 
   useEffect(() => {
-    if (st_findUserIdDone) {
-      console.log(st_findUserIdDone);
-      setIsSuccess(true);
-      LoadNotification("아이디찾기에 성공하였습니다.");
+    if (st_findUserPassDone) {
+      LoadNotification("이메일에 체크코드를 전송했습니다.");
     }
-  }, [st_findUserIdDone]);
+  }, [st_findUserPassDone]);
 
   useEffect(() => {
-    if (st_findUserIdError) {
-      console.log(st_findUserIdError);
-      return LoadNotification(st_findUserIdError);
+    if (st_findUserPassError) {
+      return LoadNotification(st_findUserPassError);
     }
-  }, [st_findUserIdError]);
+  }, [st_findUserPassError]);
 
   ////// TOGGLE //////
 
   ////// HANDLER //////
-  const loginHandler = useCallback(() => {
+  const passwordHandler = useCallback(() => {
     if (!inputUserName.value || inputUserName.value.trim() === "") {
       return LoadNotification("이름을 입력해주세요.");
     }
     if (!inputEmail.value || inputEmail.value.trim() === "") {
       return LoadNotification("이메일을 입력해주세요.");
     }
+    if (!inputMobile.value || inputMobile.value.trim() === "") {
+      return LoadNotification("이메일을 입력해주세요.");
+    }
 
     dispatch({
-      type: FIND_USER_ID_REQUEST,
+      type: FIND_USER_PASS_REQUEST,
       data: {
-        userId: inputUserName.value,
-        password: inputEmail.value,
+        email: inputEmail.value,
+        username: inputUserName.value,
+        mobile: inputMobile.value,
       },
     });
-  }, [inputUserName, inputEmail]);
+  }, [inputUserName, inputEmail, inputMobile]);
 
   const moveLinkHandler = (link) => {
     router.push(link);
@@ -176,7 +178,7 @@ const FindPass = () => {
               <Text fontSize={`18px`} margin={`0 0 40px`} color={Theme.grey_C}>
                 비밀번호 찾기
               </Text>
-              {!isSuccess ? (
+              {!st_findUserPassDone ? (
                 <>
                   <CustomInput
                     {...inputUserName}
@@ -186,6 +188,11 @@ const FindPass = () => {
                   <CustomInput
                     {...inputEmail}
                     placeholder="이메일을 입력해주세요."
+                    margin={`0 0 5px`}
+                  />
+                  <CustomInput
+                    {...inputMobile}
+                    placeholder="전화번호를 입력해주세요."
                     margin={`0 0 20px`}
                   />
                   <CommonButton
@@ -193,7 +200,7 @@ const FindPass = () => {
                     height={`50px`}
                     radius={`0`}
                     margin={`0 0 15px`}
-                    onClick={loginHandler}
+                    onClick={passwordHandler}
                   >
                     비밀번호 찾기
                   </CommonButton>
