@@ -91,7 +91,7 @@ const Index = () => {
   ////// TOGGLE //////
 
   ////// HANDLER //////
-  const loginHandler = useCallback(() => {
+  const findHandler = useCallback(() => {
     if (!inputUserName.value || inputUserName.value.trim() === "") {
       return LoadNotification("이름을 입력해주세요.");
     }
@@ -102,8 +102,8 @@ const Index = () => {
     dispatch({
       type: FIND_USER_ID_REQUEST,
       data: {
-        userId: inputUserName.value,
-        password: inputEmail.value,
+        username: inputUserName.value,
+        email: inputEmail.value,
       },
     });
   }, [inputUserName, inputEmail]);
@@ -193,7 +193,7 @@ const Index = () => {
                     height={`50px`}
                     radius={`0`}
                     margin={`0 0 15px`}
-                    onClick={loginHandler}
+                    onClick={findHandler}
                   >
                     아이디 찾기
                   </CommonButton>

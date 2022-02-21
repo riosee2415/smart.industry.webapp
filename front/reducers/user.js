@@ -5,6 +5,8 @@ export const initailState = {
   currentAdminMenu: [],
   users: null,
 
+  foundID: null,
+
   updateModal: false,
 
   //
@@ -230,13 +232,13 @@ const reducer = (state = initailState, action) =>
         draft.st_findUserIdLoading = false;
         draft.st_findUserIdDone = true;
         draft.st_findUserIdError = null;
-        draft.foundID = action.data;
+        draft.foundID = action.data.userId;
         break;
       }
       case FIND_USER_ID_FAILURE: {
         draft.st_findUserIdLoading = false;
         draft.st_findUserIdDone = false;
-        draft.st_kakaoLoginError = action.error;
+        draft.st_findUserIdError = action.error;
         break;
       }
       //////////////////////////////////////////////
