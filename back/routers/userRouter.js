@@ -170,7 +170,18 @@ router.post("/signin/admin", (req, res, next) => {
 });
 
 router.post("/signup", async (req, res, next) => {
-  const { userId, password, username, email, mobile, terms } = req.body;
+  const {
+    userId,
+    password,
+    username,
+    email,
+    mobile,
+    normalMobile,
+    zoneCode,
+    address,
+    detailAddress,
+    terms,
+  } = req.body;
 
   if (!terms) {
     return res.status(401).send("이용약관에 동의해주세요.");
@@ -184,6 +195,13 @@ router.post("/signup", async (req, res, next) => {
     if (exUser) {
       return res.status(401).send("이미 가입된 이메일 입니다.");
     }
+    const exUser2 = await User.findOne({
+      where: { userId: userId },
+    });
+
+    if (exUser2) {
+      return res.status(401).send("이미 가입된 이메일 입니다.");
+    }
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -193,6 +211,10 @@ router.post("/signup", async (req, res, next) => {
       username,
       email,
       mobile,
+      normalMobile: normalMobile ? normalMobile : null,
+      zoneCode,
+      address,
+      detailAddress,
       terms,
     });
 
