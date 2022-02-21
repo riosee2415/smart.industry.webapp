@@ -345,41 +345,34 @@ router.post("/findemail", async (req, res, next) => {
   }
 });
 
-router.post("/modifypass", isLoggedIn, async (req, res, next) => {
-  const { email, username, mobile } = req.body;
+router.post("/modifypass", async (req, res, next) => {
+  const { userId, email } = req.body;
 
   try {
-    const cookieEmail = req.user.dataValues.email;
-    const cookieUsername = req.user.dataValues.username;
-    const cookieMobile = req.user.dataValues.mobile;
+    const exUser = await User.findOne({
+      where: { userId },
+    });
 
-    if (
-      email === cookieEmail &&
-      username === cookieUsername &&
-      mobile === cookieMobile
-    ) {
-      const currentUserId = req.user.dataValues.id;
+    const UUID = generateUUID();
 
-      const UUID = generateUUID();
+    const updateResult = await User.update(
+      { secret: UUID },
+      {
+        where: { id: parseInt(exUser.id) },
+      }
+    );
 
-      const updateResult = await User.update(
-        { secret: UUID },
-        {
-          where: { id: parseInt(currentUserId) },
-        }
-      );
+    if (updateResult[0] > 0) {
+      // 이메일 전송
 
-      if (updateResult[0] > 0) {
-        // 이메일 전송
-
-        await sendSecretMail(
-          cookieEmail,
-          `🔐 [보안 인증코드 입니다.] ㅁㅁㅁㅁ 에서 비밀번호 변경을 위한 보안인증 코드를 발송했습니다.`,
-          `
+      await sendSecretMail(
+        email,
+        `🔐 [보안 인증코드 입니다.] 대한기계공구(주)에서 비밀번호 변경을 위한 보안인증 코드를 발송했습니다.`,
+        `
           <div>
-            <h3>ㅁㅁㅁㅁ</h3>
+            <h3>대한기계공구(주)</h3>
             <hr />
-            <p>보안 인증코드를 발송해드립니다. ㅁㅁㅁㅁ 홈페이지의 인증코드 입력란에 정확히 입력해주시기 바랍니다.</p>
+            <p>보안 인증코드를 발송해드립니다. 대한기계공구(주) 홈페이지의 인증코드 입력란에 정확히 입력해주시기 바랍니다.</p>
             <p>인증코드는 [<strong>${UUID}</strong>] 입니다. </p>
 
             <br /><hr />
@@ -388,18 +381,13 @@ router.post("/modifypass", isLoggedIn, async (req, res, next) => {
             </article>
           </div>
           `
-        );
+      );
 
-        return res.status(200).json({ result: true });
-      } else {
-        return res
-          .status(401)
-          .send("요청이 올바르지 않습니다. 다시 시도해주세요.");
-      }
+      return res.status(200).json({ result: true });
     } else {
       return res
         .status(401)
-        .send("입력하신 정보가 잘못되었습니다. 다시 확인해주세요.");
+        .send("요청이 올바르지 않습니다. 다시 시도해주세요.");
     }
   } catch (error) {
     console.error(error);
@@ -407,18 +395,34 @@ router.post("/modifypass", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.patch("/modifypass/update", isLoggedIn, async (req, res, next) => {
-  const { secret, password } = req.body;
-
+router.post("/checkSecret", async (req, res, next) => {
+  const { secret } = req.body;
   try {
     const exUser = await User.findOne({
-      where: { id: req.user.dataValues.id },
+      where: { secret },
     });
 
     if (!exUser) {
-      return res
-        .status(401)
-        .send("잘못된 요청 입니다. 다시 로그인 후 이용해주세요.");
+      return res.status(401).send("인증코드를 잘못 입력하셨습니다.");
+    }
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("잘못된 요청 입니다.");
+  }
+});
+
+router.patch("/modifypass/update", async (req, res, next) => {
+  const { userId, password } = req.body;
+
+  try {
+    const exUser = await User.findOne({
+      where: { userId },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("인증코드를 잘못 입력하셨습니다.");
     }
 
     const hashPassord = await bcrypt.hash(password, 12);
@@ -426,7 +430,7 @@ router.patch("/modifypass/update", isLoggedIn, async (req, res, next) => {
     const updateResult = await User.update(
       { password: hashPassord },
       {
-        where: { id: req.user.dataValues.id },
+        where: { userId },
       }
     );
 
