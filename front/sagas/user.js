@@ -40,6 +40,10 @@ import {
   FIND_USER_PASS_UPDATE_REQUEST,
   FIND_USER_PASS_UPDATE_SUCCESS,
   FIND_USER_PASS_UPDATE_FAILURE,
+  /////////////////////////////
+  USER_INFO_UPDATE_REQUEST,
+  USER_INFO_UPDATE_SUCCESS,
+  USER_INFO_UPDATE_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -283,6 +287,33 @@ function* findUserPass() {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
+function userInfoUpdateAPI(data) {
+  return axios.post(`/api/user/me/update`, data);
+}
+
+function* userInfoUpdate(action) {
+  try {
+    const result = yield call(userInfoUpdateAPI, action.data);
+
+    yield put({
+      type: USER_INFO_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_INFO_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
 function findUserPassUpdateAPI() {
   return axios.patch(`/api/user/modifypass/update`);
 }
@@ -349,6 +380,9 @@ function* watchFindUserPass() {
 function* watchFindUserPassUpdate() {
   yield takeLatest(FIND_USER_PASS_UPDATE_REQUEST, findUserPassUpdate);
 }
+function* watchUserInfoUpdate() {
+  yield takeLatest(USER_INFO_UPDATE_REQUEST, userInfoUpdate);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
@@ -363,6 +397,7 @@ export default function* userSaga() {
     fork(watchFindUserIdByEmail),
     fork(watchFindUserPass),
     fork(watchFindUserPassUpdate),
+    fork(watchUserInfoUpdate),
     //
   ]);
 }

@@ -49,6 +49,10 @@ export const initailState = {
   st_findUserPassUpdateLoading: false, // 비밀번호수정
   st_findUserPassUpdateDone: false,
   st_findUserPassUpdateError: null,
+  //
+  st_userInfoUpdateLoading: false, // 비밀번호수정
+  st_userInfoUpdateDone: false,
+  st_userInfoUpdateError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -90,6 +94,10 @@ export const FIND_USER_PASS_FAILURE = "FIND_USER_PASS_FAILURE";
 export const FIND_USER_PASS_UPDATE_REQUEST = "FIND_USER_PASS_UPDATE_REQUEST";
 export const FIND_USER_PASS_UPDATE_SUCCESS = "FIND_USER_PASS_UPDATE_SUCCESS";
 export const FIND_USER_PASS_UPDATE_FAILURE = "FIND_USER_PASS_UPDATE_FAILURE";
+
+export const USER_INFO_UPDATE_REQUEST = "USER_INFO_UPDATE_REQUEST";
+export const USER_INFO_UPDATE_SUCCESS = "USER_INFO_UPDATE_SUCCESS";
+export const USER_INFO_UPDATE_FAILURE = "USER_INFO_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -295,6 +303,26 @@ const reducer = (state = initailState, action) =>
         draft.st_findUserPassUpdateLoading = false;
         draft.st_findUserPassUpdateDone = false;
         draft.st_findUserPassUpdateError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case USER_INFO_UPDATE_REQUEST: {
+        draft.st_userInfoUpdateLoading = true;
+        draft.st_userInfoUpdateDone = null;
+        draft.st_userInfoUpdateError = false;
+        break;
+      }
+      case USER_INFO_UPDATE_SUCCESS: {
+        draft.st_userInfoUpdateLoading = false;
+        draft.st_userInfoUpdateDone = true;
+        draft.st_userInfoUpdateError = null;
+        break;
+      }
+      case USER_INFO_UPDATE_FAILURE: {
+        draft.st_userInfoUpdateLoading = false;
+        draft.st_userInfoUpdateDone = false;
+        draft.st_userInfoUpdateError = action.error;
         break;
       }
       //////////////////////////////////////////////

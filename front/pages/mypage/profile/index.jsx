@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
@@ -23,6 +23,7 @@ import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import styled from "styled-components";
+import useInput from "../../../hooks/useInput";
 
 const CustomInput = styled(TextInput)`
   width: 410px;
@@ -90,8 +91,32 @@ const Profile = () => {
   ////// HOOKS //////
 
   const [isModifyForm, setIsModifyForm] = useState(false);
+
+  const inputUserId = useInput(``);
+  const inputOriginPassword = useInput(``);
+  const inputPassword = useInput(``);
+  const inputPasswordCheck = useInput(``);
+  const inputUserName = useInput(``);
+  const inputEmail = useInput(``);
+  const inputMobile = useInput(``);
+  const [gender, setGender] = useState(false);
+  const inputBirth = useInput(``);
+  const [isCheck1, setIsCheck1] = useState(false);
+  const [isCheck2, setIsCheck2] = useState(false);
+  const [isCheck3, setIsCheck3] = useState(false);
+
   ////// REDUX //////
+
+  const { me } = useSelector((state) => state.user);
+
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (me) {
+      inputUserId.setValue(me.userId);
+      console.log(me.userId);
+    }
+  }, [me]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
@@ -335,7 +360,10 @@ const Profile = () => {
                       width={width < 900 ? `calc(100% - 120px)` : "80%"}
                       al={`flex-start`}
                     >
-                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                      <CustomConInput
+                        {...inputUserId}
+                        width={width < 900 ? `100%` : `70%`}
+                      />
                     </Wrapper>
                   </ContentWrapper>
                   <ContentWrapper
@@ -344,7 +372,9 @@ const Profile = () => {
                     dr={`row`}
                     padding={`15px 0`}
                   >
-                    <TitleWrapper>현재 비밀번호</TitleWrapper>
+                    <TitleWrapper {...inputOriginPassword}>
+                      현재 비밀번호
+                    </TitleWrapper>
                     <Wrapper
                       width={width < 900 ? `calc(100% - 120px)` : "80%"}
                       al={`flex-start`}
@@ -358,7 +388,7 @@ const Profile = () => {
                     dr={`row`}
                     padding={`15px 0`}
                   >
-                    <TitleWrapper>새 비밀번호</TitleWrapper>
+                    <TitleWrapper {...inputPassword}>새 비밀번호</TitleWrapper>
                     <Wrapper
                       width={width < 900 ? `calc(100% - 120px)` : "80%"}
                       al={`flex-start`}
@@ -372,7 +402,9 @@ const Profile = () => {
                     dr={`row`}
                     padding={`15px 0`}
                   >
-                    <TitleWrapper>새 비밀번호 확인</TitleWrapper>
+                    <TitleWrapper {...inputPasswordCheck}>
+                      새 비밀번호 확인
+                    </TitleWrapper>
                     <Wrapper
                       width={width < 900 ? `calc(100% - 120px)` : "80%"}
                       al={`flex-start`}
@@ -380,20 +412,7 @@ const Profile = () => {
                       <CustomConInput width={width < 900 ? `100%` : `70%`} />
                     </Wrapper>
                   </ContentWrapper>
-                  <ContentWrapper
-                    width={`100%`}
-                    height={`auto`}
-                    dr={`row`}
-                    padding={`15px 0`}
-                  >
-                    <TitleWrapper>현재 비밀번호</TitleWrapper>
-                    <Wrapper
-                      width={width < 900 ? `calc(100% - 120px)` : "80%"}
-                      al={`flex-start`}
-                    >
-                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
-                    </Wrapper>
-                  </ContentWrapper>
+
                   <ContentWrapper
                     width={`100%`}
                     height={`auto`}
@@ -405,7 +424,10 @@ const Profile = () => {
                       width={width < 900 ? `calc(100% - 120px)` : "80%"}
                       al={`flex-start`}
                     >
-                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                      <CustomConInput
+                        {...inputUserName}
+                        width={width < 900 ? `100%` : `70%`}
+                      />
                     </Wrapper>
                   </ContentWrapper>
                   <ContentWrapper
@@ -421,6 +443,7 @@ const Profile = () => {
                       dr={`row`}
                     >
                       <CustomConInput
+                        {...inputEmail}
                         width={width < 900 ? `calc(100% - 90px - 10px)` : `70%`}
                       />
                       <CommonButton
@@ -448,6 +471,7 @@ const Profile = () => {
                       dr={`row`}
                     >
                       <CustomConInput
+                        {...inputMobile}
                         width={width < 900 ? `calc(100% - 90px - 10px)` : `70%`}
                       />
                       <CommonButton
@@ -482,7 +506,14 @@ const Profile = () => {
                         dr={`row`}
                         margin={width < 900 ? `0 0 10px` : `0`}
                       >
-                        <Checkbox>
+                        <Checkbox
+                          checked={gender === "남자"}
+                          onClick={() =>
+                            setGender((prev) =>
+                              prev === "남자" ? null : "남자"
+                            )
+                          }
+                        >
                           <Text
                             margin={`0 0 0 12px`}
                             fontSize={width < 900 ? `13px` : `18px`}
@@ -493,7 +524,14 @@ const Profile = () => {
                             남자
                           </Text>
                         </Checkbox>
-                        <Checkbox>
+                        <Checkbox
+                          checked={gender === "여자"}
+                          onClick={() =>
+                            setGender((prev) =>
+                              prev === "여자" ? null : "여자"
+                            )
+                          }
+                        >
                           <Text
                             margin={`0 0 0 12px`}
                             fontSize={width < 900 ? `13px` : `18px`}
@@ -505,7 +543,14 @@ const Profile = () => {
                           </Text>
                         </Checkbox>
                       </Wrapper>
-                      <Checkbox>
+                      <Checkbox
+                        checked={gender === "선택안함"}
+                        onClick={() =>
+                          setGender((prev) =>
+                            prev === "선택안함" ? null : "선택안함"
+                          )
+                        }
+                      >
                         <Text
                           margin={`0 0 0 12px`}
                           fontSize={width < 900 ? `13px` : `18px`}
