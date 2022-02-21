@@ -354,6 +354,18 @@ router.post("/modifypass", async (req, res, next) => {
       where: { userId },
     });
 
+    const exUser2 = await User.findOne({
+      where: { email },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 아이디입니다.");
+    }
+
+    if (!exUser2) {
+      return res.status(401).send("존재하지 않는 이메일입니다.");
+    }
+
     const UUID = generateUUID();
 
     const updateResult = await User.update(
