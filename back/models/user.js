@@ -29,6 +29,18 @@ module.exports = class User extends Model {
           type: DataTypes.STRING(30),
           allowNull: true,
         },
+        zoneCode: {
+          type: DataTypes.STRING(30), // 우편번호
+          allowNull: false,
+        },
+        address: {
+          type: DataTypes.STRING(200), // 배달 주소
+          allowNull: false,
+        },
+        detailAddress: {
+          type: DataTypes.STRING(300), // 상세 주소
+          allowNull: false,
+        },
         terms: {
           // 이용약관동의
           type: DataTypes.BOOLEAN,

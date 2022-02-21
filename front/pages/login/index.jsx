@@ -20,6 +20,7 @@ import styled from "styled-components";
 import useWidth from "../../hooks/useWidth";
 import Theme from "../../components/Theme";
 import useInput from "../../hooks/useInput";
+import { useRouter } from "next/router";
 
 const LoadNotification = (msg, content) => {
   notification.open({
@@ -55,6 +56,7 @@ const Index = () => {
   );
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
 
   const [isCheck, setIsCheck] = useState(false);
   const inputUserId = useInput("");
@@ -105,6 +107,10 @@ const Index = () => {
       },
     });
   }, [inputUserId, inputPassword, isCheck]);
+
+  const moveLinkHandler = (link) => {
+    router.push(link);
+  };
 
   ////// DATAVIEW //////
 
@@ -245,6 +251,7 @@ const Index = () => {
                   fontSize={width < 700 ? `12px` : `14px`}
                   color={Theme.grey_C}
                   cursor={`pointer`}
+                  onClick={() => moveLinkHandler("/user/signup")}
                 >
                   회원가입
                 </Wrapper>
