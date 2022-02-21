@@ -239,7 +239,8 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
 
-  const { username, mobile, email } = req.body;
+  const { username, mobile, email, zoneCode, address, detailAddress } =
+    req.body;
 
   try {
     const exUser = await User.findOne({ where: { id: parseInt(id) } });
@@ -249,7 +250,7 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
     }
 
     const updateUser = await User.update(
-      { username, mobile, email },
+      { username, mobile, email, zoneCode, address, detailAddress },
       {
         where: { id: parseInt(req.user.id) },
       }

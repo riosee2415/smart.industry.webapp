@@ -41,10 +41,6 @@ module.exports = class User extends Model {
           type: DataTypes.STRING(300), // 상세 주소
           allowNull: false,
         },
-        // gender: {
-        //   type: DataTypes.STRING(50),
-        //   allowNull: false,
-        // },
         terms: {
           // 이용약관동의
           type: DataTypes.BOOLEAN,
