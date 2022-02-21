@@ -803,7 +803,7 @@ const SignUp = () => {
 
           <Modal>
             <DaumPostCode
-              onComplete={onCompleteHandler}
+              // onComplete={onCompleteHandler}
               width={width < 600 ? `100%` : `600px`}
               height={`450px`}
               autoClose
