@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Select, Radio, Checkbox, Form, message, Modal } from "antd";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
-import { SIGNUP_REQUEST } from "../../reducers/user";
+import { POST_CODE_MODAL_TOGGLE, SIGNUP_REQUEST } from "../../reducers/user";
 import ClientLayout from "../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import Head from "next/head";
@@ -133,14 +133,19 @@ const SignUp = () => {
   const formRef = useRef();
 
   ////// REDUX //////
-  const { st_signUpLoading, st_signUpDone, st_signUpError } = useSelector(
-    (state) => state.user
-  );
+  const { st_signUpLoading, st_signUpDone, st_signUpError, postcodeModal } =
+    useSelector((state) => state.user);
   ////// USEEFFECT //////
 
   useEffect(() => {
     if (st_signUpError) {
-      return message.error(st_signUpError);
+      return message.error({
+        content: st_signUpError,
+        className: "custom-class",
+        style: {
+          marginTop: "170px",
+        },
+      });
     }
   }, [st_signUpError]);
 
@@ -172,6 +177,13 @@ const SignUp = () => {
     }
   }, [isCheck1, isCheck2, isCheck3]);
   ////// TOGGLE //////
+
+  const postCodeModalToggle = useCallback(() => {
+    dispatch({
+      type: POST_CODE_MODAL_TOGGLE,
+    });
+  }, [postcodeModal]);
+
   ////// HANDLER //////
 
   const allCheckHandler = useCallback(() => {
@@ -189,6 +201,20 @@ const SignUp = () => {
 
   const signupHandler = useCallback(
     (data) => {
+      let reg = /^[a-z0-9]{4,16}$/;
+
+      console.log(reg.test(data.password));
+
+      if (!reg.test(data.password)) {
+        return message.error({
+          content: "비밀번호를 영문소문자, 숫자로 입력해주세요.",
+          className: "custom-class",
+          style: {
+            marginTop: "170px",
+          },
+        });
+      }
+
       if (!userType) {
         return message.error({
           content: "회원을 선택해주세요.",
@@ -268,6 +294,17 @@ const SignUp = () => {
     },
     [isAllCheck, isCheck1, isCheck2, isCheck3, userType]
   );
+
+  const postCodeSubmit = useCallback((data) => {
+    console.log(data);
+    formRef.current.setFieldsValue({
+      address: data.address,
+      zoneCode: data.zonecode,
+    });
+    dispatch({
+      type: POST_CODE_MODAL_TOGGLE,
+    });
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -566,6 +603,7 @@ const SignUp = () => {
                       kindOf={`darkgrey`}
                       padding={`0`}
                       radius={`0`}
+                      onClick={postCodeModalToggle}
                     >
                       우편번호
                     </CommonButton>
@@ -801,12 +839,16 @@ const SignUp = () => {
             </SignUpForm>
           </RsWrapper>
 
-          <Modal>
+          <Modal
+            visible={postcodeModal}
+            onCancel={postCodeModalToggle}
+            footer={null}
+            style={{ top: `200px` }}
+          >
             <DaumPostCode
-              // onComplete={onCompleteHandler}
+              onComplete={(data) => postCodeSubmit(data)}
               width={width < 600 ? `100%` : `600px`}
-              height={`450px`}
-              autoClose
+              autoClose={false}
               animation
             />
           </Modal>

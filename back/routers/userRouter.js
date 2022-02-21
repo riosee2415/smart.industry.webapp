@@ -195,12 +195,13 @@ router.post("/signup", async (req, res, next) => {
     if (exUser) {
       return res.status(401).send("이미 가입된 이메일 입니다.");
     }
+
     const exUser2 = await User.findOne({
       where: { userId: userId },
     });
 
     if (exUser2) {
-      return res.status(401).send("이미 가입된 이메일 입니다.");
+      return res.status(401).send("이미 가입된 아이디 입니다.");
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -352,6 +353,18 @@ router.post("/modifypass", async (req, res, next) => {
     const exUser = await User.findOne({
       where: { userId },
     });
+
+    const exUser2 = await User.findOne({
+      where: { email },
+    });
+
+    if (!exUser) {
+      return res.status(401).send("존재하지 않는 아이디입니다.");
+    }
+
+    if (!exUser2) {
+      return res.status(401).send("존재하지 않는 이메일입니다.");
+    }
 
     const UUID = generateUUID();
 

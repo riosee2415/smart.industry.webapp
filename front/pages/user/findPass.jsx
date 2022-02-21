@@ -6,8 +6,10 @@ import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
 import {
+  FIND_USER_CHECK_SECRET_REQUEST,
   FIND_USER_ID_REQUEST,
   FIND_USER_PASS_REQUEST,
+  FIND_USER_PASS_UPDATE_REQUEST,
   LOAD_MY_INFO_REQUEST,
   LOGIN_REQUEST,
 } from "../../reducers/user";
@@ -63,15 +65,25 @@ const FindPass = () => {
   const width = useWidth();
   const router = useRouter();
 
-  const inputUserName = useInput("");
+  const inputUserId = useInput("");
   const inputEmail = useInput("");
-  const inputMobile = useInput("");
+  const inputSecret = useInput("");
+
+  const inputPass = useInput("");
+  const inputPassCheck = useInput("");
 
   ////// REDUX //////
   const dispatch = useDispatch();
-  const { st_findUserPassDone, st_findUserPassError, foundID } = useSelector(
-    (state) => state.user
-  );
+  const {
+    st_findUserPassDone,
+    st_findUserPassError,
+    foundID,
+    st_findUserCheckSecretDone,
+    st_findUserCheckSecretError,
+
+    st_findUserPassUpdateDone,
+    st_findUserPassUpdateError,
+  } = useSelector((state) => state.user);
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -81,34 +93,78 @@ const FindPass = () => {
   }, [st_findUserPassDone]);
 
   useEffect(() => {
+    if (st_findUserPassUpdateDone) {
+      router.replace("/login");
+      return LoadNotification("비밀번호가 수정되었습니다.");
+    }
+  }, [st_findUserPassUpdateDone]);
+
+  useEffect(() => {
     if (st_findUserPassError) {
       return LoadNotification(st_findUserPassError);
     }
   }, [st_findUserPassError]);
 
+  useEffect(() => {
+    if (st_findUserCheckSecretError) {
+      return LoadNotification(st_findUserCheckSecretError);
+    }
+  }, [st_findUserCheckSecretError]);
+
+  useEffect(() => {
+    if (st_findUserPassUpdateError) {
+      return LoadNotification(st_findUserPassUpdateError);
+    }
+  }, [st_findUserPassUpdateError]);
+
   ////// TOGGLE //////
 
   ////// HANDLER //////
   const passwordHandler = useCallback(() => {
-    if (!inputUserName.value || inputUserName.value.trim() === "") {
+    if (!inputUserId.value || inputUserId.value.trim() === "") {
       return LoadNotification("이름을 입력해주세요.");
     }
     if (!inputEmail.value || inputEmail.value.trim() === "") {
-      return LoadNotification("이메일을 입력해주세요.");
-    }
-    if (!inputMobile.value || inputMobile.value.trim() === "") {
       return LoadNotification("이메일을 입력해주세요.");
     }
 
     dispatch({
       type: FIND_USER_PASS_REQUEST,
       data: {
+        userId: inputUserId.value,
         email: inputEmail.value,
-        username: inputUserName.value,
-        mobile: inputMobile.value,
       },
     });
-  }, [inputUserName, inputEmail, inputMobile]);
+  }, [inputUserId, inputEmail]);
+
+  const secretPasswordHandler = useCallback(() => {
+    dispatch({
+      type: FIND_USER_CHECK_SECRET_REQUEST,
+      data: {
+        secret: inputSecret.value,
+      },
+    });
+  }, [inputSecret]);
+
+  const changePasswordHandler = useCallback(() => {
+    let reg = /^[a-z0-9]{4,16}$/;
+
+    if (!reg.test(inputPass.value)) {
+      return LoadNotification("비밀번호를 영문소문자, 숫자로 입력해주세요.");
+    }
+
+    if (inputPass.value !== inputPassCheck.value) {
+      return LoadNotification("비밀번호가 일치하지 않습니다.");
+    }
+
+    dispatch({
+      type: FIND_USER_PASS_UPDATE_REQUEST,
+      data: {
+        userId: inputUserId.value,
+        password: inputPass.value,
+      },
+    });
+  }, [inputUserId, inputPass]);
 
   const moveLinkHandler = (link) => {
     router.push(link);
@@ -181,20 +237,16 @@ const FindPass = () => {
               {!st_findUserPassDone ? (
                 <>
                   <CustomInput
-                    {...inputUserName}
-                    placeholder="이름을 입력해주세요."
+                    {...inputUserId}
+                    placeholder="아이디를 입력해주세요."
                     margin={`0 0 5px`}
                   />
                   <CustomInput
                     {...inputEmail}
                     placeholder="이메일을 입력해주세요."
-                    margin={`0 0 5px`}
-                  />
-                  <CustomInput
-                    {...inputMobile}
-                    placeholder="전화번호를 입력해주세요."
                     margin={`0 0 20px`}
                   />
+
                   <CommonButton
                     width={`100%`}
                     height={`50px`}
@@ -205,12 +257,47 @@ const FindPass = () => {
                     비밀번호 찾기
                   </CommonButton>
                 </>
+              ) : st_findUserCheckSecretDone ? (
+                <>
+                  <CustomInput
+                    {...inputPass}
+                    placeholder="변경할 비밀번호"
+                    margin={`0 0 20px`}
+                  />
+                  <CustomInput
+                    {...inputPassCheck}
+                    placeholder="변경할 비밀번호 확인"
+                    margin={`0 0 20px`}
+                  />
+
+                  <CommonButton
+                    width={`100%`}
+                    height={`50px`}
+                    radius={`0`}
+                    margin={`0 0 15px`}
+                    onClick={changePasswordHandler}
+                  >
+                    비밀번호 변경
+                  </CommonButton>
+                </>
               ) : (
-                <Wrapper height={`150px`} ju={`flex-start`}>
-                  <Text fontSize={`18px`} margin={`30px 0 0 0`}>
-                    아이디 : {foundID}
-                  </Text>
-                </Wrapper>
+                <>
+                  <CustomInput
+                    {...inputSecret}
+                    placeholder="인증코드를 입력해주세요."
+                    margin={`0 0 20px`}
+                  />
+
+                  <CommonButton
+                    width={`100%`}
+                    height={`50px`}
+                    radius={`0`}
+                    margin={`0 0 15px`}
+                    onClick={secretPasswordHandler}
+                  >
+                    인증하기
+                  </CommonButton>
+                </>
               )}
               <Wrapper
                 height={`40px`}

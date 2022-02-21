@@ -9,6 +9,8 @@ export const initailState = {
 
   updateModal: false,
 
+  postcodeModal: false,
+
   //
   st_loginLoading: false,
   st_loginDone: false,
@@ -50,9 +52,15 @@ export const initailState = {
   st_findUserPassUpdateDone: false,
   st_findUserPassUpdateError: null,
   //
+<<<<<<< HEAD
   st_userInfoUpdateLoading: false, // 비밀번호수정
   st_userInfoUpdateDone: false,
   st_userInfoUpdateError: null,
+=======
+  st_findUserCheckSecretLoading: false, // 인증코드
+  st_findUserCheckSecretDone: false,
+  st_findUserCheckSecretError: null,
+>>>>>>> refs/remotes/origin/master
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -95,12 +103,20 @@ export const FIND_USER_PASS_UPDATE_REQUEST = "FIND_USER_PASS_UPDATE_REQUEST";
 export const FIND_USER_PASS_UPDATE_SUCCESS = "FIND_USER_PASS_UPDATE_SUCCESS";
 export const FIND_USER_PASS_UPDATE_FAILURE = "FIND_USER_PASS_UPDATE_FAILURE";
 
+<<<<<<< HEAD
 export const USER_INFO_UPDATE_REQUEST = "USER_INFO_UPDATE_REQUEST";
 export const USER_INFO_UPDATE_SUCCESS = "USER_INFO_UPDATE_SUCCESS";
 export const USER_INFO_UPDATE_FAILURE = "USER_INFO_UPDATE_FAILURE";
+=======
+export const FIND_USER_CHECK_SECRET_REQUEST = "FIND_USER_CHECK_SECRET_REQUEST";
+export const FIND_USER_CHECK_SECRET_SUCCESS = "FIND_USER_CHECK_SECRET_SUCCESS";
+export const FIND_USER_CHECK_SECRET_FAILURE = "FIND_USER_CHECK_SECRET_FAILURE";
+>>>>>>> refs/remotes/origin/master
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
+
+export const POST_CODE_MODAL_TOGGLE = "POST_CODE_MODAL_TOGGLE";
 
 export const CURRENT_ADMINMENU_STATUS = "CURRENT_ADMINMENU_STATUS";
 
@@ -307,6 +323,7 @@ const reducer = (state = initailState, action) =>
       }
       //////////////////////////////////////////////
 
+<<<<<<< HEAD
       case USER_INFO_UPDATE_REQUEST: {
         draft.st_userInfoUpdateLoading = true;
         draft.st_userInfoUpdateDone = null;
@@ -323,6 +340,24 @@ const reducer = (state = initailState, action) =>
         draft.st_userInfoUpdateLoading = false;
         draft.st_userInfoUpdateDone = false;
         draft.st_userInfoUpdateError = action.error;
+=======
+      case FIND_USER_CHECK_SECRET_REQUEST: {
+        draft.st_findUserCheckSecretLoading = true;
+        draft.st_findUserCheckSecretDone = null;
+        draft.st_findUserCheckSecretError = false;
+        break;
+      }
+      case FIND_USER_CHECK_SECRET_SUCCESS: {
+        draft.st_findUserCheckSecretLoading = false;
+        draft.st_findUserCheckSecretDone = true;
+        draft.st_findUserCheckSecretError = null;
+        break;
+      }
+      case FIND_USER_CHECK_SECRET_FAILURE: {
+        draft.st_findUserCheckSecretLoading = false;
+        draft.st_findUserCheckSecretDone = false;
+        draft.st_findUserCheckSecretError = action.error;
+>>>>>>> refs/remotes/origin/master
         break;
       }
       //////////////////////////////////////////////
@@ -351,6 +386,10 @@ const reducer = (state = initailState, action) =>
 
       case UPDATE_MODAL_CLOSE_REQUEST:
         draft.updateModal = false;
+        break;
+
+      case POST_CODE_MODAL_TOGGLE:
+        draft.postcodeModal = !draft.postcodeModal;
         break;
 
       default:

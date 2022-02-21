@@ -44,6 +44,10 @@ import {
   USER_INFO_UPDATE_REQUEST,
   USER_INFO_UPDATE_SUCCESS,
   USER_INFO_UPDATE_FAILURE,
+  /////////////////////////////
+  FIND_USER_CHECK_SECRET_REQUEST,
+  FIND_USER_CHECK_SECRET_SUCCESS,
+  FIND_USER_CHECK_SECRET_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -260,13 +264,14 @@ function* findUserIdByEmail(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function findUserPassAPI() {
-  return axios.post(`/api/user/modifypass`);
+function findUserPassAPI(data) {
+  console.log(data);
+  return axios.post(`/api/user/modifypass`, data);
 }
 
-function* findUserPass() {
+function* findUserPass(action) {
   try {
-    const result = yield call(findUserPassAPI);
+    const result = yield call(findUserPassAPI, action.data);
 
     yield put({
       type: FIND_USER_PASS_SUCCESS,
@@ -314,13 +319,14 @@ function* userInfoUpdate(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function findUserPassUpdateAPI() {
-  return axios.patch(`/api/user/modifypass/update`);
+
+function findUserPassUpdateAPI(data) {
+  return axios.patch(`/api/user/modifypass/update`, data);
 }
 
-function* findUserPassUpdate() {
+function* findUserPassUpdate(action) {
   try {
-    const result = yield call(findUserPassUpdateAPI);
+    const result = yield call(findUserPassUpdateAPI, action.data);
 
     yield put({
       type: FIND_USER_PASS_UPDATE_SUCCESS,
@@ -330,6 +336,33 @@ function* findUserPassUpdate() {
     console.error(err);
     yield put({
       type: FIND_USER_PASS_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function findUserCheckSecretAPI(data) {
+  return axios.post(`/api/user/checkSecret`, data);
+}
+
+function* findUserCheckSecret(action) {
+  try {
+    const result = yield call(findUserCheckSecretAPI, action.data);
+
+    yield put({
+      type: FIND_USER_CHECK_SECRET_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: FIND_USER_CHECK_SECRET_FAILURE,
       error: err.response.data,
     });
   }
@@ -384,6 +417,10 @@ function* watchUserInfoUpdate() {
   yield takeLatest(USER_INFO_UPDATE_REQUEST, userInfoUpdate);
 }
 
+function* watchFindUserCheckSecret() {
+  yield takeLatest(FIND_USER_CHECK_SECRET_REQUEST, findUserCheckSecret);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -398,6 +435,7 @@ export default function* userSaga() {
     fork(watchFindUserPass),
     fork(watchFindUserPassUpdate),
     fork(watchUserInfoUpdate),
+    fork(watchFindUserCheckSecret),
     //
   ]);
 }
