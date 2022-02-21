@@ -229,13 +229,13 @@ function* kakaoLogin() {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function findUserIdByEmailAPI() {
-  return axios.post(`/api/user/findUserIdByEmail`);
+function findUserIdByEmailAPI(data) {
+  return axios.post(`/api/user/findUserIdByEmail`, data);
 }
 
-function* findUserIdByEmail() {
+function* findUserIdByEmail(action) {
   try {
-    const result = yield call(findUserIdByEmailAPI);
+    const result = yield call(findUserIdByEmailAPI, action.data);
 
     yield put({
       type: FIND_USER_ID_SUCCESS,
