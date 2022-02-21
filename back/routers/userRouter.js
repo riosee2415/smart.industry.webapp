@@ -195,12 +195,13 @@ router.post("/signup", async (req, res, next) => {
     if (exUser) {
       return res.status(401).send("이미 가입된 이메일 입니다.");
     }
+
     const exUser2 = await User.findOne({
       where: { userId: userId },
     });
 
     if (exUser2) {
-      return res.status(401).send("이미 가입된 이메일 입니다.");
+      return res.status(401).send("이미 가입된 아이디 입니다.");
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
