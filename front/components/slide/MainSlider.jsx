@@ -66,7 +66,7 @@ const MainSlider = () => {
   }, [me]);
 
   const moveLinkHandler = useCallback((link) => {
-    window.open(link);
+    router.push(link);
   }, []);
   return (
     <MainSliderWrapper>
@@ -78,7 +78,9 @@ const MainSlider = () => {
                 key={idx}
                 span={24}
                 height={width < 800 ? `500px` : `720px`}
-                bgImg={`url(${data.imagePath})`}
+                bgImg={`url(${
+                  width < 800 ? data.mobileImagePath : data.imagePath
+                })`}
                 position={`relative`}
                 display={`flex !important`}
               >
@@ -101,7 +103,11 @@ const MainSlider = () => {
                       <Text fontSize={`1.125rem`}>{data.content}</Text>
                     </ColWrapper>
                     <Wrapper>
-                      <MainProductButton>더 보기</MainProductButton>
+                      <MainProductButton
+                        onClick={() => moveLinkHandler(data.link)}
+                      >
+                        더 보기
+                      </MainProductButton>
                     </Wrapper>
                   </Wrapper>
                 </RsWrapper>
