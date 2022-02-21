@@ -262,6 +262,66 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.post("/userIdCheck", async (req, res, next) => {
+  const { userId } = req.body;
+
+  try {
+    const exUser = await User.findOne({
+      where: { userId },
+    });
+
+    if (exUser) {
+      return res.status(401).send("이미 존재하는 아이디입니다.");
+    }
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("중복확인을 할 수 없습니다.");
+  }
+});
+
+router.post("/emailCheck", async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const exUser = await User.findOne({
+      where: { email },
+    });
+
+    if (exUser) {
+      return res.status(401).send("이미 존재하는 이메일입니다.");
+    }
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("중복확인을 할 수 없습니다.");
+  }
+});
+
+router.post("/findUserIdByEmail", async (req, res, next) => {
+  const { username, email } = req.body;
+
+  try {
+    const exUser = await User.findOne({
+      where: {
+        username,
+        email,
+      },
+    });
+
+    if (exUser) {
+      return res.status(200).json({ userId: exUser.userId });
+    } else {
+      return res.status(401).send("일치하는 정보가 없습니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("아이디를 찾을 수 없습니다.");
+  }
+});
+
 router.post("/findemail", async (req, res, next) => {
   const { username, mobile } = req.body;
 
