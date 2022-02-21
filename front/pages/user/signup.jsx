@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Router from "next/router";
-import { Select, Radio, Checkbox } from "antd";
+import { useRouter } from "next/router";
+import { Select, Radio, Checkbox, Form, message } from "antd";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
 import { SIGNUP_REQUEST } from "../../reducers/user";
@@ -23,6 +23,7 @@ import {
 import styled from "styled-components";
 import Theme from "../../components/Theme";
 import useWidth from "../../hooks/useWidth";
+import { useRef } from "react";
 
 const SignUpWrapper = styled(Wrapper)`
   height: ${(props) => props.height || `50px`};
@@ -96,6 +97,14 @@ const SelectStyle2 = styled(Select)`
   }
 `;
 
+const SignUpForm = styled(Form)`
+  width: 100%;
+
+  & .ant-form-item {
+    margin: 0;
+  }
+`;
+
 const { Option } = Select;
 
 const SignUp = () => {
@@ -109,28 +118,48 @@ const SignUp = () => {
 
   const dispatch = useDispatch();
 
-  const email = useInput(``);
-  const nickname = useInput(``);
+  const router = useRouter();
 
   const password = useInput(``);
-
-  const [passwordCheck, setPasswordCheck] = useState(``);
-  const [passwordError, setPasswordError] = useState(false);
 
   const [isAllCheck, setIsAllCheck] = useState(false);
   const [isCheck1, setIsCheck1] = useState(false);
   const [isCheck2, setIsCheck2] = useState(false);
   const [isCheck3, setIsCheck3] = useState(false);
 
+  const [userType, setUserType] = useState(false);
+
+  const formRef = useRef();
+
   ////// REDUX //////
-  const { st_signUpLoading, st_signUpDone } = useSelector(
+  const { st_signUpLoading, st_signUpDone, st_signUpError } = useSelector(
     (state) => state.user
   );
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_signUpError) {
+      return message.error(st_signUpError);
+    }
+  }, [st_signUpError]);
+
+  useEffect(() => {
+    formRef.current.setFieldsValue({
+      mobile_1: "010",
+      normalMobile_1: "02",
+    });
+  }, []);
+
   useEffect(() => {
     if (st_signUpDone) {
-      alert("회원가입 성공!");
-      Router.replace("/");
+      message.success({
+        content: "회원가입되었습니다.",
+        className: "custom-class",
+        style: {
+          marginTop: "170px",
+        },
+      });
+      return router.replace("/login");
     }
   }, [st_signUpDone]);
 
@@ -144,37 +173,126 @@ const SignUp = () => {
   ////// TOGGLE //////
   ////// HANDLER //////
 
-  const checkPasswordChangeHandler = useCallback(
-    (e) => {
-      setPasswordCheck(e.target.value);
-      setPasswordError(e.target.value !== password.value);
-    },
-    [password.value]
-  );
-
   const allCheckHandler = useCallback(() => {
     setIsCheck1((prev) => !prev);
     setIsCheck2((prev) => !prev);
     setIsCheck3((prev) => !prev);
   }, [isCheck1, isCheck2, isCheck3]);
 
-  const onSubmit = useCallback(() => {
-    if (password.value !== passwordCheck) {
-      alert("비밀번호 확인!");
-      return setPasswordError(true);
-    }
+  const changeUserTypeHandler = useCallback(
+    (e) => {
+      setUserType(e.target.checked);
+    },
+    [userType]
+  );
 
-    dispatch({
-      type: SIGNUP_REQUEST,
-      data: {
-        email: email.value,
-        password: password.value,
-        nickname: nickname.value,
-      },
-    });
-  }, [email, nickname, password, passwordCheck]);
+  const signupHandler = useCallback(
+    (data) => {
+      if (!userType) {
+        return message.error({
+          content: "회원을 선택해주세요.",
+          className: "custom-class",
+          style: {
+            marginTop: "170px",
+          },
+        });
+      }
+
+      let normalMobile;
+      if (!data.mobile_1 || !data.mobile_2 || !data.mobile_3) {
+        return message.error({
+          content: "휴대전화를 입력해주세요.",
+          className: "custom-class",
+          style: {
+            marginTop: "170px",
+          },
+        });
+      }
+
+      if (!data.email && !data.emailBack) {
+        return message.error({
+          content: "이메일을 입력해주세요..",
+          className: "custom-class",
+          style: {
+            marginTop: "170px",
+          },
+        });
+      }
+
+      if (
+        !data.normalMobile_1 ||
+        !data.normalMobile_2 ||
+        !data.normalMobile_3
+      ) {
+        normalMobile = null;
+      } else {
+        normalMobile = `${data.normalMobile_1}${data.normalMobile_2}${data.normalMobile_3}`;
+      }
+
+      if (!isCheck1 || !isCheck2 || !isCheck3) {
+        return message.error({
+          content: "약관에 동의해주세요.",
+          className: "custom-class",
+          style: {
+            marginTop: "170px",
+          },
+        });
+      }
+
+      if (data.password !== data.checkPassword) {
+        return message.error({
+          content: "비밀번호가 틀립니다.",
+          className: "custom-class",
+          style: {
+            marginTop: "170px",
+          },
+        });
+      }
+
+      dispatch({
+        type: SIGNUP_REQUEST,
+        data: {
+          userId: data.userId,
+          password: data.password,
+          username: data.username,
+          email: `${data.email}${data.emailBack}`,
+          mobile: `${data.mobile_1}${data.mobile_2}${data.mobile_3}`,
+          normalMobile: normalMobile,
+          zoneCode: data.zoneCode,
+          address: data.address,
+          detailAddress: data.detailAddress,
+          terms: isAllCheck,
+        },
+      });
+    },
+    [isAllCheck, isCheck1, isCheck2, isCheck3, userType]
+  );
 
   ////// DATAVIEW //////
+
+  const normalMobileArr = [
+    "02",
+    "031",
+    "032",
+    "033",
+    "041",
+    "042",
+    "043",
+    "044",
+    "051",
+    "052",
+    "053",
+    "054",
+    "055",
+    "061",
+    "062",
+    "063",
+    "064",
+  ];
+
+  const mobileArr = ["010", "011", "016", "017", "018", "019"];
+
+  const emailArr = ["@naver.com", "@hanmail.com", "@nate.com", "@gmail.com"];
 
   return (
     <>
@@ -251,374 +369,435 @@ const SignUp = () => {
               borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 30px`}
             ></Wrapper>
-            <SignUpWrapper
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-              borderTop={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 30px`}
-              bgColor={Theme.lightGrey_C}
-            >
-              <TitleWrapper>
-                회원구분
-                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
-              </TitleWrapper>
-              <Wrapper
-                borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={`9px 0 9px 20px`}
-                al={`flex-start`}
-                width={
-                  width < 700
-                    ? `calc(100% - 98px - 10px)`
-                    : `calc(100% - 13% - 10px)`
-                }
+            <SignUpForm onFinish={signupHandler} ref={formRef}>
+              <SignUpWrapper
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                margin={`0 0 30px`}
+                bgColor={Theme.lightGrey_C}
               >
-                <RadioBtn>개인회원</RadioBtn>
-              </Wrapper>
-            </SignUpWrapper>
-            <SignUpWrapper
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-              borderTop={`1px solid ${Theme.grey2_C}`}
-              height={`auto`}
-            >
-              <TitleWrapper>
-                아이디
-                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
-              </TitleWrapper>
-              <Wrapper
-                borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
-                width={
-                  width < 700
-                    ? `calc(100% - 98px - 10px)`
-                    : `calc(100% - 13% - 10px)`
-                }
-                dr={width < 700 ? `column` : `row`}
-              >
-                <SignupInput width={width < 700 ? `215px` : `206px`} />
+                <TitleWrapper>
+                  회원구분
+                  <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                </TitleWrapper>
                 <Wrapper
-                  width={width < 700 ? `206px` : `calc(100% - 215px)`}
-                  color={Theme.grey_C}
-                  padding={`0 0 0 10px`}
+                  borderLeft={`1px solid ${Theme.grey2_C}`}
+                  padding={`9px 0 9px 20px`}
                   al={`flex-start`}
-                  fontSize={width < 700 ? `12px` : `14px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 98px - 10px)`
+                      : `calc(100% - 13% - 10px)`
+                  }
                 >
-                  (영문소문자/숫자, 4~16자)
+                  <RadioBtn checked={userType} onChange={changeUserTypeHandler}>
+                    개인회원
+                  </RadioBtn>
                 </Wrapper>
-              </Wrapper>
-            </SignUpWrapper>
-            <SignUpWrapper
-              height={`auto`}
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-            >
-              <TitleWrapper>
-                비밀번호
-                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
-              </TitleWrapper>
-              <Wrapper
-                borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
-                width={
-                  width < 700
-                    ? `calc(100% - 98px - 10px)`
-                    : `calc(100% - 13% - 10px)`
-                }
-                dr={width < 700 ? `column` : `row`}
+              </SignUpWrapper>
+              <SignUpWrapper
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                height={`auto`}
               >
-                <SignupInput width={width < 700 ? `215px` : `206px`} />
+                <TitleWrapper>
+                  아이디
+                  <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                </TitleWrapper>
                 <Wrapper
-                  width={width < 700 ? `206px` : `calc(100% - 215px)`}
-                  color={Theme.grey_C}
-                  padding={`0 0 0 10px`}
-                  al={`flex-start`}
-                  fontSize={width < 700 ? `12px` : `14px`}
+                  borderLeft={`1px solid ${Theme.grey2_C}`}
+                  padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 98px - 10px)`
+                      : `calc(100% - 13% - 10px)`
+                  }
+                  dr={width < 700 ? `column` : `row`}
                 >
-                  (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자)
-                </Wrapper>
-              </Wrapper>
-            </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>
-                비밀번호 확인
-                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
-              </TitleWrapper>
-              <Wrapper
-                borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
-                width={
-                  width < 700
-                    ? `calc(100% - 98px - 10px)`
-                    : `calc(100% - 13% - 10px)`
-                }
-                al={width < 700 ? `center` : `flex-start`}
-              >
-                <SignupInput width={width < 700 ? `215px` : `206px`} />
-              </Wrapper>
-            </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>
-                이름
-                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
-              </TitleWrapper>
-              <Wrapper
-                borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
-                width={
-                  width < 700
-                    ? `calc(100% - 98px - 10px)`
-                    : `calc(100% - 13% - 10px)`
-                }
-                al={width < 700 ? `center` : `flex-start`}
-              >
-                <SignupInput width={width < 700 ? `215px` : `206px`} />
-              </Wrapper>
-            </SignUpWrapper>
-            <SignUpWrapper
-              height={`auto`}
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-            >
-              <TitleWrapper>
-                주소
-                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
-              </TitleWrapper>
-              <Wrapper
-                borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
-                width={
-                  width < 700
-                    ? `calc(100% - 98px - 10px)`
-                    : `calc(100% - 13% - 10px)`
-                }
-                al={`flex-start`}
-              >
-                <Wrapper dr={`row`} ju={`flex-start`}>
-                  <SignupInput
-                    margin={width < 700 ? `0 0 0 6%` : `0 0 0 0`}
-                    width={`65px`}
-                    color={Theme.grey_C}
-                  />
-                  <CommonButton
-                    width={`56px`}
-                    height={`25px`}
-                    margin={`0 0 0 10px`}
-                    fontSize={`12px`}
-                    kindOf={`darkgrey`}
-                    padding={`0`}
-                    radius={`0`}
+                  <Form.Item
+                    name={`userId`}
+                    rules={[
+                      { required: true, message: "아이디를 입력해주세요." },
+                    ]}
                   >
-                    우편번호
-                  </CommonButton>
+                    <SignupInput width={width < 700 ? `215px` : `206px`} />
+                  </Form.Item>
+                  <Wrapper
+                    width={width < 700 ? `206px` : `calc(100% - 215px)`}
+                    color={Theme.grey_C}
+                    padding={`0 0 0 10px`}
+                    al={`flex-start`}
+                    fontSize={width < 700 ? `12px` : `14px`}
+                  >
+                    (영문소문자/숫자, 4~16자)
+                  </Wrapper>
                 </Wrapper>
+              </SignUpWrapper>
+              <SignUpWrapper
+                height={`auto`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
+                <TitleWrapper>
+                  비밀번호
+                  <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                </TitleWrapper>
                 <Wrapper
-                  width={width < 700 ? `100%` : `auto`}
+                  borderLeft={`1px solid ${Theme.grey2_C}`}
+                  padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 98px - 10px)`
+                      : `calc(100% - 13% - 10px)`
+                  }
+                  dr={width < 700 ? `column` : `row`}
+                >
+                  <Form.Item
+                    name={`password`}
+                    rules={[
+                      { required: true, message: "비밀번호를 입력해주세요." },
+                    ]}
+                  >
+                    <SignupInput
+                      width={width < 700 ? `215px` : `206px`}
+                      type={"password"}
+                    />
+                  </Form.Item>
+                  <Wrapper
+                    width={width < 700 ? `206px` : `calc(100% - 215px)`}
+                    color={Theme.grey_C}
+                    padding={`0 0 0 10px`}
+                    al={`flex-start`}
+                    fontSize={width < 700 ? `12px` : `14px`}
+                  >
+                    (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자)
+                  </Wrapper>
+                </Wrapper>
+              </SignUpWrapper>
+              <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
+                <TitleWrapper>
+                  비밀번호 확인
+                  <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                </TitleWrapper>
+                <Wrapper
+                  borderLeft={`1px solid ${Theme.grey2_C}`}
+                  padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 98px - 10px)`
+                      : `calc(100% - 13% - 10px)`
+                  }
+                  al={width < 700 ? `center` : `flex-start`}
+                >
+                  <Form.Item
+                    name={"checkPassword"}
+                    rules={[
+                      { required: true, message: "비밀번호를 입력해주세요." },
+                    ]}
+                  >
+                    <SignupInput
+                      width={width < 700 ? `215px` : `206px`}
+                      type="password"
+                    />
+                  </Form.Item>
+                </Wrapper>
+              </SignUpWrapper>
+              <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
+                <TitleWrapper>
+                  이름
+                  <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                </TitleWrapper>
+                <Wrapper
+                  borderLeft={`1px solid ${Theme.grey2_C}`}
+                  padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 98px - 10px)`
+                      : `calc(100% - 13% - 10px)`
+                  }
+                  al={width < 700 ? `center` : `flex-start`}
+                >
+                  <Form.Item
+                    name="username"
+                    rules={[
+                      { required: true, message: "이름을 입력해주세요." },
+                    ]}
+                  >
+                    <SignupInput width={width < 700 ? `215px` : `206px`} />
+                  </Form.Item>
+                </Wrapper>
+              </SignUpWrapper>
+              <SignUpWrapper
+                height={`auto`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
+                <TitleWrapper>
+                  주소
+                  <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                </TitleWrapper>
+                <Wrapper
+                  borderLeft={`1px solid ${Theme.grey2_C}`}
+                  padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 98px - 10px)`
+                      : `calc(100% - 13% - 10px)`
+                  }
+                  al={`flex-start`}
+                >
+                  <Wrapper dr={`row`} ju={`flex-start`}>
+                    <Form.Item
+                      name="zoneCode"
+                      rules={[
+                        { required: true, message: "우편번호를 입력해주세요." },
+                      ]}
+                    >
+                      <SignupInput
+                        margin={width < 700 ? `0 0 0 6%` : `0 0 0 0`}
+                        width={`65px`}
+                        color={Theme.grey_C}
+                      />
+                    </Form.Item>
+                    <CommonButton
+                      width={`56px`}
+                      height={`25px`}
+                      margin={`0 0 0 10px`}
+                      fontSize={`12px`}
+                      kindOf={`darkgrey`}
+                      padding={`0`}
+                      radius={`0`}
+                    >
+                      우편번호
+                    </CommonButton>
+                  </Wrapper>
+                  <Wrapper
+                    width={width < 700 ? `100%` : `auto`}
+                    dr={`row`}
+                    margin={`10px 0`}
+                  >
+                    <Form.Item
+                      name="address"
+                      rules={[
+                        { required: true, message: "기본주소를 입력해주세요." },
+                      ]}
+                    >
+                      <SignupInput
+                        width={width < 700 ? `215px` : `206px`}
+                        placeholder={width < 700 ? `기본주소` : ``}
+                      />
+                    </Form.Item>
+                    <Wrapper
+                      width={width < 700 ? `100%` : `calc(100% - 206px)`}
+                      color={Theme.grey_C}
+                      padding={`0 0 0 10px`}
+                      display={width < 700 ? `none` : `flex`}
+                    >
+                      기본주소
+                    </Wrapper>
+                  </Wrapper>
+                  <Wrapper width={width < 700 ? `100%` : `auto`} dr={`row`}>
+                    <Form.Item
+                      name="detailAddress"
+                      rules={[
+                        {
+                          required: true,
+                          message: "나머지 주소를 입력해주세요.",
+                        },
+                      ]}
+                    >
+                      <SignupInput
+                        width={width < 700 ? `215px` : `206px`}
+                        placeholder={width < 700 ? `나머지주소` : ``}
+                      />
+                    </Form.Item>
+                    <Wrapper
+                      width={width < 700 ? `100%` : `calc(100% - 206px)`}
+                      color={Theme.grey_C}
+                      padding={`0 0 0 10px`}
+                      display={width < 700 ? `none` : `flex`}
+                    >
+                      나머지주소
+                    </Wrapper>
+                  </Wrapper>
+                </Wrapper>
+              </SignUpWrapper>
+              <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
+                <TitleWrapper>일반전화</TitleWrapper>
+                <Wrapper
+                  borderLeft={`1px solid ${Theme.grey2_C}`}
+                  padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 98px - 10px)`
+                      : `calc(100% - 13% - 10px)`
+                  }
                   dr={`row`}
-                  margin={`10px 0`}
+                  ju={width < 700 ? `center` : `flex-start`}
                 >
-                  <SignupInput
-                    width={width < 700 ? `215px` : `206px`}
-                    placeholder={width < 700 ? `기본주소` : ``}
-                  />
+                  <Form.Item name="normalMobile_1">
+                    <SelectStyle defaultValue={`02`} style={{ width: 65 }}>
+                      {normalMobileArr.map((data) => {
+                        return <Option value={data}>{data}</Option>;
+                      })}
+                    </SelectStyle>
+                  </Form.Item>
                   <Wrapper
-                    width={width < 700 ? `100%` : `calc(100% - 206px)`}
-                    color={Theme.grey_C}
-                    padding={`0 0 0 10px`}
-                    display={width < 700 ? `none` : `flex`}
+                    fontSize={`12px`}
+                    width={`auto`}
+                    padding={`0 2px 0 3px`}
                   >
-                    기본주소
+                    -
                   </Wrapper>
+                  <Form.Item name="normalMobile_2">
+                    <SignupInput width={`67px`} />
+                  </Form.Item>
+                  <Wrapper fontSize={`12px`} width={`auto`} padding={`0 2px`}>
+                    -
+                  </Wrapper>
+                  <Form.Item name="normalMobile_3">
+                    <SignupInput width={`67px`} />
+                  </Form.Item>
                 </Wrapper>
-                <Wrapper width={width < 700 ? `100%` : `auto`} dr={`row`}>
-                  <SignupInput
-                    width={width < 700 ? `215px` : `206px`}
-                    placeholder={width < 700 ? `나머지주소` : ``}
-                  />
+              </SignUpWrapper>
+              <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
+                <TitleWrapper>
+                  휴대전화
+                  <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                </TitleWrapper>
+                <Wrapper
+                  borderLeft={`1px solid ${Theme.grey2_C}`}
+                  padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 98px - 10px)`
+                      : `calc(100% - 13% - 10px)`
+                  }
+                  dr={`row`}
+                  ju={width < 700 ? `center` : `flex-start`}
+                >
+                  <Form.Item name="mobile_1">
+                    <SelectStyle defaultValue={`010`} style={{ width: 65 }}>
+                      {mobileArr.map((data) => {
+                        return <Option value={data}>{data}</Option>;
+                      })}
+                    </SelectStyle>
+                  </Form.Item>
                   <Wrapper
-                    width={width < 700 ? `100%` : `calc(100% - 206px)`}
-                    color={Theme.grey_C}
-                    padding={`0 0 0 10px`}
-                    display={width < 700 ? `none` : `flex`}
+                    fontSize={`12px`}
+                    width={`auto`}
+                    padding={`0 2px 0 3px`}
                   >
-                    나머지주소
+                    -
                   </Wrapper>
+                  <Form.Item name="mobile_2">
+                    <SignupInput width={`67px`} />
+                  </Form.Item>
+                  <Wrapper fontSize={`12px`} width={`auto`} padding={`0 2px`}>
+                    -
+                  </Wrapper>
+                  <Form.Item name="mobile_3">
+                    <SignupInput width={`67px`} />
+                  </Form.Item>
                 </Wrapper>
-              </Wrapper>
-            </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>일반전화</TitleWrapper>
-              <Wrapper
-                borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
-                width={
-                  width < 700
-                    ? `calc(100% - 98px - 10px)`
-                    : `calc(100% - 13% - 10px)`
-                }
-                dr={`row`}
-                ju={width < 700 ? `center` : `flex-start`}
-              >
-                <SelectStyle defaultValue={`02`} style={{ width: 65 }}>
-                  <Option value={`02`}>02</Option>
-                  <Option value={`031`}>031</Option>
-                  <Option value={`032`}>032</Option>
-                  <Option value={`033`}>033</Option>
-                  <Option value={`041`}>041</Option>
-                  <Option value={`042`}>042</Option>
-                  <Option value={`043`}>043</Option>
-                  <Option value={`044`}>044</Option>
-                  <Option value={`051`}>051</Option>
-                  <Option value={`052`}>052</Option>
-                  <Option value={`053`}>053</Option>
-                  <Option value={`054`}>054</Option>
-                  <Option value={`055`}>055</Option>
-                  <Option value={`061`}>061</Option>
-                  <Option value={`062`}>062</Option>
-                  <Option value={`063`}>063</Option>
-                  <Option value={`064`}>064</Option>
-                </SelectStyle>
+              </SignUpWrapper>
+              <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
+                <TitleWrapper>
+                  이메일
+                  <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
+                </TitleWrapper>
                 <Wrapper
-                  fontSize={`12px`}
-                  width={`auto`}
-                  padding={`0 2px 0 3px`}
+                  borderLeft={`1px solid ${Theme.grey2_C}`}
+                  padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 98px - 10px)`
+                      : `calc(100% - 13% - 10px)`
+                  }
+                  dr={`row`}
+                  ju={width < 700 ? `center` : `flex-start`}
                 >
-                  -
+                  <Form.Item name="email">
+                    <SignupInput
+                      width={width < 700 ? `95px` : `206px`}
+                      margin={`0 10px 0 0`}
+                    />
+                  </Form.Item>
+                  <Form.Item name="emailBack">
+                    <SelectStyle2
+                      defaultValue={`@`}
+                      style={width < 700 ? { width: 115 } : { width: 206 }}
+                    >
+                      {emailArr.map((data) => {
+                        return <Option value={data}>{data}</Option>;
+                      })}
+                    </SelectStyle2>
+                  </Form.Item>
                 </Wrapper>
-                <SignupInput width={`67px`} />
-                <Wrapper fontSize={`12px`} width={`auto`} padding={`0 2px`}>
-                  -
-                </Wrapper>
-                <SignupInput width={`67px`} />
+              </SignUpWrapper>
+              <Wrapper al={`flex-start`} margin={`40px 0 0 0`}>
+                <Checkbox checked={isAllCheck} onClick={allCheckHandler}>
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.black_C}
+                    cursor={`pointer`}
+                    margin={`0 0 20px 0`}
+                    fontWeight={`700`}
+                  >
+                    필수 약관 모두 동의하기
+                  </Text>
+                </Checkbox>
+                <Checkbox
+                  checked={isCheck1}
+                  onClick={() => setIsCheck1(!isCheck1)}
+                >
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.black_C}
+                    cursor={`pointer`}
+                    margin={`0 0 10px 0`}
+                  >
+                    회원약관 (필수)
+                  </Text>
+                </Checkbox>
+                <Checkbox
+                  checked={isCheck2}
+                  onClick={() => setIsCheck2(!isCheck2)}
+                >
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.black_C}
+                    cursor={`pointer`}
+                    margin={`0 0 10px 0`}
+                  >
+                    개인정보처리방침 (필수)
+                  </Text>
+                </Checkbox>
+                <Checkbox
+                  checked={isCheck3}
+                  onClick={() => setIsCheck3(!isCheck3)}
+                >
+                  <Text
+                    fontSize={`14px`}
+                    color={Theme.black_C}
+                    cursor={`pointer`}
+                  >
+                    개인정보의 제 3자의 이용 동의 (필수)
+                  </Text>
+                </Checkbox>
               </Wrapper>
-            </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>
-                휴대전화
-                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
-              </TitleWrapper>
-              <Wrapper
-                borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
-                width={
-                  width < 700
-                    ? `calc(100% - 98px - 10px)`
-                    : `calc(100% - 13% - 10px)`
-                }
-                dr={`row`}
-                ju={width < 700 ? `center` : `flex-start`}
-              >
-                <SelectStyle defaultValue={`010`} style={{ width: 65 }}>
-                  <Option value={`010`}>010</Option>
-                  <Option value={`011`}>011</Option>
-                  <Option value={`016`}>016</Option>
-                  <Option value={`017`}>017</Option>
-                  <Option value={`018`}>018</Option>
-                  <Option value={`019`}>019</Option>
-                </SelectStyle>
-                <Wrapper
-                  fontSize={`12px`}
-                  width={`auto`}
-                  padding={`0 2px 0 3px`}
+              <Wrapper>
+                <CommonButton
+                  htmlType="submit"
+                  width={`150px`}
+                  height={`50px`}
+                  margin={`60px 0 110px 0`}
+                  fontSize={`18px`}
+                  padding={`0`}
+                  radius={`0`}
                 >
-                  -
-                </Wrapper>
-                <SignupInput width={`67px`} />
-                <Wrapper fontSize={`12px`} width={`auto`} padding={`0 2px`}>
-                  -
-                </Wrapper>
-                <SignupInput width={`67px`} />
+                  회원가입
+                </CommonButton>
               </Wrapper>
-            </SignUpWrapper>
-            <SignUpWrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              <TitleWrapper>
-                이메일
-                <SpanText color={Theme.subTheme_C}>&nbsp;*</SpanText>
-              </TitleWrapper>
-              <Wrapper
-                borderLeft={`1px solid ${Theme.grey2_C}`}
-                padding={width < 700 ? `9px 0` : `9px 0 9px 20px`}
-                width={
-                  width < 700
-                    ? `calc(100% - 98px - 10px)`
-                    : `calc(100% - 13% - 10px)`
-                }
-                dr={`row`}
-                ju={width < 700 ? `center` : `flex-start`}
-              >
-                <SignupInput
-                  width={width < 700 ? `95px` : `206px`}
-                  margin={`0 10px 0 0`}
-                />
-                <SelectStyle2
-                  defaultValue={`@`}
-                  style={width < 700 ? { width: 115 } : { width: 206 }}
-                >
-                  <Option value={`@naver.com`}>@naver.com</Option>
-                  <Option value={`@hanmail.com`}>@hanmail.com</Option>
-                  <Option value={`@nate.com`}>@nate.com</Option>
-                  <Option value={`@gmail.com`}>@gmail.com</Option>
-                </SelectStyle2>
-              </Wrapper>
-            </SignUpWrapper>
-            <Wrapper al={`flex-start`} margin={`40px 0 0 0`}>
-              <Checkbox checked={isAllCheck} onClick={allCheckHandler}>
-                <Text
-                  fontSize={`14px`}
-                  color={Theme.black_C}
-                  cursor={`pointer`}
-                  margin={`0 0 20px 0`}
-                  fontWeight={`700`}
-                >
-                  필수 약관 모두 동의하기
-                </Text>
-              </Checkbox>
-              <Checkbox
-                checked={isCheck1}
-                onClick={() => setIsCheck1(!isCheck1)}
-              >
-                <Text
-                  fontSize={`14px`}
-                  color={Theme.black_C}
-                  cursor={`pointer`}
-                  margin={`0 0 10px 0`}
-                >
-                  회원약관 (필수)
-                </Text>
-              </Checkbox>
-              <Checkbox
-                checked={isCheck2}
-                onClick={() => setIsCheck2(!isCheck2)}
-              >
-                <Text
-                  fontSize={`14px`}
-                  color={Theme.black_C}
-                  cursor={`pointer`}
-                  margin={`0 0 10px 0`}
-                >
-                  개인정보처리방침 (필수)
-                </Text>
-              </Checkbox>
-              <Checkbox
-                checked={isCheck3}
-                onClick={() => setIsCheck3(!isCheck3)}
-              >
-                <Text
-                  fontSize={`14px`}
-                  color={Theme.black_C}
-                  cursor={`pointer`}
-                >
-                  개인정보의 제 3자의 이용 동의 (필수)
-                </Text>
-              </Checkbox>
-            </Wrapper>
-            <Wrapper>
-              <CommonButton
-                width={`150px`}
-                height={`50px`}
-                margin={`60px 0 110px 0`}
-                fontSize={`18px`}
-                padding={`0`}
-                radius={`0`}
-              >
-                회원가입
-              </CommonButton>
-            </Wrapper>
+            </SignUpForm>
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
