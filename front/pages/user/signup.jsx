@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Select, Radio, Checkbox, Form, message } from "antd";
+import { Select, Radio, Checkbox, Form, message, Modal } from "antd";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
 import { SIGNUP_REQUEST } from "../../reducers/user";
@@ -24,6 +24,7 @@ import styled from "styled-components";
 import Theme from "../../components/Theme";
 import useWidth from "../../hooks/useWidth";
 import { useRef } from "react";
+import DaumPostCode from "react-daum-postcode";
 
 const SignUpWrapper = styled(Wrapper)`
   height: ${(props) => props.height || `50px`};
@@ -799,6 +800,16 @@ const SignUp = () => {
               </Wrapper>
             </SignUpForm>
           </RsWrapper>
+
+          <Modal>
+            <DaumPostCode
+              // onComplete={onCompleteHandler}
+              width={width < 600 ? `100%` : `600px`}
+              height={`450px`}
+              autoClose
+              animation
+            />
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

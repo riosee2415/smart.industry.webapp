@@ -32,6 +32,14 @@ import {
   FIND_USER_ID_REQUEST,
   FIND_USER_ID_SUCCESS,
   FIND_USER_ID_FAILURE,
+  /////////////////////////////
+  FIND_USER_PASS_REQUEST,
+  FIND_USER_PASS_SUCCESS,
+  FIND_USER_PASS_FAILURE,
+  /////////////////////////////
+  FIND_USER_PASS_UPDATE_REQUEST,
+  FIND_USER_PASS_UPDATE_SUCCESS,
+  FIND_USER_PASS_UPDATE_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -246,6 +254,60 @@ function* findUserIdByEmail(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function findUserPassAPI() {
+  return axios.post(`/api/user/modifypass`);
+}
+
+function* findUserPass() {
+  try {
+    const result = yield call(findUserPassAPI);
+
+    yield put({
+      type: FIND_USER_PASS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: FIND_USER_PASS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function findUserPassUpdateAPI() {
+  return axios.patch(`/api/user/modifypass/update`);
+}
+
+function* findUserPassUpdate() {
+  try {
+    const result = yield call(findUserPassUpdateAPI);
+
+    yield put({
+      type: FIND_USER_PASS_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: FIND_USER_PASS_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -280,6 +342,14 @@ function* watchFindUserIdByEmail() {
   yield takeLatest(FIND_USER_ID_REQUEST, findUserIdByEmail);
 }
 
+function* watchFindUserPass() {
+  yield takeLatest(FIND_USER_PASS_REQUEST, findUserPass);
+}
+
+function* watchFindUserPassUpdate() {
+  yield takeLatest(FIND_USER_PASS_UPDATE_REQUEST, findUserPassUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -291,6 +361,8 @@ export default function* userSaga() {
     fork(watchUserListUpdate),
     fork(watchKakaoLogin),
     fork(watchFindUserIdByEmail),
+    fork(watchFindUserPass),
+    fork(watchFindUserPassUpdate),
     //
   ]);
 }
