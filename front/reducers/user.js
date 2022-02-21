@@ -51,6 +51,10 @@ export const initailState = {
   st_findUserPassUpdateLoading: false, // 비밀번호수정
   st_findUserPassUpdateDone: false,
   st_findUserPassUpdateError: null,
+  //
+  st_findUserCheckSecretLoading: false, // 인증코드
+  st_findUserCheckSecretDone: false,
+  st_findUserCheckSecretError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -92,6 +96,10 @@ export const FIND_USER_PASS_FAILURE = "FIND_USER_PASS_FAILURE";
 export const FIND_USER_PASS_UPDATE_REQUEST = "FIND_USER_PASS_UPDATE_REQUEST";
 export const FIND_USER_PASS_UPDATE_SUCCESS = "FIND_USER_PASS_UPDATE_SUCCESS";
 export const FIND_USER_PASS_UPDATE_FAILURE = "FIND_USER_PASS_UPDATE_FAILURE";
+
+export const FIND_USER_CHECK_SECRET_REQUEST = "FIND_USER_CHECK_SECRET_REQUEST";
+export const FIND_USER_CHECK_SECRET_SUCCESS = "FIND_USER_CHECK_SECRET_SUCCESS";
+export const FIND_USER_CHECK_SECRET_FAILURE = "FIND_USER_CHECK_SECRET_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -299,6 +307,26 @@ const reducer = (state = initailState, action) =>
         draft.st_findUserPassUpdateLoading = false;
         draft.st_findUserPassUpdateDone = false;
         draft.st_findUserPassUpdateError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case FIND_USER_CHECK_SECRET_REQUEST: {
+        draft.st_findUserCheckSecretLoading = true;
+        draft.st_findUserCheckSecretDone = null;
+        draft.st_findUserCheckSecretError = false;
+        break;
+      }
+      case FIND_USER_CHECK_SECRET_SUCCESS: {
+        draft.st_findUserCheckSecretLoading = false;
+        draft.st_findUserCheckSecretDone = true;
+        draft.st_findUserCheckSecretError = null;
+        break;
+      }
+      case FIND_USER_CHECK_SECRET_FAILURE: {
+        draft.st_findUserCheckSecretLoading = false;
+        draft.st_findUserCheckSecretDone = false;
+        draft.st_findUserCheckSecretError = action.error;
         break;
       }
       //////////////////////////////////////////////

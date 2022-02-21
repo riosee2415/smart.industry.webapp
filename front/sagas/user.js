@@ -40,6 +40,10 @@ import {
   FIND_USER_PASS_UPDATE_REQUEST,
   FIND_USER_PASS_UPDATE_SUCCESS,
   FIND_USER_PASS_UPDATE_FAILURE,
+  /////////////////////////////
+  FIND_USER_CHECK_SECRET_REQUEST,
+  FIND_USER_CHECK_SECRET_SUCCESS,
+  FIND_USER_CHECK_SECRET_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -309,6 +313,33 @@ function* findUserPassUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function findUserCheckSecretAPI(data) {
+  return axios.post(`/api/user/checkSecret`, data);
+}
+
+function* findUserCheckSecret(action) {
+  try {
+    const result = yield call(findUserCheckSecretAPI, action.data);
+
+    yield put({
+      type: FIND_USER_CHECK_SECRET_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: FIND_USER_CHECK_SECRET_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -351,6 +382,10 @@ function* watchFindUserPassUpdate() {
   yield takeLatest(FIND_USER_PASS_UPDATE_REQUEST, findUserPassUpdate);
 }
 
+function* watchFindUserCheckSecret() {
+  yield takeLatest(FIND_USER_CHECK_SECRET_REQUEST, findUserCheckSecret);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -364,6 +399,7 @@ export default function* userSaga() {
     fork(watchFindUserIdByEmail),
     fork(watchFindUserPass),
     fork(watchFindUserPassUpdate),
+    fork(watchFindUserCheckSecret),
     //
   ]);
 }
