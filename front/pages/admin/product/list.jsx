@@ -30,6 +30,10 @@ import {
   PRODUCT_IMAGE_PATH,
   PRODUCT_UPDATE_REQUEST,
   PRODUCT_DELETE_REQUEST,
+  PRODUCT_DETAIL_UPLOAD_REQUEST,
+  PRODUCT_CREATE_IMAGE_REQUEST,
+  PRODUCT_LIST_IMAGE_REQUEST,
+  PRODUCT_DETAIL_IMAGE_PATH,
 } from "../../../reducers/product";
 import { CATEGORY_LIST_REQUEST } from "../../../reducers/category";
 import Theme from "../../../components/Theme";
@@ -124,10 +128,14 @@ const ProductList = () => {
   /////////////////////////////////////////////////////////////////////////
 
   const {
+    productImages,
     productList,
+    productId,
     maxPage,
     createModal,
     productImagePath,
+    productDetailImagePath,
+    //
     st_productUploadLoading,
     st_productCreateDone,
     st_productCreateError,
@@ -135,13 +143,18 @@ const ProductList = () => {
     st_productUpdateError,
     st_productDeleteDone,
     st_productDeleteError,
+    st_productDetailUploadDone,
+    st_productDetailUploadError,
+    st_productCreateImageDone,
+    st_productCreateImageError,
   } = useSelector((state) => state.product);
   const { categoryList } = useSelector((state) => state.category);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [updateData, setUpdateData] = useState(null);
   const [selectCategory, setSelectCategory] = useState(null);
-  console.log(selectCategory);
+
+  const [detailImageArr, setDetailImageArr] = useState([]);
 
   const [form] = Form.useForm();
   const formRef = useRef();
@@ -151,6 +164,31 @@ const ProductList = () => {
   const imageRef = useRef();
 
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (st_productDetailUploadDone) {
+      if (updateData && productDetailImagePath) {
+        dispatch({
+          type: PRODUCT_CREATE_IMAGE_REQUEST,
+          data: {
+            imagePath: productDetailImagePath,
+            prodId: updateData.id,
+          },
+        });
+      } else {
+        let imageArr = detailImageArr.map((data) => data);
+
+        imageArr.push(productDetailImagePath);
+
+        setDetailImageArr(imageArr);
+      }
+    }
+  }, [st_productDetailUploadDone, updateData]);
+
+  useEffect(() => {
+    if (st_productDetailUploadError) {
+      return message.error(st_productDetailUploadError);
+    }
+  }, [st_productDetailUploadError]);
 
   useEffect(() => {
     dispatch({
@@ -171,6 +209,12 @@ const ProductList = () => {
         deliveryPay: updateData.deliveryPay,
         youtubeLink: updateData.youtubeLink,
         category: updateData.CategoryId,
+        image: productImages
+          ? productImages.map((data) => ({
+              uid: data.id,
+              url: data.imagePath,
+            }))
+          : null,
       });
 
       dispatch({
@@ -178,10 +222,21 @@ const ProductList = () => {
         data: updateData.thumbnail,
       });
     }
-  }, [updateData]);
+  }, [updateData, productImages]);
 
   useEffect(() => {
     if (st_productCreateDone) {
+      Promise.all(
+        detailImageArr.map((file) => {
+          dispatch({
+            type: PRODUCT_CREATE_IMAGE_REQUEST,
+            data: {
+              imagePath: file,
+              prodId: productId,
+            },
+          });
+        })
+      );
       dispatch({
         type: PRODUCT_LIST_REQUEST,
         data: {
@@ -199,11 +254,18 @@ const ProductList = () => {
         data: null,
       });
 
+      dispatch({
+        type: PRODUCT_DETAIL_IMAGE_PATH,
+        data: null,
+      });
+
       form.resetFields();
+
+      setDetailImageArr([]);
 
       return message.success("상품이 생성되었습니다.");
     }
-  }, [st_productCreateDone]);
+  }, [st_productCreateDone, st_productCreateImageDone]);
 
   useEffect(() => {
     if (st_productCreateError) {
@@ -230,6 +292,12 @@ const ProductList = () => {
         data: null,
       });
 
+      dispatch({
+        type: PRODUCT_DETAIL_IMAGE_PATH,
+        data: null,
+      });
+
+      setUpdateData(null);
       form.resetFields();
 
       return message.success("상품이 수정되었습니다.");
@@ -268,6 +336,13 @@ const ProductList = () => {
     (data) => {
       if (data) {
         setUpdateData(data);
+
+        dispatch({
+          type: PRODUCT_LIST_IMAGE_REQUEST,
+          data: {
+            prodId: data.id,
+          },
+        });
       } else {
         setUpdateData(null);
         form.resetFields();
@@ -325,14 +400,13 @@ const ProductList = () => {
   );
 
   const onSubmit = useCallback(
-    (data) => {
+    async (data) => {
       if (!productImagePath) {
         return LoadNotification(
           "ADMIN SYSTEM ERROR ",
           "썸네일 이미지를 등록해주세요."
         );
       }
-      console.log(data);
 
       dispatch({
         type: PRODUCT_CREATE_REQUEST,
@@ -343,15 +417,26 @@ const ProductList = () => {
           discount: data.discount,
           deliveryPay: data.deliveryPay,
           youtubeLink: data.youtubeLink,
-          categoryId: data.category,
+          CategoryId: data.category,
         },
       });
+
+      for (let i = 0; i < data.image.length; i++) {
+        const formData = new FormData();
+
+        formData.append("image", data.image[i].originFileObj);
+
+        dispatch({
+          type: PRODUCT_DETAIL_UPLOAD_REQUEST,
+          data: formData,
+        });
+      }
     },
     [productImagePath]
   );
 
   const onUpdateSubmit = useCallback(
-    (data) => {
+    async (data) => {
       if (!productImagePath) {
         return LoadNotification(
           "ADMIN SYSTEM ERROR ",
@@ -369,11 +454,25 @@ const ProductList = () => {
           discount: data.discount,
           deliveryPay: data.deliveryPay,
           youtubeLink: data.youtubeLink,
-          categoryId: data.category,
+          CategoryId: data.category,
         },
       });
     },
     [productImagePath, updateData]
+  );
+
+  const onCreateDetailImage = useCallback(
+    (file) => {
+      const formData = new FormData();
+
+      formData.append("image", file);
+
+      dispatch({
+        type: PRODUCT_DETAIL_UPLOAD_REQUEST,
+        data: formData,
+      });
+    },
+    [updateData]
   );
 
   const onDeleteSubmit = useCallback((data) => {
@@ -502,7 +601,7 @@ const ProductList = () => {
 
       <Modal
         title={updateData ? "상품 수정" : "상품 등록"}
-        width={`700px`}
+        width={`720px`}
         visible={createModal}
         onCancel={() => createModalToggle(null)}
         footer={null}
@@ -545,7 +644,7 @@ const ProductList = () => {
               size="small"
               type="primary"
               onClick={clickImageUpload}
-              loading={st_productUploadLoading}
+              // loading={st_productUploadLoading}
             >
               UPLOAD
             </Button>
@@ -625,6 +724,7 @@ const ProductList = () => {
               showUploadList={{
                 showPreviewIcon: false,
               }}
+              onChange={(data) => onCreateDetailImage(data.file.originFileObj)}
             >
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />

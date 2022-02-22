@@ -20,6 +20,18 @@ import {
   PRODUCT_UPLOAD_REQUEST,
   PRODUCT_UPLOAD_SUCCESS,
   PRODUCT_UPLOAD_FAILURE,
+  //
+  PRODUCT_DETAIL_UPLOAD_REQUEST,
+  PRODUCT_DETAIL_UPLOAD_SUCCESS,
+  PRODUCT_DETAIL_UPLOAD_FAILURE,
+  //
+  PRODUCT_CREATE_IMAGE_REQUEST,
+  PRODUCT_CREATE_IMAGE_SUCCESS,
+  PRODUCT_CREATE_IMAGE_FAILURE,
+  //
+  PRODUCT_LIST_IMAGE_REQUEST,
+  PRODUCT_LIST_IMAGE_SUCCESS,
+  PRODUCT_LIST_IMAGE_FAILURE,
 } from "../reducers/product";
 
 // SAGA AREA ********************************************************************************************************
@@ -37,7 +49,6 @@ function* productList(action) {
       data: result.data,
     });
   } catch (err) {
-    console.error(err);
     yield put({
       type: PRODUCT_LIST_FAILURE,
       error: err.response.data,
@@ -64,7 +75,6 @@ function* productCreate(action) {
       data: result.data,
     });
   } catch (err) {
-    console.error(err);
     yield put({
       type: PRODUCT_CREATE_FAILURE,
       error: err.response.data,
@@ -91,7 +101,6 @@ function* productUpdate(action) {
       data: result.data,
     });
   } catch (err) {
-    console.error(err);
     yield put({
       type: PRODUCT_UPDATE_FAILURE,
       error: err.response.data,
@@ -118,7 +127,6 @@ function* productDelete(action) {
       data: result.data,
     });
   } catch (err) {
-    console.error(err);
     yield put({
       type: PRODUCT_DELETE_FAILURE,
       error: err.response.data,
@@ -145,9 +153,86 @@ function* productUpload(action) {
       data: result.data,
     });
   } catch (err) {
-    console.error(err);
     yield put({
       type: PRODUCT_UPLOAD_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function productDetailUploadAPI(data) {
+  return axios.post(`/api/product/image`, data);
+}
+
+function* productDetailUpload(action) {
+  try {
+    const result = yield call(productDetailUploadAPI, action.data);
+
+    yield put({
+      type: PRODUCT_DETAIL_UPLOAD_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_DETAIL_UPLOAD_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function productListImageAPI(data) {
+  return axios.post(`/api/product/image/list`, data);
+}
+
+function* productListImage(action) {
+  try {
+    const result = yield call(productListImageAPI, action.data);
+
+    yield put({
+      type: PRODUCT_LIST_IMAGE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_LIST_IMAGE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function productCreateImageAPI(data) {
+  return axios.post(`/api/product/image/create`, data);
+}
+
+function* productCreateImage(action) {
+  try {
+    const result = yield call(productCreateImageAPI, action.data);
+
+    yield put({
+      type: PRODUCT_CREATE_IMAGE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_CREATE_IMAGE_FAILURE,
       error: err.response.data,
     });
   }
@@ -178,6 +263,18 @@ function* watchProductImageUpload() {
   yield takeLatest(PRODUCT_UPLOAD_REQUEST, productUpload);
 }
 
+function* watchProductDetailImageUpload() {
+  yield takeLatest(PRODUCT_DETAIL_UPLOAD_REQUEST, productDetailUpload);
+}
+
+function* watchProductCreateImage() {
+  yield takeLatest(PRODUCT_CREATE_IMAGE_REQUEST, productCreateImage);
+}
+
+function* watchProductListImage() {
+  yield takeLatest(PRODUCT_LIST_IMAGE_REQUEST, productListImage);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* menuSaga() {
   yield all([
@@ -186,6 +283,9 @@ export default function* menuSaga() {
     fork(watchProductUpdate),
     fork(watchProductDelete),
     fork(watchProductImageUpload),
+    fork(watchProductDetailImageUpload),
+    fork(watchProductCreateImage),
+    fork(watchProductListImage),
     //
   ]);
 }
