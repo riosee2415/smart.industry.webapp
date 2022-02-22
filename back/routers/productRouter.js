@@ -386,8 +386,17 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     deliveryPay,
     isUsed,
     isSale,
+    CategoryId,
   } = req.body;
   try {
+    const exCategory = await Category.findOne({
+      where: { id: parseInt(CategoryId) },
+    });
+
+    if (!exCategory) {
+      return res.status(401).send("존재하지 않는 유형입니다.");
+    }
+
     const createResult = await Product.create({
       thumbnail,
       title,
@@ -397,13 +406,14 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
       deliveryPay,
       isUsed,
       isSale,
+      CategoryId: parseInt(CategoryId),
     });
 
     if (!createResult) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
 
-    return res.status(201).json({ result: true });
+    return res.status(201).json({ result: true, id: createResult.id });
   } catch (error) {
     console.error(error);
     return res.status(401).send("상품을 추가할 수 없습니다.");
@@ -421,6 +431,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
     deliveryPay,
     isUsed,
     isSale,
+    CategoryId,
   } = req.body;
   try {
     const exProd = await Product.findOne({
@@ -429,6 +440,14 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
 
     if (!exProd) {
       return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const exCategory = await Category.findOne({
+      where: { id: parseInt(CategoryId) },
+    });
+
+    if (!exCategory) {
+      return res.status(401).send("존재하지 않는 유형입니다.");
     }
 
     const updateResult = await Product.update(
@@ -441,6 +460,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         deliveryPay,
         isUsed,
         isSale,
+        CategoryId: parseInt(CategoryId),
       },
       {
         where: { id: parseInt(id) },
@@ -455,6 +475,68 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("상품을 수정할 수 없습니다.");
+  }
+});
+
+router.patch("/used/update", isAdminCheck, async (req, res, next) => {
+  const { id, isUsed } = req.body;
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const updateResult = await Product.update(
+      {
+        isUsed,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품의 상태를 변경할 수 없습니다.");
+  }
+});
+
+router.patch("/sale/update", isAdminCheck, async (req, res, next) => {
+  const { id, isSale } = req.body;
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const updateResult = await Product.update(
+      {
+        isSale,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품의 상태를 변경할 수 없습니다.");
   }
 });
 

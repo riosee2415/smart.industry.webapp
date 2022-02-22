@@ -6,7 +6,7 @@ import wrapper from "../../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
@@ -17,6 +17,8 @@ import { useCallback } from "react";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
+import { NOTICE_DETAIL_REQUEST } from "../../../../reducers/notice";
+import { useEffect } from "react";
 
 const Notice = () => {
   ////// GLOBAL STATE //////
@@ -24,12 +26,23 @@ const Notice = () => {
     (state) => state.seo
   );
 
+  const { noticeDetails } = useSelector((state) => state.notice);
+
   const width = useWidth();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: NOTICE_DETAIL_REQUEST,
+      data: {
+        noticeId: router.query.id,
+      },
+    });
+  }, [router.query]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
@@ -154,7 +167,7 @@ const Notice = () => {
                   al={`flex-start`}
                   padding={`0 0 0 20px`}
                 >
-                  공지사항입니다.
+                  {noticeDetails && noticeDetails.title}
                 </Wrapper>
               </Wrapper>
               <Wrapper dr={`row`} borderBottom={`1px solid ${Theme.grey2_C}`}>
@@ -171,7 +184,7 @@ const Notice = () => {
                   al={`flex-start`}
                   padding={`0 0 0 20px`}
                 >
-                  대한기계공구
+                  {noticeDetails && noticeDetails.author}
                 </Wrapper>
               </Wrapper>
               <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`} dr={`row`}>
@@ -188,7 +201,7 @@ const Notice = () => {
                   al={`flex-start`}
                   padding={`0 0 0 20px`}
                 >
-                  2022-02-13
+                  {noticeDetails && noticeDetails.createdAt.substring(0, 10)}
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `25%` : `10%`}
@@ -203,16 +216,16 @@ const Notice = () => {
                   al={`flex-start`}
                   padding={`0 0 0 20px`}
                 >
-                  123
+                  {noticeDetails && noticeDetails.hit}
                 </Wrapper>
               </Wrapper>
               <Wrapper
                 minHeight={`140px`}
                 al={`flex-start`}
                 ju={`flex-start`}
-                padding={`23px 0 0 20px`}
+                padding={`23px 20px`}
               >
-                내용
+                {noticeDetails && noticeDetails.content}
               </Wrapper>
             </Wrapper>
 
