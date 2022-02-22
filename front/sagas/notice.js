@@ -5,6 +5,10 @@ import {
   NOTICE_LIST_SUCCESS,
   NOTICE_LIST_FAILURE,
   //
+  NOTICE_DETAIL_REQUEST,
+  NOTICE_DETAIL_SUCCESS,
+  NOTICE_DETAIL_FAILURE,
+  //
   NOTICE_CREATE_REQUEST,
   NOTICE_CREATE_SUCCESS,
   NOTICE_CREATE_FAILURE,
@@ -36,6 +40,32 @@ function* noticeList(action) {
     console.error(err);
     yield put({
       type: NOTICE_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function noticeDetailAPI(data) {
+  return axios.get(`/api/notice/list/${data.noticeId}`);
+}
+
+function* noticeDetail(action) {
+  try {
+    const result = yield call(noticeDetailAPI, action.data);
+
+    yield put({
+      type: NOTICE_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NOTICE_DETAIL_FAILURE,
       error: err.response.data,
     });
   }
@@ -131,6 +161,10 @@ function* watchNoticeList() {
   yield takeLatest(NOTICE_LIST_REQUEST, noticeList);
 }
 
+function* watchNoticeDetail() {
+  yield takeLatest(NOTICE_DETAIL_REQUEST, noticeDetail);
+}
+
 function* watchNoticeCreate() {
   yield takeLatest(NOTICE_CREATE_REQUEST, noticeCreate);
 }
@@ -147,6 +181,7 @@ function* watchNoticeDelete() {
 export default function* noticeSaga() {
   yield all([
     fork(watchNoticeList),
+    fork(watchNoticeDetail),
     fork(watchNoticeCreate),
     fork(watchNoticeUpdate),
     fork(watchNoticeDelete),

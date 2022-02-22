@@ -418,7 +418,7 @@ const AppHeader = () => {
                         <Link href={`/community/productQnA`}>
                           <a>
                             <SubMenuTextCol fontSize={`12px`}>
-                              상푼문의
+                              상품문의
                             </SubMenuTextCol>
                           </a>
                         </Link>
@@ -625,7 +625,7 @@ const AppHeader = () => {
                   <Link href={`/community/productQnA`}>
                     <a>
                       <Wrapper height={`50px`}>
-                        <SubMenuTextCol>상푼문의</SubMenuTextCol>
+                        <SubMenuTextCol>상품문의</SubMenuTextCol>
                       </Wrapper>
                     </a>
                   </Link>
@@ -820,7 +820,7 @@ const AppHeader = () => {
                   <Link href={`/community/productQnA`}>
                     <a>
                       <Wrapper al={`flex-start`} padding={`5px`}>
-                        상푼문의
+                        상품문의
                       </Wrapper>
                     </a>
                   </Link>

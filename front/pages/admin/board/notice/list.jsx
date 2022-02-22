@@ -9,18 +9,12 @@ import {
   Modal,
   Form,
   Input,
-  Select,
-  Switch,
   notification,
   Row,
   Col,
   message,
 } from "antd";
-import {
-  CloseOutlined,
-  CheckOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
   CREATE_MODAL_CLOSE_REQUEST,
@@ -35,30 +29,12 @@ import useInput from "../../../../hooks/useInput";
 
 import { END } from "redux-saga";
 import axios from "axios";
-import { useRouter } from "next/router";
 import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
 import wrapper from "../../../../store/configureStore";
 import { Wrapper } from "../../../../components/commonComponents";
 
 const AdminContent = styled.div`
   padding: 20px;
-`;
-
-const FileBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const Filename = styled.span`
-  margin-right: 15px;
-  color: #555;
-  font-size: 13px;
-`;
-
-const SearchRow = styled(Row)`
-  margin-bottom: 10px;
 `;
 
 const LoadNotification = (msg, content) => {
@@ -88,14 +64,6 @@ const NoticeList = ({ router }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [isTop, setIsTop] = useState(false);
-  const isTopChange = (e) => {
-    setIsTop(e);
-  };
-
-  const realFile = useInput(null);
-  const filename = useInput(null);
-
   const [updateData, setUpdateData] = useState(null);
 
   const [deletePopVisible, setDeletePopVisible] = useState(false);
@@ -104,9 +72,7 @@ const NoticeList = ({ router }) => {
   ////// HOOKS //////
   const dispatch = useDispatch();
 
-  const fileRef = useRef();
   const formRef = useRef();
-  const [state, setState] = useState(null);
 
   const searchValue = useInput("");
   const inputSearch = useInput("");
@@ -176,6 +142,7 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeCreateDone) {
+      message.success("공지사항 등록이 완료되었습니다.");
       const qs = getQs();
       dispatch({
         type: NOTICE_LIST_REQUEST,
@@ -192,6 +159,7 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeUpdateDone) {
+      message.success("공지사항 수정이 완료되었습니다.");
       const qs = getQs();
       dispatch({
         type: NOTICE_LIST_REQUEST,
@@ -208,6 +176,7 @@ const NoticeList = ({ router }) => {
 
   useEffect(() => {
     if (st_noticeDeleteDone) {
+      message.success("공지사항 삭제가 완료되었습니다.");
       const qs = getQs();
       dispatch({
         type: NOTICE_LIST_REQUEST,
@@ -285,67 +254,39 @@ const NoticeList = ({ router }) => {
     formRef.current.setFieldsValue({
       title: data.title,
       content: data.content,
-      type: data.type,
-      isTop: data.isTop,
+      author: data.author,
     });
-
-    setIsTop(data.isTop);
   }, []);
 
-  const onSubmit = useCallback(
-    (value) => {
-      const formData = new FormData();
-
-      formData.append("title", value.title);
-      formData.append("content", value.content);
-      formData.append("type", value.type);
-      formData.append("isTop", isTop);
-      formData.append("file", realFile.value);
-
-      dispatch({
-        type: NOTICE_CREATE_REQUEST,
-        data: formData,
-      });
-    },
-    [isTop, realFile.value]
-  );
+  const onSubmit = useCallback((value) => {
+    dispatch({
+      type: NOTICE_CREATE_REQUEST,
+      data: {
+        title: value.title,
+        author: value.author,
+        content: value.content,
+      },
+    });
+  }, []);
 
   const onSubmitUpdate = useCallback(
     (value) => {
-      const formData = new FormData();
-
-      formData.append("id", updateData.id);
-      formData.append("title", value.title);
-      formData.append("content", value.content);
-      formData.append("type", value.type);
-      formData.append("isTop", isTop);
-      formData.append("file", realFile.value);
-
       dispatch({
         type: NOTICE_UPDATE_REQUEST,
-        data: formData,
+        data: {
+          id: updateData.id,
+          title: value.title,
+          author: value.author,
+          content: value.content,
+        },
       });
     },
-    [isTop, realFile.value, updateData]
+    [updateData]
   );
 
   const createModalOk = useCallback(() => {
     formRef.current.submit();
-  }, [isTop, realFile.value]);
-
-  const fileChangeHandler = useCallback(
-    (e) => {
-      const currentFile = e.target.files[0];
-
-      realFile.setValue(currentFile);
-      filename.setValue(currentFile.name);
-    },
-    [realFile.value]
-  );
-
-  const fileUploadClick = useCallback(() => {
-    fileRef.current.click();
-  }, [fileRef.current]);
+  }, []);
 
   const otherPageCall = useCallback(
     (changePage) => {
@@ -381,37 +322,41 @@ const NoticeList = ({ router }) => {
   ////// DATAVIEW //////
   const columns = [
     {
-      title: "No",
+      title: "번호",
       dataIndex: "id",
     },
     {
-      title: "Title",
+      title: "제목",
       dataIndex: "title",
     },
     {
-      title: "Author",
+      title: "작성자",
       dataIndex: "author",
     },
     {
-      title: "Hit",
+      title: "조회수",
       dataIndex: "hit",
     },
     {
-      title: "CreatedAt",
+      title: "작성일",
       render: (data) => <div>{data.createdAt.substring(0, 10)}</div>,
     },
     {
-      title: "UPDATE",
+      title: "수정",
       render: (data) => (
-        <Button type="primary" onClick={() => updateModalOpen(data)}>
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => updateModalOpen(data)}
+        >
           UPDATE
         </Button>
       ),
     },
     {
-      title: "DEL",
+      title: "삭제",
       render: (data) => (
-        <Button type="danger" onClick={deletePopToggle(data.id)}>
+        <Button type="danger" size="small" onClick={deletePopToggle(data.id)}>
           DEL
         </Button>
       ),
@@ -480,35 +425,19 @@ const NoticeList = ({ router }) => {
             onFinish={updateData ? onSubmitUpdate : onSubmit}
             form={form}
             ref={formRef}
+            labelCol={{ span: 2 }}
+            wrapperCol={{ span: 22 }}
           >
             <Form.Item name={"title"} label="제목" rules={[{ required: true }]}>
-              <Input allowClear placeholder="Title..." />
+              <Input allowClear placeholder="제목을 입력해 주세요" />
             </Form.Item>
 
-            <Form.Item name={"type"} label="유형" rules={[{ required: true }]}>
-              <Select
-                showSearch
-                style={{ width: 200 }}
-                placeholder="Select a Type"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                  0
-                }
-              >
-                <Select.Option value="공지사항">공지사항</Select.Option>
-                <Select.Option value="새소식">새소식</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item name={"isTop"} label="상단">
-              <Switch
-                checkedChildren={<CheckOutlined />}
-                unCheckedChildren={<CloseOutlined />}
-                defaultChecked={false}
-                checked={isTop}
-                onChange={isTopChange}
-              />
+            <Form.Item
+              name={"author"}
+              label="작성자"
+              rules={[{ required: true }]}
+            >
+              <Input allowClear placeholder="작성자를 입력해 주세요" />
             </Form.Item>
 
             <Form.Item
@@ -518,36 +447,10 @@ const NoticeList = ({ router }) => {
             >
               <Input.TextArea
                 allowClear
-                placeholder="Content..."
+                placeholder="본문을 입력해 주세요"
                 autoSize={{ minRows: 10, maxRows: 10 }}
               />
             </Form.Item>
-
-            <Form.Item>
-              <FileBox>
-                <input
-                  type="file"
-                  name="file"
-                  hidden
-                  ref={fileRef}
-                  onChange={fileChangeHandler}
-                />
-                <Filename>
-                  {filename.value ? filename.value : `파일을 선택해주세요.`}
-                </Filename>
-                <Button type="primary" onClick={fileUploadClick}>
-                  FILE UPLOAD
-                </Button>
-              </FileBox>
-            </Form.Item>
-
-            {/* {updateData && (
-            <Form.Item>
-              <FileBox>
-                <Button onClick={onFill}>불러오기</Button>
-              </FileBox>
-            </Form.Item>
-          )} */}
           </Form>
         </Wrapper>
       </Modal>

@@ -6,16 +6,21 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   RsWrapper,
   WholeWrapper,
   Wrapper,
+  Text,
 } from "../../../components/commonComponents";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
+import { NOTICE_LIST_REQUEST } from "../../../reducers/notice";
+import { useEffect } from "react";
+import { useState } from "react";
+import { Empty } from "antd";
 
 const Notice = () => {
   ////// GLOBAL STATE //////
@@ -23,45 +28,52 @@ const Notice = () => {
     (state) => state.seo
   );
 
+  const { notices } = useSelector((state) => state.notice);
+
   const width = useWidth();
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const getQs = () => {
+    const qs = router.query;
+
+    let value = "";
+
+    if (!qs.page) {
+      setCurrentPage(1);
+      value = "?page=1";
+    } else {
+      setCurrentPage(qs.page);
+      value = `?page=${qs.page}`;
+    }
+
+    if (qs.search) {
+      value += `&search=${qs.search}`;
+    }
+
+    return value;
+  };
 
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    const qs = getQs();
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        qs,
+      },
+    });
+  }, [router.query]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
   ////// DATAVIEW //////
-  const testNotice = [
-    {
-      id: 1,
-      title: "공지사항 1번입니다.",
-      createdAt: "2022-02-15-00:00",
-      hit: "322",
-    },
-    {
-      id: 2,
-      title: "공지사항 2번입니다.",
-      createdAt: "2022-02-15-00:00",
-      hit: "123",
-    },
-    {
-      id: 3,
-      title: "공지사항 3번입니다.",
-      createdAt: "2022-02-15-00:00",
-      hit: "23",
-    },
-    {
-      id: 4,
-      title: "공지사항 4번입니다.",
-      createdAt: "2022-02-15-00:00",
-      hit: "341",
-    },
-  ];
-
   return (
     <>
       <Head>
@@ -178,53 +190,56 @@ const Notice = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper ju={`flex-start`} margin={`0 0 180px`}>
-                {testNotice && testNotice.length === 0
-                  ? ``
-                  : testNotice &&
-                    testNotice.reverse().map((data) => {
-                      return (
+                {notices && notices.length === 0 ? (
+                  <Empty description="공지사항이 없습니다." />
+                ) : (
+                  notices &&
+                  notices.map((data) => {
+                    return (
+                      <Wrapper
+                        dr={`row`}
+                        ju={`flex-start`}
+                        padding={`14px 0px`}
+                        cursor={`pointer`}
+                        borderBottom={`1px solid ${Theme.grey2_C}`}
+                        onClick={() =>
+                          moveLinkHandler(`./notice/detail/${data.id}`)
+                        }
+                      >
+                        <Wrapper width={width < 500 ? `10%` : `5%`}>
+                          {data.id}
+                        </Wrapper>
+                        <Text
+                          al={`flex-start`}
+                          padding={`0 20px`}
+                          width={width < 800 ? `60%` : `65%`}
+                          isEllipsis={true}
+                        >
+                          {data.title}
+                        </Text>
                         <Wrapper
-                          dr={`row`}
-                          ju={`flex-start`}
-                          padding={`14px 0px`}
-                          cursor={`pointer`}
-                          borderBottom={`1px solid ${Theme.grey2_C}`}
-                          onClick={() =>
-                            moveLinkHandler(`./notice/detail/${data.id}`)
+                          display={width < 500 ? `none` : `flex`}
+                          width={`10%`}
+                        >
+                          {data.author}
+                        </Wrapper>
+                        <Wrapper
+                          width={
+                            width < 500 ? `30%` : width < 800 ? `15%` : `10%`
                           }
                         >
-                          <Wrapper width={width < 500 ? `10%` : `5%`}>
-                            {data.id}
-                          </Wrapper>
-                          <Wrapper
-                            al={`flex-start`}
-                            padding={`0 20px`}
-                            width={width < 800 ? `60%` : `65%`}
-                          >
-                            {data.title}
-                          </Wrapper>
-                          <Wrapper
-                            display={width < 500 ? `none` : `flex`}
-                            width={`10%`}
-                          >
-                            관리자
-                          </Wrapper>
-                          <Wrapper
-                            width={
-                              width < 500 ? `30%` : width < 800 ? `15%` : `10%`
-                            }
-                          >
-                            {data.createdAt.substring(0, 10)}
-                          </Wrapper>
-                          <Wrapper
-                            display={width < 500 ? `none` : `flex`}
-                            width={`10%`}
-                          >
-                            {data.hit}
-                          </Wrapper>
+                          {data.createdAt.substring(0, 10)}
                         </Wrapper>
-                      );
-                    })}
+                        <Wrapper
+                          display={width < 500 ? `none` : `flex`}
+                          width={`10%`}
+                        >
+                          {data.hit}
+                        </Wrapper>
+                      </Wrapper>
+                    );
+                  })
+                )}
               </Wrapper>
             </Wrapper>
           </RsWrapper>
