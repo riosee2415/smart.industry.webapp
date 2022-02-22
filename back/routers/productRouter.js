@@ -478,6 +478,68 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
   }
 });
 
+router.patch("/used/update", isAdminCheck, async (req, res, next) => {
+  const { id, isUsed } = req.body;
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const updateResult = await Product.update(
+      {
+        isUsed,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품의 상태를 변경할 수 없습니다.");
+  }
+});
+
+router.patch("/sale/update", isAdminCheck, async (req, res, next) => {
+  const { id, isSale } = req.body;
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const updateResult = await Product.update(
+      {
+        isSale,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품의 상태를 변경할 수 없습니다.");
+  }
+});
+
 router.delete("/delete/:productId", isAdminCheck, async (req, res, next) => {
   const { productId } = req.params;
 
