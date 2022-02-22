@@ -3,11 +3,15 @@ import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
 import wrapper from "../../../store/configureStore";
-import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
+import {
+  LOAD_MY_INFO_REQUEST,
+  LOGIN_REQUEST,
+  USER_INFO_UPDATE_REQUEST,
+} from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
-import { Checkbox } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { Checkbox, notification } from "antd";
 
 import {
   RsWrapper,
@@ -24,6 +28,14 @@ import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import styled from "styled-components";
 import useInput from "../../../hooks/useInput";
+
+const LoadNotification = (msg, content) => {
+  notification.open({
+    message: msg,
+    description: content,
+    onClick: () => {},
+  });
+};
 
 const CustomInput = styled(TextInput)`
   width: 410px;
@@ -90,6 +102,8 @@ const Profile = () => {
 
   ////// HOOKS //////
 
+  const dispatch = useDispatch();
+
   const [isModifyForm, setIsModifyForm] = useState(false);
 
   const inputUserId = useInput(``);
@@ -101,27 +115,106 @@ const Profile = () => {
   const inputMobile = useInput(``);
   const [gender, setGender] = useState(false);
   const inputBirth = useInput(``);
+
+  const inputUserIdL = useInput(``);
+  const inputPasswordL = useInput(``);
+
   const [isCheck1, setIsCheck1] = useState(false);
   const [isCheck2, setIsCheck2] = useState(false);
   const [isCheck3, setIsCheck3] = useState(false);
+  const [isCheck4, setIsCheck4] = useState(false);
 
   ////// REDUX //////
 
-  const { me } = useSelector((state) => state.user);
+  const { me, st_loginDone, st_loginError } = useSelector(
+    (state) => state.user
+  );
 
   ////// USEEFFECT //////
 
   useEffect(() => {
     if (me) {
       inputUserId.setValue(me.userId);
-      console.log(me.userId);
+      inputMobile.setValue(me.mobile);
+      inputUserName.setValue(me.username);
+      inputEmail.setValue(me.email);
+      inputBirth.setValue(me.birth);
     }
   }, [me]);
+
+  useEffect(() => {
+    if (isCheck3 || isCheck4) {
+      setIsCheck2(true);
+    } else {
+      setIsCheck2(false);
+    }
+  }, [isCheck3, isCheck4]);
+
+  useEffect(() => {
+    if (st_loginDone) {
+      setIsModifyForm(true);
+    }
+  }, [st_loginDone]);
+
+  useEffect(() => {
+    if (st_loginError) {
+      LoadNotification(st_loginError);
+    }
+  }, [st_loginError]);
   ////// TOGGLE //////
   ////// HANDLER //////
+
+  const loginHandler = useCallback(() => {
+    if (!inputUserIdL.value || inputUserIdL.value.trim() === "") {
+      return LoadNotification("아이디를 입력해주세요.");
+    }
+    if (!inputPasswordL.value || inputPasswordL.value.trim() === "") {
+      return LoadNotification("비밀번호를 입력해주세요.");
+    }
+    if (inputUserIdL.value !== me.userId) {
+      return LoadNotification("현재 로그인한 유저의 아이디가 아닙니다.");
+    }
+
+    dispatch({
+      type: LOGIN_REQUEST,
+      data: {
+        userId: inputUserIdL.value,
+        password: inputPasswordL.value,
+      },
+    });
+  }, [inputUserIdL, inputPasswordL, me]);
+
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
+  const updateHandler = useCallback(() => {
+    dispatch({
+      type: USER_INFO_UPDATE_REQUEST,
+      data: {
+        username: inputUserName.value,
+        password: inputOriginPassword.value,
+        newPassword: inputPassword.value,
+        mobile: inputMobile.value,
+        normalMobile: "-",
+        email: inputEmail.value,
+        gender,
+        birth: inputBirth.value,
+        isEmail: isCheck3.value,
+        isSns: isCheck4.value,
+      },
+    });
+  }, [
+    inputUserName,
+    inputOriginPassword,
+    inputPassword,
+    inputMobile,
+    inputEmail,
+    gender,
+    inputBirth,
+    isCheck3,
+    isCheck4,
+  ]);
   ////// DATAVIEW //////
 
   return (
@@ -271,6 +364,7 @@ const Profile = () => {
                     <CustomInput
                       margin={`0 5%`}
                       placeholder={width < 900 ? `아이디` : ``}
+                      {...inputUserIdL}
                     />
                   </Wrapper>
                   <Wrapper width={`100%`} dr={`row`} ju={`space-between`}>
@@ -286,6 +380,8 @@ const Profile = () => {
                     <CustomInput
                       margin={`0 5%`}
                       placeholder={width < 900 ? `비밀번호` : ``}
+                      {...inputPasswordL}
+                      type={`password`}
                     />
                   </Wrapper>
                 </Wrapper>
@@ -295,7 +391,7 @@ const Profile = () => {
                   height={`50px`}
                   radius={`0`}
                   margin={`55px 0 0 15px`}
-                  onClick={() => setIsModifyForm(true)}
+                  onClick={loginHandler}
                 >
                   확인
                 </CommonButton>
@@ -472,6 +568,7 @@ const Profile = () => {
                     >
                       <CustomConInput
                         {...inputMobile}
+                        readOnly={true}
                         width={width < 900 ? `calc(100% - 90px - 10px)` : `70%`}
                       />
                       <CommonButton
@@ -574,7 +671,10 @@ const Profile = () => {
                       width={width < 900 ? `calc(100% - 120px)` : "80%"}
                       al={`flex-start`}
                     >
-                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                      <CustomConInput
+                        {...inputBirth}
+                        width={width < 900 ? `100%` : `70%`}
+                      />
                     </Wrapper>
                   </ContentWrapper>
                   <ContentWrapper
@@ -591,7 +691,10 @@ const Profile = () => {
                       al={width < 900 ? `flex-start` : `center`}
                       dr={width < 900 ? `column` : `row`}
                     >
-                      <Checkbox>
+                      <Checkbox
+                        checked={isCheck1}
+                        onClick={() => setIsCheck1((prev) => !prev)}
+                      >
                         <Text
                           margin={`0 0 0 12px`}
                           fontSize={width < 900 ? `13px` : `18px`}
@@ -627,7 +730,13 @@ const Profile = () => {
                       ju={`flex-start`}
                       dr={`row`}
                     >
-                      <Checkbox>
+                      <Checkbox
+                        checked={isCheck2}
+                        onClick={() => {
+                          setIsCheck3(!isCheck2);
+                          setIsCheck4(!isCheck2);
+                        }}
+                      >
                         <Text
                           margin={`0 0 0 12px`}
                           fontSize={width < 900 ? `13px` : `18px`}
@@ -654,7 +763,10 @@ const Profile = () => {
                       dr={`row`}
                       margin={width < 900 ? `0 0 60px 120px` : `0 0 60px`}
                     >
-                      <Checkbox>
+                      <Checkbox
+                        checked={isCheck3}
+                        onClick={() => setIsCheck3((prev) => !prev)}
+                      >
                         <Text
                           margin={`0 0 0 12px`}
                           fontSize={width < 900 ? `13px` : `18px`}
@@ -665,6 +777,8 @@ const Profile = () => {
                         </Text>
                       </Checkbox>
                       <Checkbox
+                        checked={isCheck4}
+                        onClick={() => setIsCheck4((prev) => !prev)}
                         style={
                           width < 700
                             ? { margin: `0 0 0 20px` }
@@ -694,6 +808,7 @@ const Profile = () => {
                     탈퇴하기
                   </CommonButton>
                   <CommonButton
+                    onClick={updateHandler}
                     fontSize={width < 900 ? `13px` : `18px`}
                     width={`150px`}
                     height={`50px`}
