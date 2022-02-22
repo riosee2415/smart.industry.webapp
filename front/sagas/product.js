@@ -32,6 +32,18 @@ import {
   PRODUCT_LIST_IMAGE_REQUEST,
   PRODUCT_LIST_IMAGE_SUCCESS,
   PRODUCT_LIST_IMAGE_FAILURE,
+  //
+  PRODUCT_DELETE_IMAGE_REQUEST,
+  PRODUCT_DELETE_IMAGE_SUCCESS,
+  PRODUCT_DELETE_IMAGE_FAILURE,
+  //
+  PRODUCT_USED_UPDATE_REQUEST,
+  PRODUCT_USED_UPDATE_SUCCESS,
+  PRODUCT_USED_UPDATE_FAILURE,
+  //
+  PRODUCT_SALE_UPDATE_REQUEST,
+  PRODUCT_SALE_UPDATE_SUCCESS,
+  PRODUCT_SALE_UPDATE_FAILURE,
 } from "../reducers/product";
 
 // SAGA AREA ********************************************************************************************************
@@ -242,6 +254,84 @@ function* productCreateImage(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function productDeleteImageAPI(data) {
+  return axios.delete(`/api/product/image/delete/${data.imageId}`);
+}
+
+function* productDeleteImage(action) {
+  try {
+    const result = yield call(productDeleteImageAPI, action.data);
+
+    yield put({
+      type: PRODUCT_DELETE_IMAGE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_DELETE_IMAGE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function productUsedUpdateAPI(data) {
+  return axios.patch(`/api/product/used/update`, data);
+}
+
+function* productUsedUpdate(action) {
+  try {
+    const result = yield call(productUsedUpdateAPI, action.data);
+
+    yield put({
+      type: PRODUCT_USED_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_USED_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function productSaleUpdateAPI(data) {
+  return axios.patch(`/api/product/sale/update`, data);
+}
+
+function* productSaleUpdate(action) {
+  try {
+    const result = yield call(productSaleUpdateAPI, action.data);
+
+    yield put({
+      type: PRODUCT_SALE_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_SALE_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchProductList() {
   yield takeLatest(PRODUCT_LIST_REQUEST, productList);
@@ -275,6 +365,18 @@ function* watchProductListImage() {
   yield takeLatest(PRODUCT_LIST_IMAGE_REQUEST, productListImage);
 }
 
+function* watchProductDeleteImage() {
+  yield takeLatest(PRODUCT_DELETE_IMAGE_REQUEST, productDeleteImage);
+}
+
+function* watchProductUsedUpdate() {
+  yield takeLatest(PRODUCT_USED_UPDATE_REQUEST, productUsedUpdate);
+}
+
+function* watchProductSaleUpdate() {
+  yield takeLatest(PRODUCT_SALE_UPDATE_REQUEST, productSaleUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* menuSaga() {
   yield all([
@@ -286,6 +388,9 @@ export default function* menuSaga() {
     fork(watchProductDetailImageUpload),
     fork(watchProductCreateImage),
     fork(watchProductListImage),
+    fork(watchProductDeleteImage),
+    fork(watchProductUsedUpdate),
+    fork(watchProductSaleUpdate),
     //
   ]);
 }

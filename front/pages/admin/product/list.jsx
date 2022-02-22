@@ -14,6 +14,7 @@ import {
   notification,
   message,
   Popconfirm,
+  Switch,
 } from "antd";
 import { Wrapper } from "../../../components/commonComponents";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +35,9 @@ import {
   PRODUCT_CREATE_IMAGE_REQUEST,
   PRODUCT_LIST_IMAGE_REQUEST,
   PRODUCT_DETAIL_IMAGE_PATH,
+  PRODUCT_DELETE_IMAGE_REQUEST,
+  PRODUCT_USED_UPDATE_REQUEST,
+  PRODUCT_SALE_UPDATE_REQUEST,
 } from "../../../reducers/product";
 import { CATEGORY_LIST_REQUEST } from "../../../reducers/category";
 import Theme from "../../../components/Theme";
@@ -146,7 +150,10 @@ const ProductList = () => {
     st_productDetailUploadDone,
     st_productDetailUploadError,
     st_productCreateImageDone,
-    st_productCreateImageError,
+    st_productUsedUpdateDone,
+st_productUsedUpdateError,
+st_productSaleUpdateDone,
+st_productSaleUpdateError,
   } = useSelector((state) => state.product);
   const { categoryList } = useSelector((state) => state.category);
 
@@ -164,6 +171,34 @@ const ProductList = () => {
   const imageRef = useRef();
 
   ////// USEEFFECT //////
+
+  useEffect(() =>{
+    if(st_productUsedUpdateDone || st_productSaleUpdateDone){
+      dispatch({
+        type: PRODUCT_LIST_REQUEST,
+        data: {
+          page: currentPage,
+          categoryId: selectCategory,
+        },
+      });
+    }
+  }, [st_productUsedUpdateDone, st_productSaleUpdateDone])
+
+  useEffect(() =>{
+    if(st_productUsedUpdateError){
+
+      return message.error(st_productUsedUpdateError)
+    }
+  }, [st_productUsedUpdateError])
+
+  useEffect(() =>{
+    if(st_productSaleUpdateError){
+
+      return message.error(st_productSaleUpdateError)
+    }
+  }, [st_productSaleUpdateError])
+
+
   useEffect(() => {
     if (st_productDetailUploadDone) {
       if (updateData && productDetailImagePath) {
@@ -463,14 +498,24 @@ const ProductList = () => {
 
   const onCreateDetailImage = useCallback(
     (file) => {
-      const formData = new FormData();
+      console.log(file);
+      if (file.file.status === "removed") {
+        dispatch({
+          type: PRODUCT_DELETE_IMAGE_REQUEST,
+          data: {
+            imageId: file.file.uid,
+          },
+        });
+      } else {
+        const formData = new FormData();
 
-      formData.append("image", file);
+        formData.append("image", file.file.originFileObj);
 
-      dispatch({
-        type: PRODUCT_DETAIL_UPLOAD_REQUEST,
-        data: formData,
-      });
+        dispatch({
+          type: PRODUCT_DETAIL_UPLOAD_REQUEST,
+          data: formData,
+        });
+      }
     },
     [updateData]
   );
@@ -480,6 +525,26 @@ const ProductList = () => {
       type: PRODUCT_DELETE_REQUEST,
       data: {
         productId: data.id,
+      },
+    });
+  }, []);
+
+  const usedChangeHandler = useCallback((data, checked) => {
+    dispatch({
+      type: PRODUCT_USED_UPDATE_REQUEST,
+      data: {
+        id: data.id,
+        isUsed: checked,
+      },
+    });
+  }, []);
+
+  const saleChangeHandler = useCallback((data, checked) => {
+    dispatch({
+      type: PRODUCT_SALE_UPDATE_REQUEST,
+      data: {
+        id: data.id,
+        isSale: checked,
       },
     });
   }, []);
@@ -506,6 +571,24 @@ const ProductList = () => {
     {
       title: "배송비",
       render: (data) => `${data.deliveryPay}원`,
+    },
+    {
+      title: "중고장비",
+      render: (data) => (
+        <Switch
+          checked={data.isUsed}
+          onChange={(checked) => usedChangeHandler(data, checked)}
+        />
+      ),
+    },
+    {
+      title: "특가상품",
+      render: (data) => (
+        <Switch
+          checked={data.isSale}
+          onChange={(checked) => saleChangeHandler(data, checked)}
+        />
+      ),
     },
     {
       title: "상세정보",
@@ -724,7 +807,7 @@ const ProductList = () => {
               showUploadList={{
                 showPreviewIcon: false,
               }}
-              onChange={(data) => onCreateDetailImage(data.file.originFileObj)}
+              onChange={(data) => onCreateDetailImage(data)}
             >
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />

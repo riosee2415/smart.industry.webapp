@@ -45,6 +45,18 @@ export const initailState = {
   st_productCreateImageLoading: false, // 상품 상세 이미지 생성
   st_productCreateImageDone: false,
   st_productCreateImageError: null,
+  //
+  st_productDeleteImageLoading: false, // 상품 상세 이미지 삭제
+  st_productDeleteImageDone: false,
+  st_productDeleteImageError: null,
+  //
+  st_productUsedUpdateLoading: false, // 상품 중고 변경
+  st_productUsedUpdateDone: false,
+  st_productUsedUpdateError: null,
+  //
+  st_productSaleUpdateLoading: false, // 상품 특가 변경
+  st_productSaleUpdateDone: false,
+  st_productSaleUpdateError: null,
 };
 
 export const PRODUCT_LIST_REQUEST = "PRODUCT_LIST_REQUEST";
@@ -78,6 +90,18 @@ export const PRODUCT_LIST_IMAGE_FAILURE = "PRODUCT_LIST_IMAGE_FAILURE";
 export const PRODUCT_CREATE_IMAGE_REQUEST = "PRODUCT_CREATE_IMAGE_REQUEST";
 export const PRODUCT_CREATE_IMAGE_SUCCESS = "PRODUCT_CREATE_IMAGE_SUCCESS";
 export const PRODUCT_CREATE_IMAGE_FAILURE = "PRODUCT_CREATE_IMAGE_FAILURE";
+//
+export const PRODUCT_DELETE_IMAGE_REQUEST = "PRODUCT_DELETE_IMAGE_REQUEST";
+export const PRODUCT_DELETE_IMAGE_SUCCESS = "PRODUCT_DELETE_IMAGE_SUCCESS";
+export const PRODUCT_DELETE_IMAGE_FAILURE = "PRODUCT_DELETE_IMAGE_FAILURE";
+//
+export const PRODUCT_USED_UPDATE_REQUEST = "PRODUCT_USED_UPDATE_REQUEST";
+export const PRODUCT_USED_UPDATE_SUCCESS = "PRODUCT_USED_UPDATE_SUCCESS";
+export const PRODUCT_USED_UPDATE_FAILURE = "PRODUCT_USED_UPDATE_FAILURE";
+//
+export const PRODUCT_SALE_UPDATE_REQUEST = "PRODUCT_SALE_UPDATE_REQUEST";
+export const PRODUCT_SALE_UPDATE_SUCCESS = "PRODUCT_SALE_UPDATE_SUCCESS";
+export const PRODUCT_SALE_UPDATE_FAILURE = "PRODUCT_SALE_UPDATE_FAILURE";
 //
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
@@ -235,6 +259,60 @@ const reducer = (state = initailState, action) =>
         draft.st_productCreateImageLoading = false;
         draft.st_productCreateImageDone = false;
         draft.st_productCreateImageError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case PRODUCT_DELETE_IMAGE_REQUEST: {
+        draft.st_productDeleteImageLoading = true;
+        draft.st_productDeleteImageDone = null;
+        draft.st_productDeleteImageError = false;
+        break;
+      }
+      case PRODUCT_DELETE_IMAGE_SUCCESS: {
+        draft.st_productDeleteImageLoading = false;
+        draft.st_productDeleteImageDone = true;
+        break;
+      }
+      case PRODUCT_DELETE_IMAGE_FAILURE: {
+        draft.st_productDeleteImageLoading = false;
+        draft.st_productDeleteImageDone = false;
+        draft.st_productDeleteImageError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case PRODUCT_USED_UPDATE_REQUEST: {
+        draft.st_productUsedUpdateLoading = true;
+        draft.st_productUsedUpdateDone = null;
+        draft.st_productUsedUpdateError = false;
+        break;
+      }
+      case PRODUCT_USED_UPDATE_SUCCESS: {
+        draft.st_productUsedUpdateLoading = false;
+        draft.st_productUsedUpdateDone = true;
+        break;
+      }
+      case PRODUCT_USED_UPDATE_FAILURE: {
+        draft.st_productUsedUpdateLoading = false;
+        draft.st_productUsedUpdateDone = false;
+        draft.st_productUsedUpdateError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case PRODUCT_SALE_UPDATE_REQUEST: {
+        draft.st_productSaleUpdateLoading = true;
+        draft.st_productSaleUpdateDone = null;
+        draft.st_productSaleUpdateError = false;
+        break;
+      }
+      case PRODUCT_SALE_UPDATE_SUCCESS: {
+        draft.st_productSaleUpdateLoading = false;
+        draft.st_productSaleUpdateDone = true;
+        break;
+      }
+      case PRODUCT_SALE_UPDATE_FAILURE: {
+        draft.st_productSaleUpdateLoading = false;
+        draft.st_productSaleUpdateDone = false;
+        draft.st_productSaleUpdateError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
