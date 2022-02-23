@@ -68,6 +68,7 @@ router.get("/detail/:boughtId", async (req, res, next) => {
   try {
     const boughtQuery = `
       SELECT  id,
+              type,
               orderNum,
               price,
               discount,
@@ -78,9 +79,9 @@ router.get("/detail/:boughtId", async (req, res, next) => {
               deliveryCom,
               deliveryNo,
               isCompleted,
-              DATE_FORMAT(B.completedAt,   "%Y년 %m월 %d일 %H시 %i분")						  AS	completedAt,
-              DATE_FORMAT(B.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							AS	createdAt,
-              DATE_FORMAT(B.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					    AS	updatedAt
+              DATE_FORMAT(completedAt,   "%Y년 %m월 %d일 %H시 %i분")						  AS	completedAt,
+              DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							AS	createdAt,
+              DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					    AS	updatedAt
         FROM  boughtHistorys
        WHERE  id = ${boughtId}
     `;
@@ -97,6 +98,7 @@ router.get("/detail/:boughtId", async (req, res, next) => {
        INNER
         JOIN  prouductId            B
           ON  A.ProductId = B.id
+       WHERE  A.BoughtHistoryId = ${boughtId}
     `;
 
     const list = await models.sequelize.query(boughtQuery);
@@ -117,6 +119,11 @@ router.get("/admin/list", async (req, res, next) => {
 });
 
 router.get("/admin/detail/:boughtId", async (req, res, next) => {
+  const { boughtId } = req.params;
+
+  if (isNanCheck(boughtId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
   try {
   } catch (error) {
     console.error(error);

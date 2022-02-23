@@ -12,7 +12,7 @@ router.get("/list", async (req, res, next) => {
       order: [["value", "ASC"]],
     });
 
-    res.status(200).json(lists);
+    return res.status(200).json(lists);
   } catch (error) {
     console.error(error);
     return res.status(400).send("제조사를 불러올 수 없습니다.");

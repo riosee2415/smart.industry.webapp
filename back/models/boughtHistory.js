@@ -4,6 +4,10 @@ module.exports = class BoughtHistory extends Model {
   static init(sequelize) {
     return super.init(
       {
+        type: {
+          type: DataTypes.STRING(50),
+          allowNull: false,
+        },
         orderNum: {
           type: DataTypes.STRING(100), // 주문번호
           allowNull: false,
