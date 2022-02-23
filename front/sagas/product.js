@@ -56,6 +56,10 @@ import {
   PRODUCT_DETAIL_REQUEST,
   PRODUCT_DETAIL_SUCCESS,
   PRODUCT_DETAIL_FAILURE,
+  //
+  PRODUCT_COMPANY_LIST_REQUEST,
+  PRODUCT_COMPANY_LIST_SUCCESS,
+  PRODUCT_COMPANY_LIST_FAILURE,
 } from "../reducers/product";
 
 // SAGA AREA ********************************************************************************************************
@@ -422,6 +426,32 @@ function* productBestUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function prodCompanyListAPI(data) {
+  return axios.get(`/api/prodCompany/list`, data);
+}
+
+function* prodCompanyList(action) {
+  try {
+    const result = yield call(prodCompanyListAPI, action.data);
+
+    yield put({
+      type: PRODUCT_COMPANY_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_COMPANY_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchProductDetail() {
   yield takeLatest(PRODUCT_DETAIL_REQUEST, productDetail);
@@ -479,8 +509,12 @@ function* watchProductBestUpdate() {
   yield takeLatest(PRODUCT_BEST_UPDATE_REQUEST, productBestUpdate);
 }
 
+function* watchProdCompanyList() {
+  yield takeLatest(PRODUCT_COMPANY_LIST_REQUEST, prodCompanyList);
+}
+
 //////////////////////////////////////////////////////////////
-export default function* menuSaga() {
+export default function* productSaga() {
   yield all([
     fork(watchProductDetail),
     fork(watchProductList),
@@ -496,6 +530,7 @@ export default function* menuSaga() {
     fork(watchProductUsedUpdate),
     fork(watchProductSaleUpdate),
     fork(watchProductBestUpdate),
+    fork(watchProdCompanyList),
     //
   ]);
 }

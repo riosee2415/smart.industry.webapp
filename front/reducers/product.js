@@ -11,6 +11,8 @@ export const initailState = {
   bestMaxPage: 1,
   bestTotalProduct: 0,
 
+  prodCompanyList: null,
+
   productDetailData: null,
   productDetailImages: null,
 
@@ -19,7 +21,7 @@ export const initailState = {
   productDetailImagePath: null,
 
   createModal: false,
-  bestProductModal: false,
+  prodCompanyModal: false,
 
   //
   st_productListLoading: false, // 상품 가져오기
@@ -77,6 +79,22 @@ export const initailState = {
   st_productBestUpdateLoading: false, // 상품 베스트상품 변경
   st_productBestUpdateDone: false,
   st_productBestUpdateError: null,
+  //
+  st_productCompanyListLoading: false, // 상품 제조사 가져오기
+  st_productCompanyListDone: false,
+  st_productCompanyListError: null,
+  //
+  st_productCompanyCreateLoading: false, // 상품 제조사 생성
+  st_productCompanyCreateDone: false,
+  st_productCompanyCreateError: null,
+  //
+  st_productCompanyUpdateLoading: false, // 상품 제조사 수정
+  st_productCompanyUpdateDone: false,
+  st_productCompanyUpdateError: null,
+  //
+  st_productCompanyDeleteLoading: false, // 상품 제조사 삭제
+  st_productCompanyDeleteDone: false,
+  st_productCompanyDeleteError: null,
 };
 
 export const PRODUCT_LIST_REQUEST = "PRODUCT_LIST_REQUEST";
@@ -135,7 +153,24 @@ export const PRODUCT_BEST_UPDATE_REQUEST = "PRODUCT_BEST_UPDATE_REQUEST";
 export const PRODUCT_BEST_UPDATE_SUCCESS = "PRODUCT_BEST_UPDATE_SUCCESS";
 export const PRODUCT_BEST_UPDATE_FAILURE = "PRODUCT_BEST_UPDATE_FAILURE";
 //
+export const PRODUCT_COMPANY_LIST_REQUEST = "PRODUCT_COMPANY_LIST_REQUEST";
+export const PRODUCT_COMPANY_LIST_SUCCESS = "PRODUCT_COMPANY_LIST_SUCCESS";
+export const PRODUCT_COMPANY_LIST_FAILURE = "PRODUCT_COMPANY_LIST_FAILURE";
+//
+export const PRODUCT_COMPANY_CREATE_REQUEST = "PRODUCT_COMPANY_CREATE_REQUEST";
+export const PRODUCT_COMPANY_CREATE_SUCCESS = "PRODUCT_COMPANY_CREATE_SUCCESS";
+export const PRODUCT_COMPANY_CREATE_FAILURE = "PRODUCT_COMPANY_CREATE_FAILURE";
+//
+export const PRODUCT_COMPANY_UPDATE_REQUEST = "PRODUCT_COMPANY_UPDATE_REQUEST";
+export const PRODUCT_COMPANY_UPDATE_SUCCESS = "PRODUCT_COMPANY_UPDATE_SUCCESS";
+export const PRODUCT_COMPANY_UPDATE_FAILURE = "PRODUCT_COMPANY_UPDATE_FAILURE";
+//
+export const PRODUCT_COMPANY_DELETE_REQUEST = "PRODUCT_COMPANY_DELETE_REQUEST";
+export const PRODUCT_COMPANY_DELETE_SUCCESS = "PRODUCT_COMPANY_DELETE_SUCCESS";
+export const PRODUCT_COMPANY_DELETE_FAILURE = "PRODUCT_COMPANY_DELETE_FAILURE";
+//
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
+export const PROD_COMPANY_MODAL_TOGGLE = "PROD_COMPANY_MODAL_TOGGLE";
 
 export const PRODUCT_IMAGE_PATH = "PRODUCT_IMAGE_PATH";
 export const PRODUCT_DETAIL_IMAGE_PATH = "PRODUCT_DETAIL_IMAGE_PATH";
@@ -407,11 +442,88 @@ const reducer = (state = initailState, action) =>
         break;
       }
       ///////////////////////////////////////////////////////
+      case PRODUCT_COMPANY_LIST_REQUEST: {
+        draft.st_productCompanyListLoading = true;
+        draft.st_productCompanyListDone = null;
+        draft.st_productCompanyListError = false;
+        break;
+      }
+      case PRODUCT_COMPANY_LIST_SUCCESS: {
+        draft.st_productCompanyListLoading = false;
+        draft.st_productCompanyListDone = true;
+        draft.prodCompanyList = aciton.data;
+        break;
+      }
+      case PRODUCT_COMPANY_LIST_FAILURE: {
+        draft.st_productCompanyListLoading = false;
+        draft.st_productCompanyListDone = false;
+        draft.st_productCompanyListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case PRODUCT_COMPANY_CREATE_REQUEST: {
+        draft.st_productCompanyCreateLoading = true;
+        draft.st_productCompanyCreateDone = null;
+        draft.st_productCompanyCreateError = false;
+        break;
+      }
+      case PRODUCT_COMPANY_CREATE_SUCCESS: {
+        draft.st_productCompanyCreateLoading = false;
+        draft.st_productCompanyCreateDone = true;
+        break;
+      }
+      case PRODUCT_COMPANY_CREATE_FAILURE: {
+        draft.st_productCompanyCreateLoading = false;
+        draft.st_productCompanyCreateDone = false;
+        draft.st_productCompanyCreateError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case PRODUCT_COMPANY_UPDATE_REQUEST: {
+        draft.st_productCompanyUpdateLoading = true;
+        draft.st_productCompanyUpdateDone = null;
+        draft.st_productCompanyUpdateError = false;
+        break;
+      }
+      case PRODUCT_COMPANY_UPDATE_SUCCESS: {
+        draft.st_productCompanyUpdateLoading = false;
+        draft.st_productCompanyUpdateDone = true;
+        break;
+      }
+      case PRODUCT_COMPANY_UPDATE_FAILURE: {
+        draft.st_productCompanyUpdateLoading = false;
+        draft.st_productCompanyUpdateDone = false;
+        draft.st_productCompanyUpdateError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case PRODUCT_COMPANY_DELETE_REQUEST: {
+        draft.st_productCompanyDeleteLoading = true;
+        draft.st_productCompanyDeleteDone = null;
+        draft.st_productCompanyDeleteError = false;
+        break;
+      }
+      case PRODUCT_COMPANY_DELETE_SUCCESS: {
+        draft.st_productCompanyDeleteLoading = false;
+        draft.st_productCompanyDeleteDone = true;
+        break;
+      }
+      case PRODUCT_COMPANY_DELETE_FAILURE: {
+        draft.st_productCompanyDeleteLoading = false;
+        draft.st_productCompanyDeleteDone = false;
+        draft.st_productCompanyDeleteError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
 
       case CREATE_MODAL_TOGGLE: {
         draft.createModal = !draft.createModal;
+      }
+
+      case PROD_COMPANY_MODAL_TOGGLE: {
+        draft.prodCompanyModal = !draft.prodCompanyModal;
       }
 
       case PRODUCT_IMAGE_PATH: {

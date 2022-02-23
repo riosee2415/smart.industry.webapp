@@ -40,6 +40,8 @@ import {
   PRODUCT_USED_UPDATE_REQUEST,
   PRODUCT_SALE_UPDATE_REQUEST,
   PRODUCT_BEST_UPDATE_REQUEST,
+  PROD_COMPANY_MODAL_TOGGLE,
+  PRODUCT_COMPANY_LIST_REQUEST,
 } from "../../../reducers/product";
 import { CATEGORY_LIST_REQUEST } from "../../../reducers/category";
 import Theme from "../../../components/Theme";
@@ -139,9 +141,10 @@ const ProductList = () => {
     productId,
     maxPage,
     createModal,
-    bestProductModal,
+    prodCompanyModal,
     productImagePath,
     productDetailImagePath,
+    prodCompanyList,
     //
     st_productUploadLoading,
     st_productCreateDone,
@@ -409,6 +412,15 @@ const ProductList = () => {
     [updateData]
   );
 
+  const prodCompanyToggle = useCallback(() => {
+    // dispatch({
+    //   type: PRODUCT_COMPANY_LIST_REQUEST,
+    // });
+    dispatch({
+      type: PROD_COMPANY_MODAL_TOGGLE,
+    });
+  }, [prodCompanyModal]);
+
   ////// HANDLER //////
 
   const clickImageUpload = useCallback(() => {
@@ -663,6 +675,33 @@ const ProductList = () => {
     },
   ];
 
+  const prodCompanyColumns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+    {
+      title: "이름",
+      dataIndex: "value",
+    },
+    {
+      title: "수정",
+      render: (data) => (
+        <Button size="small" type="primary">
+          수정
+        </Button>
+      ),
+    },
+    {
+      title: "삭제",
+      render: (data) => (
+        <Button size="small" type="danger">
+          삭제
+        </Button>
+      ),
+    },
+  ];
+
   return (
     <AdminLayout>
       <PageHeader
@@ -693,6 +732,13 @@ const ProductList = () => {
             </Button>
             <Button
               size="small"
+              style={{ margin: `0 0 0 5px` }}
+              onClick={prodCompanyToggle}
+            >
+              제조사 리스트
+            </Button>
+            <Button
+              size="small"
               style={{ margin: `0 5px` }}
               type="dashed"
               onClick={() => setSelectCategory(null)}
@@ -709,6 +755,7 @@ const ProductList = () => {
           </Wrapper>
         </Wrapper>
         <Table
+          rowKey="id"
           size="small"
           columns={columns}
           dataSource={productList ? productList : []}
@@ -812,7 +859,7 @@ const ProductList = () => {
             <Input type="number" />
           </Form.Item>
           <Form.Item
-            label="유튜브링크"
+            label="상품상세링크"
             rules={[{ required: true, message: "유튜브링크를 입력해주세요." }]}
             name="youtubeLink"
           >
@@ -834,7 +881,7 @@ const ProductList = () => {
           </Form.Item>
 
           <Form.Item
-            label="상세이미지"
+            label="상품이미지"
             name="image"
             valuePropName="fileList"
             getValueFromEvent={normFile}
@@ -862,6 +909,26 @@ const ProductList = () => {
             </Button>
           </Wrapper>
         </Form>
+      </Modal>
+
+      <Modal
+        title="제조사 리스트"
+        width={`700px`}
+        visible={prodCompanyModal}
+        onCancel={prodCompanyToggle}
+        footer={null}
+      >
+        <Wrapper al={`flex-end`} margin={`0 0 10px`}>
+          <Button size="small" type="primary">
+            + 생성
+          </Button>
+        </Wrapper>
+        <Table
+          rowKey="id"
+          size="small"
+          columns={prodCompanyColumns}
+          dataSource={prodCompanyList ? prodCompanyList : []}
+        />
       </Modal>
     </AdminLayout>
   );
