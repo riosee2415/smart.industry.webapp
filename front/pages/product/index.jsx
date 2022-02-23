@@ -203,6 +203,21 @@ const ProductList = () => {
     [productType]
   );
 
+  const chagneSelectHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: PRODUCT_LIST_REQUEST,
+        data: {
+          page: 1,
+          categoryId: productType,
+          isPrice: data === "낮은가격" ? 1 : data === "높은가격" ? 2 : null,
+          isName: data === "상품명",
+        },
+      });
+    },
+    [router.query]
+  );
+
   ////// DATAVIEW //////
 
   const selectArr = ["상품명", "신상품", "낮은가격", "높은가격", "제조사"];
@@ -291,7 +306,10 @@ const ProductList = () => {
                   <SpanText color={Theme.red_C}>{totalProduct}</SpanText>
                   개의 제품
                 </Text>
-                <CustomSelect defaultValue="신상품">
+                <CustomSelect
+                  defaultValue="신상품"
+                  onChange={chagneSelectHandler}
+                >
                   {selectArr.map((data) => {
                     return <Select.Option value={data}>{data}</Select.Option>;
                   })}
