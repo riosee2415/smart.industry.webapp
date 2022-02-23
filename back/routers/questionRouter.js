@@ -61,6 +61,22 @@ router.get(
   }
 );
 
+router.post("/detail", async (req, res, next) => {
+  try {
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("");
+  }
+});
+
+router.get("/myList", isLoggedIn, async (req, res, next) => {
+  try {
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("");
+  }
+});
+
 router.post("/create", isLoggedIn, async (req, res, next) => {
   const { author, mobile, email, title, content, term, password } = req.body;
 
@@ -79,29 +95,6 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("문의 데이터를 생성할 수 없습니다. [CODE 037]");
-  }
-});
-
-router.delete("/delete/:questionId", isAdminCheck, async (req, res, next) => {
-  const { questionId } = req.params;
-
-  try {
-    const exQuestion = await Question.findOne({
-      where: { id: parseInt(questionId) },
-    });
-
-    if (!exQuestion) {
-      return res.status(401).send("존재하지 않는 문의 입니다.");
-    }
-
-    await Question.destroy({
-      where: { id: parseInt(questionId) },
-    });
-
-    return res.status(200).json({ result: true });
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("문의내용을 삭제할 수 없습니다. [CODE 036]");
   }
 });
 

@@ -208,12 +208,12 @@ router.post("/list", async (req, res, next) => {
     page,
   } = req.body;
 
-  const LIMIT = 2;
+  const LIMIT = 20;
 
   const _page = page ? page : 1;
 
   const __page = _page - 1;
-  const OFFSET = __page * 2;
+  const OFFSET = __page * 20;
 
   let _categoryId = categoryId || null;
   let _companyId = companyId || null;

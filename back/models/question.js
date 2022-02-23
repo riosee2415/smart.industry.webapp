@@ -58,5 +58,7 @@ module.exports = class Question extends Model {
       }
     );
   }
-  static associate(db) {}
+  static associate(db) {
+    db.Question.belongsTo(db.User);
+  }
 };

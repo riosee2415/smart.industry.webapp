@@ -2,14 +2,12 @@ const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
 const { Lease } = require("../models");
+const models = require("../models");
 
 const router = express.Router();
 
-router.get("/list", async (req, res, next) => {
-  const {
-    page,
-    // type
-  } = req.query;
+router.post("/list", async (req, res, next) => {
+  const { page, type, isCompleted } = req.body;
 
   const LIMIT = 10;
 
@@ -18,39 +16,46 @@ router.get("/list", async (req, res, next) => {
   const __page = _page - 1;
   const OFFSET = __page * 10;
 
-  // let _type = type || null;
+  let _type = type || null;
+  let _isCompleted = isCompleted || null;
 
   try {
     const lengthQuery = `
-    SELECT  A.id,
-            A.type,
-            A.title,
-            A.author,
-            A.content,
-            A.hit,
-            A.email,
-            A.secret,
-            A.answer,
-            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
-            DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
-            A.answerdAt
+    SELECT  id,
+            type,
+            title,
+            author,
+            content,
+            hit,
+            email,
+            secret,
+            answer,
+            DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+            DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
+            answerdAt
       FROM  leases
+     WHERE  1 = 1
+ ${_type ? `AND  type = '${_type}'` : ``}
+ ${_isCompleted ? `AND  isCompleted = ${_isCompleted}` : ``}
     `;
 
     const selectQuery = `
-    SELECT  A.id,
-            A.type,
-            A.title,
-            A.author,
-            A.content,
-            A.hit,
-            A.email,
-            A.secret,
-            A.answer,
-            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
-            DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
-            A.answerdAt
+    SELECT  id,
+            type,
+            title,
+            author,
+            content,
+            hit,
+            email,
+            secret,
+            answer,
+            DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+            DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
+            answerdAt
       FROM  leases
+     WHERE  1 = 1
+  ${_type ? `AND  type = '${_type}'` : ``} 
+  ${_isCompleted ? `AND isCompleted = ${_isCompleted}` : ``}
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
@@ -72,6 +77,43 @@ router.get("/list", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("문의를 불러올 수 없습니다.");
+  }
+});
+
+router.post("/detail", async (req, res, next) => {
+  const { id, secret } = req.body;
+  try {
+    const exLease = await Lease.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exLease) {
+      return res.status(401).send("존재하지 않는 문의입니다.");
+    }
+
+    if (!secret) {
+      return res.status(401).send("비밀번호를 입력하여 주세요.");
+    }
+
+    const nextHit = exLease.hit;
+
+    if (String(secret) !== exLease.secret) {
+      return res.status(401).send("비밀번호가 일치하지 않습니다.");
+    }
+
+    await Lease.update(
+      {
+        hit: nextHit + 1,
+      },
+      {
+        where: { id: parseInt(id) },
+      }
+    );
+
+    return res.status(200).json(exLease);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("문의 정보를 불러올 수 없습니다.");
   }
 });
 

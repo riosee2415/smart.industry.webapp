@@ -43,6 +43,11 @@ module.exports = class ProdQuestion extends Model {
           type: DataTypes.STRING(10),
           allowNull: true,
         },
+        isComplete: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
       },
       {
         modelName: "ProdQuestion",
