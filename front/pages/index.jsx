@@ -552,7 +552,9 @@ const Home = ({}) => {
               </Wrapper>
 
               <Wrapper margin={`61px 0 0`}>
-                <MainProductButton onClick={() => moveLinkHandler(`/product`)}>
+                <MainProductButton
+                  onClick={() => moveLinkHandler(`/product?type=`)}
+                >
                   보러가기
                 </MainProductButton>
               </Wrapper>

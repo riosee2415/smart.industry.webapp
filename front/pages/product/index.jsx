@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import {
   RsWrapper,
@@ -12,6 +12,14 @@ import styled from "styled-components";
 import Theme from "../../components/Theme";
 import { Empty, Select } from "antd";
 import useWidth from "../../hooks/useWidth";
+import Head from "next/head";
+import axios from "axios";
+import wrapper from "../../store/configureStore";
+import { END } from "redux-saga";
+import { useDispatch, useSelector } from "react-redux";
+import { SEO_LIST_REQUEST } from "../../reducers/seo";
+import { CATEGORY_LIST_REQUEST } from "../../reducers/category";
+import { PRODUCT_LIST_REQUEST } from "../../reducers/product";
 
 const CustomSelect = styled(Select)`
   width: 138px;
@@ -133,11 +141,34 @@ const ProductWrapper = styled(Wrapper)`
 `;
 
 const ProductList = () => {
+  ////// GLOBAL STATE //////
+  const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
+    (state) => state.seo
+  );
+  const { categoryList } = useSelector((state) => state.category);
+  const { productList, maxPage, totalProduct } = useSelector(
+    (state) => state.product
+  );
+
   ////// HOOKS //////
+
+  const dispatch = useDispatch();
 
   const width = useWidth();
 
-  const [productType, setProductType] = useState(1);
+  const [productType, setProductType] = useState(
+    categoryList && categoryList[0].id
+  );
+  ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: PRODUCT_LIST_REQUEST,
+      data: {
+        CategoryId: productType,
+      },
+    });
+  }, [productType]);
 
   ////// HANDLER //////
 
@@ -150,216 +181,179 @@ const ProductList = () => {
 
   ////// DATAVIEW //////
 
-  const testType = [
-    {
-      id: 1,
-      name: "도로캇타기",
-    },
-    {
-      id: 2,
-      name: "브로워/분무기",
-    },
-    {
-      id: 3,
-      name: "엔진톱",
-    },
-    {
-      id: 4,
-      name: "엔진캇타기",
-    },
-    {
-      id: 5,
-      name: "발전기",
-    },
-    {
-      id: 6,
-      name: "진동로라",
-    },
-    {
-      id: 7,
-      name: "람아",
-    },
-    {
-      id: 8,
-      name: "콤팩타",
-    },
-    {
-      id: 9,
-      name: "엔진양수기",
-    },
-    {
-      id: 10,
-      name: "엔진송풍기",
-    },
-  ];
-
-  const testProductArr = [
-    {
-      id: 1,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: true,
-    },
-    {
-      id: 2,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명2",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 3,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명3",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 4,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명4",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 5,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명5",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 6,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명6",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 7,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명7",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 8,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명8",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-  ];
-
   const selectArr = ["상품명", "신상품", "낮은가격", "높은가격", "제조사"];
 
   return (
-    <ClientLayout>
-      <WholeWrapper>
-        <RsWrapper>
-          <Wrapper margin={`280px 0 0`}>
-            <Wrapper al={`flex-start`}>
-              <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 9px`}>
-                {testType &&
-                  testType.find((data) => data.id === productType).name}
-              </Text>
-              <Wrapper dr={`row`}>
-                {testType &&
-                  testType.map((data) => {
-                    return (
-                      <ProductTypeWrapper
-                        key={data.id}
-                        bgColor={productType === data.id && Theme.subTheme_C}
-                        color={productType === data.id && Theme.white_C}
-                        onClick={() => productTypeChangeHandler(data.id)}
-                      >
-                        {data.name}
-                      </ProductTypeWrapper>
-                    );
+    <>
+      <Head>
+        <title>
+          {seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content}
+        </title>
+
+        <meta
+          name="subject"
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
+        />
+        <meta
+          name="title"
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
+        />
+        <meta name="keywords" content={seo_keywords} />
+        <meta
+          name="description"
+          content={
+            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+          }
+        />
+        {/* <!-- OG tag  --> */}
+        <meta
+          property="og:title"
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
+        />
+        <meta
+          property="og:site_name"
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
+        />
+        <meta
+          property="og:description"
+          content={
+            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+          }
+        />
+        <meta property="og:keywords" content={seo_keywords} />
+        <meta
+          property="og:image"
+          content={seo_ogImage.length < 1 ? "" : seo_ogImage[0].content}
+        />
+      </Head>
+
+      <ClientLayout>
+        <WholeWrapper>
+          <RsWrapper>
+            <Wrapper margin={`280px 0 0`}>
+              <Wrapper al={`flex-start`}>
+                <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 9px`}>
+                  {categoryList &&
+                    categoryList.find((data) => data.id === productType).value}
+                </Text>
+                <Wrapper dr={`row`}>
+                  {categoryList &&
+                    categoryList.map((data) => {
+                      return (
+                        <ProductTypeWrapper
+                          key={data.id}
+                          bgColor={productType === data.id && Theme.subTheme_C}
+                          color={productType === data.id && Theme.white_C}
+                          onClick={() => productTypeChangeHandler(data.id)}
+                        >
+                          {data.value}
+                        </ProductTypeWrapper>
+                      );
+                    })}
+                </Wrapper>
+              </Wrapper>
+              <Wrapper dr={`row`} ju={`space-between`} margin={`54px 0 0`}>
+                <Text fontSize={`14px`}>
+                  총&nbsp;
+                  <SpanText color={Theme.red_C}>{totalProduct}</SpanText>
+                  개의 제품
+                </Text>
+                <CustomSelect defaultValue="신상품">
+                  {selectArr.map((data) => {
+                    return <Select.Option value={data}>{data}</Select.Option>;
                   })}
+                </CustomSelect>
+              </Wrapper>
+              <Wrapper dr={`row`} ju={`flex-start`}>
+                {productList &&
+                  (productList.length === 0 ? (
+                    <Wrapper>
+                      <Empty description="상품이 없습니다." />
+                    </Wrapper>
+                  ) : (
+                    productList.map((data) => {
+                      return (
+                        <ProductWrapper>
+                          <Wrapper
+                            padding={`20px`}
+                            border={`1px solid ${Theme.lightGrey_C}`}
+                          >
+                            <Image
+                              src={data.thumbnail}
+                              alt="main_product_thumbnail"
+                            />
+                          </Wrapper>
+                          <Text margin={`25px 0 13px`}>{data.title}</Text>
+                          <Wrapper
+                            dr={width < 900 ? `column` : `row`}
+                            fontSize={width < 900 ? `16px` : `18px`}
+                          >
+                            <Text
+                              margin={width < 900 ? `0` : `0 5px 0 0`}
+                              textDecoration={`line-through`}
+                              color={Theme.grey_C}
+                            >
+                              {String(
+                                parseInt(data.price * (data.discount / 100))
+                              ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                              원
+                            </Text>
+                            <Text
+                              margin={width < 900 ? `0` : `0 0 0 5px`}
+                              fontWeight={`bold`}
+                            >
+                              {String(
+                                data.price -
+                                  parseInt(data.price * (data.discount / 100))
+                              ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                              원
+                            </Text>
+                          </Wrapper>
+                        </ProductWrapper>
+                      );
+                    })
+                  ))}
               </Wrapper>
             </Wrapper>
-            <Wrapper dr={`row`} ju={`space-between`} margin={`54px 0 0`}>
-              <Text fontSize={`14px`}>
-                총&nbsp;
-                <SpanText color={Theme.red_C}>
-                  {testProductArr && testProductArr.length < 10
-                    ? `0${testProductArr.length}`
-                    : testProductArr.length}
-                </SpanText>
-                개의 제품
-              </Text>
-              <CustomSelect defaultValue="신상품">
-                {selectArr.map((data) => {
-                  return <Select.Option value={data}>{data}</Select.Option>;
-                })}
-              </CustomSelect>
-            </Wrapper>
-            <Wrapper dr={`row`} ju={`flex-start`}>
-              {testProductArr &&
-                (testProductArr.length === 0 ? (
-                  <Wrapper>
-                    <Empty description="상품이 없습니다." />
-                  </Wrapper>
-                ) : (
-                  testProductArr.map((data) => {
-                    return (
-                      <ProductWrapper>
-                        <Wrapper
-                          padding={`20px`}
-                          border={`1px solid ${Theme.lightGrey_C}`}
-                        >
-                          <Image
-                            src={data.thumbnail}
-                            alt="main_product_thumbnail"
-                          />
-                        </Wrapper>
-                        <Text margin={`25px 0 13px`}>{data.name}</Text>
-                        <Wrapper
-                          dr={width < 900 ? `column` : `row`}
-                          fontSize={width < 900 ? `16px` : `18px`}
-                        >
-                          <Text
-                            margin={width < 900 ? `0` : `0 5px 0 0`}
-                            textDecoration={`line-through`}
-                            color={Theme.grey_C}
-                          >
-                            {data.originPrice}
-                          </Text>
-                          <Text
-                            margin={width < 900 ? `0` : `0 0 0 5px`}
-                            fontWeight={`bold`}
-                          >
-                            {data.viewPrice}
-                          </Text>
-                        </Wrapper>
-                      </ProductWrapper>
-                    );
-                  })
-                ))}
-            </Wrapper>
-          </Wrapper>
-        </RsWrapper>
-      </WholeWrapper>
-    </ClientLayout>
+          </RsWrapper>
+        </WholeWrapper>
+      </ClientLayout>
+    </>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  async (context) => {
+    // SSR Cookie Settings For Data Load/////////////////////////////////////
+    const cookie = context.req ? context.req.headers.cookie : "";
+    axios.defaults.headers.Cookie = "";
+    if (context.req && cookie) {
+      axios.defaults.headers.Cookie = cookie;
+    }
+    ////////////////////////////////////////////////////////////////////////
+    // 구현부
+
+    context.store.dispatch({
+      type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: CATEGORY_LIST_REQUEST,
+    });
+
+    // 구현부 종료
+    context.store.dispatch(END);
+    console.log("🍀 SERVER SIDE PROPS END");
+    await context.store.sagaTask.toPromise();
+  }
+);
 
 export default ProductList;
