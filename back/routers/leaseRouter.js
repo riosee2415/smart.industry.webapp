@@ -6,7 +6,10 @@ const { Lease } = require("../models");
 const router = express.Router();
 
 router.get("/list", async (req, res, next) => {
-  const { page } = req.query;
+  const {
+    page,
+    // type
+  } = req.query;
 
   const LIMIT = 10;
 
@@ -14,6 +17,8 @@ router.get("/list", async (req, res, next) => {
 
   const __page = _page - 1;
   const OFFSET = __page * 10;
+
+  // let _type = type || null;
 
   try {
     const lengthQuery = `

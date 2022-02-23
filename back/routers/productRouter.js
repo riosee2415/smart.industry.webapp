@@ -208,12 +208,12 @@ router.post("/list", async (req, res, next) => {
     page,
   } = req.body;
 
-  const LIMIT = 10;
+  const LIMIT = 2;
 
   const _page = page ? page : 1;
 
   const __page = _page - 1;
-  const OFFSET = __page * 10;
+  const OFFSET = __page * 2;
 
   let _categoryId = categoryId || null;
   let _companyId = companyId || null;
@@ -270,7 +270,7 @@ router.post("/list", async (req, res, next) => {
     JOIN	menus				      	C
       ON	B.MenuId = C.id
    INNER
-    JOIN	prodCompanys				D
+    JOIN	prodcompanys				D
       ON	A.ProdCompanyId = D.id
    WHERE	1 = 1
      AND  A.isDelete = FALSE
@@ -308,6 +308,9 @@ router.post("/list", async (req, res, next) => {
      INNER
       JOIN	menus					C
         ON	B.MenuId = C.id
+     INNER
+      JOIN	prodcompanys				D
+        ON	A.ProdCompanyId = D.id
      WHERE	1 = 1
        AND  A.isDelete = FALSE
      ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}   
