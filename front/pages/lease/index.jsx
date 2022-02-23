@@ -30,6 +30,7 @@ import { CaretDownOutlined, DownCircleTwoTone } from "@ant-design/icons";
 import { useCallback } from "react";
 
 const Index = () => {
+  const width = useWidth();
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
@@ -121,9 +122,12 @@ const Index = () => {
       </Head>
 
       <ClientLayout>
-        <WholeWrapper margin={`194px 0 0`}>
+        <WholeWrapper margin={width < 700 ? `83px 0 0` : `194px 0 0`}>
           <RsWrapper>
-            <Wrapper al={`flex-start`} margin={`100px 0 26px`}>
+            <Wrapper
+              al={`flex-start`}
+              margin={width < 700 ? `50px 0 20px` : `100px 0 26px`}
+            >
               <Text fontSize={`14px`}>HOME | 임대문의</Text>
             </Wrapper>
 
@@ -145,23 +149,44 @@ const Index = () => {
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
               >
-                <Wrapper fontSize={`14px`} width={`80px`} height={`100%`}>
+                <Wrapper
+                  fontSize={width < 700 ? `11px` : `14px`}
+                  width={width < 700 ? `40px` : `80px`}
+                  height={`100%`}
+                >
                   번호
                 </Wrapper>
                 <Wrapper
-                  fontSize={`14px`}
-                  width={`calc(100% - 80px - 115px - 115px - 115px)`}
+                  fontSize={width < 700 ? `11px` : `14px`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 40px - 80px - 80px)`
+                      : `calc(100% - 80px - 115px - 115px - 115px)`
+                  }
                   height={`100%`}
                 >
                   제목
                 </Wrapper>
-                <Wrapper fontSize={`14px`} width={`115px`} height={`100%`}>
+                <Wrapper
+                  fontSize={width < 700 ? `11px` : `14px`}
+                  width={width < 700 ? `80px` : `115px`}
+                  height={`100%`}
+                >
                   작성자
                 </Wrapper>
-                <Wrapper fontSize={`14px`} width={`115px`} height={`100%`}>
+                <Wrapper
+                  fontSize={width < 700 ? `11px` : `14px`}
+                  width={`115px`}
+                  height={`100%`}
+                  display={width < 700 ? `none` : `flex`}
+                >
                   작성일
                 </Wrapper>
-                <Wrapper fontSize={`14px`} width={`115px`} height={`100%`}>
+                <Wrapper
+                  fontSize={width < 700 ? `11px` : `14px`}
+                  width={width < 700 ? `80px` : `115px`}
+                  height={`100%`}
+                >
                   조회수
                 </Wrapper>
               </Wrapper>
@@ -170,136 +195,171 @@ const Index = () => {
                 height={`60px`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
               >
-                <Wrapper fontSize={`14px`} width={`80px`} height={`100%`}>
+                <Wrapper
+                  fontSize={width < 700 ? `11px` : `14px`}
+                  width={width < 700 ? `40px` : `80px`}
+                  height={`100%`}
+                >
                   번호
                 </Wrapper>
                 <Wrapper
-                  width={`calc(100% - 80px - 115px - 115px - 115px)`}
+                  width={
+                    width < 700
+                      ? `calc(100% - 40px - 80px - 80px)`
+                      : `calc(100% - 80px - 115px - 115px - 115px)`
+                  }
                   height={`100%`}
                   dr={`row`}
                   ju={`flex-start`}
                 >
-                  <Wrapper
+                  <Text
+                    fontSize={width < 700 ? `11px` : `14px`}
+                    maxWidth={`calc(100% - 10px - 17px - 58px)`}
                     width={`auto`}
                     isEllipsis={true}
-                    dr={`row`}
-                    ju={`flex-start`}
                   >
-                    <Text
-                      fontSize={`14px`}
-                      maxWidth={`calc(100% - 10px - 17px)`}
-                    >
-                      임대문의&nbsp;
-                    </Text>
-                    <Text fontSize={`14px`}>[답변완료]</Text>
-                  </Wrapper>
+                    임대문의&nbsp;
+                  </Text>
+                  <Text fontSize={width < 700 ? `11px` : `14px`}>
+                    [답변완료]
+                  </Text>
                   <Image
                     src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
                     margin={`0 0 0 17px`}
                     width={`10px`}
                   />
                 </Wrapper>
-                <Wrapper fontSize={`14px`} width={`115px`} height={`100%`}>
-                  작성자
+                <Wrapper
+                  fontSize={width < 700 ? `11px` : `14px`}
+                  width={width < 700 ? `80px` : `115px`}
+                  height={`100%`}
+                >
+                  대한기계공구
                 </Wrapper>
-                <Wrapper fontSize={`14px`} width={`115px`} height={`100%`}>
+                <Wrapper
+                  fontSize={width < 700 ? `11px` : `14px`}
+                  width={`115px`}
+                  height={`100%`}
+                  display={width < 700 ? `none` : `flex`}
+                >
                   작성일
                 </Wrapper>
-                <Wrapper fontSize={`14px`} width={`115px`} height={`100%`}>
+                <Wrapper
+                  fontSize={width < 700 ? `11px` : `14px`}
+                  width={width < 700 ? `80px` : `115px`}
+                  height={`100%`}
+                >
                   조회수
                 </Wrapper>
               </Wrapper>
             </Wrapper>
 
             <Wrapper al={`flex-end`} margin={`0 0 60px`}>
-              <CommonButton width={`150px`} height={`50px`}>
+              <CommonButton
+                width={width < 700 ? `100px` : `150px`}
+                height={width < 700 ? `40px` : `50px`}
+                fontSize={width < 700 ? `14px` : `18px`}
+                padding={`0`}
+              >
                 문의 작성하기
               </CommonButton>
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 60px`}>
-              <Text fontSize={`14px`} margin={`0 25px 0 0`}>
-                검색어
-              </Text>
+              <Wrapper
+                dr={`row`}
+                ju={width < 700 ? `space-between` : `flex-start`}
+                width={width < 700 ? `100%` : `auto`}
+              >
+                <Text fontSize={`14px`} margin={`0 25px 0 0`}>
+                  검색어
+                </Text>
 
-              <Combo margin={`0 10px 0 0`}>
-                <Text fontSize={`14px`}>{comboValue}</Text>
-                <CaretDownOutlined onClick={comboToggle} />
+                <Combo margin={`0 10px 0 0`}>
+                  <Text fontSize={`14px`}>{comboValue}</Text>
+                  <CaretDownOutlined onClick={comboToggle} />
 
-                {combo && (
-                  <ComboOptionWrapper>
-                    <ComboOption
-                      beforeWidth={comboValue === "전체" ? `100%` : `0`}
-                      onClick={() => {
-                        comboHandler("전체");
-                      }}
-                    >
-                      전체
-                    </ComboOption>
-                    <ComboOption
-                      beforeWidth={comboValue === "한달" ? `100%` : `0`}
-                      onClick={() => {
-                        comboHandler("한달");
-                      }}
-                    >
-                      한달
-                    </ComboOption>
-                    <ComboOption
-                      beforeWidth={comboValue === "일주일" ? `100%` : `0`}
-                      onClick={() => {
-                        comboHandler("일주일");
-                      }}
-                    >
-                      일주일
-                    </ComboOption>
-                  </ComboOptionWrapper>
-                )}
-              </Combo>
+                  {combo && (
+                    <ComboOptionWrapper>
+                      <ComboOption
+                        beforeWidth={comboValue === "전체" ? `100%` : `0`}
+                        onClick={() => {
+                          comboHandler("전체");
+                        }}
+                      >
+                        전체
+                      </ComboOption>
+                      <ComboOption
+                        beforeWidth={comboValue === "한달" ? `100%` : `0`}
+                        onClick={() => {
+                          comboHandler("한달");
+                        }}
+                      >
+                        한달
+                      </ComboOption>
+                      <ComboOption
+                        beforeWidth={comboValue === "일주일" ? `100%` : `0`}
+                        onClick={() => {
+                          comboHandler("일주일");
+                        }}
+                      >
+                        일주일
+                      </ComboOption>
+                    </ComboOptionWrapper>
+                  )}
+                </Combo>
 
-              <Combo>
-                <Text fontSize={`14px`}>{comboValue2}</Text>
-                <CaretDownOutlined onClick={comboToggle2} />
+                <Combo>
+                  <Text fontSize={`14px`}>{comboValue2}</Text>
+                  <CaretDownOutlined onClick={comboToggle2} />
 
-                {combo2 && (
-                  <ComboOptionWrapper>
-                    <ComboOption
-                      beforeWidth={comboValue2 === "제목" ? `100%` : `0`}
-                      onClick={() => {
-                        comboHandler2("제목");
-                      }}
-                    >
-                      제목
-                    </ComboOption>
-                    <ComboOption
-                      beforeWidth={comboValue2 === "작성자" ? `100%` : `0`}
-                      onClick={() => {
-                        comboHandler2("작성자");
-                      }}
-                    >
-                      작성자
-                    </ComboOption>
-                    <ComboOption
-                      beforeWidth={comboValue2 === "내용" ? `100%` : `0`}
-                      onClick={() => {
-                        comboHandler2("내용");
-                      }}
-                    >
-                      내용
-                    </ComboOption>
-                  </ComboOptionWrapper>
-                )}
-              </Combo>
+                  {combo2 && (
+                    <ComboOptionWrapper>
+                      <ComboOption
+                        beforeWidth={comboValue2 === "제목" ? `100%` : `0`}
+                        onClick={() => {
+                          comboHandler2("제목");
+                        }}
+                      >
+                        제목
+                      </ComboOption>
+                      <ComboOption
+                        beforeWidth={comboValue2 === "작성자" ? `100%` : `0`}
+                        onClick={() => {
+                          comboHandler2("작성자");
+                        }}
+                      >
+                        작성자
+                      </ComboOption>
+                      <ComboOption
+                        beforeWidth={comboValue2 === "내용" ? `100%` : `0`}
+                        onClick={() => {
+                          comboHandler2("내용");
+                        }}
+                      >
+                        내용
+                      </ComboOption>
+                    </ComboOptionWrapper>
+                  )}
+                </Combo>
+              </Wrapper>
 
-              <TextInput
-                margin={`0 10px`}
-                border={`1px solid ${Theme.grey2_C}`}
-                width={`260px`}
-                height={`40px`}
-              />
+              <Wrapper>
+                <TextInput
+                  margin={`0 10px`}
+                  border={`1px solid ${Theme.grey2_C}`}
+                  width={`260px`}
+                  height={`40px`}
+                />
 
-              <CommonButton kindOf={`darkgrey2`} width={`75px`} height={`40px`}>
-                찾기
-              </CommonButton>
+                <CommonButton
+                  kindOf={`darkgrey2`}
+                  width={`75px`}
+                  height={`40px`}
+                >
+                  찾기
+                </CommonButton>
+              </Wrapper>
             </Wrapper>
 
             <Wrapper margin={`0 0 110px`}>페이지네이션</Wrapper>

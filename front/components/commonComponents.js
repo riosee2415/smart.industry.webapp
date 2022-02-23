@@ -562,6 +562,10 @@ export const Combo = styled(Wrapper)`
   justify-content: space-between;
   position: relative;
   border: 1px solid ${(props) => props.theme.grey2_C};
+
+  @media (max-width: 700px) {
+    width: calc(100% / 2.6);
+  }
 `;
 
 export const ComboOptionWrapper = styled(Wrapper)`
