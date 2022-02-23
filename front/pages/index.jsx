@@ -35,6 +35,7 @@ import { HeartFilled, PlusOutlined } from "@ant-design/icons";
 import { CATEGORY_LIST_REQUEST } from "../reducers/category";
 import { PRODUCT_LIST_REQUEST } from "../reducers/product";
 import { useRouter } from "next/router";
+import { MENU_LIST_REQUEST } from "../reducers/menu";
 
 const ProductWrapper = styled(Wrapper)`
   width: calc(100% / 4 - (100px / 4));
@@ -206,6 +207,7 @@ const Home = ({}) => {
 
   const { categoryList } = useSelector((state) => state.category);
   const { productList } = useSelector((state) => state.product);
+  const { menuList } = useSelector((state) => state.menu);
 
   const [isHeart, setIsHeart] = useState(false);
   const [selectCat, setSelectCat] = useState(
@@ -553,7 +555,11 @@ const Home = ({}) => {
 
               <Wrapper margin={`61px 0 0`}>
                 <MainProductButton
-                  onClick={() => moveLinkHandler(`/product?type=`)}
+                  onClick={() =>
+                    moveLinkHandler(
+                      `/product?menu=${menuList && menuList[0].id}`
+                    )
+                  }
                 >
                   보러가기
                 </MainProductButton>
@@ -809,6 +815,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: CATEGORY_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: MENU_LIST_REQUEST,
     });
 
     // 구현부 종료

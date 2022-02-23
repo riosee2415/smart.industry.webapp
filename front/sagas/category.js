@@ -16,6 +16,10 @@ import {
   CATEGORY_DELETE_REQUEST,
   CATEGORY_DELETE_SUCCESS,
   CATEGORY_DELETE_FAILURE,
+  //
+  CATEGORY_INMENU_LIST_REQUEST,
+  CATEGORY_INMENU_LIST_SUCCESS,
+  CATEGORY_INMENU_LIST_FAILURE,
 } from "../reducers/category";
 
 // SAGA AREA ********************************************************************************************************
@@ -126,6 +130,33 @@ function* categoryDelete(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function categoryInMenuListAPI(data) {
+  return axios.get(`/api/menu/catInMenu/${data.menuId}`);
+}
+
+function* categoryInMenuList(action) {
+  try {
+    const result = yield call(categoryInMenuListAPI, action.data);
+
+    yield put({
+      type: CATEGORY_INMENU_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: CATEGORY_INMENU_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchCategoryList() {
   yield takeLatest(CATEGORY_LIST_REQUEST, categoryList);
@@ -143,6 +174,10 @@ function* watchCategoryDelete() {
   yield takeLatest(CATEGORY_DELETE_REQUEST, categoryDelete);
 }
 
+function* watchCategoryInMenuList() {
+  yield takeLatest(CATEGORY_INMENU_LIST_REQUEST, categoryInMenuList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* categorySaga() {
   yield all([
@@ -150,6 +185,7 @@ export default function* categorySaga() {
     fork(watchCategoryCreate),
     fork(watchCategoryUpdate),
     fork(watchCategoryDelete),
+    fork(watchCategoryInMenuList),
     //
   ]);
 }

@@ -21,6 +21,10 @@ export const initailState = {
   st_categoryDeleteLoading: false, // 카테고리 삭제
   st_categoryDeleteDone: false,
   st_categoryDeleteError: null,
+  //
+  st_categoryInMenuListLoading: false, // 메뉴 별 카테고리
+  st_categoryInMenuListDone: false,
+  st_categoryInMenuListError: null,
 };
 
 export const CATEGORY_LIST_REQUEST = "CATEGORY_LIST_REQUEST";
@@ -38,6 +42,10 @@ export const CATEGORY_UPDATE_FAILURE = "CATEGORY_UPDATE_FAILURE";
 export const CATEGORY_DELETE_REQUEST = "CATEGORY_DELETE_REQUEST";
 export const CATEGORY_DELETE_SUCCESS = "CATEGORY_DELETE_SUCCESS";
 export const CATEGORY_DELETE_FAILURE = "CATEGORY_DELETE_FAILURE";
+//
+export const CATEGORY_INMENU_LIST_REQUEST = "CATEGORY_INMENU_LIST_REQUEST";
+export const CATEGORY_INMENU_LIST_SUCCESS = "CATEGORY_INMENU_LIST_SUCCESS";
+export const CATEGORY_INMENU_LIST_FAILURE = "CATEGORY_INMENU_LIST_FAILURE";
 //
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
@@ -114,6 +122,25 @@ const reducer = (state = initailState, action) =>
         draft.st_categoryDeleteLoading = false;
         draft.st_categoryDeleteDone = false;
         draft.st_categoryDeleteError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case CATEGORY_INMENU_LIST_REQUEST: {
+        draft.st_categoryInMenuListLoading = true;
+        draft.st_categoryInMenuListDone = null;
+        draft.st_categoryInMenuListError = false;
+        break;
+      }
+      case CATEGORY_INMENU_LIST_SUCCESS: {
+        draft.st_categoryInMenuListLoading = false;
+        draft.st_categoryInMenuListDone = true;
+        draft.categoryList = action.data.lists;
+        break;
+      }
+      case CATEGORY_INMENU_LIST_FAILURE: {
+        draft.st_categoryInMenuListLoading = false;
+        draft.st_categoryInMenuListDone = false;
+        draft.st_categoryInMenuListError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////

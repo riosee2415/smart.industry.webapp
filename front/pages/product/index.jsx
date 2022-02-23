@@ -18,8 +18,12 @@ import wrapper from "../../store/configureStore";
 import { END } from "redux-saga";
 import { useDispatch, useSelector } from "react-redux";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
-import { CATEGORY_LIST_REQUEST } from "../../reducers/category";
+import {
+  CATEGORY_INMENU_LIST_REQUEST,
+  CATEGORY_LIST_REQUEST,
+} from "../../reducers/category";
 import { PRODUCT_LIST_REQUEST } from "../../reducers/product";
+import { useRouter } from "next/router";
 
 const CustomSelect = styled(Select)`
   width: 138px;
@@ -145,7 +149,9 @@ const ProductList = () => {
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
-  const { categoryList } = useSelector((state) => state.category);
+  const { categoryList, st_categoryInMenuListDone } = useSelector(
+    (state) => state.category
+  );
   const { productList, maxPage, totalProduct } = useSelector(
     (state) => state.product
   );
@@ -156,19 +162,37 @@ const ProductList = () => {
 
   const width = useWidth();
 
-  const [productType, setProductType] = useState(
-    categoryList && categoryList[0].id
-  );
+  const router = useRouter();
+
+  const [productType, setProductType] = useState(null);
+
   ////// USEEFFECT //////
 
   useEffect(() => {
     dispatch({
-      type: PRODUCT_LIST_REQUEST,
+      type: CATEGORY_INMENU_LIST_REQUEST,
       data: {
-        CategoryId: productType,
+        menuId: router.query.menu,
       },
     });
+  }, [router.query]);
+
+  useEffect(() => {
+    if (productType) {
+      dispatch({
+        type: PRODUCT_LIST_REQUEST,
+        data: {
+          categoryId: productType,
+        },
+      });
+    }
   }, [productType]);
+
+  useEffect(() => {
+    if (st_categoryInMenuListDone) {
+      setProductType(categoryList && categoryList[0].id);
+    }
+  }, [st_categoryInMenuListDone]);
 
   ////// HANDLER //////
 
@@ -242,6 +266,7 @@ const ProductList = () => {
               <Wrapper al={`flex-start`}>
                 <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 9px`}>
                   {categoryList &&
+                    productType &&
                     categoryList.find((data) => data.id === productType).value}
                 </Text>
                 <Wrapper dr={`row`}>
@@ -343,10 +368,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: CATEGORY_LIST_REQUEST,
     });
 
     // 구현부 종료
