@@ -22,6 +22,7 @@ export const initailState = {
 
   createModal: false,
   prodCompanyModal: false,
+  prodCompanyCreateModal: false,
 
   //
   st_productListLoading: false, // 상품 가져오기
@@ -171,6 +172,8 @@ export const PRODUCT_COMPANY_DELETE_FAILURE = "PRODUCT_COMPANY_DELETE_FAILURE";
 //
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 export const PROD_COMPANY_MODAL_TOGGLE = "PROD_COMPANY_MODAL_TOGGLE";
+export const PROD_COMPANY_CREATE_MODAL_TOGGLE =
+  "PROD_COMPANY_CREATE_MODAL_TOGGLE";
 
 export const PRODUCT_IMAGE_PATH = "PRODUCT_IMAGE_PATH";
 export const PRODUCT_DETAIL_IMAGE_PATH = "PRODUCT_DETAIL_IMAGE_PATH";
@@ -451,7 +454,7 @@ const reducer = (state = initailState, action) =>
       case PRODUCT_COMPANY_LIST_SUCCESS: {
         draft.st_productCompanyListLoading = false;
         draft.st_productCompanyListDone = true;
-        draft.prodCompanyList = aciton.data;
+        draft.prodCompanyList = action.data;
         break;
       }
       case PRODUCT_COMPANY_LIST_FAILURE: {
@@ -520,18 +523,27 @@ const reducer = (state = initailState, action) =>
 
       case CREATE_MODAL_TOGGLE: {
         draft.createModal = !draft.createModal;
+        break;
       }
 
       case PROD_COMPANY_MODAL_TOGGLE: {
         draft.prodCompanyModal = !draft.prodCompanyModal;
+        break;
+      }
+
+      case PROD_COMPANY_CREATE_MODAL_TOGGLE: {
+        draft.prodCompanyCreateModal = !draft.prodCompanyCreateModal;
+        break;
       }
 
       case PRODUCT_IMAGE_PATH: {
         draft.productImagePath = action.data;
+        break;
       }
 
       case PRODUCT_DETAIL_IMAGE_PATH: {
         draft.productDetailImagePath = action.data;
+        break;
       }
     }
   });

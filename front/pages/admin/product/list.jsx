@@ -42,6 +42,10 @@ import {
   PRODUCT_BEST_UPDATE_REQUEST,
   PROD_COMPANY_MODAL_TOGGLE,
   PRODUCT_COMPANY_LIST_REQUEST,
+  PROD_COMPANY_CREATE_MODAL_TOGGLE,
+  PRODUCT_COMPANY_CREATE_REQUEST,
+  PRODUCT_COMPANY_UPDATE_REQUEST,
+  PRODUCT_COMPANY_DELETE_REQUEST,
 } from "../../../reducers/product";
 import { CATEGORY_LIST_REQUEST } from "../../../reducers/category";
 import Theme from "../../../components/Theme";
@@ -142,6 +146,7 @@ const ProductList = () => {
     maxPage,
     createModal,
     prodCompanyModal,
+    prodCompanyCreateModal,
     productImagePath,
     productDetailImagePath,
     prodCompanyList,
@@ -162,23 +167,100 @@ const ProductList = () => {
     st_productSaleUpdateError,
     st_productBestUpdateDone,
     st_productBestUpdateError,
+    //
+
+    st_productCompanyCreateDone,
+    st_productCompanyCreateError,
+
+    st_productCompanyUpdateDone,
+    st_productCompanyUpdateError,
+
+    st_productCompanyDeleteDone,
+    st_productCompanyDeleteError,
   } = useSelector((state) => state.product);
   const { categoryList } = useSelector((state) => state.category);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [updateData, setUpdateData] = useState(null);
   const [selectCategory, setSelectCategory] = useState(null);
+  const [companyUpdateData, setCompanyUpdateData] = useState(null);
 
   const [detailImageArr, setDetailImageArr] = useState([]);
+  const [createDone, setCreateDone] = useState(false);
 
   const [form] = Form.useForm();
   const formRef = useRef();
+
+  const [companyForm] = Form.useForm();
+  const companyFormRef = useRef();
 
   const dispatch = useDispatch();
 
   const imageRef = useRef();
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_productCompanyCreateDone) {
+      dispatch({
+        type: PRODUCT_COMPANY_LIST_REQUEST,
+      });
+
+      dispatch({
+        type: PROD_COMPANY_CREATE_MODAL_TOGGLE,
+      });
+
+      companyForm.resetFields();
+
+      return message.success("생성되었습니다.");
+    }
+  }, [st_productCompanyCreateDone]);
+
+  useEffect(() => {
+    if (st_productCompanyCreateError) {
+      return message.error(st_productCompanyCreateError);
+    }
+  }, [st_productCompanyCreateError]);
+
+  useEffect(() => {
+    if (st_productCompanyUpdateDone) {
+      dispatch({
+        type: PRODUCT_COMPANY_LIST_REQUEST,
+      });
+
+      dispatch({
+        type: PROD_COMPANY_CREATE_MODAL_TOGGLE,
+      });
+
+      companyForm.resetFields();
+
+      setCompanyUpdateData(null);
+
+      return message.success("수정되었습니다.");
+    }
+  }, [st_productCompanyUpdateDone]);
+
+  useEffect(() => {
+    if (st_productCompanyUpdateError) {
+      return message.error(st_productCompanyUpdateError);
+    }
+  }, [st_productCompanyUpdateError]);
+
+  useEffect(() => {
+    if (st_productCompanyDeleteDone) {
+      dispatch({
+        type: PRODUCT_COMPANY_LIST_REQUEST,
+      });
+
+      return message.success("삭제되었습니다.");
+    }
+  }, [st_productCompanyDeleteDone]);
+
+  useEffect(() => {
+    if (st_productCompanyDeleteError) {
+      return message.error(st_productCompanyDeleteError);
+    }
+  }, [st_productCompanyDeleteError]);
 
   useEffect(() => {
     if (
@@ -221,10 +303,13 @@ const ProductList = () => {
   useEffect(() => {
     if (st_productDetailUploadDone) {
       if (updateData && productDetailImagePath) {
+        let imageArr = productImages.map((data) => data.sort);
+
         dispatch({
           type: PRODUCT_CREATE_IMAGE_REQUEST,
           data: {
             imagePath: productDetailImagePath,
+            sort: parseInt(Math.max.apply(imageArr)) + 1,
             prodId: updateData.id,
           },
         });
@@ -263,6 +348,7 @@ const ProductList = () => {
         deliveryPay: updateData.deliveryPay,
         youtubeLink: updateData.youtubeLink,
         category: updateData.CategoryId,
+        prodCompany: updateData.ProdCompanyId,
         image: productImages
           ? productImages.map((data) => ({
               uid: data.id,
@@ -278,19 +364,23 @@ const ProductList = () => {
     }
   }, [updateData, productImages]);
 
+  console.log(productImages);
+
   useEffect(() => {
     if (st_productCreateDone) {
       Promise.all(
-        detailImageArr.map((file) => {
+        detailImageArr.map((file, idx) => {
           dispatch({
             type: PRODUCT_CREATE_IMAGE_REQUEST,
             data: {
               imagePath: file,
+              sort: idx,
               prodId: productId,
             },
           });
         })
       );
+
       dispatch({
         type: PRODUCT_LIST_REQUEST,
         data: {
@@ -320,6 +410,39 @@ const ProductList = () => {
       return message.success("상품이 생성되었습니다.");
     }
   }, [st_productCreateDone, st_productCreateImageDone]);
+
+  // useEffect(() => {
+  //   if (createDone) {
+  //     dispatch({
+  //       type: PRODUCT_LIST_REQUEST,
+  //       data: {
+  //         page: currentPage,
+  //         categoryId: selectCategory,
+  //       },
+  //     });
+
+  //     dispatch({
+  //       type: CREATE_MODAL_TOGGLE,
+  //     });
+
+  //     dispatch({
+  //       type: PRODUCT_IMAGE_PATH,
+  //       data: null,
+  //     });
+
+  //     dispatch({
+  //       type: PRODUCT_DETAIL_IMAGE_PATH,
+  //       data: null,
+  //     });
+
+  //     form.resetFields();
+
+  //     setDetailImageArr([]);
+
+  //     setCreateDone(false);
+  //     return message.success("상품이 생성되었습니다.");
+  //   }
+  // }, [createDone]);
 
   useEffect(() => {
     if (st_productCreateError) {
@@ -384,6 +507,14 @@ const ProductList = () => {
     }
   }, [st_productDeleteError]);
 
+  useEffect(() => {
+    if (companyUpdateData) {
+      companyFormRef.current.setFieldsValue({
+        value: companyUpdateData.value,
+      });
+    }
+  }, [companyUpdateData]);
+
   ////// TOGGLE //////
 
   const createModalToggle = useCallback(
@@ -413,15 +544,57 @@ const ProductList = () => {
   );
 
   const prodCompanyToggle = useCallback(() => {
-    // dispatch({
-    //   type: PRODUCT_COMPANY_LIST_REQUEST,
-    // });
     dispatch({
       type: PROD_COMPANY_MODAL_TOGGLE,
     });
   }, [prodCompanyModal]);
 
+  const prodCompanyCreateToggle = useCallback(
+    (data) => {
+      if (data) {
+        setCompanyUpdateData(data);
+      } else {
+        setCompanyUpdateData(null);
+      }
+      dispatch({
+        type: PROD_COMPANY_CREATE_MODAL_TOGGLE,
+      });
+    },
+    [prodCompanyCreateModal]
+  );
+
   ////// HANDLER //////
+
+  const prodCompanyCreateSubmit = useCallback((data) => {
+    dispatch({
+      type: PRODUCT_COMPANY_CREATE_REQUEST,
+      data: {
+        value: data.value,
+      },
+    });
+  }, []);
+
+  const prodCompanyUpdateSubmit = useCallback(
+    (data) => {
+      dispatch({
+        type: PRODUCT_COMPANY_UPDATE_REQUEST,
+        data: {
+          id: companyUpdateData.id,
+          value: data.value,
+        },
+      });
+    },
+    [companyUpdateData]
+  );
+
+  const prodCompanyDeleteSubmit = useCallback((data) => {
+    dispatch({
+      type: PRODUCT_COMPANY_DELETE_REQUEST,
+      data: {
+        comId: data.id,
+      },
+    });
+  }, []);
 
   const clickImageUpload = useCallback(() => {
     imageRef.current.click();
@@ -481,6 +654,7 @@ const ProductList = () => {
           deliveryPay: data.deliveryPay,
           youtubeLink: data.youtubeLink,
           CategoryId: data.category,
+          ProdCompanyId: data.prodCompany,
         },
       });
 
@@ -518,6 +692,7 @@ const ProductList = () => {
           deliveryPay: data.deliveryPay,
           youtubeLink: data.youtubeLink,
           CategoryId: data.category,
+          ProdCompanyId: data.prodCompany,
         },
       });
     },
@@ -526,7 +701,6 @@ const ProductList = () => {
 
   const onCreateDetailImage = useCallback(
     (file) => {
-      console.log(file);
       if (file.file.status === "removed") {
         dispatch({
           type: PRODUCT_DELETE_IMAGE_REQUEST,
@@ -687,7 +861,11 @@ const ProductList = () => {
     {
       title: "수정",
       render: (data) => (
-        <Button size="small" type="primary">
+        <Button
+          size="small"
+          type="primary"
+          onClick={() => prodCompanyCreateToggle(data)}
+        >
           수정
         </Button>
       ),
@@ -695,9 +873,16 @@ const ProductList = () => {
     {
       title: "삭제",
       render: (data) => (
-        <Button size="small" type="danger">
-          삭제
-        </Button>
+        <Popconfirm
+          title="삭제하시겠습니까?"
+          onConfirm={() => prodCompanyDeleteSubmit(data)}
+          okText="삭제"
+          cancelText="취소"
+        >
+          <Button size="small" type="danger">
+            삭제
+          </Button>
+        </Popconfirm>
       ),
     },
   ];
@@ -879,6 +1064,20 @@ const ProductList = () => {
                 })}
             </Select>
           </Form.Item>
+          <Form.Item
+            label="제조사"
+            rules={[{ required: true, message: "제조사를 선택해주세요." }]}
+            name="prodCompany"
+          >
+            <Select>
+              {prodCompanyList &&
+                prodCompanyList.map((data) => {
+                  return (
+                    <Select.Option value={data.id}>{data.value}</Select.Option>
+                  );
+                })}
+            </Select>
+          </Form.Item>
 
           <Form.Item
             label="상품이미지"
@@ -919,7 +1118,7 @@ const ProductList = () => {
         footer={null}
       >
         <Wrapper al={`flex-end`} margin={`0 0 10px`}>
-          <Button size="small" type="primary">
+          <Button size="small" type="primary" onClick={prodCompanyCreateToggle}>
             + 생성
           </Button>
         </Wrapper>
@@ -929,6 +1128,36 @@ const ProductList = () => {
           columns={prodCompanyColumns}
           dataSource={prodCompanyList ? prodCompanyList : []}
         />
+      </Modal>
+
+      <Modal
+        title={companyUpdateData ? "제조사 수정" : "제조사 생성"}
+        visible={prodCompanyCreateModal}
+        onCancel={prodCompanyCreateToggle}
+        footer={null}
+      >
+        <Form
+          onFinish={
+            companyUpdateData
+              ? prodCompanyUpdateSubmit
+              : prodCompanyCreateSubmit
+          }
+          form={companyForm}
+          ref={companyFormRef}
+        >
+          <Form.Item
+            label="이름"
+            name="value"
+            rules={[{ required: true, message: "이름을 입력해주세요." }]}
+          >
+            <Input />
+          </Form.Item>
+          <Wrapper al={`flex-end`}>
+            <Button type="primary" size="small" htmlType="submit">
+              {companyUpdateData ? "수정" : "+ 생성"}
+            </Button>
+          </Wrapper>
+        </Form>
       </Modal>
     </AdminLayout>
   );
@@ -958,6 +1187,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: CATEGORY_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: PRODUCT_COMPANY_LIST_REQUEST,
     });
 
     // 구현부 종료

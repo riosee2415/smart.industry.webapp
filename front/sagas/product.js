@@ -60,6 +60,18 @@ import {
   PRODUCT_COMPANY_LIST_REQUEST,
   PRODUCT_COMPANY_LIST_SUCCESS,
   PRODUCT_COMPANY_LIST_FAILURE,
+  //
+  PRODUCT_COMPANY_CREATE_REQUEST,
+  PRODUCT_COMPANY_CREATE_SUCCESS,
+  PRODUCT_COMPANY_CREATE_FAILURE,
+  //
+  PRODUCT_COMPANY_UPDATE_REQUEST,
+  PRODUCT_COMPANY_UPDATE_SUCCESS,
+  PRODUCT_COMPANY_UPDATE_FAILURE,
+  //
+  PRODUCT_COMPANY_DELETE_REQUEST,
+  PRODUCT_COMPANY_DELETE_SUCCESS,
+  PRODUCT_COMPANY_DELETE_FAILURE,
 } from "../reducers/product";
 
 // SAGA AREA ********************************************************************************************************
@@ -443,6 +455,84 @@ function* prodCompanyList(action) {
   } catch (err) {
     yield put({
       type: PRODUCT_COMPANY_LIST_FAILURE,
+      error: err.response,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function prodCompanyCreateAPI(data) {
+  return axios.post(`/api/prodCompany/create`, data);
+}
+
+function* prodCompanyCreate(action) {
+  try {
+    const result = yield call(prodCompanyCreateAPI, action.data);
+
+    yield put({
+      type: PRODUCT_COMPANY_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_COMPANY_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function prodCompanyUpdateAPI(data) {
+  return axios.patch(`/api/prodCompany/update`, data);
+}
+
+function* prodCompanyUpdate(action) {
+  try {
+    const result = yield call(prodCompanyUpdateAPI, action.data);
+
+    yield put({
+      type: PRODUCT_COMPANY_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_COMPANY_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function prodCompanyDeleteAPI(data) {
+  return axios.delete(`/api/prodCompany/delete/${data.comId}`);
+}
+
+function* prodCompanyDelete(action) {
+  try {
+    const result = yield call(prodCompanyDeleteAPI, action.data);
+
+    yield put({
+      type: PRODUCT_COMPANY_DELETE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_COMPANY_DELETE_FAILURE,
       error: err.response.data,
     });
   }
@@ -513,6 +603,18 @@ function* watchProdCompanyList() {
   yield takeLatest(PRODUCT_COMPANY_LIST_REQUEST, prodCompanyList);
 }
 
+function* watchProdCompanyCreate() {
+  yield takeLatest(PRODUCT_COMPANY_CREATE_REQUEST, prodCompanyCreate);
+}
+
+function* watchProdCompanyUpdate() {
+  yield takeLatest(PRODUCT_COMPANY_UPDATE_REQUEST, prodCompanyUpdate);
+}
+
+function* watchProdCompanyDelete() {
+  yield takeLatest(PRODUCT_COMPANY_DELETE_REQUEST, prodCompanyDelete);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* productSaga() {
   yield all([
@@ -531,6 +633,9 @@ export default function* productSaga() {
     fork(watchProductSaleUpdate),
     fork(watchProductBestUpdate),
     fork(watchProdCompanyList),
+    fork(watchProdCompanyCreate),
+    fork(watchProdCompanyUpdate),
+    fork(watchProdCompanyDelete),
     //
   ]);
 }
