@@ -250,24 +250,28 @@ router.post("/list", async (req, res, next) => {
             A.price,
             A.discount,
             A.deliveryPay,
-            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							      AS	createdAt,
             DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
             A.CategoryId,
             A.isDelete,
             A.isUsed,
             A.isSale,
             A.isBest,
-
-            B.value,
+            B.value                                                                 AS categoryId,
             B.MenuId,
-            C.imagePath
-    FROM	products 				A
+            C.imagePath                                                             AS menuImage,  
+            C.value                                                                 AS menuValue,
+            D.value                                                                 AS companyValue
+    FROM	products 			    	A
    INNER
-    JOIN	categorys 				B
+    JOIN	categorys 			  	B
       ON	A.CategoryId = B.id
    INNER
-    JOIN	menus					C
+    JOIN	menus				      	C
       ON	B.MenuId = C.id
+   INNER
+    JOIN	prodCompanys				D
+      ON	A.ProdCompanyId = D.id
    WHERE	1 = 1
      AND  A.isDelete = FALSE
      ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}    
@@ -285,16 +289,18 @@ router.post("/list", async (req, res, next) => {
             A.price,
             A.discount,
             A.deliveryPay,
-            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
+            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							      AS	createdAt,
             DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
             A.CategoryId,
             A.isDelete,
             A.isUsed,
             A.isSale,
             A.isBest,
-            B.value,
+            B.value                                                                 AS categoryId,
             B.MenuId,
-            C.imagePath
+            C.imagePath                                                             AS menuImage,  
+            C.value                                                                 AS menuValue,
+            D.value                                                                 AS companyValue
       FROM	products 				A
      INNER
       JOIN	categorys 				B
@@ -353,8 +359,8 @@ router.get("/detail/:productId", async (req, res, next) => {
             A.price,
             A.discount,
             A.deliveryPay,
-            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
-            DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
+            DATE_FORMAT(A.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							     AS	createdAt,
+            DATE_FORMAT(A.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      	 AS	updatedAt,
             A.CategoryId,
             A.isDelete,
             A.isUsed,
