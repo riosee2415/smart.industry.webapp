@@ -7,16 +7,25 @@ export const initailState = {
   maxPage: 1,
   totalProduct: 0,
 
+  productBestList: null,
+  bestMaxPage: 1,
+  bestTotalProduct: 0,
+
   productImagePath: null,
 
   productDetailImagePath: null,
 
   createModal: false,
+  bestProductModal: false,
 
   //
   st_productListLoading: false, // 상품 가져오기
   st_productListDone: false,
   st_productListError: null,
+  //
+  st_productBestListLoading: false, // 베스트 상품 가져오기
+  st_productBestListDone: false,
+  st_productBestListError: null,
   //
   st_productCreateLoading: false, // 상품 생성
   st_productCreateDone: false,
@@ -57,11 +66,19 @@ export const initailState = {
   st_productSaleUpdateLoading: false, // 상품 특가 변경
   st_productSaleUpdateDone: false,
   st_productSaleUpdateError: null,
+  //
+  st_productBestUpdateLoading: false, // 상품 베스트상품 변경
+  st_productBestUpdateDone: false,
+  st_productBestUpdateError: null,
 };
 
 export const PRODUCT_LIST_REQUEST = "PRODUCT_LIST_REQUEST";
 export const PRODUCT_LIST_SUCCESS = "PRODUCT_LIST_SUCCESS";
 export const PRODUCT_LIST_FAILURE = "PRODUCT_LIST_FAILURE";
+//
+export const PRODUCT_BEST_LIST_REQUEST = "PRODUCT_BEST_LIST_REQUEST";
+export const PRODUCT_BEST_LIST_SUCCESS = "PRODUCT_BEST_LIST_SUCCESS";
+export const PRODUCT_BEST_LIST_FAILURE = "PRODUCT_BEST_LIST_FAILURE";
 //
 export const PRODUCT_CREATE_REQUEST = "PRODUCT_CREATE_REQUEST";
 export const PRODUCT_CREATE_SUCCESS = "PRODUCT_CREATE_SUCCESS";
@@ -103,6 +120,10 @@ export const PRODUCT_SALE_UPDATE_REQUEST = "PRODUCT_SALE_UPDATE_REQUEST";
 export const PRODUCT_SALE_UPDATE_SUCCESS = "PRODUCT_SALE_UPDATE_SUCCESS";
 export const PRODUCT_SALE_UPDATE_FAILURE = "PRODUCT_SALE_UPDATE_FAILURE";
 //
+export const PRODUCT_BEST_UPDATE_REQUEST = "PRODUCT_BEST_UPDATE_REQUEST";
+export const PRODUCT_BEST_UPDATE_SUCCESS = "PRODUCT_BEST_UPDATE_SUCCESS";
+export const PRODUCT_BEST_UPDATE_FAILURE = "PRODUCT_BEST_UPDATE_FAILURE";
+//
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
 export const PRODUCT_IMAGE_PATH = "PRODUCT_IMAGE_PATH";
@@ -122,13 +143,34 @@ const reducer = (state = initailState, action) =>
         draft.st_productListDone = true;
         draft.productList = action.data.lists;
         draft.maxPage = action.data.lastPage;
-        draft.totalProduct = action.data.noticeLen;
+        draft.totalProduct = action.data.productLen;
         break;
       }
       case PRODUCT_LIST_FAILURE: {
         draft.st_productListLoading = false;
         draft.st_productListDone = false;
         draft.st_productListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case PRODUCT_BEST_LIST_REQUEST: {
+        draft.st_productBestListLoading = true;
+        draft.st_productBestListDone = null;
+        draft.st_productBestListError = false;
+        break;
+      }
+      case PRODUCT_BEST_LIST_SUCCESS: {
+        draft.st_productBestListLoading = false;
+        draft.st_productBestListDone = true;
+        draft.productBestList = action.data.lists;
+        draft.bestMaxPage = action.data.lastPage;
+        draft.bestTotalProduct = action.data.productLen;
+        break;
+      }
+      case PRODUCT_BEST_LIST_FAILURE: {
+        draft.st_productBestListLoading = false;
+        draft.st_productBestListDone = false;
+        draft.st_productBestListError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
@@ -313,6 +355,24 @@ const reducer = (state = initailState, action) =>
         draft.st_productSaleUpdateLoading = false;
         draft.st_productSaleUpdateDone = false;
         draft.st_productSaleUpdateError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case PRODUCT_BEST_UPDATE_REQUEST: {
+        draft.st_productBestUpdateLoading = true;
+        draft.st_productBestUpdateDone = null;
+        draft.st_productBestUpdateError = false;
+        break;
+      }
+      case PRODUCT_BEST_UPDATE_SUCCESS: {
+        draft.st_productBestUpdateLoading = false;
+        draft.st_productBestUpdateDone = true;
+        break;
+      }
+      case PRODUCT_BEST_UPDATE_FAILURE: {
+        draft.st_productBestUpdateLoading = false;
+        draft.st_productBestUpdateDone = false;
+        draft.st_productBestUpdateError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
