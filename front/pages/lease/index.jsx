@@ -24,8 +24,10 @@ import {
   Combo,
   ComboOption,
   ComboOptionWrapper,
+  TextInput,
 } from "../../components/commonComponents";
 import { CaretDownOutlined, DownCircleTwoTone } from "@ant-design/icons";
+import { useCallback } from "react";
 
 const Index = () => {
   ////// GLOBAL STATE //////
@@ -35,10 +37,35 @@ const Index = () => {
 
   ////// HOOKS //////
   const [combo, setCombo] = useState(false);
+  const [comboValue, setComboValue] = useState("전체");
+  const [combo2, setCombo2] = useState(false);
+  const [comboValue2, setComboValue2] = useState("제목");
+
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
+  const comboToggle = useCallback(() => {
+    setCombo(!combo);
+  }, [combo]);
+  const comboToggle2 = useCallback(() => {
+    setCombo2(!combo2);
+  }, [combo2]);
   ////// HANDLER //////
+  const comboHandler = useCallback(
+    (data) => {
+      setComboValue(data);
+      comboToggle();
+    },
+    [combo, comboValue]
+  );
+
+  const comboHandler2 = useCallback(
+    (data) => {
+      setComboValue2(data);
+      comboToggle2();
+    },
+    [combo2, comboValue2]
+  );
   ////// DATAVIEW //////
 
   return (
@@ -179,17 +206,88 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper dr={`row`} ju={`flex-start`}>
-              <Text>검색어</Text>
-              <Combo>
-                <Text>전체</Text>
-                <CaretDownOutlined />
+              <Text fontSize={`14px`} margin={`0 25px 0 0`}>
+                검색어
+              </Text>
 
-                <ComboOptionWrapper>
-                  <ComboOption>전체</ComboOption>
-                  <ComboOption>한달</ComboOption>
-                  <ComboOption>일주일</ComboOption>
-                </ComboOptionWrapper>
+              <Combo margin={`0 10px 0 0`}>
+                <Text fontSize={`14px`}>{comboValue}</Text>
+                <CaretDownOutlined onClick={comboToggle} />
+
+                {combo && (
+                  <ComboOptionWrapper>
+                    <ComboOption
+                      beforeWidth={comboValue === "전체" ? `100%` : `0`}
+                      onClick={() => {
+                        comboHandler("전체");
+                      }}
+                    >
+                      전체
+                    </ComboOption>
+                    <ComboOption
+                      beforeWidth={comboValue === "한달" ? `100%` : `0`}
+                      onClick={() => {
+                        comboHandler("한달");
+                      }}
+                    >
+                      한달
+                    </ComboOption>
+                    <ComboOption
+                      beforeWidth={comboValue === "일주일" ? `100%` : `0`}
+                      onClick={() => {
+                        comboHandler("일주일");
+                      }}
+                    >
+                      일주일
+                    </ComboOption>
+                  </ComboOptionWrapper>
+                )}
               </Combo>
+
+              <Combo>
+                <Text fontSize={`14px`}>{comboValue2}</Text>
+                <CaretDownOutlined onClick={comboToggle2} />
+
+                {combo2 && (
+                  <ComboOptionWrapper>
+                    <ComboOption
+                      beforeWidth={comboValue2 === "제목" ? `100%` : `0`}
+                      onClick={() => {
+                        comboHandler2("제목");
+                      }}
+                    >
+                      제목
+                    </ComboOption>
+                    <ComboOption
+                      beforeWidth={comboValue2 === "작성자" ? `100%` : `0`}
+                      onClick={() => {
+                        comboHandler2("작성자");
+                      }}
+                    >
+                      작성자
+                    </ComboOption>
+                    <ComboOption
+                      beforeWidth={comboValue2 === "내용" ? `100%` : `0`}
+                      onClick={() => {
+                        comboHandler2("내용");
+                      }}
+                    >
+                      내용
+                    </ComboOption>
+                  </ComboOptionWrapper>
+                )}
+              </Combo>
+
+              <TextInput
+                margin={`0 10px`}
+                border={`1px solid ${Theme.grey2_C}`}
+                width={`260px`}
+                height={`40px`}
+              />
+
+              <CommonButton kindOf={`darkgrey2`} width={`75px`} height={`40px`}>
+                찾기
+              </CommonButton>
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
