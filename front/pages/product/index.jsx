@@ -196,6 +196,10 @@ const ProductList = () => {
 
   ////// HANDLER //////
 
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
   const productTypeChangeHandler = useCallback(
     (type) => {
       setProductType(type);
@@ -324,7 +328,9 @@ const ProductList = () => {
                   ) : (
                     productList.map((data) => {
                       return (
-                        <ProductWrapper>
+                        <ProductWrapper
+                          onClick={() => moveLinkHandler(`/product/${data.id}`)}
+                        >
                           <Wrapper
                             padding={`20px`}
                             border={`1px solid ${Theme.lightGrey_C}`}
