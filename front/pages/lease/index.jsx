@@ -179,8 +179,20 @@ const Index = () => {
                   dr={`row`}
                   ju={`flex-start`}
                 >
-                  <Text fontSize={`14px`}>임대문의&nbsp;</Text>
-                  <Text fontSize={`14px`}>답변완료</Text>
+                  <Wrapper
+                    width={`auto`}
+                    isEllipsis={true}
+                    dr={`row`}
+                    ju={`flex-start`}
+                  >
+                    <Text
+                      fontSize={`14px`}
+                      maxWidth={`calc(100% - 10px - 17px)`}
+                    >
+                      임대문의&nbsp;
+                    </Text>
+                    <Text fontSize={`14px`}>[답변완료]</Text>
+                  </Wrapper>
                   <Image
                     src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
                     margin={`0 0 0 17px`}
@@ -205,7 +217,7 @@ const Index = () => {
               </CommonButton>
             </Wrapper>
 
-            <Wrapper dr={`row`} ju={`flex-start`}>
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 60px`}>
               <Text fontSize={`14px`} margin={`0 25px 0 0`}>
                 검색어
               </Text>
@@ -289,6 +301,8 @@ const Index = () => {
                 찾기
               </CommonButton>
             </Wrapper>
+
+            <Wrapper margin={`0 0 110px`}>페이지네이션</Wrapper>
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
