@@ -267,10 +267,13 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
     }
 
     let beforepass = "";
+    let inputpass = "";
     let hashedPassword = "";
 
     if (newPassword) {
-      beforepass = await bcrypt.compare(password, exUser.password);
+      inputpass = await bcrypt.compare(password, exUser.password);
+
+      beforepass = await bcrypt.compare(exUser.password, exUser.password);
 
       if (beforepass !== exUser.password) {
         return res.status(401).send("기존 비밀번호가 일치하지 않습니다.");

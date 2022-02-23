@@ -72,15 +72,19 @@ router.get("/list", async (req, res, next) => {
   }
 });
 
-router.get("/showList", async (req, res, next) => {
+// 해당 메뉴 별 카테고리 조회
+router.get("/catInMenu/:menuId", async (req, res, next) => {
+  const { menuId } = req.params;
   try {
     const selectQuery = `
     SELECT	id,
             value,
-            imagePath
-     FROM	menus
-    WHERE	1 = 1
-      AND	isDelete = FALSE
+            isDelete,
+            MenuId
+     FROM	  categorys
+    WHERE	  1 = 1
+      AND	  isDelete = FALSE
+      AND   MenuId = ${menuId}
     ORDER   BY createdAt DESC
     `;
 
