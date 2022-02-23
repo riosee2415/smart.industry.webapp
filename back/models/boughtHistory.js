@@ -17,16 +17,6 @@ module.exports = class BoughtHistory extends Model {
           allowNull: false,
           defaultValue: 0,
         },
-        discount: {
-          type: DataTypes.FLOAT, // 할인 금액
-          allowNull: false,
-          defaultValue: 0.0,
-        },
-        deliveryPrice: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          defaultValue: 3000,
-        },
         name: {
           type: DataTypes.STRING(30), // 주문자
           allowNull: false,

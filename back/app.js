@@ -29,6 +29,7 @@ const interestRouter = require("./routers/interestRouter");
 const prodCompanyRouter = require("./routers/prodCompanyRouter");
 const leaseRouter = require("./routers/leaseRouter");
 const prodQuestionRouter = require("./routers/prodQuestionRouter");
+const wishRouter = require("./routers/wishRouter");
 
 // Config Settings
 db.sequelize
@@ -112,6 +113,7 @@ app.use("/api/interest", interestRouter);
 app.use("/api/prodCompany", prodCompanyRouter);
 app.use("/api/lease", leaseRouter);
 app.use("/api/prodQuestion", prodQuestionRouter);
+app.use("/api/wish", wishRouter);
 
 // second minute hour day-of-month month day-of-week
 const task = cron.schedule(

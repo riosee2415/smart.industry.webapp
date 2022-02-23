@@ -87,7 +87,7 @@ router.delete("/delete/:comId", isAdminCheck, async (req, res, next) => {
         isDelete: true,
       },
       {
-        where: { id: parseInt(id) },
+        where: { id: parseInt(comId) },
       }
     );
 

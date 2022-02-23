@@ -17,114 +17,227 @@ const router = express.Router();
 // BOUGHT HISTORY 🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀
 //////////////////🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀
 
-router.get("/list", isAdminCheck, async (req, res, next) => {
-  const { page } = req.params;
+router.get("/list", isLoggedIn, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
   try {
-    const lengthQuery = `
-    SELECT	A.id																		                            AS	wishId,
-            A.count,
-            A.ProductId,
-            A.BoughtHistoryId,
-            B.price,
-            B.orderNum,
-            B.name,
-            B.mobile,
-            B.email,
-            B.payWay,
-            B.deliveryCom,
-            B.deliveryNo,
-            B.isCompleted,
-            B.isCancel,
-            DATE_FORMAT(B.completedAt,   "%Y년 %m월 %d일 %H시 %i분")						  AS	completedAt,
-            DATE_FORMAT(B.createdAt,     "%Y년 %m월 %d일 %H시 %i분")							AS	createdAt,
-            DATE_FORMAT(B.updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					    AS	updatedAt,
-            B.UserId																	                         AS  userId,
-            C.id																		                           AS  productId,
-            C.thumbnail,
-            C.title,
-            C.price,
-            C.discount,
-            D.value 																	                         AS  productTypeValue
-      FROM	wishItems			A
-     INNER
-      JOIN	boughtHistorys 		B
-        ON	A.BoughtHistoryId = B.id
-     INNER 
-      JOIN	products 			C
-        ON	A.ProductId = C.id 
-     INNER 
-      JOIN 	productTypes 		D
-        ON	C.ProductTypeId = D.id 
-     WHERE  B.UserId = ${req.user.id}
-    `;
+    const boughtHistorys = await BoughtHistory.findAll({
+      where: { UserId: parseInt(req.user.id) },
+      include: [
+        {
+          model: WishItem,
+          include: [
+            {
+              model: Product,
+            },
+          ],
+        },
+      ],
+    });
+
+    const delivery = await deliverySearch(boughtHistorys);
+
+    return res.status(200).json({
+      boughtHistorys,
+      delivery,
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("견적서 목록을 불러올 수 없습니다.");
   }
 });
 
-router.get("/detail/:boughtId", async (req, res, next) => {
+router.get("/detail/:boughtId", isLoggedIn, async (req, res, next) => {
   const { boughtId } = req.params;
   try {
     const boughtQuery = `
-      SELECT  id,
-              type,
-              orderNum,
-              price,
-              discount,
-              deliveryPrice,
-              name,
-              content,
-              mobile,
-              deliveryCom,
-              deliveryNo,
-              isCompleted,
-              DATE_FORMAT(completedAt,   "%Y년 %m월 %d일 %H시 %i분")						  AS	completedAt,
-              DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							AS	createdAt,
-              DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					    AS	updatedAt
-        FROM  boughtHistorys
-       WHERE  id = ${boughtId}
-    `;
+    SELECT  id,
+            type,
+            orderNum,
+            price,
+            name,
+            content,
+            mobile,
+            deliveryCom,
+            deliveryNo,
+            isCompleted,
+            DATE_FORMAT(completedAt,   "%Y년 %m월 %d일 %H시 %i분")						  AS	completedAt,
+            DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							AS	createdAt,
+            DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					    AS	updatedAt
+      FROM  boughtHistorys
+     WHERE  id = ${boughtId}
+  `;
 
     const boughtItemQuery = `
-      SELECT  A.id,
-              A.count
-              A.BoughtHistoryId,
-              A.ProductId,
-              B.thumbnail,
-              B.price,
-              B.discount
-        FROM  wishItems             A
-       INNER
-        JOIN  prouductId            B
-          ON  A.ProductId = B.id
-       WHERE  A.BoughtHistoryId = ${boughtId}
-    `;
+    SELECT  A.id,
+            A.count,
+            A.BoughtHistoryId,
+            A.ProductId,
+            B.thumbnail,
+            B.price,
+            B.discount,
+            B.deliveyPrice
+      FROM  wishItems             A
+     INNER
+      JOIN  prouductId            B
+        ON  A.ProductId = B.id
+     WHERE  A.BoughtHistoryId = ${boughtId}
+  `;
 
     const list = await models.sequelize.query(boughtQuery);
 
     const boughtItems = await models.sequelize.query(boughtItemQuery);
+
+    const delivery = await deliverySearch(list[0]);
+
+    return res.status(200).json({
+      list: list[0],
+      boughtItems: boughtItems[0],
+      delivery,
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("견적서 정보를 불러올 수 없습니다.");
   }
 });
 
-router.get("/admin/list", async (req, res, next) => {
-  try {
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("견적서 정보를 불러올 수 없습니다.");
-  }
-});
+router.get(
+  ["/admin/list", "/admin/list/:listType"],
+  isAdminCheck,
+  async (req, res, next) => {
+    const { listType } = req.body;
 
-router.get("/admin/detail/:boughtId", async (req, res, next) => {
+    let nanFlag = isNaN(listType);
+
+    if (!listType) {
+      nanFlag = false;
+    }
+
+    if (nanFlag) {
+      return res.status(400).send("잘못된 요청 입니다.");
+    }
+
+    let _listType = Number(listType);
+
+    if (_listType > 3 || !listType) {
+      _listType = 3;
+    }
+
+    try {
+      let boughts = [];
+
+      switch (_listType) {
+        case 1:
+          boughts = await BoughtHistory.findAll({
+            where: { isComplete: false },
+            include: [
+              {
+                model: WishItem,
+                include: [
+                  {
+                    model: Product,
+                  },
+                ],
+              },
+            ],
+          });
+          break;
+        case 2:
+          boughts = await BoughtHistory.findAll({
+            where: { isComplete: true },
+            include: [
+              {
+                model: WishItem,
+                include: [
+                  {
+                    model: Product,
+                  },
+                ],
+              },
+            ],
+          });
+          break;
+        case 3:
+          boughts = await BoughtHistory.findAll({
+            include: [
+              {
+                model: WishItem,
+                include: [
+                  {
+                    model: Product,
+                  },
+                ],
+              },
+            ],
+          });
+          break;
+        default:
+          break;
+      }
+
+      return res.status(200).json(boughts);
+    } catch (error) {
+      console.error(error);
+      return res.status(401).send("견적서 정보를 불러올 수 없습니다.");
+    }
+  }
+);
+
+router.get("/admin/detail/:boughtId", isAdminCheck, async (req, res, next) => {
   const { boughtId } = req.params;
 
   if (isNanCheck(boughtId)) {
     return res.status(401).send("잘못된 요청입니다.");
   }
   try {
+    const boughtQuery = `
+    SELECT  id,
+            type,
+            orderNum,
+            price,
+            discount,
+            deliveryPrice,
+            name,
+            content,
+            mobile,
+            deliveryCom,
+            deliveryNo,
+            isCompleted,
+            DATE_FORMAT(completedAt,   "%Y년 %m월 %d일 %H시 %i분")						  AS	completedAt,
+            DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							AS	createdAt,
+            DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					    AS	updatedAt
+      FROM  boughtHistorys
+     WHERE  id = ${boughtId}
+  `;
+
+    const boughtItemQuery = `
+    SELECT  A.id,
+            A.count
+            A.BoughtHistoryId,
+            A.ProductId,
+            B.thumbnail,
+            B.price,
+            B.discount,
+            B.deliveyPrice
+      FROM  wishItems             A
+     INNER
+      JOIN  prouductId            B
+        ON  A.ProductId = B.id
+     WHERE  A.BoughtHistoryId = ${boughtId}
+  `;
+
+    const list = await models.sequelize.query(boughtQuery);
+
+    const boughtItems = await models.sequelize.query(boughtItemQuery);
+
+    const delivery = await deliverySearch(list[0]);
+
+    return res.status(200).json({
+      list: list[0],
+      boughtItems: boughtItems[0],
+      delivery,
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("견적서 정보를 불러올 수 없습니다.");
@@ -163,6 +276,7 @@ router.post("/user/create", isLoggedIn, async (req, res, next) => {
   }
 });
 
+// prodId, count는 배열로 보내주세요 !
 router.post("/user/wishcreate", isLoggedIn, async (req, res, next) => {
   const { BoughtHistoryId, prodId, count } = req.body;
 
