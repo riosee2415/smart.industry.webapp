@@ -21,7 +21,7 @@ import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import { Checkbox, Empty, message } from "antd";
 import styled from "styled-components";
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
 
 const CommonCheckBox = styled(Checkbox)`
   .ant-checkbox-checked .ant-checkbox-inner {
@@ -40,10 +40,9 @@ const CommonCheckBox = styled(Checkbox)`
 `;
 
 const DarkgreyBtn = styled(CommonButton)`
-  width: 112px;
+  width: ${(props) => props.width || `112px`};
   height: 30px;
   margin: 0 0 3px;
-  padding: 0 0 2px;
   background-color: ${Theme.darkGrey_C};
   border: none;
   border-radius: 0;
@@ -53,6 +52,57 @@ const DarkgreyBtn = styled(CommonButton)`
     background-color: ${Theme.white_C};
     border: 1px solid ${Theme.darkGrey_C};
     color: ${Theme.darkGrey_C};
+  }
+`;
+
+const GreyBtn = styled(CommonButton)`
+  width: 98px;
+  height: 30px;
+  padding: 0 0 2px;
+  background-color: ${Theme.grey_C};
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+
+  &:hover {
+    background-color: ${Theme.white_C};
+    border: 1px solid ${Theme.grey_C};
+    color: ${Theme.grey_C};
+  }
+`;
+
+const Lightgrey1Btn = styled(CommonButton)`
+  width: 145px;
+  height: 50px;
+  padding: 0 0 2px;
+  background-color: ${Theme.lightGrey_C};
+  border: 1px solid ${Theme.grey2_C};
+  border-radius: 0;
+  font-size: 18px;
+  color: ${Theme.black_C};
+
+  &:hover {
+    background-color: ${Theme.darkGrey_C};
+    border: 1px solid ${Theme.lightGrey_C};
+    color: ${Theme.white_C};
+  }
+`;
+
+const Lightgrey2Btn = styled(CommonButton)`
+  width: ${(props) => props.width || `112px`};
+  height: 30px;
+  padding: 0 0 2px;
+  margin: ${(props) => props.margin || `0 0 3px`};
+  background-color: ${Theme.lightGrey2_C};
+  border: 1px solid ${Theme.grey2_C};
+  border-radius: 0;
+  font-size: 14px;
+  color: ${Theme.black_C};
+
+  &:hover {
+    background-color: ${Theme.darkGrey_C};
+    border: 1px solid ${Theme.lightGrey2_C};
+    color: ${Theme.white_C};
   }
 `;
 
@@ -226,211 +276,281 @@ const Cart = () => {
             >
               일반상품 (2)
             </Wrapper>
-            <Wrapper
-              dr={`row`}
-              bgColor={Theme.lightGrey2_C}
-              borderBottom={`1px solid ${Theme.grey2_C}`}
-              height={`62px`}
-            >
-              <Wrapper
-                width={`calc((100% - 115px - 138px) * 0.03)`}
-                borderRight={`1px solid ${Theme.grey2_C}`}
-                height={`100%`}
-              >
-                <CommonCheckBox />
+            {width < 900 ? (
+              <Wrapper width={width < 500 ? `100%` : `60%`}>
+                <Wrapper dr={`row`}>
+                  {testData && testData.length === 0 ? (
+                    <Empty />
+                  ) : (
+                    testData &&
+                    testData.map((data) => {
+                      return (
+                        <Wrapper
+                          dr={`row`}
+                          border={`1px solid ${Theme.grey2_C}`}
+                          margin={`0 0 30px`}
+                        >
+                          <Wrapper
+                            dr={`row`}
+                            ju={`space-between`}
+                            padding={`0 50px 0 20px`}
+                          >
+                            <Wrapper width={`auto`}>
+                              <CommonCheckBox />
+                            </Wrapper>
+                            <Wrapper
+                              width={`auto`}
+                              dr={`row`}
+                              cursor={`pointer`}
+                            >
+                              <CloseOutlined />
+                              삭제
+                            </Wrapper>
+                          </Wrapper>
+                          <Wrapper width={`40%`}>
+                            <Image
+                              width={`100px`}
+                              height={`100px`}
+                              src={data.productImg}
+                            />
+                          </Wrapper>
+                          <Wrapper width={`60%`} al={`flex-start`}>
+                            <Wrapper width={`auto`}>{data.productName}</Wrapper>
+                            <Wrapper width={`auto`}>{data.price}</Wrapper>
+                            <Wrapper
+                              width={`62px`}
+                              height={`25px`}
+                              border={`1px solid ${Theme.grey2_C}`}
+                              radius={`5px`}
+                              dr={`row`}
+                              padding={`0 10px`}
+                              ju={`space-between`}
+                              margin={`0 10px 0 0`}
+                            >
+                              <MinusOutlined
+                                style={{
+                                  color: Theme.darkGrey_C,
+                                  fontSize: `10px`,
+                                }}
+                                onClick={() => countHandler(data.count - 1)}
+                              />
+                              <Text color={Theme.darkGrey_C} fontSize={`12px`}>
+                                {data.count}
+                              </Text>
+                              <PlusOutlined
+                                style={{
+                                  color: Theme.darkGrey_C,
+                                  fontSize: `10px`,
+                                }}
+                                onClick={() => countHandler(data.count + 1)}
+                              />
+                            </Wrapper>
+                            <Wrapper width={`auto`}>{data.total}</Wrapper>
+                            <Wrapper width={`auto`}>기본배송</Wrapper>
+                            <DarkgreyBtn width={`100px`}>문의하기</DarkgreyBtn>
+                            <Lightgrey2Btn width={`100px`}>
+                              관심상품등록
+                            </Lightgrey2Btn>
+                          </Wrapper>
+                        </Wrapper>
+                      );
+                    })
+                  )}
+                </Wrapper>
               </Wrapper>
-              <Wrapper
-                width={`115px`}
-                borderRight={`1px solid ${Theme.grey2_C}`}
-                height={`100%`}
-              >
-                이미지
-              </Wrapper>
-              <Wrapper
-                width={`calc((100% - 115px - 138px) * 0.27)`}
-                borderRight={`1px solid ${Theme.grey2_C}`}
-                height={`100%`}
-              >
-                상품정보
-              </Wrapper>
-              <Wrapper
-                width={`calc((100% - 115px - 138px) * 0.13)`}
-                borderRight={`1px solid ${Theme.grey2_C}`}
-                height={`100%`}
-              >
-                판매가
-              </Wrapper>
-              <Wrapper
-                width={`calc((100% - 115px - 138px) * 0.1)`}
-                borderRight={`1px solid ${Theme.grey2_C}`}
-                height={`100%`}
-              >
-                수량
-              </Wrapper>
-              <Wrapper
-                width={`calc((100% - 115px - 138px) * 0.12)`}
-                borderRight={`1px solid ${Theme.grey2_C}`}
-                height={`100%`}
-              >
-                적립금
-              </Wrapper>
-              <Wrapper
-                width={`calc((100% - 115px - 138px) * 0.12)`}
-                borderRight={`1px solid ${Theme.grey2_C}`}
-                height={`100%`}
-              >
-                배송구분
-              </Wrapper>
-              <Wrapper
-                width={`calc((100% - 115px - 138px) * 0.1)`}
-                borderRight={`1px solid ${Theme.grey2_C}`}
-                height={`100%`}
-              >
-                배송비
-              </Wrapper>
-              <Wrapper
-                width={`calc((100% - 115px - 138px) * 0.13)`}
-                borderRight={`1px solid ${Theme.grey2_C}`}
-                height={`100%`}
-              >
-                합계
-              </Wrapper>
-              <Wrapper width={`138px`}>선택</Wrapper>
-            </Wrapper>
-            {testData && testData.length === 0 ? (
-              <Empty description="조회된 상품이 없습니다." />
             ) : (
-              testData &&
-              testData.map((data) => {
-                return (
+              <>
+                <Wrapper
+                  dr={`row`}
+                  bgColor={Theme.lightGrey2_C}
+                  borderBottom={`1px solid ${Theme.grey2_C}`}
+                  height={`62px`}
+                >
                   <Wrapper
-                    dr={`row`}
-                    height={`145px`}
-                    borderBottom={`1px solid ${Theme.grey2_C}`}
+                    width={`calc((100% - 115px - 138px) * 0.03)`}
+                    borderRight={`1px solid ${Theme.grey2_C}`}
+                    height={`100%`}
                   >
-                    <Wrapper
-                      width={`calc((100% - 115px - 138px) * 0.03)`}
-                      borderRight={`1px solid ${Theme.grey2_C}`}
-                      height={`100%`}
-                    >
-                      <CommonCheckBox />
-                    </Wrapper>
-                    <Wrapper
-                      width={`115px`}
-                      borderRight={`1px solid ${Theme.grey2_C}`}
-                      height={`100%`}
-                    >
-                      <Image
-                        width={`100px`}
-                        height={`100px`}
-                        src={data.productImg}
-                      />
-                    </Wrapper>
-                    <Wrapper
-                      width={`calc((100% - 115px - 138px) * 0.27)`}
-                      borderRight={`1px solid ${Theme.grey2_C}`}
-                      height={`100%`}
-                      al={`flex-start`}
-                      padding={`0 20px`}
-                    >
-                      {data.productName}
-                    </Wrapper>
-                    <Wrapper
-                      width={`calc((100% - 115px - 138px) * 0.13)`}
-                      borderRight={`1px solid ${Theme.grey2_C}`}
-                      height={`100%`}
-                    >
-                      {data.price}원
-                    </Wrapper>
-                    <Wrapper
-                      width={`calc((100% - 115px - 138px) * 0.1)`}
-                      borderRight={`1px solid ${Theme.grey2_C}`}
-                      height={`100%`}
-                    >
-                      <Wrapper
-                        width={width < 700 ? `60px` : `72px`}
-                        height={width < 700 ? `30px` : `25px`}
-                        border={`1px solid ${Theme.grey2_C}`}
-                        radius={`5px`}
-                        dr={`row`}
-                        padding={width < 700 ? `0 5px` : `0 10px`}
-                        ju={`space-between`}
-                        margin={`0 10px 0 0`}
-                      >
-                        <MinusOutlined
-                          style={{
-                            color: Theme.darkGrey_C,
-                            fontSize: `10px`,
-                          }}
-                          onClick={() => countHandler(data.count - 1)}
-                        />
-                        <Text color={Theme.darkGrey_C} fontSize={`15px`}>
-                          {data.count}
-                        </Text>
-                        <PlusOutlined
-                          style={{
-                            color: Theme.darkGrey_C,
-                            fontSize: `10px`,
-                          }}
-                          onClick={() => countHandler(data.count + 1)}
-                        />
-                      </Wrapper>
-                    </Wrapper>
-                    <Wrapper
-                      width={`calc((100% - 115px - 138px) * 0.12)`}
-                      borderRight={`1px solid ${Theme.grey2_C}`}
-                      height={`100%`}
-                    >
-                      -
-                    </Wrapper>
-                    <Wrapper
-                      width={`calc((100% - 115px - 138px) * 0.12)`}
-                      borderRight={`1px solid ${Theme.grey2_C}`}
-                      height={`100%`}
-                    >
-                      기본배송
-                    </Wrapper>
-                    <Wrapper
-                      width={`calc((100% - 115px - 138px) * 0.1)`}
-                      borderRight={`1px solid ${Theme.grey2_C}`}
-                      height={`100%`}
-                    >
-                      무료
-                    </Wrapper>
-                    <Wrapper
-                      width={`calc((100% - 115px - 138px) * 0.13)`}
-                      borderRight={`1px solid ${Theme.grey2_C}`}
-                      height={`100%`}
-                    >
-                      {data.total}원
-                    </Wrapper>
-                    <Wrapper width={`138px`}>
-                      <DarkgreyBtn>문의하기</DarkgreyBtn>
-                      <CommonButton
-                        width={`112px`}
-                        height={`30px`}
-                        margin={`0 0 3px`}
-                        radius={`0`}
-                        fontSize={`14px`}
-                        padding={`0 0 2px`}
-                        kindOf={`grey`}
-                      >
-                        관심상품등록
-                      </CommonButton>
-                      <CommonButton
-                        width={`112px`}
-                        height={`30px`}
-                        radius={`0`}
-                        fontSize={`14px`}
-                        padding={`0 0 2px`}
-                        kindOf={`grey`}
-                      >
-                        삭제
-                      </CommonButton>
-                    </Wrapper>
+                    <CommonCheckBox />
                   </Wrapper>
-                );
-              })
+                  <Wrapper
+                    width={`115px`}
+                    borderRight={`1px solid ${Theme.grey2_C}`}
+                    height={`100%`}
+                  >
+                    이미지
+                  </Wrapper>
+                  <Wrapper
+                    width={`calc((100% - 115px - 138px) * 0.27)`}
+                    borderRight={`1px solid ${Theme.grey2_C}`}
+                    height={`100%`}
+                  >
+                    상품정보
+                  </Wrapper>
+                  <Wrapper
+                    width={`calc((100% - 115px - 138px) * 0.13)`}
+                    borderRight={`1px solid ${Theme.grey2_C}`}
+                    height={`100%`}
+                  >
+                    판매가
+                  </Wrapper>
+                  <Wrapper
+                    width={`calc((100% - 115px - 138px) * 0.1)`}
+                    borderRight={`1px solid ${Theme.grey2_C}`}
+                    height={`100%`}
+                  >
+                    수량
+                  </Wrapper>
+                  <Wrapper
+                    width={`calc((100% - 115px - 138px) * 0.12)`}
+                    borderRight={`1px solid ${Theme.grey2_C}`}
+                    height={`100%`}
+                  >
+                    적립금
+                  </Wrapper>
+                  <Wrapper
+                    width={`calc((100% - 115px - 138px) * 0.12)`}
+                    borderRight={`1px solid ${Theme.grey2_C}`}
+                    height={`100%`}
+                  >
+                    배송구분
+                  </Wrapper>
+                  <Wrapper
+                    width={`calc((100% - 115px - 138px) * 0.1)`}
+                    borderRight={`1px solid ${Theme.grey2_C}`}
+                    height={`100%`}
+                  >
+                    배송비
+                  </Wrapper>
+                  <Wrapper
+                    width={`calc((100% - 115px - 138px) * 0.13)`}
+                    borderRight={`1px solid ${Theme.grey2_C}`}
+                    height={`100%`}
+                  >
+                    합계
+                  </Wrapper>
+                  <Wrapper width={`138px`}>선택</Wrapper>
+                </Wrapper>
+                {testData && testData.length === 0 ? (
+                  <Empty description="조회된 상품이 없습니다." />
+                ) : (
+                  testData &&
+                  testData.map((data) => {
+                    return (
+                      <Wrapper
+                        dr={`row`}
+                        height={`145px`}
+                        borderBottom={`1px solid ${Theme.grey2_C}`}
+                      >
+                        <Wrapper
+                          width={`calc((100% - 115px - 138px) * 0.03)`}
+                          borderRight={`1px solid ${Theme.grey2_C}`}
+                          height={`100%`}
+                        >
+                          <CommonCheckBox />
+                        </Wrapper>
+                        <Wrapper
+                          width={`115px`}
+                          borderRight={`1px solid ${Theme.grey2_C}`}
+                          height={`100%`}
+                        >
+                          <Image
+                            width={`100px`}
+                            height={`100px`}
+                            src={data.productImg}
+                          />
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc((100% - 115px - 138px) * 0.27)`}
+                          borderRight={`1px solid ${Theme.grey2_C}`}
+                          height={`100%`}
+                          al={`flex-start`}
+                          padding={`0 20px`}
+                        >
+                          {data.productName}
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc((100% - 115px - 138px) * 0.13)`}
+                          borderRight={`1px solid ${Theme.grey2_C}`}
+                          height={`100%`}
+                        >
+                          {data.price}원
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc((100% - 115px - 138px) * 0.1)`}
+                          borderRight={`1px solid ${Theme.grey2_C}`}
+                          height={`100%`}
+                        >
+                          <Wrapper
+                            width={`62px`}
+                            height={`25px`}
+                            border={`1px solid ${Theme.grey2_C}`}
+                            radius={`5px`}
+                            dr={`row`}
+                            padding={`0 10px`}
+                            ju={`space-between`}
+                            margin={`0 10px 0 0`}
+                          >
+                            <MinusOutlined
+                              style={{
+                                color: Theme.darkGrey_C,
+                                fontSize: `10px`,
+                              }}
+                              onClick={() => countHandler(data.count - 1)}
+                            />
+                            <Text color={Theme.darkGrey_C} fontSize={`12px`}>
+                              {data.count}
+                            </Text>
+                            <PlusOutlined
+                              style={{
+                                color: Theme.darkGrey_C,
+                                fontSize: `10px`,
+                              }}
+                              onClick={() => countHandler(data.count + 1)}
+                            />
+                          </Wrapper>
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc((100% - 115px - 138px) * 0.12)`}
+                          borderRight={`1px solid ${Theme.grey2_C}`}
+                          height={`100%`}
+                        >
+                          -
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc((100% - 115px - 138px) * 0.12)`}
+                          borderRight={`1px solid ${Theme.grey2_C}`}
+                          height={`100%`}
+                        >
+                          기본배송
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc((100% - 115px - 138px) * 0.1)`}
+                          borderRight={`1px solid ${Theme.grey2_C}`}
+                          height={`100%`}
+                        >
+                          무료
+                        </Wrapper>
+                        <Wrapper
+                          width={`calc((100% - 115px - 138px) * 0.13)`}
+                          borderRight={`1px solid ${Theme.grey2_C}`}
+                          height={`100%`}
+                        >
+                          {data.total}원
+                        </Wrapper>
+                        <Wrapper width={`138px`}>
+                          <DarkgreyBtn>문의하기</DarkgreyBtn>
+                          <Lightgrey2Btn>관심상품등록</Lightgrey2Btn>
+                          <Lightgrey2Btn margin={`0`}>
+                            <CloseOutlined />
+                            삭제
+                          </Lightgrey2Btn>
+                        </Wrapper>
+                      </Wrapper>
+                    );
+                  })
+                )}
+              </>
             )}
             <Wrapper
               height={`75px`}
@@ -439,8 +559,8 @@ const Cart = () => {
               dr={`row`}
               ju={`space-between`}
             >
-              <Wrapper width={`5%`}>기본배송</Wrapper>
-              <Wrapper width={`95%`} dr={`row`} ju={`flex-end`}>
+              <Wrapper width={`10%`}>기본배송</Wrapper>
+              <Wrapper width={`90%`} dr={`row`} ju={`flex-end`}>
                 상품구매금액 2,000,000 + 부가세 200,000 배송비 0 (무료) = 합계:
                 <Wrapper
                   width={`auto`}
@@ -475,6 +595,31 @@ const Cart = () => {
                 al={`flex-start`}
               >
                 할인 적용 금액은 주문서작성의 결제예정금액에서 확인 가능합니다.
+              </Wrapper>
+            </Wrapper>
+            <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 80px`}>
+              <Wrapper width={`50%`} dr={`row`} ju={`flex-start`}>
+                <Wrapper width={`auto`} margin={`0 24px 0 10px`}>
+                  선택상품을
+                </Wrapper>
+                <GreyBtn>
+                  <CloseOutlined />
+                  삭제하기
+                </GreyBtn>
+              </Wrapper>
+              <Lightgrey2Btn width={`122px`} margin={`0`}>
+                장바구니비우기
+              </Lightgrey2Btn>
+            </Wrapper>
+            <Wrapper dr={`row`} position={`relative`} margin={`0 0 120px`}>
+              <Wrapper width={`auto`} dr={`row`}>
+                <Lightgrey1Btn margin={`0 6px 0 0`}>선택상품주문</Lightgrey1Btn>
+                <CommonButton width={`145px`} height={`50px`} fontSize={`18px`}>
+                  전체상품주문
+                </CommonButton>
+              </Wrapper>
+              <Wrapper width={`auto`} position={`absolute`} right={`0`}>
+                <Lightgrey1Btn>쇼핑계속하기</Lightgrey1Btn>
               </Wrapper>
             </Wrapper>
           </RsWrapper>
