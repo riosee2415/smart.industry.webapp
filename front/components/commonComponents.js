@@ -509,7 +509,7 @@ export const TextArea = styled.textarea`
   padding: ${(props) => props.padding || `10px`};
   border: ${(props) => props.border || `1px solid ${props.theme.grey_C}`};
   border-radius: ${(props) => props.theme.radius};
-  background: ${(props) => props.bgColor};
+  background-color: ${(props) => props.bgColor || props.theme.lightGrey2_C};
   transition: ${(props) => props.transition || props.theme.transition};
   margin: ${(props) => props.margin};
   resize: none;
@@ -521,8 +521,8 @@ export const TextArea = styled.textarea`
   }
 
   &::placeholder {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    color: ${(props) => props.theme.grey_C};
   }
 `;
 
