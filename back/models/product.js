@@ -64,5 +64,6 @@ module.exports = class Product extends Model {
   }
   static associate(db) {
     db.Product.belongsTo(db.Category);
+    db.Product.belongsTo(db.ProdCompany);
   }
 };

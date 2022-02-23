@@ -6,7 +6,13 @@ const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { Category, Menu, ProductImage, Product } = require("../models");
+const {
+  Category,
+  Menu,
+  ProductImage,
+  Product,
+  ProdCompany,
+} = require("../models");
 const models = require("../models");
 
 const router = express.Router();
@@ -191,8 +197,16 @@ router.delete("/cat/:catId", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/list", async (req, res, next) => {
-  const { categoryId, isUsed, isSale, isPrice, isName, isBest, page } =
-    req.body;
+  const {
+    categoryId,
+    companyId,
+    isUsed,
+    isSale,
+    isPrice,
+    isName,
+    isBest,
+    page,
+  } = req.body;
 
   const LIMIT = 10;
 
@@ -202,6 +216,7 @@ router.post("/list", async (req, res, next) => {
   const OFFSET = __page * 10;
 
   let _categoryId = categoryId || null;
+  let _companyId = companyId || null;
   let _isUsed = isUsed || null;
   let _isSale = isSale || null;
   let _isPrice = isPrice || null;
@@ -256,6 +271,7 @@ router.post("/list", async (req, res, next) => {
    WHERE	1 = 1
      AND  A.isDelete = FALSE
      ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}    
+     ${_companyId ? `AND A.ProdCompanyId = ${_companyId}` : ``}    
      ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
      ${_isSale ? `AND A.isSale = TRUE` : ``}    
      ${_isBest ? `AND A.isBest = TRUE` : ``}    
@@ -288,7 +304,8 @@ router.post("/list", async (req, res, next) => {
         ON	B.MenuId = C.id
      WHERE	1 = 1
        AND  A.isDelete = FALSE
-     ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}    
+     ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}   
+     ${_companyId ? `AND A.ProdCompanyId = ${_companyId}` : ``}    
      ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
      ${_isSale ? `AND A.isSale = TRUE` : ``}
      ${_isBest ? `AND A.isBest = TRUE` : ``}  
@@ -343,19 +360,24 @@ router.get("/detail/:productId", async (req, res, next) => {
             A.isUsed,
             A.isSale,
             A.isBest,
-            B.value,
+            B.value                                                                 AS categoryId,
             B.MenuId,
-            C.imagePath
-    FROM	products 				A
-   INNER
-    JOIN	categorys 				B
-      ON	A.CategoryId = B.id
-   INNER
-    JOIN	menus					C
-      ON	B.MenuId = C.id
-   WHERE	1 = 1
-     AND    A.isDelete = FALSE
-     AND    A.id = ${productId}
+            C.imagePath                                                             AS menuImage,  
+            C.value                                                                 AS menuValue,
+            D.value                                                                 AS companyValue
+      FROM	products 			  	A
+    INNER
+      JOIN	categorys 				B
+        ON	A.CategoryId = B.id
+    INNER
+      JOIN	menus					    C
+        ON	B.MenuId = C.id
+    INNER
+      JOIN	prodcompanys 				D
+        ON	A.ProdCompanyId = D.id
+     WHERE	1 = 1
+      AND  A.isDelete = FALSE
+      AND  A.id = ${productId}
     `;
 
     const imageQuery = `
@@ -363,11 +385,11 @@ router.get("/detail/:productId", async (req, res, next) => {
             A.imagePath,
             A.ProductId,
             B.title
-    FROM	productImages		A
-   INNER
-    JOIN	products 			B
-      ON	A.ProductId = B.id
-   WHERE    A.ProductId = ${productId}
+      FROM	productImages		A
+    INNER
+      JOIN	products 			B
+        ON	A.ProductId = B.id
+    WHERE   A.ProductId = ${productId}
     `;
 
     const lists = await models.sequelize.query(selectQuery);
@@ -395,6 +417,7 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     isUsed,
     isSale,
     CategoryId,
+    ProdCompanyId,
   } = req.body;
   try {
     const exCategory = await Category.findOne({
@@ -403,6 +426,14 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
 
     if (!exCategory) {
       return res.status(401).send("존재하지 않는 유형입니다.");
+    }
+
+    const exCom = await ProdCompany.findOne({
+      where: { id: parseInt(ProdCompanyId) },
+    });
+
+    if (!exCom) {
+      return res.status(401).send("존재하지 않는 제조사입니다.");
     }
 
     const createResult = await Product.create({
@@ -415,6 +446,7 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
       isUsed,
       isSale,
       CategoryId: parseInt(CategoryId),
+      ProdCompanyId: parseInt(ProdCompanyId),
     });
 
     if (!createResult) {
@@ -440,6 +472,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
     isUsed,
     isSale,
     CategoryId,
+    ProdCompanyId,
   } = req.body;
   try {
     const exProd = await Product.findOne({
@@ -458,6 +491,14 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 유형입니다.");
     }
 
+    const exCom = await ProdCompany.findOne({
+      where: { id: parseInt(ProdCompanyId) },
+    });
+
+    if (!exCom) {
+      return res.status(401).send("존재하지 않는 제조사입니다.");
+    }
+
     const updateResult = await Product.update(
       {
         thumbnail,
@@ -469,6 +510,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
         isUsed,
         isSale,
         CategoryId: parseInt(CategoryId),
+        ProdCompanyId: parseInt(ProdCompanyId),
       },
       {
         where: { id: parseInt(id) },
@@ -672,7 +714,7 @@ router.post("/image/list", async (req, res, next) => {
 });
 
 router.post("/image/create", isAdminCheck, async (req, res, next) => {
-  const { imagePath, prodId } = req.body;
+  const { imagePath, sort, prodId } = req.body;
   try {
     const exProd = await Product.findOne({
       where: { id: parseInt(prodId) },
@@ -686,6 +728,7 @@ router.post("/image/create", isAdminCheck, async (req, res, next) => {
 
     const createResult = await ProductImage.create({
       imagePath,
+      sort,
       ProductId: parseInt(prodId),
     });
 
@@ -701,7 +744,7 @@ router.post("/image/create", isAdminCheck, async (req, res, next) => {
 });
 
 router.patch("/image/update", isAdminCheck, async (req, res, next) => {
-  const { id, imagePath } = req.body;
+  const { id, imagePath, sort } = req.body;
   try {
     const exImage = await ProductImage.findOne({
       where: { id: parseInt(id) },
@@ -714,6 +757,7 @@ router.patch("/image/update", isAdminCheck, async (req, res, next) => {
     const updateResult = await ProductImage.update(
       {
         imagePath,
+        sort,
       },
       {
         where: { id: parseInt(id) },

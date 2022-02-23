@@ -266,26 +266,29 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 사용자 입니다.");
     }
 
-    let beforepass = "";
-    let inputpass = "";
-    let hashedPassword = "";
+    // let beforepass = "";
+    // let inputpass = "";
+    // let hashedPassword = "";
 
-    if (newPassword) {
-      inputpass = await bcrypt.compare(password, exUser.password);
+    // if (newPassword) {
+    //   beforepass = await bcrypt.compare(password, exUser.password);
 
-      beforepass = await bcrypt.compare(exUser.password, exUser.password);
+    //   inputpass = password;
 
-      if (beforepass !== exUser.password) {
-        return res.status(401).send("기존 비밀번호가 일치하지 않습니다.");
-      }
+    //   console.log(beforepass, "before"); // true
+    //   console.log(inputpass, "inputpass"); // fourleaf0309!!
 
-      hashedPassword = await bcrypt.hash(newPassword, 12);
-    }
+    //   if (beforepass !== inputpass) {
+    //     return res.status(401).send("기존 비밀번호가 일치하지 않습니다.");
+    //   }
+
+    //   hashedPassword = await bcrypt.hash(newPassword, 12);
+    // }
 
     const updateUser = await User.update(
       {
         username,
-        password: newPassword ? hashedPassword : exUser.password,
+        // password: newPassword ? hashedPassword : exUser.password,
         mobile,
         normalMobile: normalMobile ? normalMobile : null,
         email,

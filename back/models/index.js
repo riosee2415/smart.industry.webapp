@@ -19,6 +19,8 @@ const product = require("./product");
 const productimage = require("./productimage");
 const review = require("./review");
 const wishItem = require("./wishItem");
+const prodcompany = require("./prodcompany");
+const interest = require("./interest");
 const seo = require("./seo");
 
 const env = process.env.NODE_ENV || "development";
@@ -52,6 +54,9 @@ db.Product = product;
 db.ProductImage = productimage;
 db.Review = review;
 db.WishItem = wishItem;
+db.Interest = interest;
+db.ProdCompany = prodcompany;
+
 db.Seo = seo;
 
 Object.keys(db).forEach((modelName) => {

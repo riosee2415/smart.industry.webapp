@@ -9,6 +9,10 @@ module.exports = class ProductImage extends Model {
           type: DataTypes.STRING(600),
           allowNull: false,
         },
+        sort: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
         isDelete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,

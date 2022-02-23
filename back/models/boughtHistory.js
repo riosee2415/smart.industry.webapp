@@ -4,8 +4,8 @@ module.exports = class BoughtHistory extends Model {
   static init(sequelize) {
     return super.init(
       {
-        type: {
-          type: DataTypes.STRING(100), // 회원주문 or 비회원 주문
+        orderNum: {
+          type: DataTypes.STRING(100), // 주문번호
           allowNull: false,
         },
         price: {
@@ -13,52 +13,26 @@ module.exports = class BoughtHistory extends Model {
           allowNull: false,
           defaultValue: 0,
         },
-        orderNum: {
-          type: DataTypes.STRING(100), // 주문번호
+        discount: {
+          type: DataTypes.FLOAT, // 할인 금액
           allowNull: false,
+          defaultValue: 0.0,
+        },
+        deliveryPrice: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          defaultValue: 3000,
         },
         name: {
           type: DataTypes.STRING(30), // 주문자
           allowNull: false,
         },
-        receiverName: {
-          type: DataTypes.STRING(30), // 받는사람
+        content: {
+          type: DataTypes.TEXT, // 내용
           allowNull: false,
         },
         mobile: {
           type: DataTypes.STRING(50), // 전화번호
-          allowNull: false,
-        },
-        receiverMobile: {
-          type: DataTypes.STRING(50), // 받는사람 전화번호
-          allowNull: false,
-        },
-        email: {
-          type: DataTypes.STRING(50), // 이메일
-          allowNull: false,
-        },
-        zoneCode: {
-          type: DataTypes.STRING(30), // 우편번호
-          allowNull: false,
-        },
-        address: {
-          type: DataTypes.STRING(200), // 배달 주소
-          allowNull: false,
-        },
-        detailAddress: {
-          type: DataTypes.STRING(300), // 상세 주소
-          allowNull: false,
-        },
-        deliveryMessage: {
-          type: DataTypes.TEXT, // 배송 메세지
-          allowNull: false,
-        },
-        payWay: {
-          type: DataTypes.STRING(50), // 결제 방법
-          allowNull: false,
-        },
-        delPassword: {
-          type: DataTypes.STRING(50), // 주문조회 비밀번호
           allowNull: false,
         },
         deliveryCom: {
