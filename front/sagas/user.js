@@ -48,6 +48,10 @@ import {
   FIND_USER_CHECK_SECRET_REQUEST,
   FIND_USER_CHECK_SECRET_SUCCESS,
   FIND_USER_CHECK_SECRET_FAILURE,
+  /////////////////////////////
+  EMAIL_CHECK_REQUEST,
+  EMAIL_CHECK_SUCCESS,
+  EMAIL_CHECK_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -372,6 +376,33 @@ function* findUserCheckSecret(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function checkEmailAPI(data) {
+  return axios.post(`/api/user/emailCheck`, data);
+}
+
+function* checkEmail(action) {
+  try {
+    const result = yield call(checkEmailAPI, action.data);
+
+    yield put({
+      type: EMAIL_CHECK_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: EMAIL_CHECK_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -421,6 +452,10 @@ function* watchFindUserCheckSecret() {
   yield takeLatest(FIND_USER_CHECK_SECRET_REQUEST, findUserCheckSecret);
 }
 
+function* watchCheckEmail() {
+  yield takeLatest(EMAIL_CHECK_REQUEST, checkEmail);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -436,6 +471,7 @@ export default function* userSaga() {
     fork(watchFindUserPassUpdate),
     fork(watchUserInfoUpdate),
     fork(watchFindUserCheckSecret),
+    fork(watchCheckEmail),
     //
   ]);
 }

@@ -12,6 +12,10 @@ export const initailState = {
   postcodeModal: false,
 
   //
+
+  emailCheck: null,
+
+  //
   st_loginLoading: false,
   st_loginDone: false,
   st_loginError: null,
@@ -55,9 +59,14 @@ export const initailState = {
   st_userInfoUpdateLoading: false, // 비밀번호수정
   st_userInfoUpdateDone: false,
   st_userInfoUpdateError: null,
+  //
   st_findUserCheckSecretLoading: false, // 인증코드
   st_findUserCheckSecretDone: false,
   st_findUserCheckSecretError: null,
+  //
+  st_emailCheckLoading: false, // 이메일 중복체크
+  st_emailCheckDone: false,
+  st_emailCheckError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -103,9 +112,14 @@ export const FIND_USER_PASS_UPDATE_FAILURE = "FIND_USER_PASS_UPDATE_FAILURE";
 export const USER_INFO_UPDATE_REQUEST = "USER_INFO_UPDATE_REQUEST";
 export const USER_INFO_UPDATE_SUCCESS = "USER_INFO_UPDATE_SUCCESS";
 export const USER_INFO_UPDATE_FAILURE = "USER_INFO_UPDATE_FAILURE";
+
 export const FIND_USER_CHECK_SECRET_REQUEST = "FIND_USER_CHECK_SECRET_REQUEST";
 export const FIND_USER_CHECK_SECRET_SUCCESS = "FIND_USER_CHECK_SECRET_SUCCESS";
 export const FIND_USER_CHECK_SECRET_FAILURE = "FIND_USER_CHECK_SECRET_FAILURE";
+
+export const EMAIL_CHECK_REQUEST = "EMAIL_CHECK_REQUEST";
+export const EMAIL_CHECK_SUCCESS = "EMAIL_CHECK_SUCCESS";
+export const EMAIL_CHECK_FAILURE = "EMAIL_CHECK_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -113,6 +127,8 @@ export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
 export const POST_CODE_MODAL_TOGGLE = "POST_CODE_MODAL_TOGGLE";
 
 export const CURRENT_ADMINMENU_STATUS = "CURRENT_ADMINMENU_STATUS";
+
+export const INIT_EMAIL_CHECK = "INIT_EMAIL_CHECK";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -335,6 +351,8 @@ const reducer = (state = initailState, action) =>
         draft.st_userInfoUpdateError = action.error;
         break;
       }
+      //////////////////////////////////////////////
+
       case FIND_USER_CHECK_SECRET_REQUEST: {
         draft.st_findUserCheckSecretLoading = true;
         draft.st_findUserCheckSecretDone = null;
@@ -351,6 +369,27 @@ const reducer = (state = initailState, action) =>
         draft.st_findUserCheckSecretLoading = false;
         draft.st_findUserCheckSecretDone = false;
         draft.st_findUserCheckSecretError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case EMAIL_CHECK_REQUEST: {
+        draft.st_emailCheckLoading = true;
+        draft.st_emailCheckDone = null;
+        draft.st_emailCheckError = false;
+        break;
+      }
+      case EMAIL_CHECK_SUCCESS: {
+        draft.st_emailCheckLoading = false;
+        draft.st_emailCheckDone = true;
+        draft.st_emailCheckError = null;
+        draft.emailCheck = action.data.result;
+        break;
+      }
+      case EMAIL_CHECK_FAILURE: {
+        draft.st_emailCheckLoading = false;
+        draft.st_emailCheckDone = false;
+        draft.st_emailCheckError = action.error;
         break;
       }
       //////////////////////////////////////////////
@@ -375,6 +414,10 @@ const reducer = (state = initailState, action) =>
 
       case UPDATE_MODAL_OPEN_REQUEST:
         draft.updateModal = true;
+        break;
+
+      case INIT_EMAIL_CHECK:
+        draft.emailCheck = null;
         break;
 
       case UPDATE_MODAL_CLOSE_REQUEST:

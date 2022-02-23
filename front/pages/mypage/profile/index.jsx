@@ -4,6 +4,8 @@ import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
 import wrapper from "../../../store/configureStore";
 import {
+  EMAIL_CHECK_REQUEST,
+  INIT_EMAIL_CHECK,
   LOAD_MY_INFO_REQUEST,
   LOGIN_REQUEST,
   USER_INFO_UPDATE_REQUEST,
@@ -124,14 +126,37 @@ const Profile = () => {
   const [isCheck3, setIsCheck3] = useState(false);
   const [isCheck4, setIsCheck4] = useState(false);
 
+  const [isCheckBtn, setIsCheckBtn] = useState(false);
+
   ////// REDUX //////
 
-  const { me, st_loginDone, st_loginError } = useSelector(
-    (state) => state.user
-  );
+  const {
+    me,
+    st_loginDone,
+    st_loginError,
+    st_emailCheckDone,
+    st_emailCheckError,
+    emailCheck,
+    st_userInfoUpdateDone,
+    st_userInfoUpdateError,
+  } = useSelector((state) => state.user);
 
   ////// USEEFFECT //////
 
+  useEffect(() => {
+    setIsCheckBtn(true);
+
+    if (me.email === inputEmail.value) {
+      setIsCheckBtn(false);
+    }
+    if (emailCheck === true) {
+      setIsCheckBtn(false);
+    }
+  }, [me, inputEmail, emailCheck]);
+
+  useEffect(() => {
+    console.log(emailCheck);
+  }, [inputEmail]);
   useEffect(() => {
     if (me) {
       inputUserId.setValue(me.userId);
@@ -139,6 +164,7 @@ const Profile = () => {
       inputUserName.setValue(me.username);
       inputEmail.setValue(me.email);
       inputBirth.setValue(me.birth);
+      setGender(me.gender);
     }
   }, [me]);
 
@@ -161,6 +187,33 @@ const Profile = () => {
       LoadNotification(st_loginError);
     }
   }, [st_loginError]);
+
+  useEffect(() => {
+    if (st_emailCheckDone) {
+      LoadNotification("사용가능한 이메일입니다.");
+    }
+  }, [st_emailCheckDone]);
+
+  useEffect(() => {
+    if (st_emailCheckError) {
+      LoadNotification(st_emailCheckError);
+    }
+  }, [st_emailCheckError]);
+
+  useEffect(() => {
+    if (st_userInfoUpdateDone) {
+      dispatch({
+        type: LOAD_MY_INFO_REQUEST,
+      });
+      LoadNotification("개인정보가 수정되었습니다.");
+    }
+  }, [st_userInfoUpdateDone]);
+
+  useEffect(() => {
+    if (st_userInfoUpdateError) {
+      LoadNotification(st_userInfoUpdateError);
+    }
+  }, [st_userInfoUpdateError]);
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -188,22 +241,86 @@ const Profile = () => {
     router.push(link);
   }, []);
 
-  const updateHandler = useCallback(() => {
+  const emailCheckHandler = useCallback(() => {
+    if (!inputEmail.value || inputEmail.value.trim() === "") {
+      return LoadNotification("이메일을 입력해주세요.");
+    }
     dispatch({
-      type: USER_INFO_UPDATE_REQUEST,
+      type: EMAIL_CHECK_REQUEST,
       data: {
-        username: inputUserName.value,
-        password: inputOriginPassword.value,
-        newPassword: inputPassword.value,
-        mobile: inputMobile.value,
-        normalMobile: "-",
         email: inputEmail.value,
-        gender,
-        birth: inputBirth.value,
-        isEmail: isCheck3.value,
-        isSns: isCheck4.value,
       },
     });
+  }, [inputEmail]);
+
+  const updateHandler = useCallback(() => {
+    if (inputOriginPassword.value !== "") {
+      if (!inputPassword.value || inputPassword.value.trim() === "") {
+        return LoadNotification(
+          "비밀번호를 변경하려면 새 비밀번호를 입력해주세요. "
+        );
+      }
+      if (!inputPasswordCheck.value || inputPasswordCheck.value.trim() === "") {
+        return LoadNotification(
+          "비밀번호를 변경하려면 새 비밀번호확인을 입력해주세요."
+        );
+      }
+      if (inputPassword.value !== inputPasswordCheck.value) {
+        return LoadNotification("비밀번호가 일치하지 않습니다.");
+      }
+    }
+
+    if (!inputUserName.value || inputEmail.value.trim() === "") {
+      return LoadNotification("유저네임 입력해주세요.");
+    }
+    if (!inputMobile.value || inputMobile.value.trim() === "") {
+      return LoadNotification("연락처를 입력해주세요.");
+    }
+    if (!inputEmail.value || inputEmail.value.trim() === "") {
+      return LoadNotification("이메일을 입력해주세요.");
+    }
+
+    if (inputEmail.value !== me.email && !emailCheck) {
+      return LoadNotification("중복확인을 완료해주세요.");
+    }
+
+    if (!gender || gender.trim() === "") {
+      return LoadNotification("성별을 선택해주세요.");
+    }
+    if (!inputBirth.value || inputBirth.value.trim() === "") {
+      return LoadNotification("생년월일을 입력해주세요.");
+    }
+    if (!inputOriginPassword.value || inputOriginPassword.value.trim() === "") {
+      dispatch({
+        type: USER_INFO_UPDATE_REQUEST,
+        data: {
+          username: inputUserName.value,
+          mobile: inputMobile.value,
+          normalMobile: "-",
+          email: inputEmail.value,
+          gender,
+          birth: inputBirth.value,
+          isEmail: isCheck3.value,
+          isSns: isCheck4.value,
+        },
+      });
+    } else {
+      dispatch({
+        type: USER_INFO_UPDATE_REQUEST,
+        data: {
+          username: inputUserName.value,
+          password: inputOriginPassword.value,
+          newPassword: inputPassword.value,
+          mobile: inputMobile.value,
+          normalMobile: "-",
+          email: inputEmail.value,
+          gender,
+          birth: inputBirth.value,
+          isEmail: isCheck3.value,
+          isSns: isCheck4.value,
+        },
+      });
+    }
   }, [
     inputUserName,
     inputOriginPassword,
@@ -214,7 +331,9 @@ const Profile = () => {
     inputBirth,
     isCheck3,
     isCheck4,
+    emailCheck,
   ]);
+
   ////// DATAVIEW //////
 
   return (
@@ -458,6 +577,7 @@ const Profile = () => {
                     >
                       <CustomConInput
                         {...inputUserId}
+                        readOnly
                         width={width < 900 ? `100%` : `70%`}
                       />
                     </Wrapper>
@@ -468,14 +588,15 @@ const Profile = () => {
                     dr={`row`}
                     padding={`15px 0`}
                   >
-                    <TitleWrapper {...inputOriginPassword}>
-                      현재 비밀번호
-                    </TitleWrapper>
+                    <TitleWrapper>현재 비밀번호</TitleWrapper>
                     <Wrapper
                       width={width < 900 ? `calc(100% - 120px)` : "80%"}
                       al={`flex-start`}
                     >
-                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                      <CustomConInput
+                        {...inputOriginPassword}
+                        width={width < 900 ? `100%` : `70%`}
+                      />
                     </Wrapper>
                   </ContentWrapper>
                   <ContentWrapper
@@ -484,12 +605,15 @@ const Profile = () => {
                     dr={`row`}
                     padding={`15px 0`}
                   >
-                    <TitleWrapper {...inputPassword}>새 비밀번호</TitleWrapper>
+                    <TitleWrapper>새 비밀번호</TitleWrapper>
                     <Wrapper
                       width={width < 900 ? `calc(100% - 120px)` : "80%"}
                       al={`flex-start`}
                     >
-                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                      <CustomConInput
+                        {...inputPassword}
+                        width={width < 900 ? `100%` : `70%`}
+                      />
                     </Wrapper>
                   </ContentWrapper>
                   <ContentWrapper
@@ -498,14 +622,15 @@ const Profile = () => {
                     dr={`row`}
                     padding={`15px 0`}
                   >
-                    <TitleWrapper {...inputPasswordCheck}>
-                      새 비밀번호 확인
-                    </TitleWrapper>
+                    <TitleWrapper>새 비밀번호 확인</TitleWrapper>
                     <Wrapper
                       width={width < 900 ? `calc(100% - 120px)` : "80%"}
                       al={`flex-start`}
                     >
-                      <CustomConInput width={width < 900 ? `100%` : `70%`} />
+                      <CustomConInput
+                        {...inputPasswordCheck}
+                        width={width < 900 ? `100%` : `70%`}
+                      />
                     </Wrapper>
                   </ContentWrapper>
 
@@ -540,18 +665,22 @@ const Profile = () => {
                     >
                       <CustomConInput
                         {...inputEmail}
+                        readOnly={emailCheck ? true : false}
                         width={width < 900 ? `calc(100% - 90px - 10px)` : `70%`}
                       />
-                      <CommonButton
-                        fontSize={width < 900 ? `13px` : `18px`}
-                        width={width < 900 ? `90px` : `150px`}
-                        padding={`0`}
-                        height={`50px`}
-                        radius={`0`}
-                        margin={`0 0 0 10px`}
-                      >
-                        중복확인
-                      </CommonButton>
+                      {isCheckBtn && (
+                        <CommonButton
+                          fontSize={width < 900 ? `13px` : `18px`}
+                          width={width < 900 ? `90px` : `150px`}
+                          padding={`0`}
+                          height={`50px`}
+                          radius={`0`}
+                          margin={`0 0 0 10px`}
+                          onClick={emailCheckHandler}
+                        >
+                          중복확인
+                        </CommonButton>
+                      )}
                     </Wrapper>
                   </ContentWrapper>
                   <ContentWrapper
@@ -568,19 +697,8 @@ const Profile = () => {
                     >
                       <CustomConInput
                         {...inputMobile}
-                        readOnly={true}
                         width={width < 900 ? `calc(100% - 90px - 10px)` : `70%`}
                       />
-                      <CommonButton
-                        fontSize={width < 900 ? `13px` : `18px`}
-                        width={width < 900 ? `90px` : `150px`}
-                        padding={`0`}
-                        height={`50px`}
-                        radius={`0`}
-                        margin={`0 0 0 10px`}
-                      >
-                        다른번호 인증
-                      </CommonButton>
                     </Wrapper>
                   </ContentWrapper>
                   <ContentWrapper
