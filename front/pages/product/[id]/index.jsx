@@ -37,13 +37,49 @@ const DetailButton = styled.button`
   }
 `;
 
+const ProductImageWrapper = styled(Wrapper)`
+  width: calc(100% / 3 - (108px / 3));
+  margin: 0 54px 10px 0;
+  padding: 10px;
+  border: 1px solid ${Theme.grey2_C};
+
+  position: relative;
+  cursor: pointer;
+
+  &:nth-child(3n) {
+    margin-right: 0;
+  }
+
+  img {
+    width: 85px;
+    height: 85px;
+  }
+
+  @media (max-width: 700px) {
+    width: calc(100% / 2 - (24px / 2));
+    margin: 0 6px 5px;
+  }
+`;
+
+const EmphasisText = styled(Text)`
+  line-height: 1.19;
+  margin: 55px 0 10px;
+`;
+
+const BelongText = styled(Text)`
+  font-size: 14px;
+  line-height: 1.17;
+  color: ${Theme.grey_C};
+  margin: 0 0 12px;
+`;
+
 const DetailProduct = () => {
   const { productDetailData, productDetailImages } = useSelector(
     (state) => state.product
   );
 
-  console.log(productDetailData);
-  console.log(productDetailImages);
+  // console.log(productDetailData);
+  // console.log(productDetailImages);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -51,6 +87,10 @@ const DetailProduct = () => {
   const [tab, setTab] = useState(1);
 
   const [productCount, setProductCount] = useState(1);
+
+  const [choiceImage, setChioceImage] = useState({});
+
+  const [restImages, setRestImages] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -67,6 +107,22 @@ const DetailProduct = () => {
     });
   }, [router.query]);
 
+  useEffect(() => {
+    if (productDetailData && productDetailImages) {
+      setRestImages(
+        productDetailImages.map((data, idx) => ({
+          id: idx,
+          image: data.imagePath,
+        }))
+      );
+
+      setChioceImage({
+        id: productDetailImages.length + 1,
+        image: productDetailData[0].thumbnail,
+      });
+    }
+  }, [productDetailData, productDetailImages]);
+
   ////// HANDLER //////
   const tabChangeHandler = useCallback(
     (value) => {
@@ -81,12 +137,27 @@ const DetailProduct = () => {
     }
   }, []);
 
+  const changeRestImagesHandler = useCallback(
+    (data) => {
+      let imageArr = restImages.filter((value) => value.id !== data.id);
+
+      imageArr.push({
+        id: choiceImage.id,
+        image: choiceImage.image,
+      });
+
+      setRestImages(imageArr);
+
+      setChioceImage({
+        id: data.id,
+        image: data.image,
+      });
+    },
+    [restImages, choiceImage]
+  );
+
   ////// DATAIVEW //////
-  const testImageArr = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-  ];
+
   return (
     <ClientLayout>
       <WholeWrapper>
@@ -110,40 +181,24 @@ const DetailProduct = () => {
               >
                 <Image
                   width={width < 1100 ? `324px` : `424px`}
+                  height={width < 1100 ? `324px` : `424px`}
                   margin={`0 0 56px`}
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU"
+                  src={choiceImage && choiceImage.image}
                 />
-                <Wrapper dr={`row`}>
-                  {testImageArr &&
-                    testImageArr.map((data, idx) => {
+                <Wrapper dr={`row`} ju={`flex-start`}>
+                  {restImages &&
+                    restImages.map((data) => {
                       return (
-                        <Wrapper
-                          width={
-                            width < 1100
-                              ? width < 900
-                                ? `75px`
-                                : `85px`
-                              : `105px`
-                          }
-                          height={
-                            width < 1100
-                              ? width < 900
-                                ? `75px`
-                                : `85px`
-                              : `105px`
-                          }
-                          padding={`10px`}
-                          border={`1px solid ${Theme.grey2_C}`}
-                          margin={idx === 0 ? `0` : `0 0 0 54px`}
-                          cursor={`pointer`}
+                        <ProductImageWrapper
+                          onClick={() => changeRestImagesHandler(data)}
                         >
                           <Image
                             width={`100%`}
                             height={`100%`}
-                            src={data}
+                            src={data.image}
                             alt="product_thumbnail"
                           />
-                        </Wrapper>
+                        </ProductImageWrapper>
                       );
                     })}
                 </Wrapper>
@@ -395,7 +450,7 @@ const DetailProduct = () => {
 
           <Wrapper
             dr={`row`}
-            margin={`80px 0 60px`}
+            margin={`80px 0 0`}
             borderBottom={`1px solid ${Theme.basicTheme_C}`}
           >
             <DetailButton isTab={tab === 1} onClick={() => tabChangeHandler(1)}>
@@ -409,8 +464,53 @@ const DetailProduct = () => {
             </DetailButton>
           </Wrapper>
 
-          {tab === 1 && <Wrapper>상품상세정보</Wrapper>}
-          {tab === 2 && <Wrapper>상품구매안내</Wrapper>}
+          {tab === 1 && (
+            <Wrapper margin={`60px 0 80px`}>
+              <iframe
+                width="100%"
+                height="760px"
+                src={productDetailData && productDetailData[0].youtubeLink}
+                frameborder="0"
+                allowfullscreen
+              ></iframe>
+            </Wrapper>
+          )}
+          {tab === 2 && (
+            <Wrapper margin={`10px 0 80px`}>
+              <Wrapper al={`flex-start`}>
+                <EmphasisText>• 주문안내</EmphasisText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+              </Wrapper>
+              <Wrapper al={`flex-start`}>
+                <EmphasisText>• 배송정보</EmphasisText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+              </Wrapper>
+              <Wrapper al={`flex-start`}>
+                <EmphasisText>• 교환 및 반품정보</EmphasisText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+              </Wrapper>
+              <Wrapper al={`flex-start`}>
+                <EmphasisText>• 교환 및 반품이 가능한 경우</EmphasisText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+              </Wrapper>
+              <Wrapper al={`flex-start`}>
+                <EmphasisText>• 교환 및 반품이 불가능한 경우</EmphasisText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+                <BelongText>- 구매 안내 상세 내용</BelongText>
+              </Wrapper>
+            </Wrapper>
+          )}
           {tab === 3 && <Inquiry />}
         </RsWrapper>
       </WholeWrapper>
