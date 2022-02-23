@@ -440,8 +440,41 @@ const Cart = () => {
               ju={`space-between`}
             >
               <Wrapper width={`5%`}>기본배송</Wrapper>
-              <Wrapper width={`95%`}>
-                상품구매금액 2,000,000 + 부가세 200,000 배송비 0(무료) = 합계:
+              <Wrapper width={`95%`} dr={`row`} ju={`flex-end`}>
+                상품구매금액 2,000,000 + 부가세 200,000 배송비 0 (무료) = 합계:
+                <Wrapper
+                  width={`auto`}
+                  color={Theme.red_C}
+                  fontSize={`22px`}
+                  fontWeight={`bold`}
+                  margin={`0 13px 0 22px`}
+                >
+                  2,200,000원
+                </Wrapper>
+              </Wrapper>
+            </Wrapper>
+            <Wrapper
+              height={`48px`}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+              ju={`flex-start`}
+              dr={`row`}
+              margin={`0 0 18px`}
+            >
+              <Wrapper
+                width={`16px`}
+                height={`17px`}
+                bgColor={Theme.lightGrey_C}
+                color={Theme.red_C}
+                margin={`0 12px 0 10px`}
+              >
+                !
+              </Wrapper>
+              <Wrapper
+                width={`calc(100% - 38px)`}
+                color={Theme.grey_C}
+                al={`flex-start`}
+              >
+                할인 적용 금액은 주문서작성의 결제예정금액에서 확인 가능합니다.
               </Wrapper>
             </Wrapper>
           </RsWrapper>
