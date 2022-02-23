@@ -32,6 +32,9 @@ import ToastEditorComponent from "../components/editor/ToastEditorComponent";
 import { useRef } from "react";
 import { Empty, Button } from "antd";
 import { HeartFilled, PlusOutlined } from "@ant-design/icons";
+import { CATEGORY_LIST_REQUEST } from "../reducers/category";
+import { PRODUCT_LIST_REQUEST } from "../reducers/product";
+import { useRouter } from "next/router";
 
 const ProductWrapper = styled(Wrapper)`
   width: calc(100% / 4 - (100px / 4));
@@ -173,7 +176,7 @@ const MainAfterText = styled(Text)`
 const MainProductTypeBtn = styled(Text)`
   font-size: 20px;
   position: relative;
-
+  cursor: pointer;
   ${(props) =>
     props.isCheck &&
     `
@@ -189,8 +192,7 @@ const MainProductTypeBtn = styled(Text)`
       background-color: ${Theme.subTheme2_C};
     }
   `}
-
-  @media(max-width: 900px) {
+  @media (max-width: 900px) {
     font-size: 16px;
   }
 `;
@@ -202,11 +204,32 @@ const Home = ({}) => {
     (state) => state.seo
   );
 
+  const { categoryList } = useSelector((state) => state.category);
+  const { productList } = useSelector((state) => state.product);
+
   const [isHeart, setIsHeart] = useState(false);
+  const [selectCat, setSelectCat] = useState(
+    categoryList && categoryList[0].id
+  );
+
+  const router = useRouter();
 
   ////// HOOKS //////
+
+  const dispatch = useDispatch();
+
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: PRODUCT_LIST_REQUEST,
+      data: {
+        categoryId: selectCat,
+        page: 1,
+      },
+    });
+  }, [selectCat]);
 
   useEffect(() => {
     const mapScript = document.createElement("script");
@@ -266,94 +289,23 @@ const Home = ({}) => {
   }, [isHeart]);
 
   ////// HANDLER //////
+
+  const changeSelectCatHandler = useCallback(
+    (data) => {
+      setSelectCat(data);
+    },
+    [selectCat]
+  );
+
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
   ////// DATAVIEW //////
 
   const getEditContent = (contentValue) => {
     console.log(contentValue);
   };
-
-  const testProductTypeArr = [
-    "건설기계",
-    "야마바시",
-    "다이아몬드휠",
-    "가스피팅",
-    "안전 장비",
-  ];
-
-  const testProductArr = [
-    {
-      id: 1,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: true,
-    },
-    {
-      id: 2,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명2",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 3,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명3",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 4,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명4",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 5,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명5",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 6,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명6",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 7,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명7",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-    {
-      id: 8,
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJYdH7O9XWCoItn5fJHx6_ZDjnXKZ4gB4chw&usqp=CAU",
-      name: "상품명8",
-      viewPrice: "1,100,000원",
-      originPrice: "1,220,000원",
-      isDiscount: false,
-    },
-  ];
 
   const testBestItem = [
     {
@@ -460,137 +412,149 @@ const Home = ({}) => {
                 최고의 상품을 제공하는 대한기계공구를 만나보세요.
               </Text>
               <Wrapper dr={`row`} ju={width < 900 && `space-between`}>
-                {testProductTypeArr &&
-                  testProductTypeArr.map((data) => {
+                {categoryList &&
+                  categoryList.map((data) => {
                     return (
                       <MainProductTypeBtn
-                        isCheck={true}
+                        isCheck={selectCat === data.id}
+                        onClick={() => changeSelectCatHandler(data.id)}
                         lineHeight={`1.24`}
                         margin={width < 900 ? `0` : `0 39px`}
                       >
-                        {data}
+                        {data.value}
                       </MainProductTypeBtn>
                     );
                   })}
               </Wrapper>
               <Wrapper
                 dr={`row`}
+                ju={`flex-start`}
                 margin={width < 900 ? `30px 0 0` : `80px 0 0`}
               >
-                {testProductArr && testProductArr.length === 0 ? (
-                  <Wrapper>
-                    <Empty description="상품이 없습니다." />
-                  </Wrapper>
-                ) : (
-                  testProductArr.map((data) => {
-                    return (
-                      <ProductWrapper>
-                        <Wrapper
-                          padding={`20px`}
-                          border={`1px solid ${Theme.lightGrey_C}`}
-                          position={`relative`}
-                        >
-                          <Image
-                            src={data.thumbnail}
-                            alt="main_product_thumbnail"
-                          />
+                {productList &&
+                  (productList.length === 0 ? (
+                    <Wrapper>
+                      <Empty description="상품이 없습니다." />
+                    </Wrapper>
+                  ) : (
+                    productList.slice(0, 8).map((data) => {
+                      return (
+                        <ProductWrapper key={data.id}>
                           <Wrapper
-                            className="whiteBack"
-                            opacity={`0`}
-                            position={`absolute`}
-                            top={`0`}
-                            left={`0`}
-                            width={`100%`}
-                            height={`100%`}
                             padding={`20px`}
-                            bgColor={`rgba(255, 255, 255, 0.6)`}
+                            border={`1px solid ${Theme.lightGrey_C}`}
+                            position={`relative`}
                           >
+                            <Image
+                              src={data.thumbnail}
+                              alt="main_product_thumbnail"
+                            />
                             <Wrapper
+                              className="whiteBack"
+                              opacity={`0`}
+                              position={`absolute`}
+                              top={`0`}
+                              left={`0`}
+                              width={`100%`}
                               height={`100%`}
-                              ju={`flex-end`}
-                              al={`flex-end`}
+                              padding={`20px`}
+                              bgColor={`rgba(255, 255, 255, 0.6)`}
                             >
-                              <Wrapper width={`auto`} dr={`row`}>
-                                <Text
-                                  fontSize={`12px`}
-                                  color={Theme.white_C}
-                                  bgColor={`rgba(0, 0, 0, 0.5)`}
-                                  width={`62px`}
-                                  height={`20px`}
-                                  lineHeight={`1.14`}
-                                  display={`none`}
-                                  ju={`center`}
-                                  al={`center`}
-                                >
-                                  장바구니
-                                </Text>
-                                <Image
-                                  width={`34px`}
-                                  height={`auto !important`}
-                                  src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_cart.png"
-                                  alt="cart_icon"
-                                />
-                              </Wrapper>
                               <Wrapper
-                                width={`auto`}
-                                dr={`row`}
-                                margin={`8px 0 0`}
+                                height={`100%`}
+                                ju={`flex-end`}
+                                al={`flex-end`}
                               >
-                                <Text
-                                  fontSize={`12px`}
-                                  color={Theme.white_C}
-                                  bgColor={`rgba(0, 0, 0, 0.5)`}
-                                  width={`62px`}
-                                  height={`20px`}
-                                  lineHeight={`1.14`}
-                                  display={`none`}
-                                  ju={`center`}
-                                  al={`center`}
+                                <Wrapper width={`auto`} dr={`row`}>
+                                  <Text
+                                    fontSize={`12px`}
+                                    color={Theme.white_C}
+                                    bgColor={`rgba(0, 0, 0, 0.5)`}
+                                    width={`62px`}
+                                    height={`20px`}
+                                    lineHeight={`1.14`}
+                                    display={`none`}
+                                    ju={`center`}
+                                    al={`center`}
+                                  >
+                                    장바구니
+                                  </Text>
+                                  <Image
+                                    width={`34px`}
+                                    height={`auto !important`}
+                                    src="https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_cart.png"
+                                    alt="cart_icon"
+                                  />
+                                </Wrapper>
+                                <Wrapper
+                                  width={`auto`}
+                                  dr={`row`}
+                                  margin={`8px 0 0`}
                                 >
-                                  관심상품
-                                </Text>
-                                <Image
-                                  onClick={isHeartToggle}
-                                  width={`34px`}
-                                  height={`auto !important`}
-                                  src={
-                                    isHeart
-                                      ? "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart_red.png"
-                                      : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart.png"
-                                  }
-                                  alt="heart_icon"
-                                />
+                                  <Text
+                                    fontSize={`12px`}
+                                    color={Theme.white_C}
+                                    bgColor={`rgba(0, 0, 0, 0.5)`}
+                                    width={`62px`}
+                                    height={`20px`}
+                                    lineHeight={`1.14`}
+                                    display={`none`}
+                                    ju={`center`}
+                                    al={`center`}
+                                  >
+                                    관심상품
+                                  </Text>
+                                  <Image
+                                    onClick={isHeartToggle}
+                                    width={`34px`}
+                                    height={`auto !important`}
+                                    src={
+                                      isHeart
+                                        ? "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart_red.png"
+                                        : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart.png"
+                                    }
+                                    alt="heart_icon"
+                                  />
+                                </Wrapper>
                               </Wrapper>
                             </Wrapper>
                           </Wrapper>
-                        </Wrapper>
-                        <Text margin={`25px 0 13px`}>{data.name}</Text>
-                        <Wrapper
-                          dr={width < 900 ? `column` : `row`}
-                          fontSize={width < 900 ? `16px` : `18px`}
-                        >
-                          <Text
-                            margin={width < 900 ? `0` : `0 5px 0 0`}
-                            textDecoration={`line-through`}
-                            color={Theme.grey_C}
+                          <Text margin={`25px 0 13px`}>{data.title}</Text>
+                          <Wrapper
+                            dr={width < 900 ? `column` : `row`}
+                            fontSize={width < 900 ? `16px` : `18px`}
                           >
-                            {data.originPrice}
-                          </Text>
-                          <Text
-                            margin={width < 900 ? `0` : `0 0 0 5px`}
-                            fontWeight={`bold`}
-                          >
-                            {data.viewPrice}
-                          </Text>
-                        </Wrapper>
-                      </ProductWrapper>
-                    );
-                  })
-                )}
+                            <Text
+                              margin={width < 900 ? `0` : `0 5px 0 0`}
+                              textDecoration={`line-through`}
+                              color={Theme.grey_C}
+                            >
+                              {String(
+                                parseInt(data.price * (data.discount / 100))
+                              ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                              원
+                            </Text>
+                            <Text
+                              margin={width < 900 ? `0` : `0 0 0 5px`}
+                              fontWeight={`bold`}
+                            >
+                              {String(
+                                data.price -
+                                  parseInt(data.price * (data.discount / 100))
+                              ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                              원
+                            </Text>
+                          </Wrapper>
+                        </ProductWrapper>
+                      );
+                    })
+                  ))}
               </Wrapper>
 
               <Wrapper margin={`61px 0 0`}>
-                <MainProductButton>보러가기</MainProductButton>
+                <MainProductButton onClick={() => moveLinkHandler(`/product`)}>
+                  보러가기
+                </MainProductButton>
               </Wrapper>
             </Wrapper>
 
@@ -839,6 +803,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: CATEGORY_LIST_REQUEST,
     });
 
     // 구현부 종료
