@@ -533,3 +533,50 @@ export const SubTitle = styled.h3`
     font-size: 28px;
   }
 `;
+
+//////////////////////////////////////////////////////////////////
+
+export const Combo = styled(Wrapper)`
+  width: ${(props) => props.width || `100px`};
+  height: ${(props) => props.height || `40px`};
+  padding: ${(props) => props.padding || `10px`};
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+  border: 1px solid ${(props) => props.theme.grey2_C};
+`;
+
+export const ComboOptionWrapper = styled(Wrapper)`
+  width: ${(props) => props.width || `100%`};
+  position: absolute;
+  top: 39px;
+  left: 0;
+  border: 1px solid ${(props) => props.theme.grey2_C};
+  background: ${(props) => props.theme.white_C};
+  border-top: none;
+`;
+
+export const ComboOption = styled(Wrapper)`
+  padding: 5px 10px;
+  font-size: 14px;
+  align-items: flex-start;
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: ${(props) => props.beforeWidth || `0`};
+    height: 100%;
+    background: ${(props) => props.theme.lightGrey_C};
+    transition: 0.5s;
+    z-index: -1;
+  }
+
+  &:hover:before {
+    width: 100%;
+  }
+`;
