@@ -344,11 +344,16 @@ const Index = () => {
                 </Combo>
               </Wrapper>
 
-              <Wrapper>
+              <Wrapper
+                dr={`row`}
+                ju={`flex-start`}
+                width={width < 700 ? `100%` : `auto`}
+                margin={width < 700 ? `10px 0 0` : `0`}
+              >
                 <TextInput
-                  margin={`0 10px`}
+                  margin={width < 700 ? `0 10px 0 0` : `0 10px`}
                   border={`1px solid ${Theme.grey2_C}`}
-                  width={`260px`}
+                  width={width < 700 ? `calc(100% - 75px - 10px)` : `260px`}
                   height={`40px`}
                 />
 
