@@ -62,15 +62,45 @@ router.get(
 );
 
 router.post("/detail", async (req, res, next) => {
+  const { id, password } = req.body;
   try {
+    const exQuestion = await Question.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exQuestion) {
+      return res.status(401).send("존재하지 않는 문의 입니다.");
+    }
+
+    if (!password) {
+      return res.status(401).send("비밀번호를 입력 해주세요.");
+    }
+
+    if (String(password) !== exQuestion.password) {
+      return res.status(401).send("비밀번호가 일치하지 않습니다.");
+    }
+
+    return res.status(200).json(exQuestion);
   } catch (error) {
     console.error(error);
-    return res.status(401).send("");
+    return res.status(401).send("문의 정보를 불러올 수 없습니다.");
   }
 });
 
 router.get("/myList", isLoggedIn, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
   try {
+    const myList = await Question.findAll({
+      where: { UserId: parseInt(req.user.id) },
+    });
+
+    if (!myList) {
+      return res.status(200).json([]);
+    }
+
+    return res.status(200).json(myList);
   } catch (error) {
     console.error(error);
     return res.status(401).send("");
@@ -89,6 +119,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       content,
       term,
       password,
+      UserId: parseInt(req.user.id),
     });
 
     return res.status(201).json({ result: true });

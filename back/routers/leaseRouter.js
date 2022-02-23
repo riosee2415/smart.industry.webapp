@@ -7,7 +7,15 @@ const models = require("../models");
 const router = express.Router();
 
 router.post("/list", async (req, res, next) => {
-  const { page, type, isCompleted } = req.body;
+  const {
+    page,
+    type,
+    isCompleted,
+    date,
+    searchTitle,
+    searchAuthor,
+    searchContent,
+  } = req.body;
 
   const LIMIT = 10;
 
@@ -18,6 +26,22 @@ router.post("/list", async (req, res, next) => {
 
   let _type = type || null;
   let _isCompleted = isCompleted || null;
+  let _searchTitle = searchTitle || "";
+  let _searchAuthor = searchAuthor || "";
+  let _searchContent = searchContent || "";
+
+  if (parseInt(date) > 3) {
+    date === ``;
+  }
+
+  const searchDate =
+    date === "1"
+      ? ``
+      : date === "2"
+      ? `AND  createdAt BETWEEN DATE_ADD(NOW(),INTERVAL -1  WEEK ) AND NOW()`
+      : date === "3"
+      ? `AND  createdAt BETWEEN DATE_ADD(NOW(),INTERVAL -1  MONTH ) AND NOW()`
+      : ``;
 
   try {
     const lengthQuery = `
@@ -35,8 +59,16 @@ router.post("/list", async (req, res, next) => {
             answerdAt
       FROM  leases
      WHERE  1 = 1
+       AND  (
+                  title  LIKE "%${_searchTitle}%"
+                         AND
+                  author LIKE "%${_searchAuthor}%"
+                         AND
+                  content LIKE "%${_searchContent}%"
+            )
  ${_type ? `AND  type = '${_type}'` : ``}
  ${_isCompleted ? `AND  isCompleted = ${_isCompleted}` : ``}
+ ${searchDate}
     `;
 
     const selectQuery = `
@@ -54,8 +86,16 @@ router.post("/list", async (req, res, next) => {
             answerdAt
       FROM  leases
      WHERE  1 = 1
+       AND  (
+              title  LIKE "%${_searchTitle}%"
+                    AND
+              author LIKE "%${_searchAuthor}%"
+                    AND
+              content LIKE "%${_searchContent}%"
+            )
   ${_type ? `AND  type = '${_type}'` : ``} 
   ${_isCompleted ? `AND isCompleted = ${_isCompleted}` : ``}
+  ${searchDate}
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
     `;
