@@ -1,24 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
-import AdminTop from "../../../components/admin/AdminTop";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Button,
-  Col,
-  Modal,
-  Row,
-  Table,
-  notification,
-  Layout,
-  Input,
-  message,
-} from "antd";
+import { Button, Col, Modal, Table, notification, Input, message } from "antd";
 import {
   UPDATE_MODAL_CLOSE_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
-  QUESTION_CREATE_REQUEST,
   QUESTION_UPDATE_REQUEST,
   QUESTION_DELETE_REQUEST,
   QUESTION_GET_REQUEST,
@@ -26,7 +14,6 @@ import {
 } from "../../../reducers/question";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import { useRouter } from "next/router";
-import { render } from "react-dom";
 import useInput from "../../../hooks/useInput";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -35,23 +22,8 @@ import { ColWrapper, RowWrapper } from "../../../components/commonComponents";
 import { saveAs } from "file-saver";
 import Theme from "../../../components/Theme";
 
-const { Sider, Content } = Layout;
-
 const AdminContent = styled.div`
   padding: 20px;
-`;
-
-const FileBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const Filename = styled.span`
-  margin-right: 15px;
-  color: #555;
-  font-size: 13px;
 `;
 
 const LoadNotification = (msg, content) => {
@@ -170,8 +142,6 @@ const List = ({ location }) => {
           type = types[i].value;
         }
       }
-
-      console.log(data);
 
       answer.setValue(data.answer);
       setUpdateData({ ...data, type });

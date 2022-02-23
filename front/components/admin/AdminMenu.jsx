@@ -169,6 +169,12 @@ const AdminMenu = () => {
           <Menu.Item key="/admin/question/list">
             <MenuName>문의 리스트</MenuName>
           </Menu.Item>
+          <Menu.Item key="/admin/faq/type">
+            <MenuName>FAQ 유형 리스트</MenuName>
+          </Menu.Item>
+          <Menu.Item key="/admin/faq/list">
+            <MenuName>FAQ 리스트</MenuName>
+          </Menu.Item>
         </SubMenu>
         <SubMenu
           key="sub8"

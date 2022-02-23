@@ -13,13 +13,15 @@ import {
   Wrapper,
   Image,
   CommonButton,
+  Text,
 } from "../../../components/commonComponents";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { Checkbox, Empty } from "antd";
+import { Checkbox, Empty, message } from "antd";
 import styled from "styled-components";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 
 const CommonCheckBox = styled(Checkbox)`
   .ant-checkbox-checked .ant-checkbox-inner {
@@ -71,13 +73,43 @@ const Cart = () => {
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
+  const countHandler = useCallback((count) => {
+    if (count >= 1) {
+      // dispatch({
+      //   type: WISH_UPDATE_REQUEST,
+      //   data: {
+      //     id,
+      //     count,
+      //   },
+      // });
+    } else {
+      message.error({
+        content: "현재 최소 수량입니다.",
+        className: "custom-class",
+        style: {
+          marginTop: "100px",
+        },
+      });
+    }
+  }, []);
   ////// DATAVIEW //////
   const testData = [
     {
+      id: 1,
       productImg: "",
       productName: "상품명",
       price: "1,000,000",
       total: "1,000,000",
+      count: 1,
+    },
+    {
+      id: 2,
+      productImg: "",
+      productName: "상품명",
+      price: "1,000,000",
+      total: "1,000,000",
+      count: 1,
     },
   ];
 
@@ -315,7 +347,34 @@ const Cart = () => {
                       borderRight={`1px solid ${Theme.grey2_C}`}
                       height={`100%`}
                     >
-                      수량
+                      <Wrapper
+                        width={width < 700 ? `60px` : `72px`}
+                        height={width < 700 ? `30px` : `25px`}
+                        border={`1px solid ${Theme.grey2_C}`}
+                        radius={`5px`}
+                        dr={`row`}
+                        padding={width < 700 ? `0 5px` : `0 10px`}
+                        ju={`space-between`}
+                        margin={`0 10px 0 0`}
+                      >
+                        <MinusOutlined
+                          style={{
+                            color: Theme.darkGrey_C,
+                            fontSize: `10px`,
+                          }}
+                          onClick={() => countHandler(data.count - 1)}
+                        />
+                        <Text color={Theme.darkGrey_C} fontSize={`15px`}>
+                          {data.count}
+                        </Text>
+                        <PlusOutlined
+                          style={{
+                            color: Theme.darkGrey_C,
+                            fontSize: `10px`,
+                          }}
+                          onClick={() => countHandler(data.count + 1)}
+                        />
+                      </Wrapper>
                     </Wrapper>
                     <Wrapper
                       width={`calc((100% - 115px - 138px) * 0.12)`}
@@ -373,6 +432,18 @@ const Cart = () => {
                 );
               })
             )}
+            <Wrapper
+              height={`75px`}
+              bgColor={Theme.lightGrey2_C}
+              borderBottom={`1px solid ${Theme.grey2_C}`}
+              dr={`row`}
+              ju={`space-between`}
+            >
+              <Wrapper width={`5%`}>기본배송</Wrapper>
+              <Wrapper width={`95%`}>
+                상품구매금액 2,000,000 + 부가세 200,000 배송비 0(무료) = 합계:
+              </Wrapper>
+            </Wrapper>
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
