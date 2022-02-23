@@ -278,14 +278,14 @@ const Index = () => {
                   <Wrapper dr={`row`} width={`auto`}>
                     <TextInput
                       width={width < 700 ? `100px` : `150px`}
-                      height={`20px`}
+                      height={`25px`}
                       border={`1px solid ${Theme.grey3_C}`}
                       margin={`0 10px 0 0`}
                     />
                     <CommonButton
                       kindOf={`darkgrey`}
                       width={width < 700 ? `30px` : `37px`}
-                      height={`20px`}
+                      height={`25px`}
                       fontSize={width < 700 ? `11px` : `14px`}
                       padding={`0`}
                     >
