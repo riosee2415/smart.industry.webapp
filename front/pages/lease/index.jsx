@@ -25,6 +25,7 @@ import {
   ComboOption,
   ComboOptionWrapper,
   TextInput,
+  SpanText,
 } from "../../components/commonComponents";
 import { CaretDownOutlined, DownCircleTwoTone } from "@ant-design/icons";
 import { useCallback } from "react";
@@ -250,6 +251,47 @@ const Index = () => {
                   height={`100%`}
                 >
                   조회수
+                </Wrapper>
+              </Wrapper>
+              <Wrapper
+                dr={`row`}
+                ju={`flex-start`}
+                padding={`20px 0`}
+                bgColor={Theme.lightGrey2_C}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
+                <Wrapper width={width < 700 ? `40px` : `80px`}></Wrapper>
+                <Wrapper
+                  width={
+                    width < 700 ? `calc(100% - 40px)` : `calc(100% - 80px)`
+                  }
+                  al={`flex-start`}
+                >
+                  <Text
+                    fontSize={width < 700 ? `11px` : `14px`}
+                    margin={`0 0 10px`}
+                  >
+                    <SpanText color={Theme.red_C}>비공개 글 입니다.</SpanText>{" "}
+                    글 작성시 입력한 비밀번호를 입력해주세요.
+                  </Text>
+
+                  <Wrapper dr={`row`} width={`auto`}>
+                    <TextInput
+                      width={width < 700 ? `100px` : `150px`}
+                      height={`20px`}
+                      border={`1px solid ${Theme.grey3_C}`}
+                      margin={`0 10px 0 0`}
+                    />
+                    <CommonButton
+                      kindOf={`darkgrey`}
+                      width={width < 700 ? `30px` : `37px`}
+                      height={`20px`}
+                      fontSize={width < 700 ? `11px` : `14px`}
+                      padding={`0`}
+                    >
+                      확인
+                    </CommonButton>
+                  </Wrapper>
                 </Wrapper>
               </Wrapper>
             </Wrapper>
