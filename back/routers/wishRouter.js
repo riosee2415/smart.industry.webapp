@@ -2,14 +2,7 @@ const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
-const {
-  Product,
-  BoughtHistory,
-  User,
-  WishItem,
-  Category,
-} = require("../models");
-const models = require("../models");
+const { Product, BoughtHistory, WishItem } = require("../models");
 const deliverySearch = require("../utils/deliverySearch");
 const router = express.Router();
 
@@ -50,50 +43,46 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
 
 router.get("/detail/:boughtId", isLoggedIn, async (req, res, next) => {
   const { boughtId } = req.params;
+
+  if (isNanCheck(boughtId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
   try {
-    const boughtQuery = `
-    SELECT  id,
-            type,
-            orderNum,
-            price,
-            name,
-            content,
-            mobile,
-            deliveryCom,
-            deliveryNo,
-            isCompleted,
-            DATE_FORMAT(completedAt,   "%Y년 %m월 %d일 %H시 %i분")						  AS	completedAt,
-            DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							AS	createdAt,
-            DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					    AS	updatedAt
-      FROM  boughtHistorys
-     WHERE  id = ${boughtId}
-  `;
+    const exBought = await BoughtHistory.findOne({
+      where: { id: parseInt(boughtId) },
+    });
 
-    const boughtItemQuery = `
-    SELECT  A.id,
-            A.count,
-            A.BoughtHistoryId,
-            A.ProductId,
-            B.thumbnail,
-            B.price,
-            B.discount,
-            B.deliveyPrice
-      FROM  wishItems             A
-     INNER
-      JOIN  prouductId            B
-        ON  A.ProductId = B.id
-     WHERE  A.BoughtHistoryId = ${boughtId}
-  `;
+    if (!exBought) {
+      return res.status(401).send("존재하지 않는 결제내역 입니다.");
+    }
 
-    const list = await models.sequelize.query(boughtQuery);
+    let boughtHistorys = [];
 
-    const boughtItems = await models.sequelize.query(boughtItemQuery);
+    boughtHistorys.push(
+      await BoughtHistory.findOne({
+        where: { id: parseInt(boughtId), UserId: parseInt(req.user.id) },
+        include: [
+          {
+            model: WishItem,
+            include: [
+              {
+                model: Product,
+              },
+            ],
+          },
+        ],
+      })
+    );
 
-    const delivery = await deliverySearch(list[0]);
+    const delivery = await deliverySearch(boughtHistorys);
 
     return res.status(200).json({
-      list: list[0],
-      boughtItems: boughtItems[0],
+      boughtHistorys,
       delivery,
     });
   } catch (error) {
@@ -190,52 +179,38 @@ router.get("/admin/detail/:boughtId", isAdminCheck, async (req, res, next) => {
   if (isNanCheck(boughtId)) {
     return res.status(401).send("잘못된 요청입니다.");
   }
+
   try {
-    const boughtQuery = `
-    SELECT  id,
-            type,
-            orderNum,
-            price,
-            discount,
-            deliveryPrice,
-            name,
-            content,
-            mobile,
-            deliveryCom,
-            deliveryNo,
-            isCompleted,
-            DATE_FORMAT(completedAt,   "%Y년 %m월 %d일 %H시 %i분")						  AS	completedAt,
-            DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							AS	createdAt,
-            DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					    AS	updatedAt
-      FROM  boughtHistorys
-     WHERE  id = ${boughtId}
-  `;
+    const exBought = await BoughtHistory.findOne({
+      where: { id: parseInt(boughtId) },
+    });
 
-    const boughtItemQuery = `
-    SELECT  A.id,
-            A.count
-            A.BoughtHistoryId,
-            A.ProductId,
-            B.thumbnail,
-            B.price,
-            B.discount,
-            B.deliveyPrice
-      FROM  wishItems             A
-     INNER
-      JOIN  prouductId            B
-        ON  A.ProductId = B.id
-     WHERE  A.BoughtHistoryId = ${boughtId}
-  `;
+    if (!exBought) {
+      return res.status(401).send("존재하지 않는 결제내역 입니다.");
+    }
 
-    const list = await models.sequelize.query(boughtQuery);
+    let boughtHistorys = [];
 
-    const boughtItems = await models.sequelize.query(boughtItemQuery);
+    boughtHistorys.push(
+      await BoughtHistory.findOne({
+        where: { id: parseInt(boughtId) },
+        include: [
+          {
+            model: WishItem,
+            include: [
+              {
+                model: Product,
+              },
+            ],
+          },
+        ],
+      })
+    );
 
-    const delivery = await deliverySearch(list[0]);
+    const delivery = await deliverySearch(boughtHistorys);
 
     return res.status(200).json({
-      list: list[0],
-      boughtItems: boughtItems[0],
+      boughtHistorys,
       delivery,
     });
   } catch (error) {
@@ -433,7 +408,7 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
   }
 });
 
-router.patch("/delivey/update", isAdminCheck, async (req, res, next) => {
+router.patch("/delivery/update", isAdminCheck, async (req, res, next) => {
   const { id, deliveryCom, deliveryNo } = req.body;
 
   if (isNanCheck(id)) {
