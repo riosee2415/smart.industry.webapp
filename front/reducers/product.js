@@ -11,6 +11,9 @@ export const initailState = {
   bestMaxPage: 1,
   bestTotalProduct: 0,
 
+  productDetailData: null,
+  productDetailImages: null,
+
   productImagePath: null,
 
   productDetailImagePath: null,
@@ -22,6 +25,10 @@ export const initailState = {
   st_productListLoading: false, // 상품 가져오기
   st_productListDone: false,
   st_productListError: null,
+  //
+  st_productDetailLoading: false, // 상품 상세데이터 가져오기
+  st_productDetailDone: false,
+  st_productDetailError: null,
   //
   st_productBestListLoading: false, // 베스트 상품 가져오기
   st_productBestListDone: false,
@@ -75,6 +82,10 @@ export const initailState = {
 export const PRODUCT_LIST_REQUEST = "PRODUCT_LIST_REQUEST";
 export const PRODUCT_LIST_SUCCESS = "PRODUCT_LIST_SUCCESS";
 export const PRODUCT_LIST_FAILURE = "PRODUCT_LIST_FAILURE";
+//
+export const PRODUCT_DETAIL_REQUEST = "PRODUCT_DETAIL_REQUEST";
+export const PRODUCT_DETAIL_SUCCESS = "PRODUCT_DETAIL_SUCCESS";
+export const PRODUCT_DETAIL_FAILURE = "PRODUCT_DETAIL_FAILURE";
 //
 export const PRODUCT_BEST_LIST_REQUEST = "PRODUCT_BEST_LIST_REQUEST";
 export const PRODUCT_BEST_LIST_SUCCESS = "PRODUCT_BEST_LIST_SUCCESS";
@@ -150,6 +161,26 @@ const reducer = (state = initailState, action) =>
         draft.st_productListLoading = false;
         draft.st_productListDone = false;
         draft.st_productListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case PRODUCT_DETAIL_REQUEST: {
+        draft.st_productDetailLoading = true;
+        draft.st_productDetailDone = null;
+        draft.st_productDetailError = false;
+        break;
+      }
+      case PRODUCT_DETAIL_SUCCESS: {
+        draft.st_productDetailLoading = false;
+        draft.st_productDetailDone = true;
+        draft.productDetailData = action.data.lists;
+        draft.productDetailImages = action.data.images;
+        break;
+      }
+      case PRODUCT_DETAIL_FAILURE: {
+        draft.st_productDetailLoading = false;
+        draft.st_productDetailDone = false;
+        draft.st_productDetailError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////

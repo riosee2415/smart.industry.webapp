@@ -52,7 +52,37 @@ import {
   PRODUCT_BEST_UPDATE_REQUEST,
   PRODUCT_BEST_UPDATE_SUCCESS,
   PRODUCT_BEST_UPDATE_FAILURE,
+  //
+  PRODUCT_DETAIL_REQUEST,
+  PRODUCT_DETAIL_SUCCESS,
+  PRODUCT_DETAIL_FAILURE,
 } from "../reducers/product";
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function productDetailAPI(data) {
+  return axios.get(`/api/product/detail/${data.productId}`);
+}
+
+function* productDetail(action) {
+  try {
+    const result = yield call(productDetailAPI, action.data);
+
+    yield put({
+      type: PRODUCT_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
@@ -393,6 +423,10 @@ function* productBestUpdate(action) {
 // ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
+function* watchProductDetail() {
+  yield takeLatest(PRODUCT_DETAIL_REQUEST, productDetail);
+}
+
 function* watchProductList() {
   yield takeLatest(PRODUCT_LIST_REQUEST, productList);
 }
@@ -448,6 +482,7 @@ function* watchProductBestUpdate() {
 //////////////////////////////////////////////////////////////
 export default function* menuSaga() {
   yield all([
+    fork(watchProductDetail),
     fork(watchProductList),
     fork(watchProductBestList),
     fork(watchProductCreate),

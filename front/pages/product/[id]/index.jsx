@@ -1,5 +1,5 @@
 import { Input, Button } from "antd";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import {
   RsWrapper,
@@ -15,6 +15,9 @@ import useWidth from "../../../hooks/useWidth";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import Inquiry from "../../../components/product/inquiry";
+import { useRouter } from "next/router";
+import { PRODUCT_DETAIL_REQUEST } from "../../../reducers/product";
+import { useDispatch, useSelector } from "react-redux";
 
 const DetailButton = styled.button`
   width: calc(100% / 3);
@@ -35,10 +38,34 @@ const DetailButton = styled.button`
 `;
 
 const DetailProduct = () => {
+  const { productDetailData, productDetailImages } = useSelector(
+    (state) => state.product
+  );
+
+  console.log(productDetailData);
+  console.log(productDetailImages);
+
   ////// HOOKS //////
   const width = useWidth();
 
   const [tab, setTab] = useState(1);
+
+  const [productCount, setProductCount] = useState(1);
+
+  const dispatch = useDispatch();
+
+  const router = useRouter();
+
+  ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: PRODUCT_DETAIL_REQUEST,
+      data: {
+        productId: router.query.id,
+      },
+    });
+  }, [router.query]);
 
   ////// HANDLER //////
   const tabChangeHandler = useCallback(
@@ -47,6 +74,12 @@ const DetailProduct = () => {
     },
     [tab]
   );
+
+  const productCountHandler = useCallback((count) => {
+    if (count > 0) {
+      setProductCount(count);
+    }
+  }, []);
 
   ////// DATAIVEW //////
   const testImageArr = [
@@ -130,7 +163,7 @@ const DetailProduct = () => {
                   margin={`28px 0 10px`}
                   lineHeight={`1.31`}
                 >
-                  상품명
+                  {productDetailData && productDetailData[0].title}
                 </Text>
                 <Wrapper
                   dr={`row`}
@@ -139,18 +172,42 @@ const DetailProduct = () => {
                   fontWeight={`bold`}
                   lineHeight={`1.31`}
                 >
-                  <Text color={Theme.red_C}>4%</Text>
-                  <Text
-                    fontSize={`22px`}
-                    fontWeight={`500`}
-                    margin={`0 12px 0 22px`}
-                    color={Theme.grey_C}
-                    textDecoration={`line-through`}
-                    lineHeight={`1.22`}
-                  >
-                    1,200,000원
+                  {productDetailData && productDetailData[0].discount > 0 && (
+                    <>
+                      <Text color={Theme.red_C} margin={`0 22px 0 0`}>
+                        {productDetailData[0].discount}%
+                      </Text>
+                      <Text
+                        fontSize={`22px`}
+                        fontWeight={`500`}
+                        margin={`0 12px 0 0`}
+                        color={Theme.grey_C}
+                        textDecoration={`line-through`}
+                        lineHeight={`1.22`}
+                      >
+                        {String(
+                          parseInt(
+                            (productDetailData[0].price *
+                              productDetailData[0].discount) /
+                              100
+                          )
+                        ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        원
+                      </Text>
+                    </>
+                  )}
+                  <Text>
+                    {productDetailData &&
+                      String(
+                        productDetailData[0].price -
+                          parseInt(
+                            (productDetailData[0].price *
+                              productDetailData[0].discount) /
+                              100
+                          )
+                      ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    원
                   </Text>
-                  <Text>1,100,000원</Text>
                 </Wrapper>
 
                 <Wrapper
@@ -173,7 +230,12 @@ const DetailProduct = () => {
                   <Wrapper dr={`row`}>
                     <Text width={width < 700 ? `25%` : `20%`}>배송비</Text>
                     <Text width={width < 700 ? `75%` : `80%`}>
-                      2,500원 (50,000원 이상 구매 시 무료)
+                      {productDetailData &&
+                        String(productDetailData[0].deliveryPay).replace(
+                          /\B(?=(\d{3})+(?!\d))/g,
+                          ","
+                        )}
+                      원 (50,000원 이상 구매 시 무료)
                     </Text>
                   </Wrapper>
                 </Wrapper>
@@ -215,15 +277,34 @@ const DetailProduct = () => {
                           ju={`space-between`}
                           margin={`0 10px 0 0`}
                         >
-                          <MinusOutlined style={{ cursor: `pointer` }} />
-                          <Text fontWeight={`bold`}>1</Text>
-                          <PlusOutlined style={{ cursor: `pointer` }} />
+                          <MinusOutlined
+                            style={{ cursor: `pointer` }}
+                            onClick={() =>
+                              productCountHandler(productCount - 1)
+                            }
+                          />
+                          <Text fontWeight={`bold`}>{productCount}</Text>
+                          <PlusOutlined
+                            style={{ cursor: `pointer` }}
+                            onClick={() =>
+                              productCountHandler(productCount + 1)
+                            }
+                          />
                         </Wrapper>
                       </Wrapper>
                     </Wrapper>
                     <Wrapper width={`auto`} dr={`row`}>
                       <Text fontSize={`18px`} fontWeight={`bold`}>
-                        1,170,000원
+                        {productDetailData &&
+                          String(
+                            (productDetailData[0].price -
+                              parseInt(
+                                (productDetailData[0].price *
+                                  productDetailData[0].discount) /
+                                  100
+                              )) *
+                              productCount
+                          ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                       </Text>
                       <Image
                         margin={`0 0 0 16px`}
@@ -252,14 +333,24 @@ const DetailProduct = () => {
                   </Text>
 
                   <Text fontSize={`18px`} fontWeight={`bold`}>
-                    1,170,000원
+                    {productDetailData &&
+                      String(
+                        (productDetailData[0].price -
+                          parseInt(
+                            (productDetailData[0].price *
+                              productDetailData[0].discount) /
+                              100
+                          ) +
+                          productDetailData[0].deliveryPay) *
+                          productCount
+                      ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     <SpanText
                       fontSize={`14px`}
                       fontWeight={`500`}
                       color={Theme.darkGrey_C}
                       margin={`0 0 0 22px`}
                     >
-                      (1개)
+                      ({productCount}개)
                     </SpanText>
                   </Text>
                 </Wrapper>
