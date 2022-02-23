@@ -24,6 +24,8 @@ import {
 } from "../../reducers/category";
 import { PRODUCT_LIST_REQUEST } from "../../reducers/product";
 import { useRouter } from "next/router";
+import { Pagination } from "antd";
+import { DoubleLeftOutlined, DoubleRightOutlined } from "@ant-design/icons";
 
 const CustomSelect = styled(Select)`
   width: 138px;
@@ -40,6 +42,13 @@ const CustomSelect = styled(Select)`
   }
   & .ant-select-arrow {
     color: ${Theme.basicTheme_C};
+  }
+`;
+
+const CustomPagination = styled(Pagination)`
+  & .ant-pagination-item-active {
+    border: none;
+    border-bottom: 1px solid ${Theme.basicTheme_C} !important;
   }
 `;
 
@@ -66,7 +75,7 @@ const ProductWrapper = styled(Wrapper)`
   cursor: pointer;
 
   img {
-    height: 270px;
+    height: 216px;
     transition: 0.5s;
   }
 
@@ -82,7 +91,7 @@ const ProductWrapper = styled(Wrapper)`
     }
 
     img {
-      height: 281px;
+      height: 216px;
     }
   }
 
@@ -98,7 +107,7 @@ const ProductWrapper = styled(Wrapper)`
     }
 
     img {
-      height: 281px;
+      height: 216px;
     }
   }
 
@@ -114,7 +123,7 @@ const ProductWrapper = styled(Wrapper)`
     }
 
     img {
-      height: 322px;
+      height: 216px;
     }
   }
 
@@ -126,7 +135,7 @@ const ProductWrapper = styled(Wrapper)`
     }
 
     img {
-      height: 130px;
+      height: 216px;
     }
   }
 
@@ -164,9 +173,24 @@ const ProductList = () => {
 
   const router = useRouter();
 
+  const [currentPage, setCurrentPage] = useState(1);
   const [productType, setProductType] = useState(null);
+  const [selectType, setSelectType] = useState(null);
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: PRODUCT_LIST_REQUEST,
+      data: {
+        page: currentPage,
+        categoryId: productType,
+        isPrice:
+          selectType === "낮은가격" ? 1 : selectType === "높은가격" ? 2 : null,
+        isName: selectType === "상품명",
+      },
+    });
+  }, [currentPage, productType, selectType]);
 
   useEffect(() => {
     dispatch({
@@ -209,18 +233,30 @@ const ProductList = () => {
 
   const chagneSelectHandler = useCallback(
     (data) => {
-      dispatch({
-        type: PRODUCT_LIST_REQUEST,
-        data: {
-          page: 1,
-          categoryId: productType,
-          isPrice: data === "낮은가격" ? 1 : data === "높은가격" ? 2 : null,
-          isName: data === "상품명",
-        },
-      });
+      setSelectType(data);
     },
-    [router.query]
+    [selectType]
   );
+
+  const otherPageCall = useCallback((changePage) => {
+    setCurrentPage(changePage);
+  }, []);
+
+  const nextFastPageHandler = useCallback(() => {
+    if (currentPage + 4 >= maxPage) {
+      setCurrentPage(maxPage);
+    } else {
+      setCurrentPage(currentPage + 4);
+    }
+  }, [currentPage]);
+
+  const prevFastPageHandler = useCallback(() => {
+    if (currentPage - 4 <= 0) {
+      setCurrentPage(1);
+    } else {
+      setCurrentPage(currentPage - 4);
+    }
+  }, [currentPage]);
 
   ////// DATAVIEW //////
 
@@ -370,6 +406,32 @@ const ProductList = () => {
                       );
                     })
                   ))}
+
+                <Wrapper dr={`row`} margin={`30px 0 80px`}>
+                  <DoubleLeftOutlined
+                    onClick={prevFastPageHandler}
+                    style={{
+                      color: currentPage === 1 && Theme.grey_C,
+                      margin: `4px 0 0`,
+                    }}
+                  />
+                  <CustomPagination
+                    size="small"
+                    defaultCurrent={1}
+                    current={parseInt(currentPage)}
+                    total={maxPage * 10}
+                    onChange={(page) => otherPageCall(page)}
+                    showQuickJumper={false}
+                    showSizeChanger={false}
+                  />
+                  <DoubleRightOutlined
+                    onClick={nextFastPageHandler}
+                    style={{
+                      color: currentPage === maxPage && Theme.grey_C,
+                      margin: `4px 0 0`,
+                    }}
+                  />
+                </Wrapper>
               </Wrapper>
             </Wrapper>
           </RsWrapper>

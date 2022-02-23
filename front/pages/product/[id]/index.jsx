@@ -210,7 +210,7 @@ const DetailProduct = () => {
                 margin={width < 700 && `20px 0 0`}
               >
                 <Text fontSize={`20px`} lineHeight={`1.24`}>
-                  상품 카테고리
+                  {productDetailData && productDetailData[0].categoryId}
                 </Text>
                 <Text
                   fontSize={`26px`}
@@ -466,13 +466,15 @@ const DetailProduct = () => {
 
           {tab === 1 && (
             <Wrapper margin={`60px 0 80px`}>
-              <iframe
-                width="100%"
-                height="760px"
-                src={productDetailData && productDetailData[0].youtubeLink}
-                frameborder="0"
-                allowfullscreen
-              ></iframe>
+              {productDetailData && (
+                <iframe
+                  width="100%"
+                  height="760px"
+                  src={productDetailData[0].youtubeLink}
+                  frameborder="0"
+                  allowfullscreen
+                />
+              )}
             </Wrapper>
           )}
           {tab === 2 && (

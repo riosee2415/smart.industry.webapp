@@ -442,12 +442,12 @@ const ProductList = () => {
       dispatch({
         type: PRODUCT_LIST_REQUEST,
         data: {
-          page: currentPage,
+          page: changePage,
           categoryId: selectCategory,
         },
       });
     },
-    [currentPage, selectCategory]
+    [currentPage, selectCategory, productList]
   );
 
   const onSubmit = useCallback(
