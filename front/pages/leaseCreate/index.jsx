@@ -28,6 +28,7 @@ import {
   SpanText,
   TextArea,
 } from "../../components/commonComponents";
+import Checkbox from "antd/lib/checkbox/Checkbox";
 
 const Index = () => {
   const width = useWidth();
@@ -102,7 +103,7 @@ const Index = () => {
               al={`flex-start`}
               margin={width < 700 ? `50px 0 20px` : `100px 0 26px`}
             >
-              <Text fontSize={`14px`}>HOME | 임대문의</Text>
+              <Text fontSize={`14px`}>HOME | 임대문의 | 문의 작성하기</Text>
             </Wrapper>
 
             <Wrapper
@@ -176,6 +177,31 @@ const Index = () => {
                 placeholder="문의 내용을 작성해주세요."
               />
             </Wrapper>
+
+            <Wrapper al={`flex-start`} margin={`0 0 35px`}>
+              <Text fontSize={`18px`} fontWeight={`700`} margin={`0 0 20px`}>
+                비밀번호 <SpanText color={Theme.red_C}>*</SpanText>
+              </Text>
+              <TextInput
+                border={`1px solid ${Theme.grey2_C}`}
+                width={`100%`}
+                height={`50px`}
+                placeholder="게시글 확인을 위한 비밀번호 4글자를 입력해주세요."
+              />
+            </Wrapper>
+
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 60px`}>
+              <Checkbox>개인정보 제공에 동의합니다.</Checkbox>
+            </Wrapper>
+
+            <CommonButton
+              width={`120px`}
+              height={`50px`}
+              fontSize={`18px`}
+              margin={`0 0 110px`}
+            >
+              작성하기
+            </CommonButton>
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
