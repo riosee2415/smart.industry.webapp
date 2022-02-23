@@ -191,7 +191,8 @@ router.delete("/cat/:catId", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/list", async (req, res, next) => {
-  const { categoryId, isUsed, isSale, isPrice, isName, page } = req.body;
+  const { categoryId, isUsed, isSale, isPrice, isName, isBest, page } =
+    req.body;
 
   const LIMIT = 10;
 
@@ -205,6 +206,7 @@ router.post("/list", async (req, res, next) => {
   let _isSale = isSale || null;
   let _isPrice = isPrice || null;
   let _isName = isName || null;
+  let _isBest = isBest || null;
 
   let orderName = `A.createdAt`;
   let orderSc = `DESC`;
@@ -239,6 +241,8 @@ router.post("/list", async (req, res, next) => {
             A.isDelete,
             A.isUsed,
             A.isSale,
+            A.isBest,
+
             B.value,
             B.MenuId,
             C.imagePath
@@ -250,10 +254,11 @@ router.post("/list", async (req, res, next) => {
     JOIN	menus					C
       ON	B.MenuId = C.id
    WHERE	1 = 1
-     AND    A.isDelete = FALSE
+     AND  A.isDelete = FALSE
      ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}    
      ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
      ${_isSale ? `AND A.isSale = TRUE` : ``}    
+     ${_isBest ? `AND A.isBest = TRUE` : ``}    
     `;
 
     const selectQuery = `
@@ -270,39 +275,41 @@ router.post("/list", async (req, res, next) => {
             A.isDelete,
             A.isUsed,
             A.isSale,
+            A.isBest,
             B.value,
             B.MenuId,
             C.imagePath
-    FROM	products 				A
-   INNER
-    JOIN	categorys 				B
-      ON	A.CategoryId = B.id
-   INNER
-    JOIN	menus					C
-      ON	B.MenuId = C.id
-   WHERE	1 = 1
-     AND    A.isDelete = FALSE
+      FROM	products 				A
+     INNER
+      JOIN	categorys 				B
+        ON	A.CategoryId = B.id
+     INNER
+      JOIN	menus					C
+        ON	B.MenuId = C.id
+     WHERE	1 = 1
+       AND  A.isDelete = FALSE
      ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}    
      ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
      ${_isSale ? `AND A.isSale = TRUE` : ``}
-   ORDER    BY  ${orderName} ${orderSc}
-   LIMIT    ${LIMIT}
-  OFFSET    ${OFFSET}  
+     ${_isBest ? `AND A.isBest = TRUE` : ``}  
+     ORDER   BY  ${orderName} ${orderSc}
+     LIMIT   ${LIMIT}
+    OFFSET   ${OFFSET}  
     `;
 
     const length = await models.sequelize.query(lengthQuery);
 
     const lists = await models.sequelize.query(selectQuery);
 
-    const noticeLen = length[0].length;
+    const productLen = length[0].length;
 
     const lastPage =
-      noticeLen % LIMIT > 0 ? noticeLen / LIMIT + 1 : noticeLen / LIMIT;
+      productLen % LIMIT > 0 ? productLen / LIMIT + 1 : productLen / LIMIT;
 
     return res.status(200).json({
       lists: lists[0],
       lastPage: parseInt(lastPage),
-      noticeLen: parseInt(noticeLen),
+      productLen: parseInt(productLen),
     });
   } catch (error) {
     console.error(error);
@@ -335,6 +342,7 @@ router.get("/detail/:productId", async (req, res, next) => {
             A.isDelete,
             A.isUsed,
             A.isSale,
+            A.isBest,
             B.value,
             B.MenuId,
             C.imagePath
@@ -533,6 +541,72 @@ router.patch("/sale/update", isAdminCheck, async (req, res, next) => {
       return res.status(200).json({ result: true });
     } else {
       return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품의 상태를 변경할 수 없습니다.");
+  }
+});
+
+router.patch("/best/update", isAdminCheck, async (req, res, next) => {
+  const { id, isBest } = req.body;
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    if (exProd.isDelete) {
+      return res
+        .status(401)
+        .send("이미 삭제된 상품입니다. 확인 후 다시 시도하여 주십시오.");
+    }
+
+    const prodValidation = await Product.findAll({
+      where: { isBest: true, isDelete: false },
+    });
+
+    if (req.body.isBest) {
+      if (prodValidation.length === 4) {
+        return res
+          .status(401)
+          .send("베스트 상품은 최대 4개까지 등록이 가능합니다.");
+      } else {
+        const updateResult = await Product.update(
+          {
+            isBest,
+          },
+          {
+            where: { id: parseInt(id) },
+          }
+        );
+
+        if (updateResult[0] > 0) {
+          return res.status(200).json({ result: true });
+        } else {
+          return res.status(200).json({ result: false });
+        }
+      }
+    }
+
+    if (!req.body.isBest) {
+      const updateResult = await Product.update(
+        {
+          isBest,
+        },
+        {
+          where: { id: parseInt(id) },
+        }
+      );
+
+      if (updateResult[0] > 0) {
+        return res.status(200).json({ result: true });
+      } else {
+        return res.status(200).json({ result: false });
+      }
     }
   } catch (error) {
     console.error(error);

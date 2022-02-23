@@ -47,6 +47,11 @@ module.exports = class Product extends Model {
           allowNull: false,
           defaultValue: false,
         },
+        isBest: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
       },
       {
         modelName: "Product",
