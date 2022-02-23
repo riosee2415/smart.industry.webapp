@@ -15,6 +15,7 @@ import {
   message,
   Popconfirm,
   Switch,
+  Image,
 } from "antd";
 import { Wrapper } from "../../../components/commonComponents";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,6 +39,7 @@ import {
   PRODUCT_DELETE_IMAGE_REQUEST,
   PRODUCT_USED_UPDATE_REQUEST,
   PRODUCT_SALE_UPDATE_REQUEST,
+  PRODUCT_BEST_UPDATE_REQUEST,
 } from "../../../reducers/product";
 import { CATEGORY_LIST_REQUEST } from "../../../reducers/category";
 import Theme from "../../../components/Theme";
@@ -137,6 +139,7 @@ const ProductList = () => {
     productId,
     maxPage,
     createModal,
+    bestProductModal,
     productImagePath,
     productDetailImagePath,
     //
@@ -151,9 +154,11 @@ const ProductList = () => {
     st_productDetailUploadError,
     st_productCreateImageDone,
     st_productUsedUpdateDone,
-st_productUsedUpdateError,
-st_productSaleUpdateDone,
-st_productSaleUpdateError,
+    st_productUsedUpdateError,
+    st_productSaleUpdateDone,
+    st_productSaleUpdateError,
+    st_productBestUpdateDone,
+    st_productBestUpdateError,
   } = useSelector((state) => state.product);
   const { categoryList } = useSelector((state) => state.category);
 
@@ -172,8 +177,12 @@ st_productSaleUpdateError,
 
   ////// USEEFFECT //////
 
-  useEffect(() =>{
-    if(st_productUsedUpdateDone || st_productSaleUpdateDone){
+  useEffect(() => {
+    if (
+      st_productUsedUpdateDone ||
+      st_productSaleUpdateDone ||
+      st_productBestUpdateDone
+    ) {
       dispatch({
         type: PRODUCT_LIST_REQUEST,
         data: {
@@ -182,22 +191,29 @@ st_productSaleUpdateError,
         },
       });
     }
-  }, [st_productUsedUpdateDone, st_productSaleUpdateDone])
+  }, [
+    st_productUsedUpdateDone,
+    st_productSaleUpdateDone,
+    st_productBestUpdateDone,
+  ]);
 
-  useEffect(() =>{
-    if(st_productUsedUpdateError){
-
-      return message.error(st_productUsedUpdateError)
+  useEffect(() => {
+    if (st_productBestUpdateError) {
+      return message.error(st_productBestUpdateError);
     }
-  }, [st_productUsedUpdateError])
+  }, [st_productBestUpdateError]);
 
-  useEffect(() =>{
-    if(st_productSaleUpdateError){
-
-      return message.error(st_productSaleUpdateError)
+  useEffect(() => {
+    if (st_productUsedUpdateError) {
+      return message.error(st_productUsedUpdateError);
     }
-  }, [st_productSaleUpdateError])
+  }, [st_productUsedUpdateError]);
 
+  useEffect(() => {
+    if (st_productSaleUpdateError) {
+      return message.error(st_productSaleUpdateError);
+    }
+  }, [st_productSaleUpdateError]);
 
   useEffect(() => {
     if (st_productDetailUploadDone) {
@@ -549,12 +565,27 @@ st_productSaleUpdateError,
     });
   }, []);
 
+  const bestChangeHandler = useCallback((data, checked) => {
+    dispatch({
+      type: PRODUCT_BEST_UPDATE_REQUEST,
+      data: {
+        id: data.id,
+        isBest: checked,
+      },
+    });
+  }, []);
+
   ////// DATAVIEW //////
 
   const columns = [
     {
       title: "번호",
       dataIndex: "id",
+    },
+    {
+      title: "썸네일",
+      dataIndex: "thumbnail",
+      render: (data) => <Image width={`80px`} src={data} alt="thumbnail" />,
     },
     {
       title: "상품이름",
@@ -587,6 +618,15 @@ st_productSaleUpdateError,
         <Switch
           checked={data.isSale}
           onChange={(checked) => saleChangeHandler(data, checked)}
+        />
+      ),
+    },
+    {
+      title: "베스트상품",
+      render: (data) => (
+        <Switch
+          checked={data.isBest}
+          onChange={(checked) => bestChangeHandler(data, checked)}
         />
       ),
     },

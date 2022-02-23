@@ -33,7 +33,10 @@ import { useRef } from "react";
 import { Empty, Button } from "antd";
 import { HeartFilled, PlusOutlined } from "@ant-design/icons";
 import { CATEGORY_LIST_REQUEST } from "../reducers/category";
-import { PRODUCT_LIST_REQUEST } from "../reducers/product";
+import {
+  PRODUCT_BEST_LIST_REQUEST,
+  PRODUCT_LIST_REQUEST,
+} from "../reducers/product";
 import { useRouter } from "next/router";
 import { MENU_LIST_REQUEST } from "../reducers/menu";
 
@@ -206,7 +209,9 @@ const Home = ({}) => {
   );
 
   const { categoryList } = useSelector((state) => state.category);
-  const { productList } = useSelector((state) => state.product);
+  const { productList, productBestList } = useSelector(
+    (state) => state.product
+  );
   const { menuList } = useSelector((state) => state.menu);
 
   const [isHeart, setIsHeart] = useState(false);
@@ -579,13 +584,13 @@ const Home = ({}) => {
               </Wrapper>
 
               <Wrapper dr={`row`}>
-                {testBestItem &&
-                  (testBestItem.lenght === 0 ? (
+                {productBestList &&
+                  (productBestList.lenght === 0 ? (
                     <Wrapper>
                       <Empty description="베스트상품이 없습니다." />
                     </Wrapper>
                   ) : (
-                    testBestItem.map((data) => {
+                    productBestList.map((data) => {
                       return (
                         <ProductWrapper>
                           <Wrapper
@@ -667,13 +672,17 @@ const Home = ({}) => {
                               </Wrapper>
                             </Wrapper>
                           </Wrapper>
-                          <Text margin={`25px 0 13px`}>{data.name}</Text>
+                          <Text margin={`25px 0 13px`}>{data.title}</Text>
 
                           <Text
                             fontSize={width < 900 ? `16px` : `18px`}
                             fontWeight={`bold`}
                           >
-                            {data.viewPrice}
+                            {String(
+                              data.price -
+                                parseInt(data.price * (data.discount / 100))
+                            ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            원
                           </Text>
                         </ProductWrapper>
                       );
@@ -819,6 +828,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: MENU_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: PRODUCT_BEST_LIST_REQUEST,
+      data: {
+        isBest: true,
+      },
     });
 
     // 구현부 종료

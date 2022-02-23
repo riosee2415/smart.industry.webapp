@@ -5,6 +5,10 @@ import {
   PRODUCT_LIST_SUCCESS,
   PRODUCT_LIST_FAILURE,
   //
+  PRODUCT_BEST_LIST_REQUEST,
+  PRODUCT_BEST_LIST_SUCCESS,
+  PRODUCT_BEST_LIST_FAILURE,
+  //
   PRODUCT_CREATE_REQUEST,
   PRODUCT_CREATE_SUCCESS,
   PRODUCT_CREATE_FAILURE,
@@ -44,6 +48,10 @@ import {
   PRODUCT_SALE_UPDATE_REQUEST,
   PRODUCT_SALE_UPDATE_SUCCESS,
   PRODUCT_SALE_UPDATE_FAILURE,
+  //
+  PRODUCT_BEST_UPDATE_REQUEST,
+  PRODUCT_BEST_UPDATE_SUCCESS,
+  PRODUCT_BEST_UPDATE_FAILURE,
 } from "../reducers/product";
 
 // SAGA AREA ********************************************************************************************************
@@ -63,6 +71,32 @@ function* productList(action) {
   } catch (err) {
     yield put({
       type: PRODUCT_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function productBestListAPI(data) {
+  return axios.post(`/api/product/list`, data);
+}
+
+function* productBestList(action) {
+  try {
+    const result = yield call(productBestListAPI, action.data);
+
+    yield put({
+      type: PRODUCT_BEST_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_BEST_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -332,9 +366,39 @@ function* productSaleUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function productBestUpdateAPI(data) {
+  return axios.patch(`/api/product/best/update`, data);
+}
+
+function* productBestUpdate(action) {
+  try {
+    const result = yield call(productBestUpdateAPI, action.data);
+
+    yield put({
+      type: PRODUCT_BEST_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_BEST_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchProductList() {
   yield takeLatest(PRODUCT_LIST_REQUEST, productList);
+}
+
+function* watchProductBestList() {
+  yield takeLatest(PRODUCT_BEST_LIST_REQUEST, productBestList);
 }
 
 function* watchProductCreate() {
@@ -377,10 +441,15 @@ function* watchProductSaleUpdate() {
   yield takeLatest(PRODUCT_SALE_UPDATE_REQUEST, productSaleUpdate);
 }
 
+function* watchProductBestUpdate() {
+  yield takeLatest(PRODUCT_BEST_UPDATE_REQUEST, productBestUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* menuSaga() {
   yield all([
     fork(watchProductList),
+    fork(watchProductBestList),
     fork(watchProductCreate),
     fork(watchProductUpdate),
     fork(watchProductDelete),
@@ -391,6 +460,7 @@ export default function* menuSaga() {
     fork(watchProductDeleteImage),
     fork(watchProductUsedUpdate),
     fork(watchProductSaleUpdate),
+    fork(watchProductBestUpdate),
     //
   ]);
 }
