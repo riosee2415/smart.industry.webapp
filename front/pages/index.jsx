@@ -557,18 +557,20 @@ const Home = ({}) => {
                     })
                   ))}
               </Wrapper>
-
-              <Wrapper margin={`61px 0 0`}>
-                <MainProductButton
-                  onClick={() =>
-                    moveLinkHandler(
-                      `/product?menu=${menuList && menuList[0].id}`
-                    )
-                  }
-                >
-                  보러가기
-                </MainProductButton>
-              </Wrapper>
+            </Wrapper>
+            <Wrapper margin={`61px 0 0`}>
+              <MainProductButton
+                onClick={() =>
+                  moveLinkHandler(
+                    `/product?menu=${
+                      categoryList &&
+                      categoryList.find((data) => data.id === selectCat).MenuId
+                    }`
+                  )
+                }
+              >
+                보러가기
+              </MainProductButton>
             </Wrapper>
 
             <Wrapper padding={width < 900 ? `56px 0 55px` : `112px 0 110px`}>
