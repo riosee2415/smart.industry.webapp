@@ -17,7 +17,11 @@ import { useCallback } from "react";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { NOTICE_DETAIL_REQUEST } from "../../../../reducers/notice";
+import {
+  NOTICE_DETAIL_REQUEST,
+  NOTICE_PREVPAGE_REQUEST,
+  NOTICE_NEXTPAGE_REQUEST,
+} from "../../../../reducers/notice";
 import { useEffect } from "react";
 
 const Notice = () => {
@@ -26,7 +30,9 @@ const Notice = () => {
     (state) => state.seo
   );
 
-  const { noticeDetails } = useSelector((state) => state.notice);
+  const { noticeDetails, noticePrev, noticeNext } = useSelector(
+    (state) => state.notice
+  );
 
   const width = useWidth();
   const router = useRouter();
@@ -38,6 +44,24 @@ const Notice = () => {
   useEffect(() => {
     dispatch({
       type: NOTICE_DETAIL_REQUEST,
+      data: {
+        noticeId: router.query.id,
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    dispatch({
+      type: NOTICE_PREVPAGE_REQUEST,
+      data: {
+        noticeId: router.query.id,
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    dispatch({
+      type: NOTICE_NEXTPAGE_REQUEST,
       data: {
         noticeId: router.query.id,
       },
@@ -245,7 +269,15 @@ const Notice = () => {
               borderBottom={`1px solid ${Theme.darkGrey_C}`}
               margin={`0 0 110px`}
             >
-              <Wrapper dr={`row`} borderBottom={`1px solid ${Theme.grey2_C}`}>
+              <Wrapper
+                dr={`row`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                display={noticePrev === null ? `none` : `flex`}
+                onClick={() =>
+                  moveLinkHandler(`./${noticePrev && noticePrev.id}`)
+                }
+                cursor={`pointer`}
+              >
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
                   padding={`10px 0`}
@@ -258,10 +290,17 @@ const Notice = () => {
                   al={`flex-start`}
                   padding={`0 0 0 25px`}
                 >
-                  안녕하세요 이전글입니다.
+                  {noticePrev && noticePrev.title}
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`}>
+              <Wrapper
+                dr={`row`}
+                display={noticeNext === null ? `none` : `flex`}
+                onClick={() =>
+                  moveLinkHandler(`./${noticeNext && noticeNext.id}`)
+                }
+                cursor={`pointer`}
+              >
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
                   padding={`10px 0`}
@@ -274,7 +313,7 @@ const Notice = () => {
                   al={`flex-start`}
                   padding={`0 0 0 25px`}
                 >
-                  다음글 입니다.
+                  {noticeNext && noticeNext.title}
                 </Wrapper>
               </Wrapper>
             </Wrapper>

@@ -3,6 +3,8 @@ import produce from "../util/produce";
 export const initailState = {
   notices: null,
   noticeDetails: null,
+  noticePrev: null,
+  noticeNext: null,
   maxPage: 1,
   createModal: false,
   detailModal: false,
@@ -27,6 +29,14 @@ export const initailState = {
   st_noticeDeleteDone: false,
   st_noticeDeleteError: null,
   //
+  st_noticePrevPageLoading: false, // 공지사항 이전페이지
+  st_noticePrevPageDone: false,
+  st_noticePrevPageError: null,
+  //
+  st_noticeNextPageLoading: false, // 공지사항 다음페이지
+  st_noticeNextPageDone: false,
+  st_noticeNextPageError: null,
+  //
 };
 
 export const NOTICE_LIST_REQUEST = "NOTICE_LIST_REQUEST";
@@ -48,6 +58,14 @@ export const NOTICE_UPDATE_FAILURE = "NOTICE_UPDATE_FAILURE";
 export const NOTICE_DELETE_REQUEST = "NOTICE_DELETE_REQUEST";
 export const NOTICE_DELETE_SUCCESS = "NOTICE_DELETE_SUCCESS";
 export const NOTICE_DELETE_FAILURE = "NOTICE_DELETE_FAILURE";
+//
+export const NOTICE_PREVPAGE_REQUEST = "NOTICE_PREVPAGE_REQUEST";
+export const NOTICE_PREVPAGE_SUCCESS = "NOTICE_PREVPAGE_SUCCESS";
+export const NOTICE_PREVPAGE_FAILURE = "NOTICE_PREVPAGE_FAILURE";
+//
+export const NOTICE_NEXTPAGE_REQUEST = "NOTICE_NEXTPAGE_REQUEST";
+export const NOTICE_NEXTPAGE_SUCCESS = "NOTICE_NEXTPAGE_SUCCESS";
+export const NOTICE_NEXTPAGE_FAILURE = "NOTICE_NEXTPAGE_FAILURE";
 //
 export const CREATE_MODAL_OPEN_REQUEST = "CREATE_MODAL_OPEN_REQUEST";
 export const CREATE_MODAL_CLOSE_REQUEST = "CREATE_MODAL_CLOSE_REQUEST";
@@ -148,6 +166,46 @@ const reducer = (state = initailState, action) =>
         draft.st_noticeDeleteLoading = false;
         draft.st_noticeDeleteDone = false;
         draft.st_noticeDeleteError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case NOTICE_PREVPAGE_REQUEST: {
+        draft.st_noticePrevPageLoading = true;
+        draft.st_noticePrevPageDone = null;
+        draft.st_noticePrevPageError = false;
+        break;
+      }
+      case NOTICE_PREVPAGE_SUCCESS: {
+        draft.st_noticePrevPageLoading = false;
+        draft.st_noticePrevPageDone = true;
+        draft.noticePrev = action.data;
+        break;
+      }
+      case NOTICE_PREVPAGE_FAILURE: {
+        draft.st_noticePrevPageLoading = false;
+        draft.st_noticePrevPageDone = false;
+        draft.st_noticePrevPageError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case NOTICE_NEXTPAGE_REQUEST: {
+        draft.st_noticeNextPageLoading = true;
+        draft.st_noticeNextPageDone = null;
+        draft.st_noticeNextPageError = false;
+        break;
+      }
+      case NOTICE_NEXTPAGE_SUCCESS: {
+        draft.st_noticeNextPageLoading = false;
+        draft.st_noticeNextPageDone = true;
+        draft.noticeNext = action.data;
+        break;
+      }
+      case NOTICE_NEXTPAGE_FAILURE: {
+        draft.st_noticeNextPageLoading = false;
+        draft.st_noticeNextPageDone = false;
+        draft.st_noticeNextPageError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////

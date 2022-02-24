@@ -69,6 +69,12 @@ const GreyBtn = styled(CommonButton)`
     border: 1px solid ${Theme.grey_C};
     color: ${Theme.grey_C};
   }
+
+  @media (max-width: 500px) {
+    width: 80px;
+    height: 25px;
+    font-size: 12px;
+  }
 `;
 
 const Lightgrey1Btn = styled(CommonButton)`
@@ -85,6 +91,12 @@ const Lightgrey1Btn = styled(CommonButton)`
     background-color: ${Theme.darkGrey_C};
     border: 1px solid ${Theme.lightGrey_C};
     color: ${Theme.white_C};
+  }
+
+  @media (max-width: 500px) {
+    width: 100px;
+    height: 35px;
+    font-size: 14px;
   }
 `;
 
@@ -148,7 +160,7 @@ const Cart = () => {
     {
       id: 1,
       productImg: "",
-      productName: "상품명",
+      productName: "상품명상품명상품명상품명상품명상품명상품명상품명",
       price: "1,000,000",
       total: "1,000,000",
       count: 1,
@@ -256,14 +268,18 @@ const Cart = () => {
             >
               장바구니
             </Wrapper>
-            <Wrapper width={`479px`}>
+            <Wrapper width={width < 500 ? `300px` : `479px`}>
               <Image
                 width={`100%`}
                 src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/order/first_step_title.png`}
               />
             </Wrapper>
             <Wrapper al={`flex-start`} margin={`40px 0 20px`}>
-              <CommonButton width={`209px`} height={`53px`} radius={`0`}>
+              <CommonButton
+                width={width < 500 ? `150px` : `209px`}
+                height={width < 500 ? `35px` : `53px`}
+                radius={`0`}
+              >
                 배송상품 (2)
               </CommonButton>
             </Wrapper>
@@ -288,7 +304,7 @@ const Cart = () => {
                         <Wrapper
                           dr={`row`}
                           border={`1px solid ${Theme.grey2_C}`}
-                          margin={`0 0 30px`}
+                          margin={`10px 0`}
                         >
                           <Wrapper
                             dr={`row`}
@@ -314,9 +330,13 @@ const Cart = () => {
                               src={data.productImg}
                             />
                           </Wrapper>
-                          <Wrapper width={`60%`} al={`flex-start`}>
-                            <Wrapper width={`auto`}>{data.productName}</Wrapper>
-                            <Wrapper width={`auto`}>{data.price}</Wrapper>
+                          <Wrapper
+                            width={`60%`}
+                            display={`block`}
+                            al={`flex-start`}
+                          >
+                            <Text isEllipsis={true}>{data.productName}</Text>
+                            <Text>{data.price}원</Text>
                             <Wrapper
                               width={`62px`}
                               height={`25px`}
@@ -345,8 +365,8 @@ const Cart = () => {
                                 onClick={() => countHandler(data.count + 1)}
                               />
                             </Wrapper>
-                            <Wrapper width={`auto`}>{data.total}</Wrapper>
-                            <Wrapper width={`auto`}>기본배송</Wrapper>
+                            <Text width={`auto`}>{data.total}원</Text>
+                            <Text width={`auto`}>기본배송</Text>
                             <DarkgreyBtn width={`100px`}>문의하기</DarkgreyBtn>
                             <Lightgrey2Btn width={`100px`}>
                               관심상품등록
@@ -553,19 +573,28 @@ const Cart = () => {
               </>
             )}
             <Wrapper
-              height={`75px`}
+              height={width < 500 ? `auto` : `75px`}
               bgColor={Theme.lightGrey2_C}
               borderBottom={`1px solid ${Theme.grey2_C}`}
-              dr={`row`}
-              ju={`space-between`}
+              dr={width < 500 ? `column` : `row`}
+              ju={width < 500 ? `center` : `space-between`}
             >
-              <Wrapper width={`10%`}>기본배송</Wrapper>
-              <Wrapper width={`90%`} dr={`row`} ju={`flex-end`}>
+              <Wrapper
+                width={width < 500 ? `100%` : `10%`}
+                al={width < 500 ? `flex-start` : `center`}
+              >
+                기본배송
+              </Wrapper>
+              <Wrapper
+                width={width < 500 ? `100%` : `90%`}
+                dr={`row`}
+                ju={`flex-end`}
+              >
                 상품구매금액 2,000,000 + 부가세 200,000 배송비 0 (무료) = 합계:
                 <Wrapper
                   width={`auto`}
                   color={Theme.red_C}
-                  fontSize={`22px`}
+                  fontSize={width < 500 ? `18px` : `22px`}
                   fontWeight={`bold`}
                   margin={`0 13px 0 22px`}
                 >
@@ -593,13 +622,17 @@ const Cart = () => {
                 width={`calc(100% - 38px)`}
                 color={Theme.grey_C}
                 al={`flex-start`}
+                fontSize={width < 500 ? `11px` : `14px`}
               >
                 할인 적용 금액은 주문서작성의 결제예정금액에서 확인 가능합니다.
               </Wrapper>
             </Wrapper>
             <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 80px`}>
               <Wrapper width={`50%`} dr={`row`} ju={`flex-start`}>
-                <Wrapper width={`auto`} margin={`0 24px 0 10px`}>
+                <Wrapper
+                  width={`auto`}
+                  margin={width < 500 ? `0` : `0 24px 0 10px`}
+                >
                   선택상품을
                 </Wrapper>
                 <GreyBtn>
@@ -614,11 +647,20 @@ const Cart = () => {
             <Wrapper dr={`row`} position={`relative`} margin={`0 0 120px`}>
               <Wrapper width={`auto`} dr={`row`}>
                 <Lightgrey1Btn margin={`0 6px 0 0`}>선택상품주문</Lightgrey1Btn>
-                <CommonButton width={`145px`} height={`50px`} fontSize={`18px`}>
+                <CommonButton
+                  width={width < 500 ? `100px` : `145px`}
+                  height={width < 500 ? `35px` : `50px`}
+                  fontSize={width < 500 ? `14px` : `18px`}
+                >
                   전체상품주문
                 </CommonButton>
               </Wrapper>
-              <Wrapper width={`auto`} position={`absolute`} right={`0`}>
+              <Wrapper
+                width={`auto`}
+                position={width < 500 ? `` : `absolute`}
+                right={`0`}
+                margin={width < 500 ? `0 0 0 6px` : `0`}
+              >
                 <Lightgrey1Btn>쇼핑계속하기</Lightgrey1Btn>
               </Wrapper>
             </Wrapper>

@@ -20,7 +20,14 @@ import { useRouter } from "next/dist/client/router";
 import { NOTICE_LIST_REQUEST } from "../../../reducers/notice";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Empty } from "antd";
+import { Empty, Pagination } from "antd";
+import styled from "styled-components";
+
+const CustomPagination = styled(Pagination)`
+  & .ant-pagination-item-active {
+    border: none;
+  }
+`;
 
 const Notice = () => {
   ////// GLOBAL STATE //////
@@ -28,7 +35,7 @@ const Notice = () => {
     (state) => state.seo
   );
 
-  const { notices } = useSelector((state) => state.notice);
+  const { notices, maxPage } = useSelector((state) => state.notice);
 
   const width = useWidth();
   const router = useRouter();
@@ -69,6 +76,17 @@ const Notice = () => {
     });
   }, [router.query]);
   ////// TOGGLE //////
+  const otherPageCall = useCallback((changePage) => {
+    setCurrentPage(changePage);
+    const queryString = `?page=${changePage}`;
+
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        qs: queryString || "",
+      },
+    });
+  }, []);
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -241,6 +259,15 @@ const Notice = () => {
                   })
                 )}
               </Wrapper>
+              <CustomPagination
+                size="small"
+                defaultCurrent={1}
+                current={parseInt(currentPage)}
+                total={maxPage * 10}
+                onChange={(page) => otherPageCall(page)}
+                showQuickJumper={false}
+                showSizeChanger={false}
+              />
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>

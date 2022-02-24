@@ -20,6 +20,14 @@ import {
   NOTICE_DELETE_REQUEST,
   NOTICE_DELETE_SUCCESS,
   NOTICE_DELETE_FAILURE,
+  //
+  NOTICE_PREVPAGE_REQUEST,
+  NOTICE_PREVPAGE_SUCCESS,
+  NOTICE_PREVPAGE_FAILURE,
+  //
+  NOTICE_NEXTPAGE_REQUEST,
+  NOTICE_NEXTPAGE_SUCCESS,
+  NOTICE_NEXTPAGE_FAILURE,
 } from "../reducers/notice";
 
 // SAGA AREA ********************************************************************************************************
@@ -155,6 +163,58 @@ function* noticeDelete(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function noticePrevPageAPI(data) {
+  return axios.get(`/api/notice/prev/${data.noticeId}`, data);
+}
+
+function* noticePrevPage(action) {
+  try {
+    const result = yield call(noticePrevPageAPI, action.data);
+
+    yield put({
+      type: NOTICE_PREVPAGE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NOTICE_PREVPAGE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function noticeNextPageAPI(data) {
+  return axios.get(`/api/notice/next/${data.noticeId}`, data);
+}
+
+function* noticeNextPage(action) {
+  try {
+    const result = yield call(noticeNextPageAPI, action.data);
+
+    yield put({
+      type: NOTICE_NEXTPAGE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NOTICE_NEXTPAGE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
 function* watchNoticeList() {
@@ -177,6 +237,14 @@ function* watchNoticeDelete() {
   yield takeLatest(NOTICE_DELETE_REQUEST, noticeDelete);
 }
 
+function* watchNoticePrevPage() {
+  yield takeLatest(NOTICE_PREVPAGE_REQUEST, noticePrevPage);
+}
+
+function* watchNoticeNextPage() {
+  yield takeLatest(NOTICE_NEXTPAGE_REQUEST, noticeNextPage);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* noticeSaga() {
   yield all([
@@ -185,6 +253,8 @@ export default function* noticeSaga() {
     fork(watchNoticeCreate),
     fork(watchNoticeUpdate),
     fork(watchNoticeDelete),
+    fork(watchNoticePrevPage),
+    fork(watchNoticeNextPage),
     //
   ]);
 }
