@@ -127,15 +127,27 @@ const AdminMenu = () => {
         <SubMenu
           key="sub3"
           icon={<BookOutlined />}
-          title="게시판 관리"
+          title="커뮤니티 관리"
           onTitleClick={titleClickHandler("sub3")}
         >
           <Menu.Item key="/admin/board/notice/list">
             <MenuName>공지사항 관리</MenuName>
           </Menu.Item>
-          <Menu.Item key="/admin/board/gallery/list">
-            <MenuName>갤러리 관리</MenuName>
+          <Menu.Item key="/admin/question/type">
+            <MenuName>문의 유형 리스트</MenuName>
           </Menu.Item>
+          <Menu.Item key="/admin/question/list">
+            <MenuName>문의 리스트</MenuName>
+          </Menu.Item>
+          <Menu.Item key="/admin/faq/type">
+            <MenuName>FAQ 유형 리스트</MenuName>
+          </Menu.Item>
+          <Menu.Item key="/admin/faq/list">
+            <MenuName>FAQ 리스트</MenuName>
+          </Menu.Item>
+          {/* <Menu.Item key="/admin/board/gallery/list">
+            <MenuName>갤러리 관리</MenuName>
+          </Menu.Item> */}
         </SubMenu>
         <SubMenu
           key="su43"
@@ -162,20 +174,7 @@ const AdminMenu = () => {
           icon={<PhoneOutlined />}
           title="문의 관리"
           onTitleClick={titleClickHandler("sub6")}
-        >
-          <Menu.Item key="/admin/question/type">
-            <MenuName>문의 유형 리스트</MenuName>
-          </Menu.Item>
-          <Menu.Item key="/admin/question/list">
-            <MenuName>문의 리스트</MenuName>
-          </Menu.Item>
-          <Menu.Item key="/admin/faq/type">
-            <MenuName>FAQ 유형 리스트</MenuName>
-          </Menu.Item>
-          <Menu.Item key="/admin/faq/list">
-            <MenuName>FAQ 리스트</MenuName>
-          </Menu.Item>
-        </SubMenu>
+        ></SubMenu>
         <SubMenu
           key="sub8"
           icon={<GiftOutlined />}
