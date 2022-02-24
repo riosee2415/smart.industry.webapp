@@ -4,8 +4,14 @@ export const initailState = {
   menuList: null,
   menuImagePath: null,
 
+  headerMenuList: null,
+
   createModal: false,
 
+  //
+  st_menuHeaderListLoading: false, // 메뉴 가져오기
+  st_menuHeaderListDone: false,
+  st_menuHeaderListError: null,
   //
   st_menuListLoading: false, // 메뉴 가져오기
   st_menuListDone: false,
@@ -28,6 +34,10 @@ export const initailState = {
   st_menuUploadError: null,
 };
 
+export const MENU_HEADER_LIST_REQUEST = "MENU_HEADER_LIST_REQUEST";
+export const MENU_HEADER_LIST_SUCCESS = "MENU_HEADER_LIST_SUCCESS";
+export const MENU_HEADER_LIST_FAILURE = "MENU_HEADER_LIST_FAILURE";
+//
 export const MENU_LIST_REQUEST = "MENU_LIST_REQUEST";
 export const MENU_LIST_SUCCESS = "MENU_LIST_SUCCESS";
 export const MENU_LIST_FAILURE = "MENU_LIST_FAILURE";
@@ -55,6 +65,25 @@ export const MENU_IMAGE_PATH = "MENU_IMAGE_PATH";
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case MENU_HEADER_LIST_REQUEST: {
+        draft.st_menuHeaderListLoading = true;
+        draft.st_menuHeaderListDone = null;
+        draft.st_menuHeaderListError = false;
+        break;
+      }
+      case MENU_HEADER_LIST_SUCCESS: {
+        draft.st_menuHeaderListLoading = false;
+        draft.st_menuHeaderListDone = true;
+        draft.headerMenuList = action.data;
+        break;
+      }
+      case MENU_HEADER_LIST_FAILURE: {
+        draft.st_menuHeaderListLoading = false;
+        draft.st_menuHeaderListDone = false;
+        draft.st_menuHeaderListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
       case MENU_LIST_REQUEST: {
         draft.st_menuListLoading = true;
         draft.st_menuListDone = null;

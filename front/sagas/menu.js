@@ -1,6 +1,10 @@
 import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
 import axios from "axios";
 import {
+  MENU_HEADER_LIST_REQUEST,
+  MENU_HEADER_LIST_SUCCESS,
+  MENU_HEADER_LIST_FAILURE,
+  //
   MENU_LIST_REQUEST,
   MENU_LIST_SUCCESS,
   MENU_LIST_FAILURE,
@@ -21,6 +25,33 @@ import {
   MENU_UPLOAD_SUCCESS,
   MENU_UPLOAD_FAILURE,
 } from "../reducers/menu";
+
+// // SAGA AREA ********************************************************************************************************
+// // ******************************************************************************************************************
+// function menuHeaderListAPI() {
+//   return axios.get(`/api/menu/list`);
+// }
+
+// function* menuHeaderList(action) {
+//   try {
+//     const result = yield call(menuHeaderListAPI, action.data);
+
+//     yield put({
+//       type: MENU_HEADER_LIST_SUCCESS,
+//       data: result.data,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     yield put({
+//       type: MENU_HEADER_LIST_FAILURE,
+//       error: err.response.data,
+//     });
+//   }
+// }
+
+// // ******************************************************************************************************************
+// // ******************************************************************************************************************
+// // ******************************************************************************************************************
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
@@ -158,6 +189,10 @@ function* menuUpload(action) {
 // ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
+// function* watchMenuHeaderList() {
+//   yield takeLatest(MENU_HEADER_LIST_REQUEST, menuHeaderList);
+// }
+
 function* watchMenuList() {
   yield takeLatest(MENU_LIST_REQUEST, menuList);
 }

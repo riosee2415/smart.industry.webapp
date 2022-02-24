@@ -168,8 +168,6 @@ const ProductList = () => {
     (state) => state.product
   );
 
-  console.log("productList", productList);
-
   ////// HOOKS //////
 
   const dispatch = useDispatch();
@@ -186,6 +184,7 @@ const ProductList = () => {
   ////// USEEFFECT //////
   useEffect(() => {
     if (router.query.category) {
+      console.log("router.query.category", router.query.category);
       setProductType(parseInt(router.query.category));
     }
     if (router.query.menu) {
@@ -197,6 +196,8 @@ const ProductList = () => {
       });
     }
   }, [router.query]);
+
+  console.log("productType", productType);
 
   useEffect(() => {
     dispatch({
@@ -222,12 +223,6 @@ const ProductList = () => {
       });
     }
   }, [productType]);
-
-  useEffect(() => {
-    if (st_categoryInMenuListDone) {
-      setProductType(categoryList && categoryList[0].id);
-    }
-  }, [st_categoryInMenuListDone]);
 
   ////// HANDLER //////
 
@@ -341,8 +336,6 @@ const ProductList = () => {
             <Wrapper margin={`280px 0 0`}>
               <Wrapper al={`flex-start`}>
                 <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 9px`}>
-                  {console.log("categoryList", categoryList)}
-                  {console.log("productType", productType)}
                   {categoryList &&
                     categoryList.length > 0 &&
                     productType &&
