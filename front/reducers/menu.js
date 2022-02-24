@@ -186,6 +186,9 @@ const reducer = (state = initailState, action) =>
       case MENU_IMAGE_PATH: {
         draft.menuImagePath = action.data;
       }
+
+      default:
+        break;
     }
   });
 

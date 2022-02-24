@@ -176,7 +176,11 @@ const reducer = (state = initailState, action) =>
 
       case CREATE_MODAL_TOGGLE: {
         draft.createModal = !draft.createModal;
+        break;
       }
+
+      default:
+        break;
     }
   });
 
