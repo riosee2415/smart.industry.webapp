@@ -6,7 +6,7 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
@@ -21,6 +21,8 @@ import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { Empty } from "antd";
 import { useRouter } from "next/dist/client/router";
+import { FAQ_GET_REQUEST, FAQ_TYPE_GET_REQUEST } from "../../../reducers/faq";
+import { useEffect } from "react";
 
 const FaqTabBtn = styled(Wrapper)`
   width: 180px;
@@ -56,16 +58,28 @@ const Faq = () => {
     (state) => state.seo
   );
 
+  const { faqs, types } = useSelector((state) => state.faq);
+
   const width = useWidth();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   ////// HOOKS //////
-  const [typeTab, setTypeTab] = useState(1);
+  const [typeTab, setTypeTab] = useState(0);
 
   const [datum, setDatum] = useState(null);
 
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: FAQ_GET_REQUEST,
+      data: {
+        typeId: "",
+        search: "",
+      },
+    });
+  }, []);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
@@ -83,91 +97,6 @@ const Faq = () => {
     [datum]
   );
   ////// DATAVIEW //////
-  const faqType = [
-    {
-      id: 1,
-      typeId: 1,
-      type: "전체",
-    },
-    {
-      id: 2,
-      typeId: 2,
-      type: "상품문의",
-    },
-    {
-      id: 3,
-      typeId: 3,
-      type: "배송문의",
-    },
-    {
-      id: 4,
-      typeId: 4,
-      type: "취소/반품/교환",
-    },
-    {
-      id: 5,
-      typeId: 5,
-      type: "주문조회",
-    },
-    {
-      id: 6,
-      typeId: 6,
-      type: "기타문의",
-    },
-    {
-      id: 7,
-      typeId: 7,
-      type: "회원/탈퇴",
-    },
-  ];
-  const faqTypeQuestion = [
-    // {
-    //   type: "전체",
-    // },
-    {
-      id: 1,
-      typeId: 2,
-      type: "상품문의",
-      question: "상품문의",
-      answer: "상품문의답변",
-    },
-    {
-      id: 2,
-      typeId: 3,
-      type: "배송문의",
-      question: "배송문의",
-      answer: "배송문의답변",
-    },
-    {
-      id: 3,
-      typeId: 4,
-      type: "취소/반품/교환",
-      question: "취소/반품/교환",
-      answer: "취소/반품/교환답변",
-    },
-    {
-      id: 4,
-      typeId: 5,
-      type: "주문조회",
-      question: "주문조회",
-      answer: "주문조회답변",
-    },
-    {
-      id: 5,
-      typeId: 6,
-      type: "기타문의",
-      question: "기타문의",
-      answer: "기타문의답변",
-    },
-    {
-      id: 6,
-      typeId: 7,
-      type: "회원/탈퇴",
-      question: "회원/탈퇴",
-      answer:
-        "회원/탈퇴답변 sdfsdf asdfasdfa dfasdfasd fasdfasdf asdfasdf asdfasdfas dfasdfasd fasdfasdf asdfasdf asdfasdf asdfasdf asdfasdf wefwefwef wefwefwef wefwefwef wefwefwef fwefwefwef",
-    },
-  ];
 
   return (
     <>
@@ -289,56 +218,221 @@ const Faq = () => {
               al={`flex-start`}
               margin={`0 0 40px`}
             >
-              {faqType && faqType.length === 0
+              <FaqTabBtn
+                border={`1px solid ${Theme.grey2_C}`}
+                bgColor={
+                  typeTab === 0
+                    ? `${Theme.basicTheme_C}`
+                    : `${Theme.lightGrey2_C}`
+                }
+                color={typeTab === 0 ? `${Theme.lightGrey2_C}` : ``}
+                onClick={() => setTypeTab(0)}
+              >
+                전체
+              </FaqTabBtn>
+              {types && types.length === 0
                 ? ``
-                : faqType &&
-                  faqType.map((data) => {
+                : types &&
+                  types.map((data) => {
                     return (
                       <FaqTabBtn
                         border={`1px solid ${Theme.grey2_C}`}
                         bgColor={
-                          typeTab === data.typeId
+                          typeTab === data.id
                             ? `${Theme.basicTheme_C}`
                             : `${Theme.lightGrey2_C}`
                         }
                         color={
-                          typeTab === data.typeId ? `${Theme.lightGrey2_C}` : ``
+                          typeTab === data.id ? `${Theme.lightGrey2_C}` : ``
                         }
-                        onClick={() => setTypeTab(data.typeId)}
+                        onClick={() => setTypeTab(data.id)}
                       >
-                        {data.type}
+                        {data.value}
                       </FaqTabBtn>
                     );
                   })}
             </Wrapper>
             <Wrapper margin={`0 0 180px`}>
-              {faqTypeQuestion && faqTypeQuestion[0].typeId === typeTab ? (
+              <Wrapper
+                bgColor={Theme.lightGrey2_C}
+                height={`40px`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
+                <Wrapper width={width < 700 ? `15%` : `5%`}>번호</Wrapper>
+                <Wrapper
+                  width={width < 700 ? `35%` : width < 1100 ? `25%` : `15%`}
+                >
+                  분류
+                </Wrapper>
+                <Wrapper
+                  width={width < 700 ? `50%` : width < 1100 ? `70%` : `80%`}
+                >
+                  제목
+                </Wrapper>
+              </Wrapper>
+              {/* {faqs && faqs.length === 0 ? (
+                <Empty description="조회된 FAQ가 없습니다." />
+              ) : ( 
+                faqs &&
+                faqs.map((data, idx) => {
+                  return (
+                    <>
+                      <Wrapper ju={`flex-start`}>
+                        <Wrapper
+                          dr={`row`}
+                          ju={`flex-start`}
+                          padding={`14px 0px`}
+                          cursor={`pointer`}
+                          borderBottom={`1px solid ${Theme.grey2_C}`}
+                          onClick={() => onClickToggleHandler(data)}
+                        >
+                          <Wrapper width={width < 700 ? `15%` : `5%`}>
+                            {data.id}
+                          </Wrapper>
+                          <Wrapper
+                            width={
+                              width < 700 ? `35%` : width < 1100 ? `25%` : `15%`
+                            }
+                          >
+                            {data.FaqType.value}
+                          </Wrapper>
+                          <Wrapper
+                            width={
+                              width < 700 ? `50%` : width < 1100 ? `70%` : `80%`
+                            }
+                            al={`flex-start`}
+                          >
+                            {data.question}
+                          </Wrapper>
+                        </Wrapper>
+
+                        {datum && datum.id === data.id && (
+                          <Wrapper
+                            dr={`row`}
+                            borderBottom={`1px solid ${Theme.grey2_C}`}
+                          >
+                            <Wrapper
+                              width={width < 700 ? `0%` : `6%`}
+                            ></Wrapper>
+                            <Wrapper
+                              width={width < 700 ? `0%` : `14%`}
+                            ></Wrapper>
+                            <Wrapper
+                              width={width < 700 ? `100%` : `80%`}
+                              dr={`row`}
+                              al={`flex-start`}
+                            >
+                              <Wrapper
+                                width={`20px`}
+                                height={`20px`}
+                                color={Theme.white_C}
+                                radius={`100%`}
+                                bgColor={Theme.red_C}
+                                margin={`23px 26px 0 20px`}
+                              >
+                                A
+                              </Wrapper>
+                              <Wrapper
+                                width={`calc(100% - 66px)`}
+                                padding={`24px 0`}
+                                al={`flex-start`}
+                              >
+                                {data.answer}
+                              </Wrapper>
+                            </Wrapper>
+                          </Wrapper>
+                        )}
+                      </Wrapper>
+                    </>
+                  );
+                })
+              )} */}
+
+              {faqs && faqs.length === 0 ? (
                 <Empty description="조회된 FAQ가 없습니다." />
               ) : (
-                <>
-                  <Wrapper
-                    bgColor={Theme.lightGrey2_C}
-                    height={`40px`}
-                    borderTop={`1px solid ${Theme.grey2_C}`}
-                    borderBottom={`1px solid ${Theme.grey2_C}`}
-                  >
-                    <Wrapper width={width < 700 ? `15%` : `5%`}>번호</Wrapper>
-                    <Wrapper
-                      width={width < 700 ? `35%` : width < 1100 ? `25%` : `15%`}
-                    >
-                      분류
-                    </Wrapper>
-                    <Wrapper
-                      width={width < 700 ? `50%` : width < 1100 ? `70%` : `80%`}
-                    >
-                      제목
-                    </Wrapper>
-                  </Wrapper>
-                  {faqTypeQuestion && faqTypeQuestion.length === 0
-                    ? ``
-                    : faqTypeQuestion &&
-                      faqTypeQuestion.reverse().map((data, idx) => {
-                        return (
+                faqs &&
+                faqs.map((data) => {
+                  return (
+                    <>
+                      {typeTab === 0 ? (
+                        <Wrapper ju={`flex-start`}>
+                          <Wrapper
+                            dr={`row`}
+                            ju={`flex-start`}
+                            padding={`14px 0px`}
+                            cursor={`pointer`}
+                            borderBottom={`1px solid ${Theme.grey2_C}`}
+                            onClick={() => onClickToggleHandler(data)}
+                          >
+                            <Wrapper width={width < 700 ? `15%` : `5%`}>
+                              {data.id}
+                            </Wrapper>
+                            <Wrapper
+                              width={
+                                width < 700
+                                  ? `35%`
+                                  : width < 1100
+                                  ? `25%`
+                                  : `15%`
+                              }
+                            >
+                              {data.FaqType.value}
+                            </Wrapper>
+                            <Wrapper
+                              width={
+                                width < 700
+                                  ? `50%`
+                                  : width < 1100
+                                  ? `70%`
+                                  : `80%`
+                              }
+                              al={`flex-start`}
+                            >
+                              {data.question}
+                            </Wrapper>
+                          </Wrapper>
+
+                          {datum && datum.id === data.id && (
+                            <Wrapper
+                              dr={`row`}
+                              borderBottom={`1px solid ${Theme.grey2_C}`}
+                            >
+                              <Wrapper
+                                width={width < 700 ? `0%` : `6%`}
+                              ></Wrapper>
+                              <Wrapper
+                                width={width < 700 ? `0%` : `14%`}
+                              ></Wrapper>
+                              <Wrapper
+                                width={width < 700 ? `100%` : `80%`}
+                                dr={`row`}
+                                al={`flex-start`}
+                              >
+                                <Wrapper
+                                  width={`20px`}
+                                  height={`20px`}
+                                  color={Theme.white_C}
+                                  radius={`100%`}
+                                  bgColor={Theme.red_C}
+                                  margin={`23px 26px 0 20px`}
+                                >
+                                  A
+                                </Wrapper>
+                                <Wrapper
+                                  width={`calc(100% - 66px)`}
+                                  padding={`24px 0`}
+                                  al={`flex-start`}
+                                >
+                                  {data.answer}
+                                </Wrapper>
+                              </Wrapper>
+                            </Wrapper>
+                          )}
+                        </Wrapper>
+                      ) : (
+                        data.FaqTypeId === typeTab && (
                           <Wrapper ju={`flex-start`}>
                             <Wrapper
                               dr={`row`}
@@ -360,7 +454,7 @@ const Faq = () => {
                                     : `15%`
                                 }
                               >
-                                {data.type}
+                                {data.FaqType.value}
                               </Wrapper>
                               <Wrapper
                                 width={
@@ -413,9 +507,11 @@ const Faq = () => {
                               </Wrapper>
                             )}
                           </Wrapper>
-                        );
-                      })}
-                </>
+                        )
+                      )}
+                    </>
+                  );
+                })
               )}
             </Wrapper>
           </RsWrapper>
@@ -442,6 +538,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: FAQ_TYPE_GET_REQUEST,
     });
 
     // 구현부 종료

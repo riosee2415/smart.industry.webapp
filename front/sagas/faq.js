@@ -204,7 +204,7 @@ function* faqTypeCreate(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function faqTypeDeleteAPI(data) {
-  return axios.delete(`/api/faq/type/delete/`, data);
+  return axios.patch(`/api/faq/type/delete/`, data);
 }
 
 function* faqTypeDelete(action) {
