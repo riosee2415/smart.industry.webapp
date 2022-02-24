@@ -30,18 +30,33 @@ router.post("/list", async (req, res, next) => {
       case 1:
         questions = await ProdQuestion.findAll({
           where: { isComplete: false, ProductId: parseInt(ProductId) },
+          include: [
+            {
+              model: Product,
+            },
+          ],
           //
         });
         break;
       case 2:
         questions = await ProdQuestion.findAll({
           where: { isComplete: true, ProductId: parseInt(ProductId) },
+          include: [
+            {
+              model: Product,
+            },
+          ],
           //
         });
         break;
       case 3:
         questions = await ProdQuestion.findAll({
           ProductId: parseInt(ProductId),
+          include: [
+            {
+              model: Product,
+            },
+          ],
         });
         break;
       default:
@@ -60,6 +75,11 @@ router.post("/detail", async (req, res, next) => {
   try {
     const exQue = await ProdQuestion.findOne({
       where: { id: parseInt(id) },
+      include: [
+        {
+          model: Product,
+        },
+      ],
     });
 
     if (!exQue) {
