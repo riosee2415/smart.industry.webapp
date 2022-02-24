@@ -60,6 +60,7 @@ const Notice = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [id, setId] = useState("");
+  const [code, setCode] = useState("");
   ////// REDUX //////
   ////// USEEFFECT //////
 
@@ -72,12 +73,6 @@ const Notice = () => {
       },
     });
   }, []);
-
-  useEffect(() => {
-    if (st_productQuestionDetailDone) {
-      moveLinkHandler(`/community/productQnA/detail/${id}`);
-    }
-  }, [st_productQuestionDetailDone]);
 
   useEffect(() => {
     if (st_productQuestionDetailError) {
@@ -103,51 +98,59 @@ const Notice = () => {
 
   const onClickDetailHanlder = useCallback((data) => {
     if (data.isSecret) {
-      setId(data.id);
       ModalToggle();
     } else {
       moveLinkHandler(`/community/productQnA/detail/${data.id}`);
     }
+    setCode(data.secret);
+    setId(data.id);
   }, []);
 
   const ModalHandleOk = useCallback(() => {
     if (!inputSecret.value) {
       return message.error("비밀번호를 입력해주세요.");
     } else {
-      dispatch({
-        type: PRODUCT_QUESTION_DETAIL_REQUEST,
-        data: {
-          id,
-          secret: inputSecret.value,
-        },
-      });
-    }
+      if (code === inputSecret.value) {
+        moveLinkHandler(
+          `/community/productQnA/detail/${id}?Code=${code ? code : ""}`
+        );
 
-    inputSecret.setValue();
-    ModalToggle();
+        ModalToggle();
+        inputSecret.setValue("");
+        return message.success("비밀번호를 확인했습니다.");
+      } else {
+        return message.error("비밀번호가 틀렸습니다.");
+      }
+    }
   }, [isModalVisible, inputSecret.value]);
 
+  const ModalHandlerCancel = useCallback(() => {
+    ModalToggle();
+
+    inputSecret.setValue("");
+  }, [isModalVisible]);
+
   ////// DATAVIEW //////
-  const testNotice = [
-    {
-      id: 1,
-      title: "상품문의",
-      createdAt: "2022-02-15-00:00",
-      hit: "322",
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-      productName: "상품명",
-    },
-    {
-      id: 2,
-      title: "상품문의[답변완료]",
-      createdAt: "2022-02-15-00:00",
-      hit: "123",
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-      productName: "상품명",
-    },
-  ];
+  // const testNotice = [
+  //   {
+  //     id: 1,
+  //     title: "상품문의",
+  //     createdAt: "2022-02-15-00:00",
+  //     hit: "322",
+  //     thumbnail:
+  //       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
+  //     productName: "상품명",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "상품문의[답변완료]",
+  //     createdAt: "2022-02-15-00:00",
+  //     hit: "123",
+  //     thumbnail:
+  //       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
+  //     productName: "상품명",
+  //   },
+  // ];
 
   return (
     <>
@@ -288,13 +291,13 @@ const Notice = () => {
                             <Image
                               width={width < 500 ? `40px` : `50px`}
                               height={width < 500 ? `40px` : `50px`}
-                              src={data.thumbnail}
+                              src={data.Product.thumbnail}
                             />
                             <Wrapper
                               width={`calc(100% - 50px)`}
                               al={`flex-start`}
                               padding={`0 0 0 10px`}>
-                              {data.productName}
+                              {data.Product.title}
                             </Wrapper>
                           </Wrapper>
                           <Wrapper
@@ -360,7 +363,7 @@ const Notice = () => {
             title="비밀글 입력"
             visible={isModalVisible}
             onOk={() => ModalHandleOk()}
-            onCancel={() => ModalToggle()}
+            onCancel={() => ModalHandlerCancel()}
             okText="확인"
             cancelText="취소">
             <Wrapper dr={`row`}>

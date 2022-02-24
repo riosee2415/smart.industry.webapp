@@ -39,8 +39,25 @@ const ProductQnA = () => {
 
   ////// HOOKS //////
 
+  const [detailData, setDetailData] = useState({});
+
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: PRODUCT_QUESTION_DETAIL_REQUEST,
+      data: {
+        id: router.query.id,
+        secret: router.query.Code,
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    if (st_productQuestionDetailDone) {
+      setDetailData(productQuestionDetail);
+    }
+  }, [st_productQuestionDetailDone]);
 
   useEffect(() => {
     if (st_productQuestionDetailError) {
@@ -177,7 +194,7 @@ const ProductQnA = () => {
                   width={width < 500 ? `80%` : `90%`}
                   al={`flex-start`}
                   padding={`0 0 0 20px`}>
-                  {productQuestionDetail && productQuestionDetail.title}
+                  {detailData && detailData.title}
                 </Wrapper>
               </Wrapper>
               <Wrapper
@@ -196,7 +213,7 @@ const ProductQnA = () => {
                   width={width < 500 ? `80%` : `90%`}
                   al={`flex-start`}
                   padding={`0 0 0 20px`}>
-                  {productQuestionDetail && productQuestionDetail.author}
+                  {detailData && detailData.author}
                 </Wrapper>
               </Wrapper>
               <Wrapper
@@ -215,8 +232,9 @@ const ProductQnA = () => {
                   width={width < 500 ? `30%` : `15%`}
                   al={`flex-start`}
                   padding={`0 0 0 20px`}>
-                  {productQuestionDetail &&
-                    productQuestionDetail.createdAt.substring(0, 10)}
+                  {detailData &&
+                    detailData.createdAt &&
+                    detailData.createdAt.substring(0, 10)}
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `25%` : `10%`}
@@ -230,7 +248,7 @@ const ProductQnA = () => {
                   width={width < 500 ? `25%` : `65%`}
                   al={`flex-start`}
                   padding={`0 0 0 20px`}>
-                  {productQuestionDetail && productQuestionDetail.hit}
+                  {detailData && detailData.hit}
                 </Wrapper>
               </Wrapper>
               <Wrapper
@@ -238,17 +256,13 @@ const ProductQnA = () => {
                 al={`flex-start`}
                 ju={`flex-start`}
                 padding={`23px 0 0 20px`}>
-                {productQuestionDetail && productQuestionDetail.content}
+                {detailData && detailData.content}
               </Wrapper>
               <Wrapper
                 dr={`row`}
                 al={`flex-start`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
-                display={
-                  productQuestionDetail && productQuestionDetail.answer
-                    ? `flex`
-                    : `none`
-                }
+                display={detailData && detailData.answer ? `flex` : `none`}
                 bgColor={Theme.lightGrey2_C}>
                 <Wrapper
                   width={`20px`}
@@ -266,7 +280,7 @@ const ProductQnA = () => {
                   al={`flex-start`}
                   ju={`flex-start`}
                   padding={`23px 10px 0 0`}>
-                  {productQuestionDetail && productQuestionDetail.answer}
+                  {detailData && detailData.answer}
                 </Wrapper>
               </Wrapper>
             </Wrapper>

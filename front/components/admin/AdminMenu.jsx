@@ -63,8 +63,7 @@ const AdminMenu = () => {
         selectedKeys={[current]}
         mode="inline"
         selectedKeys={router.pathname}
-        disabled={false}
-      >
+        disabled={false}>
         <Wrapper margin={`20px 0 10px`}>
           <Image
             alt="logo"
@@ -94,8 +93,7 @@ const AdminMenu = () => {
           key="sub1"
           icon={<BarChartOutlined />}
           title="접속자 관리"
-          onTitleClick={titleClickHandler("sub1")}
-        >
+          onTitleClick={titleClickHandler("sub1")}>
           <Menu.Item key="/admin/logs/acceptLogs">
             <MenuName>접속자 통계</MenuName>
           </Menu.Item>
@@ -104,8 +102,7 @@ const AdminMenu = () => {
           key="sub2"
           icon={<InfoCircleOutlined />}
           title="기초 관리"
-          onTitleClick={titleClickHandler("sub2")}
-        >
+          onTitleClick={titleClickHandler("sub2")}>
           <Menu.Item key="/admin/info/businessInformation">
             <MenuName>사업자정보 관리</MenuName>
           </Menu.Item>
@@ -128,8 +125,7 @@ const AdminMenu = () => {
           key="sub3"
           icon={<BookOutlined />}
           title="커뮤니티 관리"
-          onTitleClick={titleClickHandler("sub3")}
-        >
+          onTitleClick={titleClickHandler("sub3")}>
           <Menu.Item key="/admin/board/notice/list">
             <MenuName>공지사항 관리</MenuName>
           </Menu.Item>
@@ -153,8 +149,7 @@ const AdminMenu = () => {
           key="su43"
           icon={<SettingOutlined />}
           title="베너 관리"
-          onTitleClick={titleClickHandler("sub4")}
-        >
+          onTitleClick={titleClickHandler("sub4")}>
           <Menu.Item key="/admin/banner/mainbanner">
             <MenuName>메인베너 관리</MenuName>
           </Menu.Item>
@@ -163,8 +158,7 @@ const AdminMenu = () => {
           key="sub5"
           icon={<UserOutlined />}
           title="회원 관리"
-          onTitleClick={titleClickHandler("sub5")}
-        >
+          onTitleClick={titleClickHandler("sub5")}>
           <Menu.Item key="/admin/user/userList">
             <MenuName>회원 리스트</MenuName>
           </Menu.Item>
@@ -173,24 +167,25 @@ const AdminMenu = () => {
           key="sub6"
           icon={<PhoneOutlined />}
           title="문의 관리"
-          onTitleClick={titleClickHandler("sub6")}
-        ></SubMenu>
+          onTitleClick={titleClickHandler("sub6")}></SubMenu>
         <SubMenu
           key="sub8"
           icon={<GiftOutlined />}
           title="상품 관리"
-          onTitleClick={titleClickHandler("sub8")}
-        >
+          onTitleClick={titleClickHandler("sub8")}>
           <Menu.Item key="/admin/product/list">
             <MenuName>상품 리스트</MenuName>
+          </Menu.Item>
+
+          <Menu.Item key="/admin/product/question">
+            <MenuName>상품 문의</MenuName>
           </Menu.Item>
         </SubMenu>
         <SubMenu
           key="sub7"
           icon={<SettingOutlined />}
           title="환경 설정"
-          onTitleClick={titleClickHandler("sub7")}
-        >
+          onTitleClick={titleClickHandler("sub7")}>
           <Menu.Item key="/admin/envv/seo">
             <MenuName>SEO 설정</MenuName>
           </Menu.Item>
