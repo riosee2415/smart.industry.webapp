@@ -14,6 +14,7 @@ import menu from "./menu";
 import category from "./category";
 import product from "./product";
 import faq from "./faq";
+import interest from "./interest";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -37,6 +38,7 @@ const rootReducer = (state, action) => {
           category,
           product,
           faq,
+          interest,
         });
         return combinedReducer(state, action);
       }
