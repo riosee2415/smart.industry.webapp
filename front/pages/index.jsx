@@ -47,7 +47,7 @@ const ProductWrapper = styled(Wrapper)`
   cursor: pointer;
 
   img {
-    height: 270px;
+    height: 290px;
     transition: 0.5s;
   }
 
@@ -111,6 +111,13 @@ const MainProductButton = styled(Button)`
   width: 135px;
   height: 50px;
   border-radius: 0;
+
+  &:hover {
+    background-color: ${Theme.basicTheme_C};
+    border: 1px solid ${Theme.basicTheme_C};
+    color: ${Theme.white_C};
+  }
+
   @media (max-width: 900px) {
     width: 115px;
     height: 40px;
@@ -125,6 +132,10 @@ const MainBottomButton = styled(Button)`
   border-radius: 0;
   background-color: transparent;
   color: ${Theme.white_C};
+
+  &:hover {
+    color: ${Theme.black_C};
+  }
 
   @media (max-width: 900px) {
     width: 115px;
@@ -448,7 +459,6 @@ const Home = ({}) => {
                       return (
                         <ProductWrapper key={data.id}>
                           <Wrapper
-                            padding={`20px`}
                             border={`1px solid ${Theme.lightGrey_C}`}
                             position={`relative`}
                           >
@@ -464,7 +474,6 @@ const Home = ({}) => {
                               left={`0`}
                               width={`100%`}
                               height={`100%`}
-                              padding={`20px`}
                               bgColor={`rgba(255, 255, 255, 0.6)`}
                             >
                               <Wrapper
@@ -596,7 +605,6 @@ const Home = ({}) => {
                       return (
                         <ProductWrapper>
                           <Wrapper
-                            padding={`20px`}
                             border={`1px solid ${Theme.lightGrey_C}`}
                             position={`relative`}
                           >
@@ -612,7 +620,6 @@ const Home = ({}) => {
                               left={`0`}
                               width={`100%`}
                               height={`100%`}
-                              padding={`20px`}
                               bgColor={`rgba(255, 255, 255, 0.6)`}
                             >
                               <Wrapper
