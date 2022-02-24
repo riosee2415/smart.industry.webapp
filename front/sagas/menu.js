@@ -26,32 +26,32 @@ import {
   MENU_UPLOAD_FAILURE,
 } from "../reducers/menu";
 
-// // SAGA AREA ********************************************************************************************************
-// // ******************************************************************************************************************
-// function menuHeaderListAPI() {
-//   return axios.get(`/api/menu/list`);
-// }
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function menuHeaderListAPI() {
+  return axios.get(`/api/menu/menuInCat`);
+}
 
-// function* menuHeaderList(action) {
-//   try {
-//     const result = yield call(menuHeaderListAPI, action.data);
+function* menuHeaderList(action) {
+  try {
+    const result = yield call(menuHeaderListAPI, action.data);
 
-//     yield put({
-//       type: MENU_HEADER_LIST_SUCCESS,
-//       data: result.data,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     yield put({
-//       type: MENU_HEADER_LIST_FAILURE,
-//       error: err.response.data,
-//     });
-//   }
-// }
+    yield put({
+      type: MENU_HEADER_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MENU_HEADER_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
-// // ******************************************************************************************************************
-// // ******************************************************************************************************************
-// // ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
@@ -189,9 +189,9 @@ function* menuUpload(action) {
 // ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
-// function* watchMenuHeaderList() {
-//   yield takeLatest(MENU_HEADER_LIST_REQUEST, menuHeaderList);
-// }
+function* watchMenuHeaderList() {
+  yield takeLatest(MENU_HEADER_LIST_REQUEST, menuHeaderList);
+}
 
 function* watchMenuList() {
   yield takeLatest(MENU_LIST_REQUEST, menuList);
@@ -216,6 +216,7 @@ function* watchMenuImageUpload() {
 //////////////////////////////////////////////////////////////
 export default function* menuSaga() {
   yield all([
+    fork(watchMenuHeaderList),
     fork(watchMenuList),
     fork(watchMenuCreate),
     fork(watchMenuUpdate),
