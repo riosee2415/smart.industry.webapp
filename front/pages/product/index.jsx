@@ -22,7 +22,10 @@ import {
   CATEGORY_INMENU_LIST_REQUEST,
   CATEGORY_LIST_REQUEST,
 } from "../../reducers/category";
-import { PRODUCT_LIST_REQUEST } from "../../reducers/product";
+import {
+  PRODUCT_COMPANY_LIST_REQUEST,
+  PRODUCT_LIST_REQUEST,
+} from "../../reducers/product";
 import { useRouter } from "next/router";
 import { Pagination } from "antd";
 import { DoubleLeftOutlined, DoubleRightOutlined } from "@ant-design/icons";
@@ -161,7 +164,7 @@ const ProductList = () => {
   const { categoryList, st_categoryInMenuListDone } = useSelector(
     (state) => state.category
   );
-  const { productList, maxPage, totalProduct } = useSelector(
+  const { productList, maxPage, totalProduct, prodCompanyList } = useSelector(
     (state) => state.product
   );
 
@@ -176,6 +179,7 @@ const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productType, setProductType] = useState(null);
   const [selectType, setSelectType] = useState(null);
+  const [selectCompany, setSelectCompany] = useState(null);
 
   ////// USEEFFECT //////
 
@@ -188,9 +192,10 @@ const ProductList = () => {
         isPrice:
           selectType === "낮은가격" ? 1 : selectType === "높은가격" ? 2 : null,
         isName: selectType === "상품명",
+        companyId: selectCompany,
       },
     });
-  }, [currentPage, productType, selectType]);
+  }, [currentPage, productType, selectType, selectCompany]);
 
   useEffect(() => {
     dispatch({
@@ -233,9 +238,19 @@ const ProductList = () => {
 
   const chagneSelectHandler = useCallback(
     (data) => {
+      if (selectType === "제조사") {
+        setSelectCompany(null);
+      }
       setSelectType(data);
     },
-    [selectType]
+    [selectType, selectCompany]
+  );
+
+  const chagneSelectCompanyHandler = useCallback(
+    (data) => {
+      setSelectCompany(data);
+    },
+    [selectCompany]
   );
 
   const otherPageCall = useCallback((changePage) => {
@@ -346,14 +361,30 @@ const ProductList = () => {
                   <SpanText color={Theme.red_C}>{totalProduct}</SpanText>
                   개의 제품
                 </Text>
-                <CustomSelect
-                  defaultValue="신상품"
-                  onChange={chagneSelectHandler}
-                >
-                  {selectArr.map((data) => {
-                    return <Select.Option value={data}>{data}</Select.Option>;
-                  })}
-                </CustomSelect>
+                <Wrapper width={`auto`}>
+                  <CustomSelect
+                    defaultValue="신상품"
+                    onChange={chagneSelectHandler}
+                  >
+                    {selectArr.map((data) => {
+                      return <Select.Option value={data}>{data}</Select.Option>;
+                    })}
+                  </CustomSelect>
+                  {selectType === "제조사" && prodCompanyList && (
+                    <CustomSelect
+                      placeholder="제조사를 선택해주세요."
+                      onChange={chagneSelectCompanyHandler}
+                    >
+                      {prodCompanyList.map((data) => {
+                        return (
+                          <Select.Option value={data.id}>
+                            {data.value}
+                          </Select.Option>
+                        );
+                      })}
+                    </CustomSelect>
+                  )}
+                </Wrapper>
               </Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`}>
                 {productList &&
@@ -455,6 +486,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: PRODUCT_COMPANY_LIST_REQUEST,
     });
 
     // 구현부 종료
