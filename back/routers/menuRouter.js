@@ -104,6 +104,7 @@ router.get("/menuInCat", async (req, res, next) => {
       include: [
         {
           model: Category,
+          where: { isDelete: false },
         },
       ],
     });
