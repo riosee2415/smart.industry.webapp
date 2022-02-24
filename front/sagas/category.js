@@ -20,7 +20,37 @@ import {
   CATEGORY_INMENU_LIST_REQUEST,
   CATEGORY_INMENU_LIST_SUCCESS,
   CATEGORY_INMENU_LIST_FAILURE,
+  //
+  CATEGORY_HEADER_LIST_REQUEST,
+  CATEGORY_HEADER_LIST_SUCCESS,
+  CATEGORY_HEADER_LIST_FAILURE,
 } from "../reducers/category";
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function categoryHeaderListAPI() {
+  return axios.get(`/api/product/cat/list`);
+}
+
+function* categoryHeaderList(action) {
+  try {
+    const result = yield call(categoryHeaderListAPI, action.data);
+
+    yield put({
+      type: CATEGORY_HEADER_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: CATEGORY_HEADER_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
@@ -158,6 +188,10 @@ function* categoryInMenuList(action) {
 // ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
+function* watchCategoryHeaderList() {
+  yield takeLatest(CATEGORY_HEADER_LIST_REQUEST, categoryHeaderList);
+}
+
 function* watchCategoryList() {
   yield takeLatest(CATEGORY_LIST_REQUEST, categoryList);
 }
@@ -181,6 +215,7 @@ function* watchCategoryInMenuList() {
 //////////////////////////////////////////////////////////////
 export default function* categorySaga() {
   yield all([
+    fork(watchCategoryHeaderList),
     fork(watchCategoryList),
     fork(watchCategoryCreate),
     fork(watchCategoryUpdate),

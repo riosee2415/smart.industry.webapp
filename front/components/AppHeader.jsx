@@ -26,6 +26,7 @@ import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useDispatch, useSelector } from "react-redux";
 import { MENU_LIST_REQUEST } from "../reducers/menu";
+import { CATEGORY_HEADER_LIST_REQUEST } from "../reducers/category";
 
 const WebRow = styled(RowWrapper)`
   z-index: 10000;
@@ -90,6 +91,7 @@ const AllMenu = styled(RsWrapper)`
   box-shadow: 0px 3px 6px ${Theme.lightGrey_C};
   flex-direction: row;
   z-index: 20;
+  align-items: flex-start;
 
   display: none;
 `;
@@ -198,6 +200,9 @@ const AppHeader = () => {
   ////////////// - USE STATE- ///////////////
   const [headerScroll, setHeaderScroll] = useState(false);
   const [pageY, setPageY] = useState(0);
+
+  const { headerCategoryList } = useSelector((state) => state.category);
+
   // const documentRef = useRef(document);
 
   const [drawar, setDrawar] = useState(false);
@@ -229,9 +234,9 @@ const AppHeader = () => {
 
   useEffect(() => {
     dispatch({
-      type: MENU_LIST_REQUEST,
+      type: CATEGORY_HEADER_LIST_REQUEST,
     });
-  }, []);
+  }, [router.query]);
 
   useEffect(() => {
     document.addEventListener("scroll", handleScroll);
@@ -357,30 +362,23 @@ const AppHeader = () => {
                         color={Theme.black_C}
                       >
                         <Title>건설기계</Title>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          도로캇타기
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          브로워/분무기
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          엔진톱
-                        </SubMenuTextCol>
-                        <SubMenuTextCol fontSize={`12px`} margin={`0 0 12px`}>
-                          엔진캇타기
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          도로캇타기
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          브로워/분무기
-                        </SubMenuTextCol>
-                        <SubMenuTextCol margin={`0 0 12px`} fontSize={`12px`}>
-                          엔진톱
-                        </SubMenuTextCol>
-                        <SubMenuTextCol fontSize={`12px`}>
-                          엔진캇타기
-                        </SubMenuTextCol>
+                        {console.log(headerCategoryList)}
+                        {headerCategoryList &&
+                          headerCategoryList.map((data) => {
+                            return (
+                              <SubMenuTextCol
+                                margin={`0 0 12px`}
+                                fontSize={`12px`}
+                                onClick={() =>
+                                  moveLinkHandler(
+                                    `/product?menu=${data.MenuId}&category=${data.id}`
+                                  )
+                                }
+                              >
+                                {data.value}
+                              </SubMenuTextCol>
+                            );
+                          })}
                       </Wrapper>
                     </Wrapper>
                     <Wrapper
@@ -585,13 +583,22 @@ const AppHeader = () => {
                 </MenuWrapper>
               </Wrapper>
 
-              <SubMenuCol width={`calc(100% / 7)`}>
+              <SubMenuCol
+                width={`calc(100% / 7)`}
+                onClick={() => moveLinkHandler(`/product?isUsed=true`)}
+              >
                 <Text>중고장비</Text>
               </SubMenuCol>
-              <SubMenuCol width={`calc(100% / 7)`}>
+              <SubMenuCol
+                width={`calc(100% / 7)`}
+                onClick={() => moveLinkHandler(`/product?isSale=true`)}
+              >
                 <Text>특가상품</Text>
               </SubMenuCol>
-              <SubMenuCol width={`calc(100% / 7)`}>
+              <SubMenuCol
+                width={`calc(100% / 7)`}
+                onClick={() => moveLinkHandler(`/lease`)}
+              >
                 <Text>임대문의</Text>
               </SubMenuCol>
               <SubMenuCol width={`calc(100% / 7)`}>

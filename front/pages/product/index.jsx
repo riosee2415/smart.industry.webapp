@@ -168,6 +168,8 @@ const ProductList = () => {
     (state) => state.product
   );
 
+  console.log("productList", productList);
+
   ////// HOOKS //////
 
   const dispatch = useDispatch();
@@ -182,6 +184,19 @@ const ProductList = () => {
   const [selectCompany, setSelectCompany] = useState(null);
 
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (router.query.category) {
+      setProductType(parseInt(router.query.category));
+    }
+    if (router.query.menu) {
+      dispatch({
+        type: CATEGORY_INMENU_LIST_REQUEST,
+        data: {
+          menuId: router.query.menu,
+        },
+      });
+    }
+  }, [router.query]);
 
   useEffect(() => {
     dispatch({
@@ -196,15 +211,6 @@ const ProductList = () => {
       },
     });
   }, [currentPage, productType, selectType, selectCompany]);
-
-  useEffect(() => {
-    dispatch({
-      type: CATEGORY_INMENU_LIST_REQUEST,
-      data: {
-        menuId: router.query.menu,
-      },
-    });
-  }, [router.query]);
 
   useEffect(() => {
     if (productType) {
@@ -335,7 +341,10 @@ const ProductList = () => {
             <Wrapper margin={`280px 0 0`}>
               <Wrapper al={`flex-start`}>
                 <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 9px`}>
+                  {console.log("categoryList", categoryList)}
+                  {console.log("productType", productType)}
                   {categoryList &&
+                    categoryList.length > 0 &&
                     productType &&
                     categoryList.find((data) => data.id === productType).value}
                 </Text>

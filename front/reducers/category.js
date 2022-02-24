@@ -3,8 +3,14 @@ import produce from "../util/produce";
 export const initailState = {
   categoryList: null,
 
+  headerCategoryList: null,
+
   createModal: false,
 
+  //
+  st_categoryHeaderListLoading: false, // 카테고리 가져오기
+  st_categoryHeaderListDone: false,
+  st_categoryHeaderListError: null,
   //
   st_categoryListLoading: false, // 카테고리 가져오기
   st_categoryListDone: false,
@@ -27,6 +33,10 @@ export const initailState = {
   st_categoryInMenuListError: null,
 };
 
+export const CATEGORY_HEADER_LIST_REQUEST = "CATEGORY_HEADER_LIST_REQUEST";
+export const CATEGORY_HEADER_LIST_SUCCESS = "CATEGORY_HEADER_LIST_SUCCESS";
+export const CATEGORY_HEADER_LIST_FAILURE = "CATEGORY_HEADER_LIST_FAILURE";
+//
 export const CATEGORY_LIST_REQUEST = "CATEGORY_LIST_REQUEST";
 export const CATEGORY_LIST_SUCCESS = "CATEGORY_LIST_SUCCESS";
 export const CATEGORY_LIST_FAILURE = "CATEGORY_LIST_FAILURE";
@@ -52,6 +62,25 @@ export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
+      case CATEGORY_HEADER_LIST_REQUEST: {
+        draft.st_categoryHeaderListLoading = true;
+        draft.st_categoryHeaderListDone = null;
+        draft.st_categoryHeaderListError = false;
+        break;
+      }
+      case CATEGORY_HEADER_LIST_SUCCESS: {
+        draft.st_categoryHeaderListLoading = false;
+        draft.st_categoryHeaderListDone = true;
+        draft.headerCategoryList = action.data.lists;
+        break;
+      }
+      case CATEGORY_HEADER_LIST_FAILURE: {
+        draft.st_categoryHeaderListLoading = false;
+        draft.st_categoryHeaderListDone = false;
+        draft.st_categoryHeaderListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
       case CATEGORY_LIST_REQUEST: {
         draft.st_categoryListLoading = true;
         draft.st_categoryListDone = null;
