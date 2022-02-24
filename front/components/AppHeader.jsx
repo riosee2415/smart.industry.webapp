@@ -24,6 +24,8 @@ import {
 import { Drawer } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
+import { useDispatch, useSelector } from "react-redux";
+import { MENU_LIST_REQUEST } from "../reducers/menu";
 
 const WebRow = styled(RowWrapper)`
   z-index: 10000;
@@ -203,6 +205,8 @@ const AppHeader = () => {
 
   const router = useRouter();
 
+  const dispatch = useDispatch();
+
   ///////////// - EVENT HANDLER- ////////////
 
   const drawarToggle = useCallback(() => {
@@ -222,6 +226,13 @@ const AppHeader = () => {
   }, []);
 
   ////////////// - USE EFFECT- //////////////
+
+  useEffect(() => {
+    dispatch({
+      type: MENU_LIST_REQUEST,
+    });
+  }, []);
+
   useEffect(() => {
     document.addEventListener("scroll", handleScroll);
     return () => document.removeEventListener("scroll", handleScroll);
