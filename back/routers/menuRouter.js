@@ -6,7 +6,7 @@ const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { Menu } = require("../models");
+const { Menu, Category } = require("../models");
 const models = require("../models");
 
 try {
@@ -94,6 +94,24 @@ router.get("/catInMenu/:menuId", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("메뉴를 불러올 수 없습니다.");
+  }
+});
+
+router.get("/menuInCat", async (req, res, next) => {
+  try {
+    const lists = await Menu.findAll({
+      where: { isDelete: false },
+      include: [
+        {
+          model: Category,
+        },
+      ],
+    });
+
+    return res.status(200).json(lists);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("메뉴 정보를 불러올 수 없습니다.");
   }
 });
 

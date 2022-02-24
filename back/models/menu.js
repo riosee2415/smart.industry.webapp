@@ -28,5 +28,7 @@ module.exports = class Menu extends Model {
       }
     );
   }
-  static associate(db) {}
+  static associate(db) {
+    db.Menu.hasMany(db.Category);
+  }
 };
