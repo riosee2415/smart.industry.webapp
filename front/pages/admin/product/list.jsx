@@ -303,7 +303,7 @@ const ProductList = () => {
   useEffect(() => {
     if (st_productDetailUploadDone) {
       if (updateData && productDetailImagePath) {
-        let imageArr = productImages.map((data) => data.sort);
+        let imageArr = productImages && productImages.map((data) => data.sort);
 
         dispatch({
           type: PRODUCT_CREATE_IMAGE_REQUEST,
@@ -368,18 +368,18 @@ const ProductList = () => {
 
   useEffect(() => {
     if (st_productCreateDone) {
-      Promise.all(
-        detailImageArr.map((file, idx) => {
-          dispatch({
-            type: PRODUCT_CREATE_IMAGE_REQUEST,
-            data: {
-              imagePath: file,
-              sort: idx,
-              prodId: productId,
-            },
-          });
-        })
-      );
+      console.log(detailImageArr);
+      for (let i = 0; i < detailImageArr.length; i++) {
+        console.log(`testtest${i}`, detailImageArr[i]);
+        dispatch({
+          type: PRODUCT_CREATE_IMAGE_REQUEST,
+          data: {
+            imagePath: detailImageArr[i],
+            sort: i,
+            prodId: productId,
+          },
+        });
+      }
 
       dispatch({
         type: PRODUCT_LIST_REQUEST,
@@ -404,45 +404,11 @@ const ProductList = () => {
       });
 
       form.resetFields();
-
       setDetailImageArr([]);
 
       return message.success("상품이 생성되었습니다.");
     }
-  }, [st_productCreateDone, st_productCreateImageDone]);
-
-  // useEffect(() => {
-  //   if (createDone) {
-  //     dispatch({
-  //       type: PRODUCT_LIST_REQUEST,
-  //       data: {
-  //         page: currentPage,
-  //         categoryId: selectCategory,
-  //       },
-  //     });
-
-  //     dispatch({
-  //       type: CREATE_MODAL_TOGGLE,
-  //     });
-
-  //     dispatch({
-  //       type: PRODUCT_IMAGE_PATH,
-  //       data: null,
-  //     });
-
-  //     dispatch({
-  //       type: PRODUCT_DETAIL_IMAGE_PATH,
-  //       data: null,
-  //     });
-
-  //     form.resetFields();
-
-  //     setDetailImageArr([]);
-
-  //     setCreateDone(false);
-  //     return message.success("상품이 생성되었습니다.");
-  //   }
-  // }, [createDone]);
+  }, [st_productCreateDone]);
 
   useEffect(() => {
     if (st_productCreateError) {
@@ -708,7 +674,7 @@ const ProductList = () => {
             imageId: file.file.uid,
           },
         });
-      } else {
+      } else if (file.file.status === "done") {
         const formData = new FormData();
 
         formData.append("image", file.file.originFileObj);
