@@ -232,8 +232,6 @@ const ProductList = () => {
     }
   }, [router.query]);
 
-  console.log("productType", productType);
-
   useEffect(() => {
     dispatch({
       type: PRODUCT_LIST_REQUEST,

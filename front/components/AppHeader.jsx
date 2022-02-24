@@ -21,11 +21,11 @@ import {
   DownOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-import { Drawer } from "antd";
+import { Drawer, Empty } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useDispatch, useSelector } from "react-redux";
-import { MENU_LIST_REQUEST } from "../reducers/menu";
+import { MENU_HEADER_LIST_REQUEST, MENU_LIST_REQUEST } from "../reducers/menu";
 import { CATEGORY_HEADER_LIST_REQUEST } from "../reducers/category";
 
 const WebRow = styled(RowWrapper)`
@@ -202,6 +202,7 @@ const AppHeader = () => {
   const [pageY, setPageY] = useState(0);
 
   const { headerCategoryList } = useSelector((state) => state.category);
+  const { headerMenuList } = useSelector((state) => state.menu);
 
   // const documentRef = useRef(document);
 
@@ -235,6 +236,9 @@ const AppHeader = () => {
   useEffect(() => {
     dispatch({
       type: CATEGORY_HEADER_LIST_REQUEST,
+    });
+    dispatch({
+      type: MENU_HEADER_LIST_REQUEST,
     });
   }, [router.query]);
 
@@ -362,7 +366,6 @@ const AppHeader = () => {
                         color={Theme.black_C}
                       >
                         <Title>건설기계</Title>
-                        {console.log(headerCategoryList)}
                         {headerCategoryList &&
                           headerCategoryList.map((data) => {
                             return (
@@ -517,68 +520,48 @@ const AppHeader = () => {
                     zIndex={`10`}
                     className={`submenu`}
                   >
-                    <SubMenuWrapper
-                      height={`48px`}
-                      borderBottom={`1px solid ${Theme.basicTheme_C}`}
-                    >
-                      <SubMenuTextCol bgColorBe={Theme.white_C}>
-                        건설기계
-                      </SubMenuTextCol>
-                      <InMenu dr={`row`}>
-                        <Wrapper
-                          width={`calc(100% - 194px)`}
-                          al={`flex-start`}
-                          color={Theme.black_C}
-                        >
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                        </Wrapper>
-                        <Wrapper width={`194px`}>
-                          <Image
-                            alt="image"
-                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/main/company_bg.png`}
-                          />
-                        </Wrapper>
-                      </InMenu>
-                    </SubMenuWrapper>
-                    <SubMenuWrapper
-                      height={`48px`}
-                      borderBottom={`1px solid ${Theme.basicTheme_C}`}
-                    >
-                      <SubMenuTextCol bgColorBe={Theme.white_C}>
-                        야마비시
-                      </SubMenuTextCol>
-                      <InMenu dr={`row`}>
-                        <Wrapper
-                          width={`calc(100% - 194px)`}
-                          al={`flex-start`}
-                          color={Theme.black_C}
-                        >
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                        </Wrapper>
-                        <Wrapper width={`194px`}>
-                          <Image
-                            alt="image"
-                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/main/company_bg.png`}
-                          />
-                        </Wrapper>
-                      </InMenu>
-                    </SubMenuWrapper>
+                    {headerMenuList &&
+                      (headerMenuList.length === 0 ? (
+                        <Empty description="카테고리가 없습니다." />
+                      ) : (
+                        headerMenuList.map((data) => {
+                          return (
+                            <SubMenuWrapper
+                              height={`48px`}
+                              borderBottom={`1px solid ${Theme.basicTheme_C}`}
+                            >
+                              <SubMenuTextCol bgColorBe={Theme.white_C}>
+                                {data.value}
+                              </SubMenuTextCol>
+                              <InMenu dr={`row`}>
+                                <Wrapper
+                                  width={`calc(100% - 194px)`}
+                                  al={`flex-start`}
+                                  color={Theme.black_C}
+                                >
+                                  {data.Categories.map((value) => {
+                                    return (
+                                      <SubMenuTextCol
+                                        margin={`0 0 10px`}
+                                        onClick={() =>
+                                          moveLinkHandler(
+                                            `/product?menu=${data.id}&category=${value.id}`
+                                          )
+                                        }
+                                      >
+                                        {value.value}
+                                      </SubMenuTextCol>
+                                    );
+                                  })}
+                                </Wrapper>
+                                <Wrapper width={`194px`}>
+                                  <Image alt="image" src={data.imagePath} />
+                                </Wrapper>
+                              </InMenu>
+                            </SubMenuWrapper>
+                          );
+                        })
+                      ))}
                   </Wrapper>
                 </MenuWrapper>
               </Wrapper>
