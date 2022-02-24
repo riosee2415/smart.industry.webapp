@@ -364,13 +364,9 @@ const ProductList = () => {
     }
   }, [updateData, productImages]);
 
-  console.log(productImages);
-
   useEffect(() => {
     if (st_productCreateDone) {
-      console.log(detailImageArr);
       for (let i = 0; i < detailImageArr.length; i++) {
-        console.log(`testtest${i}`, detailImageArr[i]);
         dispatch({
           type: PRODUCT_CREATE_IMAGE_REQUEST,
           data: {
@@ -610,6 +606,18 @@ const ProductList = () => {
         );
       }
 
+      // let expUrl = /^http[s]?\:\/\//i;
+
+      const youtubeUrl =
+        /(http:|https:)?(\/\/)?(www\.)?(youtube.com|youtu.be)\/(watch|embed)?(\?v=|\/)?(\S+)?/g;
+
+      if (!youtubeUrl.test(data.youtubeLink)) {
+        return LoadNotification(
+          "ADMIN SYSTEM ERROR ",
+          "유튜브링크 형식에 맞게 등록해주세요."
+        );
+      }
+
       dispatch({
         type: PRODUCT_CREATE_REQUEST,
         data: {
@@ -644,6 +652,16 @@ const ProductList = () => {
         return LoadNotification(
           "ADMIN SYSTEM ERROR ",
           "썸네일 이미지를 등록해주세요."
+        );
+      }
+
+      const youtubeUrl =
+        /(http:|https:)?(\/\/)?(www\.)?(youtube.com|youtu.be)\/(watch|embed)?(\?v=|\/)?(\S+)?/g;
+
+      if (!youtubeUrl.test(data.youtubeLink)) {
+        return LoadNotification(
+          "ADMIN SYSTEM ERROR ",
+          "유튜브링크 형식에 맞게 등록해주세요."
         );
       }
 

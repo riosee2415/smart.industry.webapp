@@ -19,6 +19,11 @@ import { useRouter } from "next/router";
 import { PRODUCT_DETAIL_REQUEST } from "../../../reducers/product";
 import { useDispatch, useSelector } from "react-redux";
 
+const Video = styled.video`
+  width: 100%;
+  height: 760px;
+`;
+
 const DetailButton = styled.button`
   width: calc(100% / 3);
   height: 60px;
