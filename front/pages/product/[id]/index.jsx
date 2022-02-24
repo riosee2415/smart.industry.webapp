@@ -1,4 +1,4 @@
-import { Input, Button } from "antd";
+import { Input, Button, Modal, message } from "antd";
 import React, { useState, useCallback, useEffect } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import {
@@ -83,23 +83,21 @@ const DetailProduct = () => {
     (state) => state.product
   );
 
-  // console.log(productDetailData);
-  // console.log(productDetailImages);
-
   ////// HOOKS //////
   const width = useWidth();
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   const [tab, setTab] = useState(1);
 
   const [productCount, setProductCount] = useState(1);
-
   const [choiceImage, setChioceImage] = useState({});
-
   const [restImages, setRestImages] = useState([]);
 
-  const dispatch = useDispatch();
+  //cart
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const router = useRouter();
+  const [prevStorge, setPrevStorge] = useState([]);
 
   ////// USEEFFECT //////
 
@@ -160,6 +158,83 @@ const DetailProduct = () => {
     },
     [restImages, choiceImage]
   );
+
+  //cart
+  const ModalHandleOk = useCallback(
+    // 중복 상품 기능
+    () => {
+      const resultDatum = prevStorge.map((data, idx) => {
+        if (data.id === productDetailData[0].id) {
+          return {
+            ...data,
+            productNum: data.productNum + productCount,
+          };
+        } else {
+          return data;
+        }
+      });
+
+      // dispatch({
+      //   type: UPDATE_WISHLIST,
+      //   data: {
+      //     list: true,
+      //   },
+      // });
+
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(resultDatum));
+      ModalToggle();
+    },
+    [productCount, prevStorge, productDetailData]
+  );
+
+  const basketHandler = useCallback(() => {
+    const datum = localStorage.getItem("WKDQKRNSL")
+      ? JSON.parse(localStorage.getItem("WKDQKRNSL"))
+      : [];
+
+    let checkWish = false;
+
+    const resultData = datum.map((data) => {
+      if (data.id === productDetailData[0].id) {
+        ModalToggle();
+        setPrevStorge(datum);
+        checkWish = true;
+
+        return {
+          ...data,
+        };
+      } else {
+        return data;
+      }
+    });
+
+    if (!checkWish) {
+      resultData.push({
+        id: productDetailData[0].id,
+        thumbnail: productDetailData[0].thumbnail,
+        title: productDetailData[0].title,
+        productNum: productCount,
+        price: productDetailData[0].price,
+        discount: productDetailData[0].discount,
+        deliveryPay: productDetailData[0].deliveryPay,
+      });
+
+      message.success("상품이 장바구니에 담겼습니다.");
+    }
+
+    localStorage.setItem("WKDQKRNSL", JSON.stringify(resultData));
+
+    // dispatch({
+    //   type: UPDATE_WISHLIST,
+    //   data: {
+    //     list: true,
+    //   },
+    // });
+  }, [prevStorge, productDetailData, productCount]);
+  ////// TOGGLE //////
+  const ModalToggle = useCallback(() => {
+    setIsModalVisible((prev) => !prev);
+  }, []);
 
   ////// DATAIVEW //////
 
@@ -428,6 +503,7 @@ const DetailProduct = () => {
                     radius={`0`}
                     color={Theme.black_C}
                     kindOf={`color`}
+                    onClick={basketHandler}
                   >
                     장바구니
                   </CommonButton>
@@ -520,6 +596,18 @@ const DetailProduct = () => {
           )}
           {tab === 3 && <Inquiry />}
         </RsWrapper>
+        <Modal
+          centered={true}
+          title="알림"
+          visible={isModalVisible}
+          onOk={() => ModalHandleOk(productDetailData, productCount)}
+          onCancel={ModalToggle}
+        >
+          <Wrapper>
+            <Text>장바구니에 동일한 상품이 있습니다.</Text>
+            <Text>장바구니에 추가하시겠습니까?</Text>
+          </Wrapper>
+        </Modal>
       </WholeWrapper>
     </ClientLayout>
   );
