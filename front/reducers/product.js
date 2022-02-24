@@ -193,6 +193,7 @@ const reducer = (state = initailState, action) =>
         draft.productList = action.data.lists;
         draft.maxPage = action.data.lastPage;
         draft.totalProduct = action.data.productLen;
+
         break;
       }
       case PRODUCT_LIST_FAILURE: {

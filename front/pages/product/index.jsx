@@ -420,6 +420,7 @@ const ProductList = () => {
                     defaultCurrent={1}
                     current={parseInt(currentPage)}
                     total={maxPage * 10}
+                    pageSize={20}
                     onChange={(page) => otherPageCall(page)}
                     showQuickJumper={false}
                     showSizeChanger={false}

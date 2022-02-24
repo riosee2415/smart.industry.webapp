@@ -947,6 +947,7 @@ const ProductList = () => {
           pagination={{
             defaultCurrent: 1,
             current: parseInt(currentPage),
+            pageSize: 20,
 
             total: maxPage * 10,
             onChange: (page) => otherPageCall(page),
@@ -979,7 +980,7 @@ const ProductList = () => {
                 ? `${productImagePath}`
                 : `https://via.placeholder.com/${PRODUCT_WIDTH}x${PRODUCT_HEIGHT}`
             }
-            alt="main_GALLEY_image"
+            alt="main_product_image"
           />
           <PreviewGuide>
             {productImagePath && `이미지 미리보기 입니다.`}
