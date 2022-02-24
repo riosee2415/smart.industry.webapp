@@ -23,6 +23,7 @@ import { Empty } from "antd";
 import { useRouter } from "next/dist/client/router";
 import { FAQ_GET_REQUEST, FAQ_TYPE_GET_REQUEST } from "../../../reducers/faq";
 import { useEffect } from "react";
+import useInput from "../../../hooks/useInput";
 
 const FaqTabBtn = styled(Wrapper)`
   width: 180px;
@@ -69,6 +70,8 @@ const Faq = () => {
 
   const [datum, setDatum] = useState(null);
 
+  const inputSearch = useInput("");
+
   ////// REDUX //////
   ////// USEEFFECT //////
   useEffect(() => {
@@ -96,6 +99,16 @@ const Faq = () => {
     },
     [datum]
   );
+
+  const onKeyDonwComboHandler = useCallback(() => {
+    dispatch({
+      type: FAQ_GET_REQUEST,
+      data: {
+        typeId: "",
+        search: inputSearch.value,
+      },
+    });
+  }, [inputSearch.value]);
   ////// DATAVIEW //////
 
   return (
@@ -208,8 +221,12 @@ const Faq = () => {
                   height={`40px`}
                   margin={width < 500 ? `0 0 5px` : `0 6px 0 0`}
                   bgColor={Theme.white_C}
+                  onKeyDown={(e) => e.keyCode === 13 && onKeyDonwComboHandler()}
+                  {...inputSearch}
                 />
-                <SearchBtn>검색</SearchBtn>
+                <SearchBtn onClick={() => onKeyDonwComboHandler()}>
+                  검색
+                </SearchBtn>
               </Wrapper>
             </Wrapper>
             <Wrapper
