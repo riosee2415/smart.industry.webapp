@@ -497,69 +497,7 @@ const AppHeader = () => {
                     bgColor={Theme.subTheme_C}
                     color={Theme.white_C}
                     zIndex={`10`}
-<<<<<<< HEAD
                     className={`submenu`}>
-                    <SubMenuWrapper
-                      height={`48px`}
-                      borderBottom={`1px solid ${Theme.basicTheme_C}`}>
-                      <SubMenuTextCol bgColorBe={Theme.white_C}>
-                        건설기계
-                      </SubMenuTextCol>
-                      <InMenu dr={`row`}>
-                        <Wrapper
-                          width={`calc(100% - 194px)`}
-                          al={`flex-start`}
-                          color={Theme.black_C}>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                        </Wrapper>
-                        <Wrapper width={`194px`}>
-                          <Image
-                            alt="image"
-                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/main/company_bg.png`}
-                          />
-                        </Wrapper>
-                      </InMenu>
-                    </SubMenuWrapper>
-                    <SubMenuWrapper
-                      height={`48px`}
-                      borderBottom={`1px solid ${Theme.basicTheme_C}`}>
-                      <SubMenuTextCol bgColorBe={Theme.white_C}>
-                        야마비시
-                      </SubMenuTextCol>
-                      <InMenu dr={`row`}>
-                        <Wrapper
-                          width={`calc(100% - 194px)`}
-                          al={`flex-start`}
-                          color={Theme.black_C}>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                          <SubMenuTextCol margin={`0 0 10px`}>
-                            건설기계
-                          </SubMenuTextCol>
-                        </Wrapper>
-                        <Wrapper width={`194px`}>
-                          <Image
-                            alt="image"
-                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/main/company_bg.png`}
-                          />
-                        </Wrapper>
-                      </InMenu>
-                    </SubMenuWrapper>
-=======
-                    className={`submenu`}
-                  >
                     {headerMenuList &&
                       (headerMenuList.length === 0 ? (
                         <Empty description="카테고리가 없습니다." />
@@ -568,8 +506,7 @@ const AppHeader = () => {
                           return (
                             <SubMenuWrapper
                               height={`48px`}
-                              borderBottom={`1px solid ${Theme.basicTheme_C}`}
-                            >
+                              borderBottom={`1px solid ${Theme.basicTheme_C}`}>
                               <SubMenuTextCol bgColorBe={Theme.white_C}>
                                 {data.value}
                               </SubMenuTextCol>
@@ -577,8 +514,7 @@ const AppHeader = () => {
                                 <Wrapper
                                   width={`calc(100% - 194px)`}
                                   al={`flex-start`}
-                                  color={Theme.black_C}
-                                >
+                                  color={Theme.black_C}>
                                   {data.Categories.map((value) => {
                                     return (
                                       <SubMenuTextCol
@@ -587,8 +523,7 @@ const AppHeader = () => {
                                           moveLinkHandler(
                                             `/product?menu=${data.id}&category=${value.id}`
                                           )
-                                        }
-                                      >
+                                        }>
                                         {value.value}
                                       </SubMenuTextCol>
                                     );
@@ -602,7 +537,6 @@ const AppHeader = () => {
                           );
                         })
                       ))}
->>>>>>> refs/remotes/origin/master
                   </Wrapper>
                 </MenuWrapper>
               </Wrapper>
