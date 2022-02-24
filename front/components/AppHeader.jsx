@@ -180,7 +180,7 @@ const InMenu = styled(Wrapper)`
   background: ${Theme.white_C};
   position: absolute;
   top: 0;
-  left: 192px;
+  left: 128px;
   z-index: 30;
   border: 1px solid ${Theme.subTheme2_C};
   align-items: flex-start;
