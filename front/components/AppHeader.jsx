@@ -247,8 +247,7 @@ const AppHeader = () => {
       <WebRow>
         <Wrapper
           borderBottom={`1px solid ${Theme.lightGrey_C}`}
-          padding={`10px 0`}
-        >
+          padding={`10px 0`}>
           <RsWrapper dr={`row`} ju={`flex-end`} fontSize={`14px`}>
             <Link href={`/login`}>
               <a>
@@ -271,8 +270,7 @@ const AppHeader = () => {
               <Wrapper
                 width={`290px`}
                 position={`relative`}
-                margin={`0 0 0 30px`}
-              >
+                margin={`0 0 0 30px`}>
                 <TextInput
                   type={`text`}
                   width={`100%`}
@@ -286,8 +284,7 @@ const AppHeader = () => {
                   position={`absolute`}
                   top={`0`}
                   right={`15px`}
-                  height={`100%`}
-                >
+                  height={`100%`}>
                   <Image
                     width={`14px`}
                     alt="icon"
@@ -302,8 +299,7 @@ const AppHeader = () => {
         <Wrapper
           borderBottom={`1px solid ${Theme.lightGrey_C}`}
           padding={`5px 0`}
-          className={headerScroll && "display"}
-        >
+          className={headerScroll && "display"}>
           <RsWrapper dr={`row`} ju={`space-between`}>
             <ATag width={`auto`} href="/">
               <Image
@@ -326,8 +322,7 @@ const AppHeader = () => {
                 position={`absolute`}
                 top={`0`}
                 right={`15px`}
-                height={`100%`}
-              >
+                height={`100%`}>
                 <Image
                   width={`14px`}
                   alt="icon"
@@ -343,8 +338,7 @@ const AppHeader = () => {
               <Wrapper
                 width={`calc(100% / 7)`}
                 dr={`row`}
-                position={`relative`}
-              >
+                position={`relative`}>
                 <MenuCol width={`100%`} dr={`row`}>
                   <MenuOutlined style={{ margin: `0 10px 0 0` }} />
                   전체 카테고리
@@ -354,15 +348,13 @@ const AppHeader = () => {
                       borderRight={`1px solid ${Theme.lightGrey_C}`}
                       dr={`row`}
                       ju={`flex-start`}
-                      al={`flex-start`}
-                    >
+                      al={`flex-start`}>
                       <Wrapper
                         width={`calc(100% / 3)`}
                         al={`flex-start`}
-                        color={Theme.black_C}
-                      >
+                        color={Theme.black_C}>
                         <Title>건설기계</Title>
-                        {console.log(headerCategoryList)}
+                        {/* {console.log(headerCategoryList)} */}
                         {headerCategoryList &&
                           headerCategoryList.map((data) => {
                             return (
@@ -373,8 +365,7 @@ const AppHeader = () => {
                                   moveLinkHandler(
                                     `/product?menu=${data.MenuId}&category=${data.id}`
                                   )
-                                }
-                              >
+                                }>
                                 {data.value}
                               </SubMenuTextCol>
                             );
@@ -385,21 +376,18 @@ const AppHeader = () => {
                       width={`calc(100% / 5 * 2)`}
                       dr={`row`}
                       ju={`flex-start`}
-                      al={`flex-start`}
-                    >
+                      al={`flex-start`}>
                       <Wrapper
                         width={`calc(100% / 2)`}
                         padding={`0 0 0 20px`}
                         al={`flex-start`}
-                        color={Theme.black_C}
-                      >
+                        color={Theme.black_C}>
                         <Title>커뮤니티</Title>
                         <Link href={`/community/faq`}>
                           <a>
                             <SubMenuTextCol
                               margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
+                              fontSize={`12px`}>
                               이용안내 FAQ
                             </SubMenuTextCol>
                           </a>
@@ -408,8 +396,7 @@ const AppHeader = () => {
                           <a>
                             <SubMenuTextCol
                               margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
+                              fontSize={`12px`}>
                               공지사항
                             </SubMenuTextCol>
                           </a>
@@ -418,8 +405,7 @@ const AppHeader = () => {
                           <a>
                             <SubMenuTextCol
                               margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
+                              fontSize={`12px`}>
                               1:1 맞춤문의
                             </SubMenuTextCol>
                           </a>
@@ -436,15 +422,13 @@ const AppHeader = () => {
                         width={`calc(100% / 2)`}
                         padding={`0 0 0 20px`}
                         color={Theme.black_C}
-                        al={`flex-start`}
-                      >
+                        al={`flex-start`}>
                         <Title>마이페이지</Title>
                         <Link href={`/mypage/order`}>
                           <a>
                             <SubMenuTextCol
                               margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
+                              fontSize={`12px`}>
                               주문내역 조회
                             </SubMenuTextCol>
                           </a>
@@ -453,8 +437,7 @@ const AppHeader = () => {
                           <a>
                             <SubMenuTextCol
                               margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
+                              fontSize={`12px`}>
                               회원 정보
                             </SubMenuTextCol>
                           </a>
@@ -463,8 +446,7 @@ const AppHeader = () => {
                           <a>
                             <SubMenuTextCol
                               margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
+                              fontSize={`12px`}>
                               장바구니
                             </SubMenuTextCol>
                           </a>
@@ -473,8 +455,7 @@ const AppHeader = () => {
                           <a>
                             <SubMenuTextCol
                               margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
+                              fontSize={`12px`}>
                               관심상품
                             </SubMenuTextCol>
                           </a>
@@ -483,8 +464,7 @@ const AppHeader = () => {
                           <a>
                             <SubMenuTextCol
                               margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
+                              fontSize={`12px`}>
                               1:1 문의 내역
                             </SubMenuTextCol>
                           </a>
@@ -500,8 +480,7 @@ const AppHeader = () => {
                   left={`0`}
                   bgColor={Theme.basicTheme_C}
                   color={Theme.white_C}
-                  dr={`row`}
-                >
+                  dr={`row`}>
                   <DownloadOutlined style={{ margin: `0 10px 0 0` }} />
                   <Wrapper width={`auto`} al={`flex-start`} fontSize={`12px`}>
                     <Text>CATEGORY OPEN</Text>
@@ -515,12 +494,10 @@ const AppHeader = () => {
                     bgColor={Theme.subTheme_C}
                     color={Theme.white_C}
                     zIndex={`10`}
-                    className={`submenu`}
-                  >
+                    className={`submenu`}>
                     <SubMenuWrapper
                       height={`48px`}
-                      borderBottom={`1px solid ${Theme.basicTheme_C}`}
-                    >
+                      borderBottom={`1px solid ${Theme.basicTheme_C}`}>
                       <SubMenuTextCol bgColorBe={Theme.white_C}>
                         건설기계
                       </SubMenuTextCol>
@@ -528,8 +505,7 @@ const AppHeader = () => {
                         <Wrapper
                           width={`calc(100% - 194px)`}
                           al={`flex-start`}
-                          color={Theme.black_C}
-                        >
+                          color={Theme.black_C}>
                           <SubMenuTextCol margin={`0 0 10px`}>
                             건설기계
                           </SubMenuTextCol>
@@ -550,8 +526,7 @@ const AppHeader = () => {
                     </SubMenuWrapper>
                     <SubMenuWrapper
                       height={`48px`}
-                      borderBottom={`1px solid ${Theme.basicTheme_C}`}
-                    >
+                      borderBottom={`1px solid ${Theme.basicTheme_C}`}>
                       <SubMenuTextCol bgColorBe={Theme.white_C}>
                         야마비시
                       </SubMenuTextCol>
@@ -559,8 +534,7 @@ const AppHeader = () => {
                         <Wrapper
                           width={`calc(100% - 194px)`}
                           al={`flex-start`}
-                          color={Theme.black_C}
-                        >
+                          color={Theme.black_C}>
                           <SubMenuTextCol margin={`0 0 10px`}>
                             건설기계
                           </SubMenuTextCol>
@@ -585,20 +559,17 @@ const AppHeader = () => {
 
               <SubMenuCol
                 width={`calc(100% / 7)`}
-                onClick={() => moveLinkHandler(`/product?isUsed=true`)}
-              >
+                onClick={() => moveLinkHandler(`/product?isUsed=true`)}>
                 <Text>중고장비</Text>
               </SubMenuCol>
               <SubMenuCol
                 width={`calc(100% / 7)`}
-                onClick={() => moveLinkHandler(`/product?isSale=true`)}
-              >
+                onClick={() => moveLinkHandler(`/product?isSale=true`)}>
                 <Text>특가상품</Text>
               </SubMenuCol>
               <SubMenuCol
                 width={`calc(100% / 7)`}
-                onClick={() => moveLinkHandler(`/lease`)}
-              >
+                onClick={() => moveLinkHandler(`/lease`)}>
                 <Text>임대문의</Text>
               </SubMenuCol>
               <SubMenuCol width={`calc(100% / 7)`}>
@@ -614,8 +585,7 @@ const AppHeader = () => {
                     <a>
                       <Wrapper
                         height={`50px`}
-                        borderBottom={`1px solid ${Theme.lightGrey_C}`}
-                      >
+                        borderBottom={`1px solid ${Theme.lightGrey_C}`}>
                         <SubMenuTextCol>이용안내 FAQ</SubMenuTextCol>
                       </Wrapper>
                     </a>
@@ -624,8 +594,7 @@ const AppHeader = () => {
                     <a>
                       <Wrapper
                         height={`50px`}
-                        borderBottom={`1px solid ${Theme.lightGrey_C}`}
-                      >
+                        borderBottom={`1px solid ${Theme.lightGrey_C}`}>
                         <SubMenuTextCol>공지사항</SubMenuTextCol>
                       </Wrapper>
                     </a>
@@ -634,8 +603,7 @@ const AppHeader = () => {
                     <a>
                       <Wrapper
                         height={`50px`}
-                        borderBottom={`1px solid ${Theme.lightGrey_C}`}
-                      >
+                        borderBottom={`1px solid ${Theme.lightGrey_C}`}>
                         <SubMenuTextCol>1:1 맞춤문의</SubMenuTextCol>
                       </Wrapper>
                     </a>
@@ -659,8 +627,7 @@ const AppHeader = () => {
           span={4}
           al={`flex-start`}
           fontSize={`1.6rem`}
-          padding={`0 10px`}
-        >
+          padding={`0 10px`}>
           <Link href={`/login`}>
             <a>
               <UserOutlined />
@@ -679,8 +646,7 @@ const AppHeader = () => {
           span={4}
           al={`flex-end`}
           fontSize={`1.6rem`}
-          padding={`0 10px`}
-        >
+          padding={`0 10px`}>
           <AlignRightOutlined onClick={drawarToggle} />
         </ColWrapper>
         <Wrapper
@@ -691,8 +657,7 @@ const AppHeader = () => {
           wrap={`nowrap`}
           dr={`row`}
           ju={`flex-start`}
-          padding={`0 10px`}
-        >
+          padding={`0 10px`}>
           <Wrapper minWidth={`80px`} margin={`0 5px`}>
             건설기계
           </Wrapper>
@@ -718,14 +683,12 @@ const AppHeader = () => {
             closable={true}
             onClose={drawarToggle}
             visible={drawarToggle}
-            getContainer={false}
-          >
+            getContainer={false}>
             <Wrapper
               dr={`row`}
               ju={`flex-start`}
               borderBottom={`1px solid ${Theme.lightGrey_C}`}
-              padding={`0 0 15px`}
-            >
+              padding={`0 0 15px`}>
               <Link href={`/login`}>
                 <a>
                   <Text fontSize={`12px`}>로그인</Text>
@@ -763,8 +726,7 @@ const AppHeader = () => {
                 position={`absolute`}
                 top={`0`}
                 right={`15px`}
-                height={`100%`}
-              >
+                height={`100%`}>
                 <Image
                   width={`14px`}
                   alt="icon"
@@ -781,8 +743,7 @@ const AppHeader = () => {
                 fontSize={`1.2rem`}
                 onClick={() => {
                   setSubMenu(0);
-                }}
-              >
+                }}>
                 카테고리
                 <DownOutlined style={{ color: Theme.basicTheme_C }} />
               </Wrapper>
@@ -807,8 +768,7 @@ const AppHeader = () => {
                 fontSize={`1.2rem`}
                 onClick={() => {
                   setSubMenu(1);
-                }}
-              >
+                }}>
                 커뮤니티
                 <DownOutlined style={{ color: Theme.basicTheme_C }} />
               </Wrapper>
@@ -851,22 +811,19 @@ const AppHeader = () => {
                 <Wrapper
                   width={`30px`}
                   height={`1px`}
-                  bgColor={Theme.basicTheme_C}
-                ></Wrapper>
+                  bgColor={Theme.basicTheme_C}></Wrapper>
                 <Wrapper
                   dr={`row`}
                   margin={`10px 0`}
                   ju={`flex-start`}
-                  fontSize={`20px`}
-                >
+                  fontSize={`20px`}>
                   <Wrapper
                     width={`35px`}
                     height={`35px`}
                     bgColor={Theme.basicTheme_C}
                     color={Theme.white_C}
                     radius={`100%`}
-                    margin={`0 5px 0 0`}
-                  >
+                    margin={`0 5px 0 0`}>
                     <PhoneOutlined />
                   </Wrapper>
                   0000-0000

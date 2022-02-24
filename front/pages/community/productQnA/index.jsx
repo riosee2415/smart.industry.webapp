@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
@@ -6,7 +6,7 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
@@ -14,29 +14,119 @@ import {
   WholeWrapper,
   Wrapper,
   Image,
+  Text,
 } from "../../../components/commonComponents";
+
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
+import { useEffect } from "react";
+import {
+  PRODUCT_QUESTION_DETAIL_REQUEST,
+  PRODUCT_QUESTION_LIST_REQUEST,
+} from "../../../reducers/product";
+import { message, Modal } from "antd";
+import styled from "styled-components";
+import useOnlyNumberInput from "../../../hooks/useOnlyNumberInput";
+
+const CustomModal = styled(Modal)`
+  & .ant-modal-content {
+    top: 250px;
+  }
+`;
 
 const Notice = () => {
+  const dispatch = useDispatch();
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
 
+  const {
+    productQuestionList,
+    st_productQuestionListDone,
+    st_productQuestionListError,
+    st_productQuestionDetailDone,
+    st_productQuestionDetailError,
+  } = useSelector((state) => state.product);
+
   const width = useWidth();
   const router = useRouter();
 
   ////// HOOKS //////
+
+  const inputSecret = useOnlyNumberInput();
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [id, setId] = useState("");
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: PRODUCT_QUESTION_LIST_REQUEST,
+      data: {
+        listType: "",
+        ProductId: "",
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (st_productQuestionDetailDone) {
+      moveLinkHandler(`/community/productQnA/detail/${id}`);
+    }
+  }, [st_productQuestionDetailDone]);
+
+  useEffect(() => {
+    if (st_productQuestionDetailError) {
+      return message.error(st_productQuestionDetailError);
+    }
+  }, [st_productQuestionDetailError]);
+
+  useEffect(() => {
+    if (st_productQuestionListError) {
+      return message.error(st_productQuestionListError);
+    }
+  }, [st_productQuestionListError]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
+  const ModalToggle = useCallback(() => {
+    setIsModalVisible(!isModalVisible);
+  }, [isModalVisible]);
+
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
+  const onClickDetailHanlder = useCallback((data) => {
+    if (data.isSecret) {
+      setId(data.id);
+      ModalToggle();
+    } else {
+      moveLinkHandler(`/community/productQnA/detail/${data.id}`);
+    }
+  }, []);
+
+  const ModalHandleOk = useCallback(() => {
+    if (!inputSecret.value) {
+      return message.error("비밀번호를 입력해주세요.");
+    } else {
+      dispatch({
+        type: PRODUCT_QUESTION_DETAIL_REQUEST,
+        data: {
+          id,
+          secret: inputSecret.value,
+        },
+      });
+    }
+
+    inputSecret.setValue();
+    ModalToggle();
+  }, [isModalVisible, inputSecret.value]);
+
   ////// DATAVIEW //////
   const testNotice = [
     {
@@ -119,8 +209,7 @@ const Notice = () => {
                 width={`auto`}
                 margin={`0 8px 0 0`}
                 onClick={() => moveLinkHandler(`/`)}
-                cursor={`pointer`}
-              >
+                cursor={`pointer`}>
                 HOME
               </Wrapper>
               |
@@ -128,8 +217,7 @@ const Notice = () => {
                 width={`auto`}
                 margin={`0 8px`}
                 onClick={() => moveLinkHandler(`/community/faq`)}
-                cursor={`pointer`}
-              >
+                cursor={`pointer`}>
                 커뮤니티
               </Wrapper>
               |
@@ -137,8 +225,7 @@ const Notice = () => {
                 width={`auto`}
                 margin={`0 8px`}
                 onClick={() => moveLinkHandler(`/community/productQnA`)}
-                cursor={`pointer`}
-              >
+                cursor={`pointer`}>
                 상품문의
               </Wrapper>
             </Wrapper>
@@ -148,8 +235,7 @@ const Notice = () => {
               al={`flex-start`}
               padding={`0 0 10px`}
               borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 40px`}
-            >
+              margin={`0 0 40px`}>
               상품문의
             </Wrapper>
 
@@ -158,23 +244,20 @@ const Notice = () => {
                 bgColor={Theme.lightGrey2_C}
                 height={`40px`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-              >
+                borderBottom={`1px solid ${Theme.grey2_C}`}>
                 <Wrapper width={`5%`} display={width < 500 ? `none` : `flex`}>
                   번호
                 </Wrapper>
                 <Wrapper width={width < 500 ? `30%` : `20%`}>상품명</Wrapper>
                 <Wrapper
-                  width={width < 500 ? `45%` : width < 800 ? `40%` : `45%`}
-                >
+                  width={width < 500 ? `45%` : width < 800 ? `40%` : `45%`}>
                   제목
                 </Wrapper>
                 <Wrapper width={`10%`} display={width < 500 ? `none` : `flex`}>
                   작성자
                 </Wrapper>
                 <Wrapper
-                  width={width < 500 ? `25%` : width < 800 ? `15%` : `10%`}
-                >
+                  width={width < 500 ? `25%` : width < 800 ? `15%` : `10%`}>
                   작성일
                 </Wrapper>
                 <Wrapper width={`10%`} display={width < 500 ? `none` : `flex`}>
@@ -182,10 +265,10 @@ const Notice = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper ju={`flex-start`}>
-                {testNotice && testNotice.length === 0
+                {productQuestionList && productQuestionList.length === 0
                   ? ``
-                  : testNotice &&
-                    testNotice.reverse().map((data) => {
+                  : productQuestionList &&
+                    productQuestionList.map((data) => {
                       return (
                         <Wrapper
                           dr={`row`}
@@ -193,20 +276,15 @@ const Notice = () => {
                           padding={`14px 0px`}
                           cursor={`pointer`}
                           borderBottom={`1px solid ${Theme.grey2_C}`}
-                          onClick={() =>
-                            moveLinkHandler(`./productQnA/detail/${data.id}`)
-                          }
-                        >
+                          onClick={() => onClickDetailHanlder(data)}>
                           <Wrapper
                             width={`5%`}
-                            display={width < 500 ? `none` : `flex`}
-                          >
+                            display={width < 500 ? `none` : `flex`}>
                             {data.id}
                           </Wrapper>
                           <Wrapper
                             width={width < 500 ? `30%` : `20%`}
-                            dr={`row`}
-                          >
+                            dr={`row`}>
                             <Image
                               width={width < 500 ? `40px` : `50px`}
                               height={width < 500 ? `40px` : `50px`}
@@ -215,8 +293,7 @@ const Notice = () => {
                             <Wrapper
                               width={`calc(100% - 50px)`}
                               al={`flex-start`}
-                              padding={`0 0 0 10px`}
-                            >
+                              padding={`0 0 0 10px`}>
                               {data.productName}
                             </Wrapper>
                           </Wrapper>
@@ -225,35 +302,33 @@ const Notice = () => {
                               width < 500 ? `45%` : width < 800 ? `40%` : `45%`
                             }
                             ju={`flex-start`}
-                            dr={`row`}
-                          >
+                            dr={`row`}>
                             <Wrapper width={`auto`} margin={`0 17px 0 0`}>
                               {data.title}
                             </Wrapper>
                             <Wrapper width={`10px`} height={`10px`}>
-                              <Image
-                                height={`100%`}
-                                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
-                              />
+                              {data.isSecret && (
+                                <Image
+                                  height={`100%`}
+                                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
+                                />
+                              )}
                             </Wrapper>
                           </Wrapper>
                           <Wrapper
                             width={`10%`}
-                            display={width < 500 ? `none` : `flex`}
-                          >
-                            관리자
+                            display={width < 500 ? `none` : `flex`}>
+                            {data.author}
                           </Wrapper>
                           <Wrapper
                             width={
                               width < 500 ? `25%` : width < 800 ? `15%` : `10%`
-                            }
-                          >
+                            }>
                             {data.createdAt.substring(0, 10)}
                           </Wrapper>
                           <Wrapper
                             width={`10%`}
-                            display={width < 500 ? `none` : `flex`}
-                          >
+                            display={width < 500 ? `none` : `flex`}>
                             {data.hit}
                           </Wrapper>
                         </Wrapper>
@@ -264,8 +339,7 @@ const Notice = () => {
                 margin={`40px 0 0`}
                 dr={`row`}
                 height={`40px`}
-                ju={`flex-start`}
-              >
+                ju={`flex-start`}>
                 <Wrapper width={`auto`} display={width < 500 ? `none` : `flex`}>
                   검색어
                 </Wrapper>
@@ -281,6 +355,23 @@ const Notice = () => {
               </Wrapper>
             </Wrapper>
           </RsWrapper>
+
+          <CustomModal
+            title="비밀글 입력"
+            visible={isModalVisible}
+            onOk={() => ModalHandleOk()}
+            onCancel={() => ModalToggle()}
+            okText="확인"
+            cancelText="취소">
+            <Wrapper dr={`row`}>
+              <Text width={`80px`}>비밀번호</Text>
+              <TextInput
+                placeholder="비밀글 비밀번호를 입력해주세요."
+                width={`calc(100% - 80px)`}
+                {...inputSecret}
+              />
+            </Wrapper>
+          </CustomModal>
         </WholeWrapper>
       </ClientLayout>
     </>

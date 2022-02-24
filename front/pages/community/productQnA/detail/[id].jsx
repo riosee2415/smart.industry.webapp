@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ClientLayout from "../../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../../reducers/seo";
 import Head from "next/head";
@@ -6,7 +6,7 @@ import wrapper from "../../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
@@ -17,33 +17,53 @@ import { useCallback } from "react";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
+import { useEffect } from "react";
+import { message } from "antd";
+import { PRODUCT_QUESTION_DETAIL_REQUEST } from "../../../../reducers/product";
 
 const ProductQnA = () => {
+  const dispatch = useDispatch();
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
 
+  const {
+    productQuestionDetail,
+    st_productQuestionDetailDone,
+    st_productQuestionDetailError,
+  } = useSelector((state) => state.product);
+
   const width = useWidth();
   const router = useRouter();
 
   ////// HOOKS //////
+
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_productQuestionDetailError) {
+      return message.error(st_productQuestionDetailError);
+    }
+  }, [st_productQuestionDetailError]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
   ////// DATAVIEW //////
-  const testData = {
-    title: "상품문의[답변완료]",
-    write: "user",
-    createdAt: "2022-02-16-00:00",
-    hit: "123",
-    question: "문의내용 입니다.",
-    answer: "문의내용에 대한 답변입니다.",
-  };
+
+  // const testData = {
+  //   title: "상품문의[답변완료]",
+  //   write: "user",
+  //   createdAt: "2022-02-16-00:00",
+  //   hit: "123",
+  //   question: "문의내용 입니다.",
+  //   answer: "문의내용에 대한 답변입니다.",
+  // };
 
   return (
     <>
@@ -105,8 +125,7 @@ const ProductQnA = () => {
                 width={`auto`}
                 margin={`0 8px 0 0`}
                 onClick={() => moveLinkHandler(`/`)}
-                cursor={`pointer`}
-              >
+                cursor={`pointer`}>
                 HOME
               </Wrapper>
               |
@@ -114,8 +133,7 @@ const ProductQnA = () => {
                 width={`auto`}
                 margin={`0 8px`}
                 onClick={() => moveLinkHandler(`/community/faq`)}
-                cursor={`pointer`}
-              >
+                cursor={`pointer`}>
                 커뮤니티
               </Wrapper>
               |
@@ -123,8 +141,7 @@ const ProductQnA = () => {
                 width={`auto`}
                 margin={`0 8px`}
                 onClick={() => moveLinkHandler(`/community/productQnA`)}
-                cursor={`pointer`}
-              >
+                cursor={`pointer`}>
                 상품문의
               </Wrapper>
               |
@@ -138,8 +155,7 @@ const ProductQnA = () => {
               al={`flex-start`}
               padding={`0 0 10px`}
               borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 40px`}
-            >
+              margin={`0 0 40px`}>
               상품문의 상세보기
             </Wrapper>
 
@@ -148,108 +164,99 @@ const ProductQnA = () => {
                 height={`50px`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
-                dr={`row`}
-              >
+                dr={`row`}>
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
                   height={`100%`}
                   bgColor={Theme.lightGrey2_C}
                   padding={`0 0 0 20px`}
-                  al={`flex-start`}
-                >
+                  al={`flex-start`}>
                   제목
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `80%` : `90%`}
                   al={`flex-start`}
-                  padding={`0 0 0 20px`}
-                >
-                  {testData && testData.title}
+                  padding={`0 0 0 20px`}>
+                  {productQuestionDetail && productQuestionDetail.title}
                 </Wrapper>
               </Wrapper>
               <Wrapper
                 height={`50px`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
-                dr={`row`}
-              >
+                dr={`row`}>
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
                   height={`100%`}
                   padding={`0 0 0 20px`}
-                  al={`flex-start`}
-                >
+                  al={`flex-start`}>
                   작성자
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `80%` : `90%`}
                   al={`flex-start`}
-                  padding={`0 0 0 20px`}
-                >
-                  {testData && testData.write}
+                  padding={`0 0 0 20px`}>
+                  {productQuestionDetail && productQuestionDetail.author}
                 </Wrapper>
               </Wrapper>
               <Wrapper
                 height={`50px`}
                 dr={`row`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-              >
+                borderBottom={`1px solid ${Theme.grey2_C}`}>
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
                   height={`100%`}
                   padding={`0 0 0 20px`}
-                  al={`flex-start`}
-                >
+                  al={`flex-start`}>
                   작성일
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `30%` : `15%`}
                   al={`flex-start`}
-                  padding={`0 0 0 20px`}
-                >
-                  {testData && testData.createdAt.substring(0, 10)}
+                  padding={`0 0 0 20px`}>
+                  {productQuestionDetail &&
+                    productQuestionDetail.createdAt.substring(0, 10)}
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `25%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
                   height={`100%`}
                   padding={`0 0 0 20px`}
-                  al={`flex-start`}
-                >
+                  al={`flex-start`}>
                   조회수
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `25%` : `65%`}
                   al={`flex-start`}
-                  padding={`0 0 0 20px`}
-                >
-                  {testData && testData.hit}
+                  padding={`0 0 0 20px`}>
+                  {productQuestionDetail && productQuestionDetail.hit}
                 </Wrapper>
               </Wrapper>
               <Wrapper
                 minHeight={`140px`}
                 al={`flex-start`}
                 ju={`flex-start`}
-                padding={`23px 0 0 20px`}
-              >
-                {testData && testData.question}
+                padding={`23px 0 0 20px`}>
+                {productQuestionDetail && productQuestionDetail.content}
               </Wrapper>
               <Wrapper
                 dr={`row`}
                 al={`flex-start`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
-                display={testData && testData.answer ? `flex` : `none`}
-                bgColor={Theme.lightGrey2_C}
-              >
+                display={
+                  productQuestionDetail && productQuestionDetail.answer
+                    ? `flex`
+                    : `none`
+                }
+                bgColor={Theme.lightGrey2_C}>
                 <Wrapper
                   width={`20px`}
                   height={`20px`}
                   color={Theme.white_C}
                   radius={`100%`}
                   bgColor={Theme.red_C}
-                  margin={`23px 26px 0 20px`}
-                >
+                  margin={`23px 26px 0 20px`}>
                   A
                 </Wrapper>
 
@@ -258,9 +265,8 @@ const ProductQnA = () => {
                   minHeight={`140px`}
                   al={`flex-start`}
                   ju={`flex-start`}
-                  padding={`23px 10px 0 0`}
-                >
-                  {testData && testData.answer}
+                  padding={`23px 10px 0 0`}>
+                  {productQuestionDetail && productQuestionDetail.answer}
                 </Wrapper>
               </Wrapper>
             </Wrapper>
@@ -270,8 +276,7 @@ const ProductQnA = () => {
                 width={`116px`}
                 height={`50px`}
                 radius={`0`}
-                onClick={() => moveLinkHandler(`/community/productQnA`)}
-              >
+                onClick={() => moveLinkHandler(`/community/productQnA`)}>
                 목록
               </CommonButton>
             </Wrapper>
