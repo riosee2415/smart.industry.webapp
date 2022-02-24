@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
@@ -22,6 +22,7 @@ import { useRouter } from "next/dist/client/router";
 import { Checkbox, Empty, message } from "antd";
 import styled from "styled-components";
 import { MinusOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
 
 const CommonCheckBox = styled(Checkbox)`
   .ant-checkbox-checked .ant-checkbox-inner {
@@ -128,8 +129,35 @@ const Cart = () => {
   const router = useRouter();
 
   ////// HOOKS //////
+  const [datum, setDatum] = useState([]);
+  const [isCheck, setIsCheck] = useState([]);
+  const [isDelete, setIsDelete] = useState([]);
+  const [isCheckAll, setIsCheckAll] = useState(true);
+  const [localDataum, setLocalDataum] = useState([]);
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    const toggleArr = [];
+    const deleteArr = [];
+
+    const data = localStorage.getItem("WKDQKRNSL")
+      ? JSON.parse(localStorage.getItem("WKDQKRNSL"))
+      : [];
+
+    for (let i = 0; i < data.length; i++) {
+      toggleArr.push(true);
+    }
+    for (let j = 0; j < data.length; j++) {
+      deleteArr.push(false);
+    }
+
+    setDatum(data);
+    setLocalDataum(data);
+    setIsCheck(toggleArr);
+    setIsDelete(deleteArr);
+  }, []);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
@@ -154,6 +182,90 @@ const Cart = () => {
         },
       });
     }
+  }, []);
+
+  const PrdouctNumHandler = useCallback(
+    (PrdocutNum, idx2, prevData) => {
+      let result = datum.map((data, idx) => {
+        if (idx === idx2) {
+          if (Number(data.productNum) + Number(PrdocutNum) === 0) {
+            return {
+              ...data,
+              productNum: 1,
+            };
+          } else {
+            return {
+              ...data,
+              productNum: Number(data.productNum) + Number(PrdocutNum),
+              total: Number(data.price) * Number(PrdocutNum + data.productNum),
+            };
+          }
+        } else {
+          return {
+            ...data,
+          };
+        }
+      });
+      setDatum(result);
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
+    },
+    [datum]
+  );
+
+  const checkEachHandler = useCallback(
+    (e, data, idx2) => {
+      let result = isCheck.map((data1, idx) => {
+        return idx2 === idx ? !data1 : data1;
+      });
+
+      setIsCheck(result);
+    },
+    [isCheck]
+  );
+
+  const checkBoxAllHandler = useCallback(
+    (e) => {
+      let result = isCheck.map(() => {
+        return e.target.checked ? true : false;
+      });
+
+      setIsCheck(result);
+      setIsCheckAll(e.target.checked);
+    },
+
+    [isCheck, isCheckAll]
+  );
+
+  const deleteHandler = useCallback(
+    (localStorgeDatum) => {
+      let result = localStorgeDatum.filter((data, idx) => {
+        return !isCheck[idx];
+      });
+
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
+
+      setDatum(result);
+    },
+    [isCheck, datum]
+  );
+
+  const deleteOneHandler = useCallback(
+    (localStorgeDatum, index) => {
+      let result = localStorgeDatum.filter((data, idx) => {
+        return idx !== index;
+      });
+
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
+
+      setDatum(result);
+    },
+    [isDelete, datum]
+  );
+
+  const deleteAllHandler = useCallback((localStorgeDatum) => {
+    localStorage.setItem("WKDQKRNSL", JSON.stringify([]));
+
+    setDatum([]);
   }, []);
   ////// DATAVIEW //////
   const testData = [
@@ -292,14 +404,15 @@ const Cart = () => {
             >
               일반상품 (2)
             </Wrapper>
+            {console.log(datum)}
             {width < 900 ? (
               <Wrapper width={width < 500 ? `100%` : `60%`}>
                 <Wrapper dr={`row`}>
-                  {testData && testData.length === 0 ? (
+                  {datum && datum.length === 0 ? (
                     <Empty />
                   ) : (
-                    testData &&
-                    testData.map((data) => {
+                    datum &&
+                    datum.map((data, idx) => {
                       return (
                         <Wrapper
                           dr={`row`}
@@ -327,7 +440,7 @@ const Cart = () => {
                             <Image
                               width={`100px`}
                               height={`100px`}
-                              src={data.productImg}
+                              src={data.thumbnail}
                             />
                           </Wrapper>
                           <Wrapper
@@ -352,17 +465,21 @@ const Cart = () => {
                                   color: Theme.darkGrey_C,
                                   fontSize: `10px`,
                                 }}
-                                onClick={() => countHandler(data.count - 1)}
+                                onClick={() =>
+                                  PrdouctNumHandler(-1, idx, localDataum)
+                                }
                               />
                               <Text color={Theme.darkGrey_C} fontSize={`12px`}>
-                                {data.count}
+                                {data.productNum}
                               </Text>
                               <PlusOutlined
                                 style={{
                                   color: Theme.darkGrey_C,
                                   fontSize: `10px`,
                                 }}
-                                onClick={() => countHandler(data.count + 1)}
+                                onClick={() =>
+                                  PrdouctNumHandler(1, idx, localDataum)
+                                }
                               />
                             </Wrapper>
                             <Text width={`auto`}>{data.total}원</Text>
@@ -391,7 +508,10 @@ const Cart = () => {
                     borderRight={`1px solid ${Theme.grey2_C}`}
                     height={`100%`}
                   >
-                    <CommonCheckBox />
+                    <CommonCheckBox
+                      checked={isCheckAll}
+                      onChange={(e) => checkBoxAllHandler(e)}
+                    />
                   </Wrapper>
                   <Wrapper
                     width={`115px`}
@@ -451,11 +571,11 @@ const Cart = () => {
                   </Wrapper>
                   <Wrapper width={`138px`}>선택</Wrapper>
                 </Wrapper>
-                {testData && testData.length === 0 ? (
+                {datum && datum.length === 0 ? (
                   <Empty description="조회된 상품이 없습니다." />
                 ) : (
-                  testData &&
-                  testData.map((data) => {
+                  datum &&
+                  datum.map((data, idx) => {
                     return (
                       <Wrapper
                         dr={`row`}
@@ -467,7 +587,10 @@ const Cart = () => {
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
-                          <CommonCheckBox />
+                          <CommonCheckBox
+                            checked={isCheck[idx]}
+                            onChange={(e) => checkEachHandler(e, data, idx)}
+                          />
                         </Wrapper>
                         <Wrapper
                           width={`115px`}
@@ -477,7 +600,7 @@ const Cart = () => {
                           <Image
                             width={`100px`}
                             height={`100px`}
-                            src={data.productImg}
+                            src={data.thumbnail}
                           />
                         </Wrapper>
                         <Wrapper
@@ -516,17 +639,21 @@ const Cart = () => {
                                 color: Theme.darkGrey_C,
                                 fontSize: `10px`,
                               }}
-                              onClick={() => countHandler(data.count - 1)}
+                              onClick={() =>
+                                PrdouctNumHandler(-1, idx, localDataum)
+                              }
                             />
                             <Text color={Theme.darkGrey_C} fontSize={`12px`}>
-                              {data.count}
+                              {data.productNum}
                             </Text>
                             <PlusOutlined
                               style={{
                                 color: Theme.darkGrey_C,
                                 fontSize: `10px`,
                               }}
-                              onClick={() => countHandler(data.count + 1)}
+                              onClick={() =>
+                                PrdouctNumHandler(1, idx, localDataum)
+                              }
                             />
                           </Wrapper>
                         </Wrapper>
@@ -549,19 +676,22 @@ const Cart = () => {
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
-                          무료
+                          {data.deliveryPay}원
                         </Wrapper>
                         <Wrapper
                           width={`calc((100% - 115px - 138px) * 0.13)`}
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
-                          {data.total}원
+                          원{/* 보류 */}
                         </Wrapper>
                         <Wrapper width={`138px`}>
                           <DarkgreyBtn>문의하기</DarkgreyBtn>
                           <Lightgrey2Btn>관심상품등록</Lightgrey2Btn>
-                          <Lightgrey2Btn margin={`0`}>
+                          <Lightgrey2Btn
+                            margin={`0`}
+                            onClick={() => deleteOneHandler(datum, idx)}
+                          >
                             <CloseOutlined />
                             삭제
                           </Lightgrey2Btn>
@@ -635,13 +765,17 @@ const Cart = () => {
                 >
                   선택상품을
                 </Wrapper>
-                <GreyBtn>
+                <GreyBtn onClick={() => deleteHandler(datum)}>
                   <CloseOutlined />
                   삭제하기
                 </GreyBtn>
               </Wrapper>
-              <Lightgrey2Btn width={`122px`} margin={`0`}>
-                장바구니비우기
+              <Lightgrey2Btn
+                width={`122px`}
+                margin={`0`}
+                onClick={() => deleteAllHandler(datum)}
+              >
+                장바구니 비우기
               </Lightgrey2Btn>
             </Wrapper>
             <Wrapper dr={`row`} position={`relative`} margin={`0 0 120px`}>

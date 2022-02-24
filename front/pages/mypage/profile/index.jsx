@@ -155,9 +155,6 @@ const Profile = () => {
   }, [me, inputEmail, emailCheck]);
 
   useEffect(() => {
-    console.log(emailCheck);
-  }, [inputEmail]);
-  useEffect(() => {
     if (me) {
       inputUserId.setValue(me.userId);
       inputMobile.setValue(me.mobile);

@@ -158,7 +158,7 @@ const DetailProduct = () => {
     },
     [restImages, choiceImage]
   );
-
+  console.log(productDetailData);
   //cart
   const ModalHandleOk = useCallback(
     // 중복 상품 기능
