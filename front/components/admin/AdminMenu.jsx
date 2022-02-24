@@ -133,9 +133,9 @@ const AdminMenu = () => {
           <Menu.Item key="/admin/board/notice/list">
             <MenuName>공지사항 관리</MenuName>
           </Menu.Item>
-          <Menu.Item key="/admin/question/type">
+          {/* <Menu.Item key="/admin/question/type">
             <MenuName>문의 유형 리스트</MenuName>
-          </Menu.Item>
+          </Menu.Item> */}
           <Menu.Item key="/admin/question/list">
             <MenuName>문의 리스트</MenuName>
           </Menu.Item>
