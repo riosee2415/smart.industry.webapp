@@ -420,7 +420,7 @@ const Home = ({}) => {
           {/* <Popup /> */}
 
           <RsWrapper>
-            <Wrapper padding={width < 900 ? `56px 0 55px` : `112px 0 110px`}>
+            <Wrapper padding={width < 900 ? `56px 0 55px` : `112px 0 80px`}>
               <SubTitle>Product</SubTitle>
               <Text
                 margin={`24px 0 41px`}
@@ -431,7 +431,7 @@ const Home = ({}) => {
               </Text>
               <Wrapper dr={`row`} ju={width < 900 && `space-between`}>
                 {categoryList &&
-                  categoryList.map((data) => {
+                  categoryList.slice(0, 5).map((data) => {
                     return (
                       <MainProductTypeBtn
                         isCheck={selectCat === data.id}
@@ -567,7 +567,7 @@ const Home = ({}) => {
                   ))}
               </Wrapper>
             </Wrapper>
-            <Wrapper margin={`61px 0 0`}>
+            <Wrapper margin={`0 0 110px`}>
               <MainProductButton
                 onClick={() =>
                   moveLinkHandler(
