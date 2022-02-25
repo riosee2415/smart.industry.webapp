@@ -70,6 +70,71 @@ router.post("/list", async (req, res, next) => {
   }
 });
 
+router.post("/admin/list", async (req, res, next) => {
+  const { listType } = req.body;
+
+  let nanFlag = isNaN(listType);
+
+  if (!listType) {
+    nanFlag = false;
+  }
+
+  if (nanFlag) {
+    return res.status(400).send("잘못된 요청 입니다.");
+  }
+
+  let _listType = Number(listType);
+
+  if (_listType > 3 || !listType) {
+    _listType = 3;
+  }
+
+  try {
+    let questions = [];
+
+    switch (_listType) {
+      case 1:
+        questions = await ProdQuestion.findAll({
+          where: { isComplete: false },
+          include: [
+            {
+              model: Product,
+            },
+          ],
+          //
+        });
+        break;
+      case 2:
+        questions = await ProdQuestion.findAll({
+          where: { isComplete: true },
+          include: [
+            {
+              model: Product,
+            },
+          ],
+          //
+        });
+        break;
+      case 3:
+        questions = await ProdQuestion.findAll({
+          include: [
+            {
+              model: Product,
+            },
+          ],
+        });
+        break;
+      default:
+        break;
+    }
+
+    return res.status(200).json(questions);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품 문의 목록을 불러올 수 없습니다.");
+  }
+});
+
 router.post("/detail", async (req, res, next) => {
   const { id, secret } = req.body;
   try {
