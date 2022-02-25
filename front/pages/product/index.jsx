@@ -126,7 +126,7 @@ const ProductWrapper = styled(Wrapper)`
     }
 
     img {
-      height: 216px;
+      height: 168px;
     }
   }
 
@@ -135,10 +135,6 @@ const ProductWrapper = styled(Wrapper)`
 
     &:nth-child(2n + 1) {
       margin-right: 15px;
-    }
-
-    img {
-      height: 216px;
     }
   }
 
@@ -416,7 +412,11 @@ const ProductList = () => {
                   )}
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`} ju={`flex-start`}>
+              <Wrapper
+                dr={`row`}
+                ju={`flex-start`}
+                margin={width < 700 && `40px 0 0`}
+              >
                 {productList &&
                   (productList.length === 0 ? (
                     <Wrapper>
@@ -429,15 +429,18 @@ const ProductList = () => {
                           onClick={() => moveLinkHandler(`/product/${data.id}`)}
                         >
                           <Wrapper
-                            padding={`20px`}
+                            padding={width < 700 ? `0px` : `20px`}
                             border={`1px solid ${Theme.lightGrey_C}`}
                           >
                             <Image
+                              width={width < 700 ? `100%` : `216px`}
                               src={data.thumbnail}
                               alt="main_product_thumbnail"
                             />
                           </Wrapper>
-                          <Text margin={`25px 0 13px`}>{data.title}</Text>
+                          <Text margin={width ? `5px 0` : `25px 0 13px`}>
+                            {data.title}
+                          </Text>
                           <Wrapper
                             dr={width < 900 ? `column` : `row`}
                             fontSize={width < 900 ? `16px` : `18px`}
