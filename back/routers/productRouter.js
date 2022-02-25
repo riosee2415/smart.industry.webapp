@@ -279,7 +279,7 @@ router.post("/list", async (req, res, next) => {
      AND  A.isDelete = FALSE
      ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}    
      ${_companyId ? `AND A.ProdCompanyId = ${_companyId}` : ``}  
-     ${_search ? `AND A.name LIKE '%${_search}%'` : ``}  
+     ${_search ? `AND A.title LIKE '%${_search}%'` : ``}  
      ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
      ${_isSale ? `AND A.isSale = TRUE` : ``}    
      ${_isBest ? `AND A.isBest = TRUE` : ``}    
@@ -320,7 +320,7 @@ router.post("/list", async (req, res, next) => {
        AND  A.isDelete = FALSE
      ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}   
      ${_companyId ? `AND A.ProdCompanyId = ${_companyId}` : ``} 
-     ${_search ? `AND A.name LIKE '%${_search}%'` : ``}    
+     ${_search ? `AND A.title LIKE '%${_search}%'` : ``}    
      ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
      ${_isSale ? `AND A.isSale = TRUE` : ``}
      ${_isBest ? `AND A.isBest = TRUE` : ``}  
