@@ -46,6 +46,7 @@ import {
   PRODUCT_COMPANY_CREATE_REQUEST,
   PRODUCT_COMPANY_UPDATE_REQUEST,
   PRODUCT_COMPANY_DELETE_REQUEST,
+  UNIT_MODAL_TOGGLE,
 } from "../../../reducers/product";
 import { CATEGORY_LIST_REQUEST } from "../../../reducers/category";
 import Theme from "../../../components/Theme";
@@ -113,6 +114,16 @@ const Adminli = styled.li`
   color: ${Theme.red_C};
 `;
 
+const GuideUl = styled.ul`
+  width: 100%;
+  padding: 5px;
+`;
+const GuideLi = styled.li`
+  width: 100%;
+  margin-bottom: 5px;
+  color: ${(props) => (props.isImpo ? props.theme.red_C : "")};
+`;
+
 const LoadNotification = (msg, content) => {
   notification.open({
     message: msg,
@@ -142,14 +153,16 @@ const ProductList = () => {
   const {
     productImages,
     productList,
+    prodCompanyList,
     productId,
     maxPage,
     createModal,
     prodCompanyModal,
     prodCompanyCreateModal,
+    unitModal,
+    //
     productImagePath,
     productDetailImagePath,
-    prodCompanyList,
     //
     st_productUploadLoading,
     st_productCreateDone,
@@ -525,6 +538,12 @@ const ProductList = () => {
     [prodCompanyCreateModal]
   );
 
+  const unitMdoalToggle = useCallback(() => {
+    dispatch({
+      type: UNIT_MODAL_TOGGLE,
+    });
+  }, [unitModal]);
+
   ////// HANDLER //////
 
   const prodCompanyCreateSubmit = useCallback((data) => {
@@ -896,7 +915,7 @@ const ProductList = () => {
             </Select>
           </Wrapper>
           <Wrapper width={`60%`} dr={`row`} ju={`flex-end`}>
-            <Button size="small" type="danger">
+            <Button size="small" type="danger" onClick={unitMdoalToggle}>
               주의사항
             </Button>
             <Button
@@ -1143,6 +1162,24 @@ const ProductList = () => {
             </Button>
           </Wrapper>
         </Form>
+      </Modal>
+
+      <Modal
+        title="주의사항"
+        visible={unitModal}
+        onCancel={unitMdoalToggle}
+        footer={null}
+        width={`600px`}
+      >
+        <GuideUl>
+          <GuideLi>베스트상품은 총 4개까지만 존재할 수 있습니다.</GuideLi>
+          <GuideLi>가겨, 할인율, 배송비는 숫자만 입력가능합니다.</GuideLi>
+          <GuideLi>상품상세링크에는 유튜브 링크만 입력가능합니다.</GuideLi>
+          <GuideLi isImpo={true}>
+            조작의 실수 및 기능문의는 (주)4LEAF SOFTWARE 1600-4198로
+            연락바랍니다.
+          </GuideLi>
+        </GuideUl>
       </Modal>
     </AdminLayout>
   );

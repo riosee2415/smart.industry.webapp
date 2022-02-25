@@ -26,6 +26,7 @@ export const initailState = {
   createModal: false,
   prodCompanyModal: false,
   prodCompanyCreateModal: false,
+  unitModal: false,
 
   //
   st_productListLoading: false, // 상품 가져오기
@@ -218,6 +219,7 @@ export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 export const PROD_COMPANY_MODAL_TOGGLE = "PROD_COMPANY_MODAL_TOGGLE";
 export const PROD_COMPANY_CREATE_MODAL_TOGGLE =
   "PROD_COMPANY_CREATE_MODAL_TOGGLE";
+export const UNIT_MODAL_TOGGLE = "UNIT_MODAL_TOGGLE";
 
 export const PRODUCT_IMAGE_PATH = "PRODUCT_IMAGE_PATH";
 export const PRODUCT_DETAIL_IMAGE_PATH = "PRODUCT_DETAIL_IMAGE_PATH";
@@ -648,6 +650,11 @@ const reducer = (state = initailState, action) =>
 
       case CREATE_MODAL_TOGGLE: {
         draft.createModal = !draft.createModal;
+        break;
+      }
+
+      case UNIT_MODAL_TOGGLE: {
+        draft.unitModal = !draft.unitModal;
         break;
       }
 
