@@ -135,18 +135,18 @@ const List = ({ location }) => {
         type: UPDATE_MODAL_OPEN_REQUEST,
       });
 
-      let type = "";
+      // let type = "";
 
-      for (let i = 0; i < types.length; i++) {
-        if (data.QuestionTypeId === types[i].id) {
-          type = types[i].value;
-        }
-      }
+      // for (let i = 0; i < types.length; i++) {
+      //   if (data.QuestionTypeId === types[i].id) {
+      //     type = types[i].value;
+      //   }
+      // }
 
       answer.setValue(data.answer);
-      setUpdateData({ ...data, type });
+      setUpdateData({ ...data });
     },
-    [updateModal, types]
+    [updateModal]
   );
 
   const updateModalClose = useCallback(() => {
@@ -180,6 +180,7 @@ const List = ({ location }) => {
       },
     });
   }, [updateData, answer]);
+  console.log(updateData);
 
   const deleteQuestionHandler = useCallback(() => {
     if (!deleteId) {
@@ -197,62 +198,43 @@ const List = ({ location }) => {
     setDeleteId(null);
     setDeletePopVisible((prev) => !prev);
   }, [deleteId]);
-
-  const fileDownloadHandler = useCallback(async (filePath) => {
-    let blob = await fetch(filePath).then((r) => r.blob());
-
-    const file = new Blob([blob]);
-
-    const ext = filePath.substring(
-      filePath.lastIndexOf(".") + 1,
-      filePath.length
-    );
-
-    const originName = `첨부파일.${ext}`;
-
-    saveAs(file, originName);
-  }, []);
   ////// DATAVIEW //////
 
   // Table
   const columns = [
     {
-      title: "No",
+      title: "번호",
       dataIndex: "id",
     },
 
     {
-      title: "Title",
+      title: "제목",
       render: (data) => <div>{data.title}</div>,
     },
     {
-      title: "isCompleted",
+      title: "처리여부",
       render: (data) => <div>{data.isCompleted ? `완료` : `미완료`}</div>,
     },
     ,
     {
-      title: "CreatedAt",
+      title: "작성일",
       render: (data) => {
         return <div>{data.createdAt.substring(0, 10)}</div>;
       },
     },
     {
-      title: "UpdatedAt",
+      title: "처리일",
       render: (data) => <div>{data.updatedAt.substring(0, 10)}</div>,
     },
     {
-      title: "UPDATE",
+      title: "상세보기",
       render: (data) => (
-        <Button type="primary" onClick={() => updateModalOpen(data)}>
-          UPDATE
-        </Button>
-      ),
-    },
-    {
-      title: "DELETE",
-      render: (data) => (
-        <Button type="danger" onClick={deletePopToggle(data.id)}>
-          DEL
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => updateModalOpen(data)}
+        >
+          상세보기
         </Button>
       ),
     },
@@ -295,7 +277,7 @@ const List = ({ location }) => {
           rowKey="id"
           columns={columns}
           dataSource={questions ? questions : []}
-          size="middle"
+          size="small"
         />
       </AdminContent>
 
@@ -321,22 +303,9 @@ const List = ({ location }) => {
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
               >
-                이름
+                이메일
               </ColWrapper>
-              <ColWrapper>{`${updateData && updateData.name}(${
-                updateData && updateData.email
-              })`}</ColWrapper>
-            </RowWrapper>
-            {/*  */}
-            <RowWrapper gutter={5} margin={`10px 0`}>
-              <ColWrapper
-                width={`120px`}
-                height={`30px`}
-                bgColor={Theme.basicTheme_C}
-              >
-                문의 유형
-              </ColWrapper>
-              <ColWrapper>{updateData && updateData.type.value}</ColWrapper>
+              <ColWrapper>{updateData && updateData.email}</ColWrapper>
             </RowWrapper>
             {/*  */}
             <RowWrapper gutter={5}>
@@ -349,6 +318,28 @@ const List = ({ location }) => {
                 문의 제목
               </ColWrapper>
               <ColWrapper>{updateData && updateData.title}</ColWrapper>
+            </RowWrapper>
+            <RowWrapper gutter={5}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                height={`30px`}
+              >
+                작성자
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.author}</ColWrapper>
+            </RowWrapper>
+            <RowWrapper gutter={5}>
+              <ColWrapper
+                width={`120px`}
+                height={`30px`}
+                bgColor={Theme.basicTheme_C}
+                height={`30px`}
+              >
+                연락처
+              </ColWrapper>
+              <ColWrapper>{updateData && updateData.mobile}</ColWrapper>
             </RowWrapper>
             {/*  */}
             <RowWrapper gutter={5} margin={`10px 0`}>
@@ -370,44 +361,7 @@ const List = ({ location }) => {
             />
           </ColWrapper>
         </RowWrapper>
-        <RowWrapper padding={`20px 50px`}>
-          {updateData && updateData.file1 && (
-            <ColWrapper
-              width={`120px`}
-              height={`30px`}
-              bgColor={Theme.grey_C}
-              radius={`5px`}
-              margin={`0 10px 0 0`}
-              cursor={`pointer`}
-              color={Theme.white_C}
-              onClick={() => fileDownloadHandler(updateData.file1)}
-            >
-              첨부파일 1
-            </ColWrapper>
-          )}
-          {updateData && updateData.file2 && (
-            <ColWrapper
-              width={`120px`}
-              height={`30px`}
-              bgColor={Theme.grey_C}
-              radius={`5px`}
-              margin={`0 10px 0 0`}
-              cursor={`pointer`}
-              color={Theme.white_C}
-              onClick={() => fileDownloadHandler(updateData.file2)}
-            >
-              첨부파일 2
-            </ColWrapper>
-          )}
-        </RowWrapper>
       </Modal>
-
-      <Modal
-        visible={deletePopVisible}
-        onOk={() => deleteQuestionHandler()}
-        onCancel={() => {}}
-        title="Ask"
-      ></Modal>
     </AdminLayout>
   );
 };

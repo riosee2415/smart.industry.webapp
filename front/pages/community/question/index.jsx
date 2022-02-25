@@ -6,7 +6,7 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
@@ -22,8 +22,10 @@ import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { Checkbox } from "antd";
+import { Checkbox, notification, message } from "antd";
 import useInput from "../../../hooks/useInput";
+import { QUESTION_CREATE_REQUEST } from "../../../reducers/question";
+import { useEffect } from "react";
 
 const ContentArea = styled(TextArea)`
   width: 100%;
@@ -50,14 +52,25 @@ const CommonCheckBox = styled(Checkbox)`
   }
 `;
 
+const LoadNotification = (msg, content) => {
+  notification.open({
+    message: msg,
+    description: content,
+    onClick: () => {},
+  });
+};
+
 const Question = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
+  const { me } = useSelector((state) => state.user);
+  const { st_questionCreateDone } = useSelector((state) => state.question);
 
   const width = useWidth();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [isTerms, setIsTerms] = useState(false);
 
@@ -68,6 +81,14 @@ const Question = () => {
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (st_questionCreateDone) {
+      LoadNotification("문의하기가 접수되었습니다.");
+
+      setIsTerms(false);
+      inputContent.setValue("");
+    }
+  }, [st_questionCreateDone, inputContent.value, isTerms]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
@@ -80,6 +101,28 @@ const Question = () => {
     },
     [isTerms]
   );
+
+  const QuestionHandler = useCallback(() => {
+    if (!inputContent.value || inputContent.value.trim() === "") {
+      return LoadNotification("문의내용을 입력해주세요.");
+    }
+    if (!isTerms) {
+      return LoadNotification("개인정보 제공에 동의해주세요.");
+    }
+
+    dispatch({
+      type: QUESTION_CREATE_REQUEST,
+      data: {
+        author: me.username,
+        mobile: me.mobile,
+        email: me.email,
+        title: me && me ? me.username : "비회원일때 제목",
+        content: inputContent.value,
+        term: isTerms,
+        password: me && me ? parseInt("0000") : parseInt("1111"),
+      },
+    });
+  }, [me, isTerms, inputContent.value]);
   ////// DATAVIEW //////
   const testUserData = [
     {
@@ -280,7 +323,12 @@ const Question = () => {
                   </CommonCheckBox>
                 </Wrapper>
               </Wrapper>
-              <CommonButton width={`117px`} height={`50px`} radius={`0`}>
+              <CommonButton
+                width={`117px`}
+                height={`50px`}
+                radius={`0`}
+                onClick={QuestionHandler}
+              >
                 작성하기
               </CommonButton>
             </Wrapper>
