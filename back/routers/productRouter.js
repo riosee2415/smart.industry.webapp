@@ -200,6 +200,7 @@ router.post("/list", async (req, res, next) => {
   const {
     categoryId,
     companyId,
+    search,
     isUsed,
     isSale,
     isPrice,
@@ -217,6 +218,7 @@ router.post("/list", async (req, res, next) => {
 
   let _categoryId = categoryId || null;
   let _companyId = companyId || null;
+  let _search = search ? search : "";
   let _isUsed = isUsed || null;
   let _isSale = isSale || null;
   let _isPrice = isPrice || null;
@@ -276,7 +278,8 @@ router.post("/list", async (req, res, next) => {
    WHERE	1 = 1
      AND  A.isDelete = FALSE
      ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}    
-     ${_companyId ? `AND A.ProdCompanyId = ${_companyId}` : ``}    
+     ${_companyId ? `AND A.ProdCompanyId = ${_companyId}` : ``}  
+     ${_search ? `AND A.name LIKE '%${_search}%'` : ``}  
      ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
      ${_isSale ? `AND A.isSale = TRUE` : ``}    
      ${_isBest ? `AND A.isBest = TRUE` : ``}    
@@ -316,7 +319,8 @@ router.post("/list", async (req, res, next) => {
      WHERE	1 = 1
        AND  A.isDelete = FALSE
      ${_categoryId ? `AND A.CategoryId = ${_categoryId}` : ``}   
-     ${_companyId ? `AND A.ProdCompanyId = ${_companyId}` : ``}    
+     ${_companyId ? `AND A.ProdCompanyId = ${_companyId}` : ``} 
+     ${_search ? `AND A.name LIKE '%${_search}%'` : ``}    
      ${_isUsed ? `AND A.isUsed = TRUE` : ``}    
      ${_isSale ? `AND A.isSale = TRUE` : ``}
      ${_isBest ? `AND A.isBest = TRUE` : ``}  
