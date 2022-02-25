@@ -129,6 +129,29 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
   }
 });
 
+//  비회원 1대1 문의
+//
+// router.post("/notUser/create", async (req, res, next) => {
+//   const { author, mobile, email, title, content, term, password } = req.body;
+
+//   try {
+//     const createResult = await Question.create({
+//       author,
+//       mobile,
+//       email,
+//       title,
+//       content,
+//       term,
+//       password,
+//     });
+
+//     return res.status(201).json({ result: true });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(401).send("문의 데이터를 생성할 수 없습니다. [CODE 037]");
+//   }
+// });
+
 router.patch("/update", isAdminCheck, async (req, res, next) => {
   const { id, answer } = req.body;
 
