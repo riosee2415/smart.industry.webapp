@@ -58,6 +58,10 @@ export const QUESTION_CREATE_REQUEST = "QUESTION_CREATE_REQUEST";
 export const QUESTION_CREATE_SUCCESS = "QUESTION_CREATE_SUCCESS";
 export const QUESTION_CREATE_FAILURE = "QUESTION_CREATE_FAILURE";
 
+export const NOT_USER_CREATE_REQUEST = "NOT_USER_CREATE_REQUEST";
+export const NOT_USER_CREATE_SUCCESS = "NOT_USER_CREATE_SUCCESS";
+export const NOT_USER_CREATE_FAILURE = "NOT_USER_CREATE_FAILURE";
+
 // ************************************************
 export const QUESTION_TYPE_GET_REQUEST = "QUESTION_TYPE_GET_REQUEST";
 export const QUESTION_TYPE_GET_SUCCESS = "QUESTION_TYPE_GET_SUCCESS";
@@ -153,6 +157,24 @@ const reducer = (state = initailState, action) =>
         draft.st_questionCreateLoading = false;
         draft.st_questionCreateDone = false;
         draft.st_questionCreateError = action.error;
+        break;
+      }
+      case NOT_USER_CREATE_REQUEST: {
+        draft.st_notUserCreateLoading = true;
+        draft.st_notUserCreateDone = null;
+        draft.st_notUserCreateError = false;
+        break;
+      }
+      case NOT_USER_CREATE_SUCCESS: {
+        draft.st_notUserCreateLoading = false;
+        draft.st_notUserCreateDone = true;
+        draft.questions = action.data;
+        break;
+      }
+      case NOT_USER_CREATE_FAILURE: {
+        draft.st_notUserCreateLoading = false;
+        draft.st_notUserCreateDone = false;
+        draft.st_notUserCreateError = action.error;
         break;
       }
       // ************************************************

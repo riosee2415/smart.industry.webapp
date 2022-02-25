@@ -16,6 +16,10 @@ import {
   QUESTION_UPDATE_REQUEST,
   QUESTION_UPDATE_SUCCESS,
   QUESTION_UPDATE_FAILURE,
+  //
+  NOT_USER_CREATE_REQUEST,
+  NOT_USER_CREATE_SUCCESS,
+  NOT_USER_CREATE_FAILURE,
   // ************************************************
   QUESTION_TYPE_GET_REQUEST,
   QUESTION_TYPE_GET_SUCCESS,
@@ -133,6 +137,33 @@ function* questionUpdate(action) {
     console.error(err);
     yield put({
       type: QUESTION_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function notUserCreateAPI(data) {
+  return axios.post(`/api/question/notUser/create`, data);
+}
+
+function* notUserCreate(action) {
+  try {
+    const result = yield call(notUserCreateAPI, action.data);
+
+    yield put({
+      type: NOT_USER_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NOT_USER_CREATE_FAILURE,
       error: err.response.data,
     });
   }
@@ -273,6 +304,10 @@ function* watchQuestionUpdate() {
   yield takeLatest(QUESTION_UPDATE_REQUEST, questionUpdate);
 }
 
+function* watchQuestionNotUserCreate() {
+  yield takeLatest(NOT_USER_CREATE_REQUEST, notUserCreate);
+}
+
 // ****************************************************************
 
 function* watchQuestionTypeGet() {
@@ -298,6 +333,7 @@ export default function* bannerSaga() {
     fork(watchQuestionCreate),
     fork(watchQuestionDelete),
     fork(watchQuestionUpdate),
+    fork(watchQuestionNotUserCreate),
 
     // ****************************************************************
 
