@@ -211,6 +211,7 @@ const ProductList = () => {
           isName: selectType === "상품명",
           companyId: selectCompany,
           search: router.query.search,
+          categoryId: productType,
         },
       });
     }
@@ -253,6 +254,12 @@ const ProductList = () => {
 
   const productTypeChangeHandler = useCallback(
     (type) => {
+      router.replace(
+        `${router.asPath.substring(
+          0,
+          router.asPath.indexOf("category") + 9
+        )}${type}`
+      );
       setProductType(type);
     },
     [productType]

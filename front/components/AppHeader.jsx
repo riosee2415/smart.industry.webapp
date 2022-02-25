@@ -252,9 +252,9 @@ const AppHeader = () => {
       if (router.pathname === "/product") {
         if (router.query) {
           if (router.asPath.indexOf("search") === -1) {
-            router.push(`${router.asPath}&search=${data.searchData}`);
+            router.replace(`${router.asPath}&search=${data.searchData}`);
           } else {
-            router.push(
+            router.replace(
               `${router.asPath.substring(
                 0,
                 router.asPath.indexOf("search") + 7
@@ -262,10 +262,10 @@ const AppHeader = () => {
             );
           }
         } else {
-          router.push(`/product?search=${data.searchData}`);
+          router.replace(`/product?search=${data.searchData}`);
         }
       } else {
-        router.push(`/product?search=${data.searchData}`);
+        router.replace(`/product?search=${data.searchData}`);
       }
     },
     [router]
