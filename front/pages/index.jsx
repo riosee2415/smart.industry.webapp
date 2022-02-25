@@ -30,7 +30,7 @@ import Popup from "../components/popup/popup";
 import Mainslider from "../components/slide/MainSlider";
 import ToastEditorComponent from "../components/editor/ToastEditorComponent";
 import { useRef } from "react";
-import { Empty, Button } from "antd";
+import { Empty, Button, message } from "antd";
 import { HeartFilled, PlusOutlined } from "@ant-design/icons";
 import { CATEGORY_LIST_REQUEST } from "../reducers/category";
 import {
@@ -39,6 +39,10 @@ import {
 } from "../reducers/product";
 import { useRouter } from "next/router";
 import { MENU_LIST_REQUEST } from "../reducers/menu";
+import {
+  INTEREST_LIST_REQUEST,
+  INTEREST_CREATE_REQUEST,
+} from "../reducers/interest";
 
 const ProductWrapper = styled(Wrapper)`
   width: calc(100% / 4 - (100px / 4));
@@ -219,11 +223,17 @@ const Home = ({}) => {
     (state) => state.seo
   );
 
+  const { me } = useSelector((state) => state.user);
+  const { interestList, st_interestCreateDone, st_interestCreateError } =
+    useSelector((state) => state.interest);
   const { categoryList } = useSelector((state) => state.category);
   const { productList, productBestList } = useSelector(
     (state) => state.product
   );
   const { menuList } = useSelector((state) => state.menu);
+
+  console.log(interestList);
+  console.log(me);
 
   const [isHeart, setIsHeart] = useState(false);
   const [selectCat, setSelectCat] = useState(
@@ -248,6 +258,28 @@ const Home = ({}) => {
       },
     });
   }, [selectCat]);
+
+  useEffect(() => {
+    if (st_interestCreateError) {
+      return message.error(st_interestCreateError);
+    }
+  }, [st_interestCreateError]);
+  useEffect(() => {
+    if (st_interestCreateDone) {
+      dispatch({
+        type: INTEREST_LIST_REQUEST,
+      });
+      return message.success("관심상품으로 등록되었습니다.");
+    }
+  }, [st_interestCreateDone]);
+
+  useEffect(() => {
+    if (me) {
+      dispatch({
+        type: INTEREST_LIST_REQUEST,
+      });
+    }
+  }, [me]);
 
   useEffect(() => {
     const mapScript = document.createElement("script");
@@ -307,6 +339,20 @@ const Home = ({}) => {
   }, [isHeart]);
 
   ////// HANDLER //////
+
+  const interestChangeHandler = useCallback((id) => {
+    if (me) {
+      dispatch({
+        type: INTEREST_CREATE_REQUEST,
+        data: {
+          id,
+        },
+      });
+    } else {
+      router.push("/login");
+      return message.error("로그인 후 이용해주세요.");
+    }
+  }, []);
 
   const changeSelectCatHandler = useCallback(
     (data) => {
@@ -521,7 +567,9 @@ const Home = ({}) => {
                                     관심상품
                                   </Text>
                                   <Image
-                                    onClick={isHeartToggle}
+                                    onClick={() =>
+                                      interestChangeHandler(data.id)
+                                    }
                                     width={`34px`}
                                     height={`auto !important`}
                                     src={
