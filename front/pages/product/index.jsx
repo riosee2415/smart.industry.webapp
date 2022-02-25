@@ -358,6 +358,31 @@ const ProductList = () => {
         <WholeWrapper>
           <RsWrapper>
             <Wrapper margin={`280px 0 0`}>
+              {!router.query.menu &&
+                !router.query.category &&
+                !router.query.isSale &&
+                !router.query.isUsed &&
+                router.query.search && (
+                  <Wrapper al={`flex-start`}>
+                    <Wrapper dr={`row`} ju={`flex-start`} fontSize={`14px`}>
+                      <Text>HOME</Text>
+                      <Wrapper
+                        height={`10px`}
+                        width={`1px`}
+                        bgColor={Theme.grey_C}
+                        margin={`0 10px`}
+                      />
+                      <Text>상품검색</Text>
+                    </Wrapper>
+                    <Text
+                      fontSize={`20px`}
+                      fontWeight={`bold`}
+                      margin={`25px 0`}
+                    >
+                      상품검색
+                    </Text>
+                  </Wrapper>
+                )}
               <Wrapper al={`flex-start`}>
                 <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 9px`}>
                   {categoryList &&
@@ -381,7 +406,19 @@ const ProductList = () => {
                     })}
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`} ju={`space-between`} margin={`54px 0 0`}>
+              <Wrapper
+                dr={`row`}
+                ju={`space-between`}
+                margin={
+                  !router.query.menu &&
+                  !router.query.category &&
+                  !router.query.isSale &&
+                  !router.query.isUsed &&
+                  router.query.search
+                    ? `0`
+                    : `54px 0 0`
+                }
+              >
                 <Text fontSize={`14px`}>
                   총&nbsp;
                   <SpanText color={Theme.red_C}>{totalProduct}</SpanText>
