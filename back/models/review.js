@@ -26,6 +26,11 @@ module.exports = class Review extends Model {
           allowNull: false,
           defaultValue: 0,
         },
+        isDelete: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
       },
       {
         modelName: "Review",
@@ -38,5 +43,6 @@ module.exports = class Review extends Model {
   }
   static associate(db) {
     db.Review.belongsTo(db.Product);
+    db.Review.belongsTo(db.User);
   }
 };

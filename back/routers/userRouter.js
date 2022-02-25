@@ -93,7 +93,7 @@ router.get("/signin", async (req, res, next) => {
       const fullUserWithoutPassword = await User.findOne({
         where: { id: req.user.id },
         attributes: {
-          exclude: ["level, secret, password"],
+          exclude: ["level", "secret", "password"],
         },
       });
 
@@ -131,7 +131,7 @@ router.post("/signin", (req, res, next) => {
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
         attributes: {
-          exclude: ["level, secret, password"],
+          exclude: ["level", "secret", "password"],
         },
       });
 
@@ -166,7 +166,7 @@ router.post("/signin/admin", (req, res, next) => {
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
         attributes: {
-          exclude: ["level, secret, password"],
+          exclude: ["level", "secret", "password"],
         },
       });
 
