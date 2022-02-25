@@ -94,6 +94,9 @@ const GlobalStyles = createGlobalStyle`
   .ant-notification{
     z-index: 10000 !important;
   }
+  .ant-message{
+    z-index: 10001 !important;
+  }
 `;
 
 export default GlobalStyles;

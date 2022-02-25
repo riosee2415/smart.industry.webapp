@@ -14,6 +14,9 @@ import {
   Image,
   CommonButton,
   Text,
+  TextInput,
+  SpanText,
+  TextArea,
 } from "../../../components/commonComponents";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
@@ -23,6 +26,9 @@ import { Checkbox, Empty, message } from "antd";
 import styled from "styled-components";
 import { MinusOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
+import { INTEREST_CREATE_REQUEST } from "../../../reducers/interest";
+import { numberWithCommas } from "../../../components/commonUtils";
+import useInput from "../../../hooks/useInput";
 
 const CommonCheckBox = styled(Checkbox)`
   .ant-checkbox-checked .ant-checkbox-inner {
@@ -131,35 +137,126 @@ const Cart = () => {
   ////// HOOKS //////
   const [datum, setDatum] = useState([]);
   const [isCheck, setIsCheck] = useState([]);
-  const [isDelete, setIsDelete] = useState([]);
-  const [isCheckAll, setIsCheckAll] = useState(true);
+  const [isOrderForm, setIsOrderForm] = useState(false);
+  const [orderDatum, setOrderDatum] = useState(null);
+  const [showDatum, setShowDatum] = useState(null);
+
+  const [isCheckAll, setIsCheckAll] = useState(false);
   const [localDataum, setLocalDataum] = useState([]);
+  const [allPrice, setAllPrice] = useState(0);
+
+  // 문의
+  const inputName = useInput(``);
+  const inputMobile = useInput(``);
+  const inputContent = useInput(``);
   ////// REDUX //////
+
+  const { st_interestCreateDone, st_interestCreateError } = useSelector(
+    (state) => state.interest
+  );
+  const { me } = useSelector((state) => state.user);
+
   ////// USEEFFECT //////
 
   useEffect(() => {
-    const toggleArr = [];
-    const deleteArr = [];
+    if (me) {
+      inputName.setValue(me.username);
+      inputMobile.setValue(me.mobile);
+    }
+  }, []);
 
+  useEffect(() => {
     const data = localStorage.getItem("WKDQKRNSL")
       ? JSON.parse(localStorage.getItem("WKDQKRNSL"))
       : [];
 
+    let toggleArr = [];
+
     for (let i = 0; i < data.length; i++) {
-      toggleArr.push(true);
+      toggleArr.push(false);
     }
-    for (let j = 0; j < data.length; j++) {
-      deleteArr.push(false);
-    }
+
+    setIsCheck(toggleArr);
 
     setDatum(data);
     setLocalDataum(data);
+    // console.log(toggleArr, "<<<");
+    // console.log(isCheck, "<<<");
+  }, [router.query]);
+
+  useEffect(() => {
+    let toggleArr = [];
+    if (isOrderForm) {
+      for (let i = 0; i < orderDatum.length; i++) {
+        toggleArr.push(false);
+      }
+    } else {
+      for (let j = 0; j < datum.length; j++) {
+        toggleArr.push(false);
+      }
+    }
+
     setIsCheck(toggleArr);
-    setIsDelete(deleteArr);
-  }, []);
+
+    // console.log(toggleArr, "<<<");
+    // console.log(isCheck, "<<<");
+  }, [isOrderForm, datum]);
+
+  // useEffect(() => {
+  //   // if (width < 900) {
+  //   //   const tempArr = [];
+  //   //   for (let i = 0; i < isCheck.length; i++) {
+  //   //     tempArr.push(false);
+  //   //   }
+  //   //   setIsCheck(tempArr);
+  //   //   setIsCheckAll(false);
+  //   // }
+  //   // checkBoxAllHandler();
+  //   if (width < 900) checkBoxInit();
+  // }, [width]);
+
+  useEffect(() => {
+    if (st_interestCreateDone) {
+      return message.success("관심상품으로 등록되었습니다.");
+    }
+  }, [st_interestCreateDone]);
+
+  useEffect(() => {
+    if (st_interestCreateError) {
+      return message.error(st_interestCreateError);
+    }
+  }, [st_interestCreateError]);
+
+  useEffect(() => {
+    let tempData = 0;
+    for (let i = 0; i < datum.length; i++) {
+      tempData += datum[i].price * datum[i].productNum + datum[i].deliveryPay;
+    }
+    console.log(tempData);
+    setAllPrice(tempData);
+  }, [datum]);
+
+  useEffect(() => {
+    if (isOrderForm) {
+      orderDatum && setShowDatum(orderDatum);
+    } else {
+      datum && setShowDatum(datum);
+    }
+  }, [datum, orderDatum, isOrderForm]);
 
   ////// TOGGLE //////
+
   ////// HANDLER //////
+
+  const interestHandler = useCallback((ProductId) => {
+    dispatch({
+      type: INTEREST_CREATE_REQUEST,
+      data: {
+        ProductId,
+      },
+    });
+  }, []);
+
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
@@ -219,6 +316,7 @@ const Cart = () => {
       });
 
       setIsCheck(result);
+      console.log(result);
     },
     [isCheck]
   );
@@ -236,12 +334,21 @@ const Cart = () => {
     [isCheck, isCheckAll]
   );
 
+  const checkBoxInit = useCallback(() => {
+    let result = isCheck.map(() => {
+      return false;
+    });
+
+    setIsCheck(result);
+    setIsCheckAll(false);
+  }, [isCheck, isCheckAll, width]);
+
   const deleteHandler = useCallback(
     (localStorgeDatum) => {
       let result = localStorgeDatum.filter((data, idx) => {
         return !isCheck[idx];
       });
-
+      console.log(isCheck);
       localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
 
       setDatum(result);
@@ -259,7 +366,7 @@ const Cart = () => {
 
       setDatum(result);
     },
-    [isDelete, datum]
+    [datum]
   );
 
   const deleteAllHandler = useCallback((localStorgeDatum) => {
@@ -267,12 +374,67 @@ const Cart = () => {
 
     setDatum([]);
   }, []);
+
+  const orderAllHandler = useCallback(() => {
+    let checkHandle = isCheck.map(() => {
+      return false;
+    });
+    setIsCheck(checkHandle);
+    setIsCheckAll(false);
+
+    setIsOrderForm(true);
+    setOrderDatum(datum);
+  }, [datum, isCheck]);
+
+  const orderOneHandler = useCallback(
+    (orderData) => {
+      let checkHandle = isCheck.map(() => {
+        return false;
+      });
+      setIsCheck(checkHandle);
+      setIsCheckAll(false);
+      console.log("<<<");
+      setIsOrderForm(true);
+      setOrderDatum(orderData);
+    },
+    [isCheck]
+  );
+
+  const orderHandler = useCallback(() => {
+    let checkHandle = isCheck.map(() => {
+      return false;
+    });
+    setIsCheck(checkHandle);
+    setIsCheckAll(false);
+
+    let result = datum.filter((data, idx) => {
+      return isCheck[idx];
+    });
+    console.log(result);
+    setOrderDatum(result);
+    setIsOrderForm(true);
+  }, [datum, isCheck]);
+
+  const goBackHandler = useCallback(() => {
+    setOrderDatum(null);
+    setIsOrderForm(false);
+  }, []);
+
+  const deleteOrderHandler = useCallback(() => {
+    let result = orderDatum.filter((data, idx) => {
+      return !isCheck[idx];
+    });
+    console.log(isCheck);
+
+    setOrderDatum(result);
+  }, [isCheck, orderDatum]);
+
   ////// DATAVIEW //////
   const testData = [
     {
       id: 1,
       productImg: "",
-      productName: "상품명상품명상품명상품명상품명상품명상품명상품명",
+      title: "상품명상품명상품명상품명상품명상품명상품명상품명",
       price: "1,000,000",
       total: "1,000,000",
       count: 1,
@@ -280,7 +442,7 @@ const Cart = () => {
     {
       id: 2,
       productImg: "",
-      productName: "상품명",
+      title: "상품명",
       price: "1,000,000",
       total: "1,000,000",
       count: 1,
@@ -404,15 +566,15 @@ const Cart = () => {
             >
               일반상품 (2)
             </Wrapper>
-            {console.log(datum)}
+
             {width < 900 ? (
               <Wrapper width={width < 500 ? `100%` : `60%`}>
                 <Wrapper dr={`row`}>
-                  {datum && datum.length === 0 ? (
+                  {showDatum && showDatum.length === 0 ? (
                     <Empty />
                   ) : (
-                    datum &&
-                    datum.map((data, idx) => {
+                    showDatum &&
+                    showDatum.map((data, idx) => {
                       return (
                         <Wrapper
                           dr={`row`}
@@ -425,12 +587,16 @@ const Cart = () => {
                             padding={`0 50px 0 20px`}
                           >
                             <Wrapper width={`auto`}>
-                              <CommonCheckBox />
+                              <CommonCheckBox
+                                checked={isCheck[idx]}
+                                onChange={(e) => checkEachHandler(e, data, idx)}
+                              />
                             </Wrapper>
                             <Wrapper
                               width={`auto`}
                               dr={`row`}
                               cursor={`pointer`}
+                              onClick={() => deleteOneHandler(datum, idx)}
                             >
                               <CloseOutlined />
                               삭제
@@ -448,7 +614,7 @@ const Cart = () => {
                             display={`block`}
                             al={`flex-start`}
                           >
-                            <Text isEllipsis={true}>{data.productName}</Text>
+                            <Text isEllipsis={true}>{data.title}</Text>
                             <Text>{data.price}원</Text>
                             <Wrapper
                               width={`62px`}
@@ -460,32 +626,47 @@ const Cart = () => {
                               ju={`space-between`}
                               margin={`0 10px 0 0`}
                             >
-                              <MinusOutlined
-                                style={{
-                                  color: Theme.darkGrey_C,
-                                  fontSize: `10px`,
-                                }}
-                                onClick={() =>
-                                  PrdouctNumHandler(-1, idx, localDataum)
-                                }
-                              />
+                              {!isOrderForm && (
+                                <MinusOutlined
+                                  style={{
+                                    color: Theme.darkGrey_C,
+                                    fontSize: `10px`,
+                                  }}
+                                  onClick={() =>
+                                    PrdouctNumHandler(-1, idx, localDataum)
+                                  }
+                                />
+                              )}
                               <Text color={Theme.darkGrey_C} fontSize={`12px`}>
                                 {data.productNum}
                               </Text>
-                              <PlusOutlined
-                                style={{
-                                  color: Theme.darkGrey_C,
-                                  fontSize: `10px`,
-                                }}
-                                onClick={() =>
-                                  PrdouctNumHandler(1, idx, localDataum)
-                                }
-                              />
+                              {!isOrderForm && (
+                                <PlusOutlined
+                                  style={{
+                                    color: Theme.darkGrey_C,
+                                    fontSize: `10px`,
+                                  }}
+                                  onClick={() =>
+                                    PrdouctNumHandler(1, idx, localDataum)
+                                  }
+                                />
+                              )}
                             </Wrapper>
-                            <Text width={`auto`}>{data.total}원</Text>
+                            <Text width={`auto`}>
+                              {data.price * data.productNum + data.deliveryPay}
+                              원
+                            </Text>
                             <Text width={`auto`}>기본배송</Text>
-                            <DarkgreyBtn width={`100px`}>문의하기</DarkgreyBtn>
-                            <Lightgrey2Btn width={`100px`}>
+                            <DarkgreyBtn
+                              width={`100px`}
+                              onClick={() => orderOneHandler(data)}
+                            >
+                              문의하기
+                            </DarkgreyBtn>
+                            <Lightgrey2Btn
+                              width={`100px`}
+                              onClick={() => interestHandler(data.id)}
+                            >
                               관심상품등록
                             </Lightgrey2Btn>
                           </Wrapper>
@@ -504,7 +685,11 @@ const Cart = () => {
                   height={`62px`}
                 >
                   <Wrapper
-                    width={`calc((100% - 115px - 138px) * 0.03)`}
+                    width={
+                      isOrderForm
+                        ? `calc((100% - 115px ) * 0.03)`
+                        : `calc((100% - 115px - 138px) * 0.03)`
+                    }
                     borderRight={`1px solid ${Theme.grey2_C}`}
                     height={`100%`}
                   >
@@ -521,61 +706,94 @@ const Cart = () => {
                     이미지
                   </Wrapper>
                   <Wrapper
-                    width={`calc((100% - 115px - 138px) * 0.27)`}
+                    width={
+                      isOrderForm
+                        ? `calc((100% - 115px ) * 0.27)`
+                        : `calc((100% - 115px - 138px) * 0.27)`
+                    }
                     borderRight={`1px solid ${Theme.grey2_C}`}
                     height={`100%`}
                   >
                     상품정보
                   </Wrapper>
                   <Wrapper
-                    width={`calc((100% - 115px - 138px) * 0.13)`}
+                    width={
+                      isOrderForm
+                        ? `calc((100% - 115px ) * 0.13)`
+                        : `calc((100% - 115px - 138px) * 0.13)`
+                    }
                     borderRight={`1px solid ${Theme.grey2_C}`}
                     height={`100%`}
                   >
                     판매가
                   </Wrapper>
                   <Wrapper
-                    width={`calc((100% - 115px - 138px) * 0.1)`}
+                    width={
+                      isOrderForm
+                        ? `calc((100% - 115px ) * 0.1)`
+                        : `calc((100% - 115px - 138px) * 0.1)`
+                    }
                     borderRight={`1px solid ${Theme.grey2_C}`}
                     height={`100%`}
                   >
                     수량
                   </Wrapper>
                   <Wrapper
-                    width={`calc((100% - 115px - 138px) * 0.12)`}
+                    width={
+                      isOrderForm
+                        ? `calc((100% - 115px ) * 0.12)`
+                        : `calc((100% - 115px - 138px) * 0.12)`
+                    }
                     borderRight={`1px solid ${Theme.grey2_C}`}
                     height={`100%`}
                   >
                     적립금
                   </Wrapper>
                   <Wrapper
-                    width={`calc((100% - 115px - 138px) * 0.12)`}
+                    width={
+                      isOrderForm
+                        ? `calc((100% - 115px ) * 0.12)`
+                        : `calc((100% - 115px - 138px) * 0.12)`
+                    }
                     borderRight={`1px solid ${Theme.grey2_C}`}
                     height={`100%`}
                   >
                     배송구분
                   </Wrapper>
                   <Wrapper
-                    width={`calc((100% - 115px - 138px) * 0.1)`}
+                    width={
+                      isOrderForm
+                        ? `calc((100% - 115px ) * 0.1)`
+                        : `calc((100% - 115px - 138px) * 0.1)`
+                    }
                     borderRight={`1px solid ${Theme.grey2_C}`}
                     height={`100%`}
                   >
                     배송비
                   </Wrapper>
                   <Wrapper
-                    width={`calc((100% - 115px - 138px) * 0.13)`}
+                    width={
+                      isOrderForm
+                        ? `calc((100% - 115px ) * 0.13)`
+                        : `calc((100% - 115px - 138px) * 0.13)`
+                    }
                     borderRight={`1px solid ${Theme.grey2_C}`}
                     height={`100%`}
                   >
                     합계
                   </Wrapper>
-                  <Wrapper width={`138px`}>선택</Wrapper>
+                  <Wrapper
+                    display={isOrderForm ? `none` : `flex`}
+                    width={`138px`}
+                  >
+                    선택
+                  </Wrapper>
                 </Wrapper>
-                {datum && datum.length === 0 ? (
+                {showDatum && showDatum.length === 0 ? (
                   <Empty description="조회된 상품이 없습니다." />
                 ) : (
-                  datum &&
-                  datum.map((data, idx) => {
+                  showDatum &&
+                  showDatum.map((data, idx) => {
                     return (
                       <Wrapper
                         dr={`row`}
@@ -583,7 +801,11 @@ const Cart = () => {
                         borderBottom={`1px solid ${Theme.grey2_C}`}
                       >
                         <Wrapper
-                          width={`calc((100% - 115px - 138px) * 0.03)`}
+                          width={
+                            isOrderForm
+                              ? `calc((100% - 115px) * 0.03)`
+                              : `calc((100% - 115px - 138px) * 0.03)`
+                          }
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
@@ -604,90 +826,137 @@ const Cart = () => {
                           />
                         </Wrapper>
                         <Wrapper
-                          width={`calc((100% - 115px - 138px) * 0.27)`}
+                          width={
+                            isOrderForm
+                              ? `calc((100% - 115px) * 0.27)`
+                              : `calc((100% - 115px - 138px) * 0.27)`
+                          }
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                           al={`flex-start`}
                           padding={`0 20px`}
                         >
-                          {data.productName}
+                          {data.title}
+                          {/* {console.log(data)} */}
                         </Wrapper>
                         <Wrapper
-                          width={`calc((100% - 115px - 138px) * 0.13)`}
+                          width={
+                            isOrderForm
+                              ? `calc((100% - 115px) * 0.13)`
+                              : `calc((100% - 115px - 138px) * 0.13)`
+                          }
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
                           {data.price}원
                         </Wrapper>
                         <Wrapper
-                          width={`calc((100% - 115px - 138px) * 0.1)`}
+                          width={
+                            isOrderForm
+                              ? `calc((100% - 115px) * 0.1)`
+                              : `calc((100% - 115px - 138px) * 0.1)`
+                          }
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
                           <Wrapper
                             width={`62px`}
                             height={`25px`}
-                            border={`1px solid ${Theme.grey2_C}`}
+                            border={
+                              isOrderForm
+                                ? `none`
+                                : `1px solid ${Theme.grey2_C}`
+                            }
                             radius={`5px`}
                             dr={`row`}
                             padding={`0 10px`}
-                            ju={`space-between`}
-                            margin={`0 10px 0 0`}
+                            ju={isOrderForm ? `center` : `space-between`}
+                            margin={isOrderForm ? `0` : `0 10px 0 0`}
                           >
-                            <MinusOutlined
-                              style={{
-                                color: Theme.darkGrey_C,
-                                fontSize: `10px`,
-                              }}
-                              onClick={() =>
-                                PrdouctNumHandler(-1, idx, localDataum)
-                              }
-                            />
+                            {!isOrderForm && (
+                              <MinusOutlined
+                                style={{
+                                  color: Theme.darkGrey_C,
+                                  fontSize: `10px`,
+                                }}
+                                onClick={() =>
+                                  PrdouctNumHandler(-1, idx, localDataum)
+                                }
+                              />
+                            )}
                             <Text color={Theme.darkGrey_C} fontSize={`12px`}>
                               {data.productNum}
                             </Text>
-                            <PlusOutlined
-                              style={{
-                                color: Theme.darkGrey_C,
-                                fontSize: `10px`,
-                              }}
-                              onClick={() =>
-                                PrdouctNumHandler(1, idx, localDataum)
-                              }
-                            />
+                            {!isOrderForm && (
+                              <PlusOutlined
+                                style={{
+                                  color: Theme.darkGrey_C,
+                                  fontSize: `10px`,
+                                }}
+                                onClick={() =>
+                                  PrdouctNumHandler(1, idx, localDataum)
+                                }
+                              />
+                            )}
                           </Wrapper>
                         </Wrapper>
                         <Wrapper
-                          width={`calc((100% - 115px - 138px) * 0.12)`}
+                          width={
+                            isOrderForm
+                              ? `calc((100% - 115px) * 0.12)`
+                              : `calc((100% - 115px - 138px) * 0.12)`
+                          }
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
                           -
                         </Wrapper>
                         <Wrapper
-                          width={`calc((100% - 115px - 138px) * 0.12)`}
+                          width={
+                            isOrderForm
+                              ? `calc((100% - 115px) * 0.12)`
+                              : `calc((100% - 115px - 138px) * 0.12)`
+                          }
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
                           기본배송
                         </Wrapper>
                         <Wrapper
-                          width={`calc((100% - 115px - 138px) * 0.1)`}
+                          width={
+                            isOrderForm
+                              ? `calc((100% - 115px) * 0.1)`
+                              : `calc((100% - 115px - 138px) * 0.1)`
+                          }
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
                           {data.deliveryPay}원
                         </Wrapper>
                         <Wrapper
-                          width={`calc((100% - 115px - 138px) * 0.13)`}
+                          width={
+                            isOrderForm
+                              ? `calc((100% - 115px) * 0.13)`
+                              : `calc((100% - 115px - 138px) * 0.13)`
+                          }
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
-                          원{/* 보류 */}
+                          {data.price * data.productNum + data.deliveryPay}원
+                          {/* 보류 */}
                         </Wrapper>
-                        <Wrapper width={`138px`}>
-                          <DarkgreyBtn>문의하기</DarkgreyBtn>
-                          <Lightgrey2Btn>관심상품등록</Lightgrey2Btn>
+                        <Wrapper
+                          width={`138px`}
+                          display={isOrderForm ? `none` : `flex`}
+                        >
+                          <DarkgreyBtn onClick={() => orderOneHandler(data)}>
+                            문의하기
+                          </DarkgreyBtn>
+                          <Lightgrey2Btn
+                            onClick={() => interestHandler(data.id)}
+                          >
+                            관심상품등록
+                          </Lightgrey2Btn>
                           <Lightgrey2Btn
                             margin={`0`}
                             onClick={() => deleteOneHandler(datum, idx)}
@@ -720,7 +989,8 @@ const Cart = () => {
                 dr={`row`}
                 ju={`flex-end`}
               >
-                상품구매금액 2,000,000 + 부가세 200,000 배송비 0 (무료) = 합계:
+                상품구매금액 {numberWithCommas(allPrice)} +
+                {/* 부가세 200,000 배송비 */}0 (무료) = 합계:
                 <Wrapper
                   width={`auto`}
                   color={Theme.red_C}
@@ -728,7 +998,7 @@ const Cart = () => {
                   fontWeight={`bold`}
                   margin={`0 13px 0 22px`}
                 >
-                  2,200,000원
+                  {numberWithCommas(allPrice)}원
                 </Wrapper>
               </Wrapper>
             </Wrapper>
@@ -754,7 +1024,9 @@ const Cart = () => {
                 al={`flex-start`}
                 fontSize={width < 500 ? `11px` : `14px`}
               >
-                할인 적용 금액은 주문서작성의 결제예정금액에서 확인 가능합니다.
+                {isOrderForm
+                  ? `상품의 옵션 및 수량은 상품상세 또는 장바구니에서 가능합니다.`
+                  : `할인 적용 금액은 주문서작성의 결제예정금액에서 확인 가능합니다.`}
               </Wrapper>
             </Wrapper>
             <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 80px`}>
@@ -765,26 +1037,86 @@ const Cart = () => {
                 >
                   선택상품을
                 </Wrapper>
-                <GreyBtn onClick={() => deleteHandler(datum)}>
+                <GreyBtn
+                  onClick={() =>
+                    isOrderForm
+                      ? deleteOrderHandler(orderDatum)
+                      : deleteHandler(datum)
+                  }
+                >
                   <CloseOutlined />
                   삭제하기
                 </GreyBtn>
               </Wrapper>
-              <Lightgrey2Btn
-                width={`122px`}
-                margin={`0`}
-                onClick={() => deleteAllHandler(datum)}
-              >
-                장바구니 비우기
-              </Lightgrey2Btn>
+              {isOrderForm ? (
+                <Lightgrey2Btn
+                  width={`122px`}
+                  margin={`0`}
+                  onClick={goBackHandler}
+                >
+                  이전페이지
+                </Lightgrey2Btn>
+              ) : (
+                <Lightgrey2Btn
+                  width={`122px`}
+                  margin={`0`}
+                  onClick={() => deleteAllHandler(datum)}
+                >
+                  장바구니 비우기
+                </Lightgrey2Btn>
+              )}
             </Wrapper>
+            {isOrderForm && (
+              <Wrapper>
+                <Wrapper al={`flex-start`} margin={`0 0 35px`}>
+                  <Text margin={`0 0 20px`}>
+                    이름<SpanText color={Theme.red_C}>*</SpanText>
+                  </Text>
+                  <TextInput
+                    border={`1px solid ${Theme.grey2_C}`}
+                    width={`100%`}
+                    placeholder={`이름을 입력해주세요.`}
+                    {...inputName}
+                    readOnly={me ? true : false}
+                  />
+                </Wrapper>
+                <Wrapper al={`flex-start`} margin={`0 0 35px`}>
+                  <Text margin={`0 0 20px`}>
+                    연락처<SpanText color={Theme.red_C}>*</SpanText>
+                  </Text>
+                  <TextInput
+                    border={`1px solid ${Theme.grey2_C}`}
+                    width={`100%`}
+                    placeholder={`연락처를 입력해주세요.`}
+                    {...inputMobile}
+                    readOnly={me ? true : false}
+                  />
+                </Wrapper>
+                <Wrapper al={`flex-start`} margin={`0 0 35px`}>
+                  <Text margin={`0 0 20px`}>
+                    내용<SpanText color={Theme.red_C}>*</SpanText>
+                  </Text>
+                  <TextArea
+                    border={`1px solid ${Theme.grey2_C}`}
+                    width={`100%`}
+                    height={`415px`}
+                    radius={`0`}
+                    placeholder={`문의 내용을 입력해주세요.`}
+                    {...inputContent}
+                  />
+                </Wrapper>
+              </Wrapper>
+            )}
             <Wrapper dr={`row`} position={`relative`} margin={`0 0 120px`}>
               <Wrapper width={`auto`} dr={`row`}>
-                <Lightgrey1Btn margin={`0 6px 0 0`}>선택상품주문</Lightgrey1Btn>
+                <Lightgrey1Btn margin={`0 6px 0 0`} onClick={orderHandler}>
+                  선택상품주문
+                </Lightgrey1Btn>
                 <CommonButton
                   width={width < 500 ? `100px` : `145px`}
                   height={width < 500 ? `35px` : `50px`}
                   fontSize={width < 500 ? `14px` : `18px`}
+                  onClick={orderAllHandler}
                 >
                   전체상품주문
                 </CommonButton>

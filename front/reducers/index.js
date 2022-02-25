@@ -15,7 +15,7 @@ import category from "./category";
 import product from "./product";
 import faq from "./faq";
 import interest from "./interest";
-
+import wish from "./wish";
 const rootReducer = (state, action) => {
   switch (action.type) {
     case HYDRATE:
@@ -39,6 +39,7 @@ const rootReducer = (state, action) => {
           product,
           faq,
           interest,
+          wish,
         });
         return combinedReducer(state, action);
       }
