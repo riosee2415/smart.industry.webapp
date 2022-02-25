@@ -71,7 +71,7 @@ function* interestCreate(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function interestDeleteAPI(data) {
-  return axios.delete(`/api/interest/delete/${data.interestId}`);
+  return axios.delete(`/api/interest/delete/${data.interId}`);
 }
 
 function* interestDelete(action) {

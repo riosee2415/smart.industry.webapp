@@ -12,10 +12,6 @@ export const initailState = {
   st_interestCreateDone: false,
   st_interestCreateError: null,
   //
-  st_interestUpdateLoading: false, // 관심상품 업데이트
-  st_interestUpdateDone: false,
-  st_interestUpdateError: null,
-  //
   st_interestDeleteLoading: false, // 관심상품 삭제
   st_interestDeleteDone: false,
   st_interestDeleteError: null,
@@ -30,10 +26,6 @@ export const INTEREST_LIST_FAILURE = "INTEREST_LIST_FAILURE";
 export const INTEREST_CREATE_REQUEST = "INTEREST_CREATE_REQUEST";
 export const INTEREST_CREATE_SUCCESS = "INTEREST_CREATE_SUCCESS";
 export const INTEREST_CREATE_FAILURE = "INTEREST_CREATE_FAILURE";
-//
-export const INTEREST_UPDATE_REQUEST = "INTEREST_UPDATE_REQUEST";
-export const INTEREST_UPDATE_SUCCESS = "INTEREST_UPDATE_SUCCESS";
-export const INTEREST_UPDATE_FAILURE = "INTEREST_UPDATE_FAILURE";
 //
 export const INTEREST_DELETE_REQUEST = "INTEREST_DELETE_REQUEST";
 export const INTEREST_DELETE_SUCCESS = "INTEREST_DELETE_SUCCESS";
@@ -78,24 +70,6 @@ const reducer = (state = initailState, action) =>
         draft.st_interestCreateLoading = false;
         draft.st_interestCreateDone = false;
         draft.st_interestCreateError = action.error;
-        break;
-      }
-      ///////////////////////////////////////////////////////
-      case INTEREST_UPDATE_REQUEST: {
-        draft.st_interestUpdateLoading = true;
-        draft.st_interestUpdateDone = null;
-        draft.st_interestUpdateError = false;
-        break;
-      }
-      case INTEREST_UPDATE_SUCCESS: {
-        draft.st_interestUpdateLoading = false;
-        draft.st_interestUpdateDone = true;
-        break;
-      }
-      case INTEREST_UPDATE_FAILURE: {
-        draft.st_interestUpdateLoading = false;
-        draft.st_interestUpdateDone = false;
-        draft.st_interestUpdateError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////

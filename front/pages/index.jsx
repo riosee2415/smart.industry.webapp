@@ -42,6 +42,7 @@ import { MENU_LIST_REQUEST } from "../reducers/menu";
 import {
   INTEREST_LIST_REQUEST,
   INTEREST_CREATE_REQUEST,
+  INTEREST_DELETE_REQUEST,
 } from "../reducers/interest";
 
 const ProductWrapper = styled(Wrapper)`
@@ -224,16 +225,20 @@ const Home = ({}) => {
   );
 
   const { me } = useSelector((state) => state.user);
-  const { interestList, st_interestCreateDone, st_interestCreateError } =
-    useSelector((state) => state.interest);
+  const {
+    interestList,
+    //
+    st_interestCreateDone,
+    st_interestCreateError,
+    //
+    st_interestDeleteDone,
+    st_interestDeleteError,
+  } = useSelector((state) => state.interest);
   const { categoryList } = useSelector((state) => state.category);
   const { productList, productBestList } = useSelector(
     (state) => state.product
   );
   const { menuList } = useSelector((state) => state.menu);
-
-  console.log(interestList);
-  console.log(me);
 
   const [isHeart, setIsHeart] = useState(false);
   const [selectCat, setSelectCat] = useState(
@@ -264,14 +269,28 @@ const Home = ({}) => {
       return message.error(st_interestCreateError);
     }
   }, [st_interestCreateError]);
+
+  useEffect(() => {
+    if (st_interestDeleteError) {
+      return message.error(st_interestDeleteError);
+    }
+  }, [st_interestDeleteError]);
+
   useEffect(() => {
     if (st_interestCreateDone) {
       dispatch({
         type: INTEREST_LIST_REQUEST,
       });
-      return message.success("관심상품으로 등록되었습니다.");
     }
   }, [st_interestCreateDone]);
+
+  useEffect(() => {
+    if (st_interestDeleteDone) {
+      dispatch({
+        type: INTEREST_LIST_REQUEST,
+      });
+    }
+  }, [st_interestDeleteDone]);
 
   useEffect(() => {
     if (me) {
@@ -340,19 +359,34 @@ const Home = ({}) => {
 
   ////// HANDLER //////
 
-  const interestChangeHandler = useCallback((id) => {
-    if (me) {
-      dispatch({
-        type: INTEREST_CREATE_REQUEST,
-        data: {
-          id,
-        },
-      });
-    } else {
-      router.push("/login");
-      return message.error("로그인 후 이용해주세요.");
-    }
-  }, []);
+  const interestChangeHandler = useCallback(
+    (id) => {
+      let checkData =
+        interestList && interestList.find((value) => value.ProductId === id);
+
+      if (me) {
+        if (checkData) {
+          dispatch({
+            type: INTEREST_DELETE_REQUEST,
+            data: {
+              interId: checkData.id,
+            },
+          });
+        } else {
+          dispatch({
+            type: INTEREST_CREATE_REQUEST,
+            data: {
+              ProductId: id,
+            },
+          });
+        }
+      } else {
+        router.push("/login");
+        return message.error("로그인 후 이용해주세요.");
+      }
+    },
+    [interestList]
+  );
 
   const changeSelectCatHandler = useCallback(
     (data) => {
@@ -573,7 +607,10 @@ const Home = ({}) => {
                                     width={`34px`}
                                     height={`auto !important`}
                                     src={
-                                      isHeart
+                                      interestList &&
+                                      interestList.find(
+                                        (value) => value.ProductId === data.id
+                                      )
                                         ? "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart_red.png"
                                         : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart.png"
                                     }
@@ -715,11 +752,16 @@ const Home = ({}) => {
                                     관심상품
                                   </Text>
                                   <Image
-                                    onClick={isHeartToggle}
+                                    onClick={() =>
+                                      interestChangeHandler(data.id)
+                                    }
                                     width={`34px`}
                                     height={`auto !important`}
                                     src={
-                                      isHeart
+                                      interestList &&
+                                      interestList.find(
+                                        (value) => value.ProductId === data.id
+                                      )
                                         ? "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart_red.png"
                                         : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/icon_heart.png"
                                     }
