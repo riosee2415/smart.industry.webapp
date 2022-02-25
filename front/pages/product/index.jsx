@@ -195,12 +195,13 @@ const ProductList = () => {
       });
     }
 
-    if (router.query.isUsed) {
+    if (router.query) {
       dispatch({
         type: PRODUCT_LIST_REQUEST,
         data: {
           page: currentPage,
-          isUsed: true,
+          isUsed: router.query.isUsed && router.query.isUsed === "true",
+          isSale: router.query.isSale && router.query.isSale === "true",
           isPrice:
             selectType === "낮은가격"
               ? 1
@@ -209,24 +210,7 @@ const ProductList = () => {
               : null,
           isName: selectType === "상품명",
           companyId: selectCompany,
-        },
-      });
-    }
-
-    if (router.query.isSale) {
-      dispatch({
-        type: PRODUCT_LIST_REQUEST,
-        data: {
-          page: currentPage,
-          isSale: true,
-          isPrice:
-            selectType === "낮은가격"
-              ? 1
-              : selectType === "높은가격"
-              ? 2
-              : null,
-          isName: selectType === "상품명",
-          companyId: selectCompany,
+          search: router.query.search,
         },
       });
     }
@@ -236,14 +220,15 @@ const ProductList = () => {
     dispatch({
       type: PRODUCT_LIST_REQUEST,
       data: {
-        isUsed: router.query.isUsed === "true",
-        isSale: router.query.isSale === "true",
+        isUsed: router.query.isUsed && router.query.isUsed === "true",
+        isSale: router.query.isSale && router.query.isSale === "true",
         page: currentPage,
         categoryId: productType,
         isPrice:
           selectType === "낮은가격" ? 1 : selectType === "높은가격" ? 2 : null,
         isName: selectType === "상품명",
         companyId: selectCompany,
+        search: router.query.search,
       },
     });
   }, [currentPage, productType, selectType, selectCompany]);
@@ -254,6 +239,7 @@ const ProductList = () => {
         type: PRODUCT_LIST_REQUEST,
         data: {
           categoryId: productType,
+          search: router.query.search,
         },
       });
     }

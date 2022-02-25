@@ -9,6 +9,7 @@ import {
   WholeWrapper,
   Text,
   TextInput,
+  CommonButton,
 } from "./commonComponents";
 import { withResizeDetector } from "react-resize-detector";
 import styled from "styled-components";
@@ -21,7 +22,7 @@ import {
   DownOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-import { Drawer, Empty } from "antd";
+import { Drawer, Empty, Form, Button } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useDispatch, useSelector } from "react-redux";
@@ -181,7 +182,7 @@ const InMenu = styled(Wrapper)`
   background: ${Theme.white_C};
   position: absolute;
   top: 0;
-  left: 128px;
+  left: 192px;
   z-index: 30;
   border: 1px solid ${Theme.subTheme2_C};
   align-items: flex-start;
@@ -194,6 +195,18 @@ const SubMenuWrapper = styled(Wrapper)`
 
   &:hover ${InMenu} {
     display: flex;
+  }
+`;
+
+const CustomForm = styled(Form)`
+  width: 100%;
+  & .ant-row {
+    width: 100%;
+  }
+
+  & .ant-form-item {
+    width: 100%;
+    margin: 0;
   }
 `;
 
@@ -233,6 +246,30 @@ const AppHeader = () => {
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
+  const serarchHandler = useCallback(
+    (data) => {
+      if (router.pathname === "/product") {
+        if (router.query) {
+          if (router.asPath.indexOf("search") === -1) {
+            router.push(`${router.asPath}&search=${data.searchData}`);
+          } else {
+            router.push(
+              `${router.asPath.substring(
+                0,
+                router.asPath.indexOf("search") + 7
+              )}${data.searchData}`
+            );
+          }
+        } else {
+          router.push(`/product?search=${data.searchData}`);
+        }
+      } else {
+        router.push(`/product?search=${data.searchData}`);
+      }
+    },
+    [router]
+  );
 
   ////////////// - USE EFFECT- //////////////
 
@@ -291,27 +328,31 @@ const AppHeader = () => {
                 position={`relative`}
                 margin={`0 0 0 30px`}
               >
-                <TextInput
-                  type={`text`}
-                  width={`100%`}
-                  height={`35px`}
-                  placeholder={`검색어를 입력해주세요.`}
-                  radius={`18px`}
-                  padding={`0 40px 0 20px`}
-                />
-                <Wrapper
-                  width={`auto`}
-                  position={`absolute`}
-                  top={`0`}
-                  right={`15px`}
-                  height={`100%`}
-                >
-                  <Image
-                    width={`14px`}
-                    alt="icon"
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/header/icon_search.png`}
-                  />
-                </Wrapper>
+                <CustomForm onFinish={serarchHandler}>
+                  <Form.Item name="searchData">
+                    <TextInput
+                      type={`text`}
+                      width={`100%`}
+                      height={`35px`}
+                      placeholder={`검색어를 입력해주세요.`}
+                      radius={`18px`}
+                      padding={`0 40px 0 20px`}
+                    />
+                  </Form.Item>
+                  <Wrapper
+                    width={`auto`}
+                    position={`absolute`}
+                    top={`0`}
+                    right={`15px`}
+                    height={`100%`}
+                  >
+                    <Image
+                      width={`14px`}
+                      alt="icon"
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/header/icon_search.png`}
+                    />
+                  </Wrapper>
+                </CustomForm>
               </Wrapper>
             )}
           </RsWrapper>
@@ -331,27 +372,31 @@ const AppHeader = () => {
             </ATag>
 
             <Wrapper width={`290px`} position={`relative`}>
-              <TextInput
-                type={`text`}
-                width={`100%`}
-                height={`35px`}
-                placeholder={`검색어를 입력해주세요.`}
-                radius={`18px`}
-                padding={`0 40px 0 20px`}
-              />
-              <Wrapper
-                width={`auto`}
-                position={`absolute`}
-                top={`0`}
-                right={`15px`}
-                height={`100%`}
-              >
-                <Image
-                  width={`14px`}
-                  alt="icon"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/header/icon_search.png`}
-                />
-              </Wrapper>
+              <CustomForm onFinish={serarchHandler}>
+                <Form.Item name="searchData">
+                  <TextInput
+                    type={`text`}
+                    width={`100%`}
+                    height={`35px`}
+                    placeholder={`검색어를 입력해주세요.`}
+                    radius={`18px`}
+                    padding={`0 40px 0 20px`}
+                  />
+                </Form.Item>
+                <Wrapper
+                  width={`auto`}
+                  position={`absolute`}
+                  top={`0`}
+                  right={`15px`}
+                  height={`100%`}
+                >
+                  <Image
+                    width={`14px`}
+                    alt="icon"
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/header/icon_search.png`}
+                  />
+                </Wrapper>
+              </CustomForm>
             </Wrapper>
           </RsWrapper>
         </Wrapper>
@@ -723,51 +768,61 @@ const AppHeader = () => {
               borderBottom={`1px solid ${Theme.lightGrey_C}`}
               padding={`0 0 15px`}
             >
-              <Link href={`/login`}>
-                <a>
-                  <Text fontSize={`12px`}>로그인</Text>
-                </a>
-              </Link>
-              <Link href={`/user/signup`}>
-                <a>
-                  <Text fontSize={`12px`} margin={`0 0 0 20px`}>
-                    회원가입
-                  </Text>
-                </a>
-              </Link>
-              <Text fontSize={`12px`} margin={`0 0 0 20px`}>
-                주문조회
-              </Text>
-              <Link href={`/mypage`}>
-                <a>
-                  <Text fontSize={`12px`} margin={`0 0 0 20px`}>
-                    마이페이지
-                  </Text>
-                </a>
-              </Link>
+              {" "}
+              {me ? (
+                <>
+                  <Text fontSize={`12px`}>주문조회</Text>
+                  <Link href={`/mypage`}>
+                    <a>
+                      <Text fontSize={`12px`} margin={`0 0 0 20px`}>
+                        마이페이지
+                      </Text>
+                    </a>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href={`/login`}>
+                    <a>
+                      <Text fontSize={`12px`}>로그인</Text>
+                    </a>
+                  </Link>
+                  <Link href={`/user/signup`}>
+                    <a>
+                      <Text fontSize={`12px`} margin={`0 0 0 20px`}>
+                        회원가입
+                      </Text>
+                    </a>
+                  </Link>
+                </>
+              )}
             </Wrapper>
             <Wrapper width={`100%`} position={`relative`} margin={`20px 0`}>
-              <TextInput
-                type={`text`}
-                width={`100%`}
-                height={`35px`}
-                placeholder={`검색어를 입력해주세요.`}
-                radius={`18px`}
-                padding={`0 40px 0 20px`}
-              />
-              <Wrapper
-                width={`auto`}
-                position={`absolute`}
-                top={`0`}
-                right={`15px`}
-                height={`100%`}
-              >
-                <Image
-                  width={`14px`}
-                  alt="icon"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/header/icon_search.png`}
-                />
-              </Wrapper>
+              <CustomForm onFinish={serarchHandler}>
+                <Form.Item name="searchData">
+                  <TextInput
+                    type={`text`}
+                    width={`100%`}
+                    height={`35px`}
+                    placeholder={`검색어를 입력해주세요.`}
+                    radius={`18px`}
+                    padding={`0 40px 0 20px`}
+                  />
+                </Form.Item>
+                <Wrapper
+                  width={`auto`}
+                  position={`absolute`}
+                  top={`0`}
+                  right={`15px`}
+                  height={`100%`}
+                >
+                  <Image
+                    width={`14px`}
+                    alt="icon"
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/header/icon_search.png`}
+                  />
+                </Wrapper>
+              </CustomForm>
             </Wrapper>
             <ColWrapper al={`flex-start`}>
               <Wrapper
