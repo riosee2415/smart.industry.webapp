@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
@@ -6,7 +6,7 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
@@ -20,6 +20,10 @@ import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import { Empty } from "antd";
 import styled from "styled-components";
+import {
+  INTEREST_LIST_REQUEST,
+  INTEREST_DELETE_REQUEST,
+} from "../../../reducers/interest";
 
 const DelTag = styled.del`
   color: ${Theme.grey_C};
@@ -32,17 +36,45 @@ const WishList = () => {
     (state) => state.seo
   );
 
+  const { interestList, st_interestDeleteDone, st_interestDeleteError } =
+    useSelector((state) => state.interest);
+
   const width = useWidth();
   const router = useRouter();
 
   ////// HOOKS //////
+
+  const dispatch = useDispatch();
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_interestDeleteError) {
+      return message.error(st_interestDeleteError);
+    }
+  }, [st_interestDeleteError]);
+
+  useEffect(() => {
+    dispatch({
+      type: INTEREST_LIST_REQUEST,
+    });
+  }, [st_interestDeleteDone]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
+  const deleteInterest = useCallback((id) => {
+    dispatch({
+      type: INTEREST_DELETE_REQUEST,
+      data: {
+        interId: id,
+      },
+    });
+  }, []);
+
   ////// DATAVIEW //////
   const testData = [
     {
@@ -154,56 +186,75 @@ const WishList = () => {
               관심상품
             </Wrapper>
             <Wrapper margin={`0 0 110px`}>
-              {testData && testData.length === 0 ? (
-                <Empty description="조회된 데이터가 없습니다." />
-              ) : (
-                testData &&
-                testData.map((data) => {
-                  return (
-                    <Wrapper
-                      padding={`30px 20px`}
-                      borderBottom={`1px solid ${Theme.grey2_C}`}
-                      ju={`space-between`}
-                      dr={`row`}
-                    >
-                      <Wrapper dr={`row`} width={`auto`}>
-                        <Image
-                          width={`100px`}
-                          height={`100px`}
-                          src={data.productImg}
-                        />
-                        <Wrapper
-                          width={`calc(100% - 100px)`}
-                          padding={`0 0 0 50px`}
-                          fontSize={`16px`}
-                        >
-                          <Wrapper al={`flex-start`}>
-                            {data.productName}
-                          </Wrapper>
-                          <Wrapper al={`flex-start`} dr={`row`}>
-                            <Wrapper width={`auto`}>{data.dcPrice}</Wrapper>
-                            <DelTag>{data.price}</DelTag>
-                            <Wrapper width={`auto`}>| 1개</Wrapper>
+              {interestList &&
+                (interestList.length === 0 ? (
+                  <Wrapper margin={`100px 0`}>
+                    <Empty description="조회된 관심상품이 없습니다." />
+                  </Wrapper>
+                ) : (
+                  interestList.map((data) => {
+                    return (
+                      <Wrapper
+                        padding={`30px 20px`}
+                        borderBottom={`1px solid ${Theme.grey2_C}`}
+                        ju={`space-between`}
+                        dr={`row`}
+                      >
+                        <Wrapper dr={`row`} width={`auto`}>
+                          <Image
+                            width={`100px`}
+                            height={`100px`}
+                            src={data.Product.thumbnail}
+                          />
+                          <Wrapper
+                            width={`calc(100% - 100px)`}
+                            padding={`0 0 0 50px`}
+                            fontSize={`16px`}
+                          >
+                            <Wrapper al={`flex-start`}>
+                              {data.Product.title}
+                            </Wrapper>
+                            <Wrapper al={`flex-start`} dr={`row`}>
+                              <Wrapper width={`auto`}>
+                                {String(
+                                  parseInt(
+                                    data.Product.price -
+                                      data.Product.price *
+                                        (data.Product.discount / 100)
+                                  )
+                                ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                원
+                              </Wrapper>
+                              <DelTag>
+                                {String(
+                                  parseInt(
+                                    data.Product.price *
+                                      (data.Product.discount / 100)
+                                  )
+                                ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                원
+                              </DelTag>
+                            </Wrapper>
                           </Wrapper>
                         </Wrapper>
+                        <Wrapper width={`auto`}>
+                          <CommonButton
+                            width={`107px`}
+                            height={`44px`}
+                            margin={`0 0 12px`}
+                            kindOf={`white`}
+                            onClick={() => deleteInterest(data.id)}
+                          >
+                            삭제
+                          </CommonButton>
+                          <CommonButton width={`107px`} height={`44px`}>
+                            장바구니
+                          </CommonButton>
+                        </Wrapper>
                       </Wrapper>
-                      <Wrapper width={`auto`}>
-                        <CommonButton
-                          width={`107px`}
-                          height={`44px`}
-                          margin={`0 0 12px`}
-                          kindOf={`white`}
-                        >
-                          삭제
-                        </CommonButton>
-                        <CommonButton width={`107px`} height={`44px`}>
-                          장바구니
-                        </CommonButton>
-                      </Wrapper>
-                    </Wrapper>
-                  );
-                })
-              )}
+                    );
+                  })
+                ))}
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
