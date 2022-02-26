@@ -28,8 +28,6 @@ const Notice = () => {
 
   const { myQuestionDetails } = useSelector((state) => state.question);
 
-  console.log(myQuestionDetails);
-
   const width = useWidth();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -52,15 +50,6 @@ const Notice = () => {
     router.push(link);
   }, []);
   ////// DATAVIEW //////
-  const testData = [
-    {
-      title: "문의 제목이 들어갑니다",
-      createdAt: "2022-02-16-00:00",
-      question: "문의내용 입니다.",
-      answer: "문의내용에 대한 답변입니다.",
-    },
-  ];
-
   return (
     <>
       <Head>
@@ -160,80 +149,76 @@ const Notice = () => {
             </Wrapper>
 
             <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-              {testData && testData.length === 0 ? (
-                <Wrapper>다시 시도해주세요.</Wrapper>
-              ) : (
-                testData &&
-                testData.map((data) => {
-                  return (
-                    <>
-                      <Wrapper
-                        dr={`row`}
-                        padding={`11px 0`}
-                        bgColor={Theme.lightGrey2_C}
-                        borderTop={`1px solid ${Theme.grey2_C}`}
-                        borderBottom={`1px solid ${Theme.grey2_C}`}
-                      >
-                        <Wrapper width={`70%`}>제목</Wrapper>
-                        <Wrapper width={`15%`}>작성일</Wrapper>
-                        <Wrapper width={`15%`}>답변여부</Wrapper>
-                      </Wrapper>
-                      <Wrapper
-                        dr={`row`}
-                        padding={`21px 0 21px 20px`}
-                        borderBottom={`1px solid ${Theme.grey2_C}`}
-                      >
-                        <Wrapper width={`70%`} al={`flex-start`}>
-                          {data.title}
-                        </Wrapper>
-                        <Wrapper width={`15%`}>
-                          {data.createdAt.substring(0, 10)}
-                        </Wrapper>
-                        <Wrapper width={`15%`}>
-                          {data.answer.length === 0 ? `답변대기` : `답변완료`}
-                        </Wrapper>
-                      </Wrapper>
+              <Wrapper
+                dr={`row`}
+                padding={`11px 0`}
+                bgColor={Theme.lightGrey2_C}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
+                <Wrapper width={`70%`}>제목</Wrapper>
+                <Wrapper width={`15%`}>작성일</Wrapper>
+                <Wrapper width={`15%`}>답변여부</Wrapper>
+              </Wrapper>
+              <Wrapper
+                dr={`row`}
+                padding={`21px 0 21px 20px`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
+                <Wrapper width={`70%`} al={`flex-start`}>
+                  {myQuestionDetails && myQuestionDetails.title}
+                </Wrapper>
+                <Wrapper width={`15%`}>
+                  {myQuestionDetails &&
+                    myQuestionDetails.createdAt.substring(0, 10)}
+                </Wrapper>
+                <Wrapper width={`15%`}>
+                  {myQuestionDetails && myQuestionDetails.isCompleted
+                    ? `답변완료`
+                    : `답변대기`}
+                </Wrapper>
+              </Wrapper>
 
-                      <Wrapper
-                        minHeight={`140px`}
-                        al={`flex-start`}
-                        ju={`flex-start`}
-                        padding={`23px 0 0 20px`}
-                      >
-                        {data.question}
-                      </Wrapper>
-                      <Wrapper
-                        dr={`row`}
-                        al={`flex-start`}
-                        borderTop={`1px solid ${Theme.grey2_C}`}
-                        display={data.answer ? `flex` : `none`}
-                        bgColor={Theme.lightGrey2_C}
-                      >
-                        <Wrapper
-                          width={`20px`}
-                          height={`20px`}
-                          color={Theme.white_C}
-                          radius={`100%`}
-                          bgColor={Theme.red_C}
-                          margin={`23px 26px 0 20px`}
-                        >
-                          A
-                        </Wrapper>
+              <Wrapper
+                minHeight={`140px`}
+                al={`flex-start`}
+                ju={`flex-start`}
+                padding={`23px 0 0 20px`}
+              >
+                {myQuestionDetails && myQuestionDetails.content}
+              </Wrapper>
+              <Wrapper
+                dr={`row`}
+                al={`flex-start`}
+                borderTop={`1px solid ${Theme.grey2_C}`}
+                display={
+                  myQuestionDetails && myQuestionDetails.isCompleted
+                    ? `flex`
+                    : `none`
+                }
+                bgColor={Theme.lightGrey2_C}
+              >
+                <Wrapper
+                  width={`20px`}
+                  height={`20px`}
+                  color={Theme.white_C}
+                  radius={`100%`}
+                  bgColor={Theme.red_C}
+                  margin={`23px 26px 0 20px`}
+                >
+                  A
+                </Wrapper>
 
-                        <Wrapper
-                          width={`calc(100% - 66px)`}
-                          minHeight={`140px`}
-                          al={`flex-start`}
-                          ju={`flex-start`}
-                          padding={`23px 10px 0 0`}
-                        >
-                          {data.answer}
-                        </Wrapper>
-                      </Wrapper>
-                    </>
-                  );
-                })
-              )}
+                <Wrapper
+                  width={`calc(100% - 66px)`}
+                  minHeight={`140px`}
+                  al={`flex-start`}
+                  ju={`flex-start`}
+                  padding={`23px 10px 0 0`}
+                >
+                  {myQuestionDetails && myQuestionDetails.answer}
+                </Wrapper>
+              </Wrapper>
             </Wrapper>
 
             <Wrapper al={`flex-end`} margin={`20px 0`}>

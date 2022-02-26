@@ -178,7 +178,7 @@ const Board = () => {
                           {data.createdAt.substring(0, 10)}
                         </Wrapper>
                         <Wrapper width={`15%`}>
-                          {/* {data.answer.length === 0 ? "답변대기" : "답변완료"} */}
+                          {data.isCompleted ? "답변완료" : "답변대기"}
                         </Wrapper>
                       </Wrapper>
                     );
