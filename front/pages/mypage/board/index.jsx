@@ -6,7 +6,7 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   RsWrapper,
   WholeWrapper,
@@ -16,6 +16,9 @@ import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
+import { QUESTION_MY_LIST_REQUEST } from "../../../reducers/question";
+import { useEffect } from "react";
+import { Empty } from "antd";
 
 const Board = () => {
   ////// GLOBAL STATE //////
@@ -23,39 +26,26 @@ const Board = () => {
     (state) => state.seo
   );
 
+  const { myQuestions } = useSelector((state) => state.question);
+
   const width = useWidth();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: QUESTION_MY_LIST_REQUEST,
+    });
+  }, []);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
   ////// DATAVIEW //////
-  const testData = [
-    {
-      id: 1,
-      title: "문의내역 1번입니다.",
-      createdAt: "2022-02-15-00:00",
-      answer: true,
-    },
-    {
-      id: 2,
-      title: "문의내역 2번입니다.",
-      createdAt: "2022-02-15-00:00",
-      answer: false,
-    },
-    {
-      id: 3,
-      title: "문의내역 3번입니다.",
-      createdAt: "2022-02-15-00:00",
-      answer: true,
-    },
-  ];
-
   return (
     <>
       <Head>
@@ -161,37 +151,39 @@ const Board = () => {
                 <Wrapper width={`15%`}>답변여부</Wrapper>
               </Wrapper>
               <Wrapper ju={`flex-start`} margin={`0 0 180px`}>
-                {testData && testData.length === 0
-                  ? ``
-                  : testData &&
-                    testData.reverse().map((data) => {
-                      return (
+                {myQuestions && myQuestions.length === 0 ? (
+                  <Empty description="문의내역이 없습니다." />
+                ) : (
+                  myQuestions &&
+                  myQuestions.map((data) => {
+                    return (
+                      <Wrapper
+                        dr={`row`}
+                        ju={`flex-start`}
+                        padding={`14px 0px`}
+                        cursor={`pointer`}
+                        borderBottom={`1px solid ${Theme.grey2_C}`}
+                        onClick={() =>
+                          moveLinkHandler(`./board/detail/${data.id}`)
+                        }
+                      >
                         <Wrapper
-                          dr={`row`}
-                          ju={`flex-start`}
-                          padding={`14px 0px`}
-                          cursor={`pointer`}
-                          borderBottom={`1px solid ${Theme.grey2_C}`}
-                          onClick={() =>
-                            moveLinkHandler(`./board/detail/${data.id}`)
-                          }
+                          al={`flex-start`}
+                          padding={`0 20px`}
+                          width={`70%`}
                         >
-                          <Wrapper
-                            al={`flex-start`}
-                            padding={`0 20px`}
-                            width={`70%`}
-                          >
-                            {data.title}
-                          </Wrapper>
-                          <Wrapper width={`15%`}>
-                            {data.createdAt.substring(0, 10)}
-                          </Wrapper>
-                          <Wrapper width={`15%`}>
-                            {data.answer ? "답변완료" : "답변대기"}
-                          </Wrapper>
+                          {data.title}
                         </Wrapper>
-                      );
-                    })}
+                        <Wrapper width={`15%`}>
+                          {data.createdAt.substring(0, 10)}
+                        </Wrapper>
+                        <Wrapper width={`15%`}>
+                          {/* {data.answer.length === 0 ? "답변대기" : "답변완료"} */}
+                        </Wrapper>
+                      </Wrapper>
+                    );
+                  })
+                )}
               </Wrapper>
             </Wrapper>
           </RsWrapper>

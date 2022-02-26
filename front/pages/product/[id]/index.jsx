@@ -29,6 +29,7 @@ import {
 } from "../../../reducers/interest";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
+import Review from "../../../components/product/review";
 
 const Video = styled.video`
   width: 100%;
@@ -36,7 +37,7 @@ const Video = styled.video`
 `;
 
 const DetailButton = styled.button`
-  width: calc(100% / 3);
+  width: calc(100% / 4);
   height: 60px;
   cursor: pointer;
   background: none;
@@ -720,6 +721,12 @@ const DetailProduct = () => {
                 isTab={tab === 3}
                 onClick={() => tabChangeHandler(3)}
               >
+                상품사용후기
+              </DetailButton>
+              <DetailButton
+                isTab={tab === 4}
+                onClick={() => tabChangeHandler(4)}
+              >
                 상품문의
               </DetailButton>
             </Wrapper>
@@ -777,7 +784,8 @@ const DetailProduct = () => {
                 </Wrapper>
               </Wrapper>
             )}
-            {tab === 3 && <Inquiry />}
+            {tab === 3 && <Review />}
+            {tab === 4 && <Inquiry />}
           </RsWrapper>
           <Modal
             centered={true}

@@ -5,6 +5,14 @@ import {
   QUESTION_GET_SUCCESS,
   QUESTION_GET_FAILURE,
   //
+  QUESTION_MY_LIST_REQUEST,
+  QUESTION_MY_LIST_SUCCESS,
+  QUESTION_MY_LIST_FAILURE,
+  //
+  QUESTION_MY_DETAIL_REQUEST,
+  QUESTION_MY_DETAIL_SUCCESS,
+  QUESTION_MY_DETAIL_FAILURE,
+  //
   QUESTION_CREATE_REQUEST,
   QUESTION_CREATE_SUCCESS,
   QUESTION_CREATE_FAILURE,
@@ -16,6 +24,10 @@ import {
   QUESTION_UPDATE_REQUEST,
   QUESTION_UPDATE_SUCCESS,
   QUESTION_UPDATE_FAILURE,
+  //
+  NOT_USER_CREATE_REQUEST,
+  NOT_USER_CREATE_SUCCESS,
+  NOT_USER_CREATE_FAILURE,
   // ************************************************
   QUESTION_TYPE_GET_REQUEST,
   QUESTION_TYPE_GET_SUCCESS,
@@ -52,6 +64,59 @@ function* questionGet(action) {
     console.error(err);
     yield put({
       type: QUESTION_GET_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function questionMyListAPI(data) {
+  return axios.get(`/api/question/myList`, data);
+}
+
+function* questionMyList(action) {
+  try {
+    const result = yield call(questionMyListAPI, action.data);
+
+    yield put({
+      type: QUESTION_MY_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: QUESTION_MY_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function questionMyDetailAPI(data) {
+  console.log(data);
+  return axios.post(`/api/question/detail`, data);
+}
+
+function* questionMyDetail(action) {
+  try {
+    const result = yield call(questionMyDetailAPI, action.data);
+
+    yield put({
+      type: QUESTION_MY_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: QUESTION_MY_DETAIL_FAILURE,
       error: err.response.data,
     });
   }
@@ -133,6 +198,33 @@ function* questionUpdate(action) {
     console.error(err);
     yield put({
       type: QUESTION_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function notUserCreateAPI(data) {
+  return axios.post(`/api/question/notUser/create`, data);
+}
+
+function* notUserCreate(action) {
+  try {
+    const result = yield call(notUserCreateAPI, action.data);
+
+    yield put({
+      type: NOT_USER_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NOT_USER_CREATE_FAILURE,
       error: err.response.data,
     });
   }
@@ -261,6 +353,14 @@ function* watchQuestionGet() {
   yield takeLatest(QUESTION_GET_REQUEST, questionGet);
 }
 
+function* watchQuestionMyList() {
+  yield takeLatest(QUESTION_MY_LIST_REQUEST, questionMyList);
+}
+
+function* watchQuestionMyDetail() {
+  yield takeLatest(QUESTION_MY_DETAIL_REQUEST, questionMyDetail);
+}
+
 function* watchQuestionCreate() {
   yield takeLatest(QUESTION_CREATE_REQUEST, questionCreate);
 }
@@ -271,6 +371,10 @@ function* watchQuestionDelete() {
 
 function* watchQuestionUpdate() {
   yield takeLatest(QUESTION_UPDATE_REQUEST, questionUpdate);
+}
+
+function* watchQuestionNotUserCreate() {
+  yield takeLatest(NOT_USER_CREATE_REQUEST, notUserCreate);
 }
 
 // ****************************************************************
@@ -295,9 +399,12 @@ function* watchQuestionTypeUpdate() {
 export default function* bannerSaga() {
   yield all([
     fork(watchQuestionGet),
+    fork(watchQuestionMyList),
+    fork(watchQuestionMyDetail),
     fork(watchQuestionCreate),
     fork(watchQuestionDelete),
     fork(watchQuestionUpdate),
+    fork(watchQuestionNotUserCreate),
 
     // ****************************************************************
 

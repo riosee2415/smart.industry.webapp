@@ -126,7 +126,7 @@ const ProductWrapper = styled(Wrapper)`
     }
 
     img {
-      height: 216px;
+      height: 168px;
     }
   }
 
@@ -135,10 +135,6 @@ const ProductWrapper = styled(Wrapper)`
 
     &:nth-child(2n + 1) {
       margin-right: 15px;
-    }
-
-    img {
-      height: 216px;
     }
   }
 
@@ -195,12 +191,13 @@ const ProductList = () => {
       });
     }
 
-    if (router.query.isUsed) {
+    if (router.query) {
       dispatch({
         type: PRODUCT_LIST_REQUEST,
         data: {
           page: currentPage,
-          isUsed: true,
+          isUsed: router.query.isUsed && router.query.isUsed === "true",
+          isSale: router.query.isSale && router.query.isSale === "true",
           isPrice:
             selectType === "낮은가격"
               ? 1
@@ -209,24 +206,8 @@ const ProductList = () => {
               : null,
           isName: selectType === "상품명",
           companyId: selectCompany,
-        },
-      });
-    }
-
-    if (router.query.isSale) {
-      dispatch({
-        type: PRODUCT_LIST_REQUEST,
-        data: {
-          page: currentPage,
-          isSale: true,
-          isPrice:
-            selectType === "낮은가격"
-              ? 1
-              : selectType === "높은가격"
-              ? 2
-              : null,
-          isName: selectType === "상품명",
-          companyId: selectCompany,
+          search: router.query.search,
+          categoryId: productType,
         },
       });
     }
@@ -236,14 +217,15 @@ const ProductList = () => {
     dispatch({
       type: PRODUCT_LIST_REQUEST,
       data: {
-        isUsed: router.query.isUsed === "true",
-        isSale: router.query.isSale === "true",
+        isUsed: router.query.isUsed && router.query.isUsed === "true",
+        isSale: router.query.isSale && router.query.isSale === "true",
         page: currentPage,
         categoryId: productType,
         isPrice:
           selectType === "낮은가격" ? 1 : selectType === "높은가격" ? 2 : null,
         isName: selectType === "상품명",
         companyId: selectCompany,
+        search: router.query.search,
       },
     });
   }, [currentPage, productType, selectType, selectCompany]);
@@ -254,6 +236,7 @@ const ProductList = () => {
         type: PRODUCT_LIST_REQUEST,
         data: {
           categoryId: productType,
+          search: router.query.search,
         },
       });
     }
@@ -267,6 +250,12 @@ const ProductList = () => {
 
   const productTypeChangeHandler = useCallback(
     (type) => {
+      router.replace(
+        `${router.asPath.substring(
+          0,
+          router.asPath.indexOf("category") + 9
+        )}${type}`
+      );
       setProductType(type);
     },
     [productType]
@@ -369,6 +358,30 @@ const ProductList = () => {
         <WholeWrapper>
           <RsWrapper>
             <Wrapper margin={`280px 0 0`}>
+              {!router.query.menu &&
+                !router.query.category &&
+                !router.query.isSale &&
+                !router.query.isUsed &&
+                router.query.search && (
+                  <Wrapper al={`flex-start`}>
+                    <Wrapper dr={`row`} ju={`flex-start`} fontSize={`14px`}>
+                      <Text>HOME</Text>
+                      <Wrapper
+                        height={`10px`}
+                        width={`1px`}
+                        bgColor={Theme.grey_C}
+                        margin={`0 10px`}
+                      />
+                      <Text>상품검색</Text>
+                    </Wrapper>
+                    <Text
+                      fontSize={`20px`}
+                      fontWeight={`bold`}
+                      margin={`25px 0`}>
+                      상품검색
+                    </Text>
+                  </Wrapper>
+                )}
               <Wrapper al={`flex-start`}>
                 <Text fontSize={`22px`} fontWeight={`bold`} margin={`0 0 9px`}>
                   {categoryList &&
@@ -391,7 +404,18 @@ const ProductList = () => {
                     })}
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`} ju={`space-between`} margin={`54px 0 0`}>
+              <Wrapper
+                dr={`row`}
+                ju={`space-between`}
+                margin={
+                  !router.query.menu &&
+                  !router.query.category &&
+                  !router.query.isSale &&
+                  !router.query.isUsed &&
+                  router.query.search
+                    ? `0`
+                    : `54px 0 0`
+                }>
                 <Text fontSize={`14px`}>
                   총&nbsp;
                   <SpanText color={Theme.red_C}>{totalProduct}</SpanText>
@@ -420,7 +444,10 @@ const ProductList = () => {
                   )}
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`} ju={`flex-start`}>
+              <Wrapper
+                dr={`row`}
+                ju={`flex-start`}
+                margin={width < 700 && `40px 0 0`}>
                 {productList &&
                   (productList.length === 0 ? (
                     <Wrapper>
@@ -434,14 +461,17 @@ const ProductList = () => {
                             moveLinkHandler(`/product/${data.id}`)
                           }>
                           <Wrapper
-                            padding={`20px`}
+                            padding={width < 700 ? `0px` : `20px`}
                             border={`1px solid ${Theme.lightGrey_C}`}>
                             <Image
+                              width={width < 700 ? `100%` : `216px`}
                               src={data.thumbnail}
                               alt="main_product_thumbnail"
                             />
                           </Wrapper>
-                          <Text margin={`25px 0 13px`}>{data.title}</Text>
+                          <Text margin={width ? `5px 0` : `25px 0 13px`}>
+                            {data.title}
+                          </Text>
                           <Wrapper
                             dr={width < 900 ? `column` : `row`}
                             fontSize={width < 900 ? `16px` : `18px`}>

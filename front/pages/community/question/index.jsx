@@ -24,7 +24,10 @@ import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import { Checkbox, notification, message } from "antd";
 import useInput from "../../../hooks/useInput";
-import { QUESTION_CREATE_REQUEST } from "../../../reducers/question";
+import {
+  QUESTION_CREATE_REQUEST,
+  NOT_USER_CREATE_REQUEST,
+} from "../../../reducers/question";
 import { useEffect } from "react";
 
 const ContentArea = styled(TextArea)`
@@ -66,7 +69,13 @@ const Question = () => {
     (state) => state.seo
   );
   const { me } = useSelector((state) => state.user);
-  const { st_questionCreateDone } = useSelector((state) => state.question);
+  const {
+    st_questionCreateDone,
+    st_notUserCreateDone,
+    //
+    st_questionCreateError,
+    st_notUserCreateError,
+  } = useSelector((state) => state.question);
 
   const width = useWidth();
   const router = useRouter();
@@ -77,10 +86,25 @@ const Question = () => {
   const inputTitle = useInput("");
   const inputContent = useInput("");
   const inputPassword = useInput("");
+  const inputName = useInput("");
+  const inputMobile = useInput("");
+  const inputEmail = useInput("");
 
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (st_questionCreateError) {
+      return message.error(st_questionCreateError);
+    }
+  }, [st_questionCreateError]);
+
+  useEffect(() => {
+    if (st_notUserCreateError) {
+      return message.error(st_notUserCreateError);
+    }
+  }, [st_notUserCreateError]);
+
   useEffect(() => {
     if (st_questionCreateDone) {
       LoadNotification("문의하기가 접수되었습니다.");
@@ -89,6 +113,27 @@ const Question = () => {
       inputContent.setValue("");
     }
   }, [st_questionCreateDone, inputContent.value, isTerms]);
+
+  useEffect(() => {
+    if (st_notUserCreateDone) {
+      LoadNotification("문의하기가 접수되었습니다.");
+
+      setIsTerms(false);
+      inputName.setValue("");
+      inputMobile.setValue("");
+      inputEmail.setValue("");
+      inputTitle.setValue("");
+      inputContent.setValue("");
+    }
+  }, [
+    st_notUserCreateDone,
+    inputContent.value,
+    isTerms,
+    inputName.value,
+    inputMobile.value,
+    inputEmail.value,
+    inputTitle.value,
+  ]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
@@ -103,35 +148,72 @@ const Question = () => {
   );
 
   const QuestionHandler = useCallback(() => {
-    if (!inputContent.value || inputContent.value.trim() === "") {
-      return LoadNotification("문의내용을 입력해주세요.");
-    }
-    if (!isTerms) {
-      return LoadNotification("개인정보 제공에 동의해주세요.");
-    }
+    if (me) {
+      if (!inputTitle.value || inputTitle.value.trim() === "") {
+        return LoadNotification("제목을 입력해주세요.");
+      }
+      if (!inputContent.value || inputContent.value.trim() === "") {
+        return LoadNotification("문의내용을 입력해주세요.");
+      }
+      if (!isTerms) {
+        return LoadNotification("개인정보 제공에 동의해주세요.");
+      }
 
-    dispatch({
-      type: QUESTION_CREATE_REQUEST,
-      data: {
-        author: me.username,
-        mobile: me.mobile,
-        email: me.email,
-        title: me && me ? me.username : "비회원일때 제목",
-        content: inputContent.value,
-        term: isTerms,
-        password: me && me ? parseInt("0000") : parseInt("1111"),
-      },
-    });
-  }, [me, isTerms, inputContent.value]);
+      dispatch({
+        type: QUESTION_CREATE_REQUEST,
+        data: {
+          author: me.username,
+          mobile: me.mobile,
+          email: me.email,
+          title: inputTitle.value,
+          content: inputContent.value,
+          term: isTerms,
+          password: parseInt("0000"),
+        },
+      });
+    } else {
+      if (!inputName.value || inputName.value.trim() === "") {
+        return LoadNotification("이름을 입력해주세요.");
+      }
+      if (!inputMobile.value || inputMobile.value.trim() === "") {
+        return LoadNotification("연락처를 입력해주세요.");
+      }
+      if (!inputEmail.value || inputEmail.value.trim() === "") {
+        return LoadNotification("이메일을 입력해주세요.");
+      }
+      if (!inputTitle.value || inputTitle.value.trim() === "") {
+        return LoadNotification("제목을 입력해주세요.");
+      }
+      if (!inputContent.value || inputContent.value.trim() === "") {
+        return LoadNotification("문의내용을 입력해주세요.");
+      }
+      if (!isTerms) {
+        return LoadNotification("개인정보 제공에 동의해주세요.");
+      }
+
+      dispatch({
+        type: NOT_USER_CREATE_REQUEST,
+        data: {
+          author: inputName.value,
+          mobile: inputMobile.value,
+          email: inputEmail.value,
+          title: inputTitle.value,
+          content: inputContent.value,
+          term: isTerms,
+          password: parseInt("1111"),
+        },
+      });
+    }
+  }, [
+    me,
+    isTerms,
+    inputContent.value,
+    inputName.value,
+    inputMobile.value,
+    inputEmail.value,
+    inputTitle.value,
+  ]);
   ////// DATAVIEW //////
-  const testUserData = [
-    {
-      username: "포립이",
-      mobile: "010-0000-0000",
-      email: "4leaf.njs@gmail.com",
-    },
-  ];
-
   return (
     <>
       <Head>
@@ -199,91 +281,92 @@ const Question = () => {
             </Wrapper>
 
             <Wrapper margin={`0 0 110px`}>
-              {/* {testUserData && testUserData.length === 0
-                ? ``
-                : testUserData &&
-                  testUserData.map((data) => {
-                    return (
-                      <Wrapper dr={`row`}>
-                        <Wrapper width={`50%`} al={`flex-start`}>
-                          <Wrapper
-                            al={`flex-start`}
-                            fontSize={`18px`}
-                            fontWeight={`bold`}
-                            margin={width < 500 ? `0 0 10px` : `0 0 20px`}
-                          >
-                            이름
-                          </Wrapper>
-                          <Wrapper
-                            width={`calc(100% - 10px)`}
-                            margin={`0 10px 0 0`}
-                          >
-                            <TextInput
-                              placeholder={data.username}
-                              width={`100%`}
-                              readOnly
-                            />
-                          </Wrapper>
-                        </Wrapper>
-                        <Wrapper width={`50%`} al={`flex-start`}>
-                          <Wrapper
-                            al={`flex-start`}
-                            fontSize={`18px`}
-                            fontWeight={`bold`}
-                            margin={width < 500 ? `0 0 10px` : `0 0 20px 10px`}
-                          >
-                            연락처
-                          </Wrapper>
-                          <Wrapper
-                            width={width < 500 ? `100%` : `calc(100% - 10px)`}
-                            margin={width < 500 ? `0` : `0 0 0 10px`}
-                          >
-                            <TextInput
-                              placeholder={data.mobile}
-                              width={`100%`}
-                              readOnly
-                            />
-                          </Wrapper>
-                        </Wrapper>
-                        <Wrapper al={`flex-start`} margin={`35px 0 0`}>
-                          <Wrapper
-                            al={`flex-start`}
-                            fontSize={`18px`}
-                            fontWeight={`bold`}
-                            margin={width < 500 ? `0 0 10px` : `0 0 20px`}
-                          >
-                            이메일
-                          </Wrapper>
-                          <TextInput
-                            placeholder={data.email}
-                            width={`100%`}
-                            readOnly
-                          />
-                        </Wrapper>
-                      </Wrapper>
-                    );
-                  })}
+              <Wrapper dr={`row`}>
+                <Wrapper width={`50%`} al={`flex-start`}>
+                  <Wrapper
+                    ju={`flex-start`}
+                    fontSize={`18px`}
+                    fontWeight={`bold`}
+                    margin={width < 500 ? `0 0 10px` : `0 0 20px`}
+                    dr={`row`}
+                  >
+                    이름<SpanText color={Theme.red_C}>*</SpanText>
+                  </Wrapper>
+                  <Wrapper width={`calc(100% - 10px)`} margin={`0 10px 0 0`}>
+                    <TextInput
+                      placeholder={me ? me.username : `이름을 입력해주세요.`}
+                      width={`100%`}
+                      readOnly={me ? true : false}
+                      border={`1px solid ${Theme.grey2_C}`}
+                      {...inputName}
+                    />
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper width={`50%`} al={`flex-start`}>
+                  <Wrapper
+                    ju={`flex-start`}
+                    fontSize={`18px`}
+                    fontWeight={`bold`}
+                    margin={width < 500 ? `0 0 10px` : `0 0 20px 10px`}
+                    dr={`row`}
+                  >
+                    연락처<SpanText color={Theme.red_C}>*</SpanText>
+                  </Wrapper>
+                  <Wrapper
+                    width={width < 500 ? `100%` : `calc(100% - 10px)`}
+                    margin={width < 500 ? `0` : `0 0 0 10px`}
+                  >
+                    <TextInput
+                      placeholder={me ? me.mobile : `연락처를 입력해주세요.`}
+                      width={`100%`}
+                      readOnly={me ? true : false}
+                      border={`1px solid ${Theme.grey2_C}`}
+                      {...inputMobile}
+                    />
+                  </Wrapper>
+                </Wrapper>
+                <Wrapper al={`flex-start`} margin={`35px 0 0`}>
+                  <Wrapper
+                    ju={`flex-start`}
+                    fontSize={`18px`}
+                    fontWeight={`bold`}
+                    margin={width < 500 ? `0 0 10px` : `0 0 20px`}
+                    dr={`row`}
+                  >
+                    이메일<SpanText color={Theme.red_C}>*</SpanText>
+                  </Wrapper>
+                  <TextInput
+                    placeholder={me ? me.email : `이메일을 입력해주세요.`}
+                    width={`100%`}
+                    readOnly={me ? true : false}
+                    border={`1px solid ${Theme.grey2_C}`}
+                    {...inputEmail}
+                  />
+                </Wrapper>
+              </Wrapper>
               <Wrapper al={`flex-start`} margin={`35px 0 0`}>
                 <Wrapper
-                  al={`flex-start`}
+                  ju={`flex-start`}
                   fontSize={`18px`}
                   fontWeight={`bold`}
                   margin={width < 500 ? `0 0 10px` : `0 0 20px`}
+                  dr={`row`}
                 >
-                  제목
+                  제목<SpanText color={Theme.red_C}>*</SpanText>
                 </Wrapper>
                 <TextInput
                   width={`100%`}
                   placeholder={`제목을 입력해주세요.`}
+                  border={`1px solid ${Theme.grey2_C}`}
                   {...inputTitle}
                 />
-              </Wrapper> */}
+              </Wrapper>
               <Wrapper al={`flex-start`}>
                 <Wrapper
                   al={`flex-start`}
                   fontSize={`18px`}
                   fontWeight={`bold`}
-                  margin={width < 500 ? `0 0 10px` : `0 0 20px`}
+                  margin={width < 500 ? `35px 0 10px` : `35px 0 20px`}
                   width={`auto`}
                   dr={`row`}
                 >

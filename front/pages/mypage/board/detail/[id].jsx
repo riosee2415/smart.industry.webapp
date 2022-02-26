@@ -6,7 +6,7 @@ import wrapper from "../../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CommonButton,
   RsWrapper,
@@ -17,6 +17,8 @@ import { useCallback } from "react";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
+import { QUESTION_MY_DETAIL_REQUEST } from "../../../../reducers/question";
+import { useEffect } from "react";
 
 const Notice = () => {
   ////// GLOBAL STATE //////
@@ -24,12 +26,26 @@ const Notice = () => {
     (state) => state.seo
   );
 
+  const { myQuestionDetails } = useSelector((state) => state.question);
+
+  console.log(myQuestionDetails);
+
   const width = useWidth();
   const router = useRouter();
+  const dispatch = useDispatch();
 
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: QUESTION_MY_DETAIL_REQUEST,
+      data: {
+        id: parseInt(router.query.id),
+        password: "0",
+      },
+    });
+  }, [router.query]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {

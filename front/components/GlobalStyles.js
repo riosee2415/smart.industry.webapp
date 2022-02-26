@@ -97,6 +97,11 @@ const GlobalStyles = createGlobalStyle`
   .ant-message{
     z-index: 10001 !important;
   }
+
+  .ant-modal-wrap,
+  .ant-modal-mask {
+    z-index: 10000 !important;
+  }
 `;
 
 export default GlobalStyles;

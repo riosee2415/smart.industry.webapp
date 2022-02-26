@@ -2,6 +2,8 @@ import produce from "../util/produce";
 
 export const initailState = {
   questions: null,
+  myQuestions: null,
+  myQuestionDetails: null,
   types: null,
 
   createTypeModal: false, // 문의 유형 create 모달 실행
@@ -13,9 +15,21 @@ export const initailState = {
   st_questionDone: false,
   st_questionError: null,
   //
+  st_questionMyListLoading: false, // 나의 문의정보 가져오기
+  st_questionMyListDone: false,
+  st_questionMyListError: null,
+  //
+  st_questionMyDetailLoading: false, // 나의 문의정보 디테일 가져오기
+  st_questionMyDetailDone: false,
+  st_questionMyDetailError: null,
+  //
   st_questionCreateLoading: false, // 문의 정보 추가하기
   st_questionCreateDone: false,
   st_questionCreateError: null,
+  //
+  st_notUserCreateLoading: false, // 비회원 문의 정보 추가하기
+  st_notUserCreateDone: false,
+  st_notUserCreateError: null,
   //
   st_questionDeleteLoading: false, // 문의 정보 삭제하기
   st_questionDeleteDone: false,
@@ -46,6 +60,14 @@ export const QUESTION_GET_REQUEST = "QUESTION_GET_REQUEST";
 export const QUESTION_GET_SUCCESS = "QUESTION_GET_SUCCESS";
 export const QUESTION_GET_FAILURE = "QUESTION_GET_FAILURE";
 
+export const QUESTION_MY_LIST_REQUEST = "QUESTION_MY_LIST_REQUEST";
+export const QUESTION_MY_LIST_SUCCESS = "QUESTION_MY_LIST_SUCCESS";
+export const QUESTION_MY_LIST_FAILURE = "QUESTION_MY_LIST_FAILURE";
+
+export const QUESTION_MY_DETAIL_REQUEST = "QUESTION_MY_DETAIL_REQUEST";
+export const QUESTION_MY_DETAIL_SUCCESS = "QUESTION_MY_DETAIL_SUCCESS";
+export const QUESTION_MY_DETAIL_FAILURE = "QUESTION_MY_DETAIL_FAILURE";
+
 export const QUESTION_DELETE_REQUEST = "QUESTION_DELETE_REQUEST";
 export const QUESTION_DELETE_SUCCESS = "QUESTION_DELETE_SUCCESS";
 export const QUESTION_DELETE_FAILURE = "QUESTION_DELETE_FAILURE";
@@ -57,6 +79,10 @@ export const QUESTION_UPDATE_FAILURE = "QUESTION_UPDATE_FAILURE";
 export const QUESTION_CREATE_REQUEST = "QUESTION_CREATE_REQUEST";
 export const QUESTION_CREATE_SUCCESS = "QUESTION_CREATE_SUCCESS";
 export const QUESTION_CREATE_FAILURE = "QUESTION_CREATE_FAILURE";
+
+export const NOT_USER_CREATE_REQUEST = "NOT_USER_CREATE_REQUEST";
+export const NOT_USER_CREATE_SUCCESS = "NOT_USER_CREATE_SUCCESS";
+export const NOT_USER_CREATE_FAILURE = "NOT_USER_CREATE_FAILURE";
 
 // ************************************************
 export const QUESTION_TYPE_GET_REQUEST = "QUESTION_TYPE_GET_REQUEST";
@@ -101,6 +127,42 @@ const reducer = (state = initailState, action) =>
         draft.st_questionLoading = false;
         draft.st_questionDone = false;
         draft.st_questionError = action.error;
+        break;
+      }
+      case QUESTION_MY_LIST_REQUEST: {
+        draft.st_questionMyListLoading = true;
+        draft.st_questionMyListDone = null;
+        draft.st_questionMyListError = false;
+        break;
+      }
+      case QUESTION_MY_LIST_SUCCESS: {
+        draft.st_questionMyListLoading = false;
+        draft.st_questionMyListDone = true;
+        draft.myQuestions = action.data;
+        break;
+      }
+      case QUESTION_MY_LIST_FAILURE: {
+        draft.st_questionMyListLoading = false;
+        draft.st_questionMyListDone = false;
+        draft.st_questionMyListError = action.error;
+        break;
+      }
+      case QUESTION_MY_DETAIL_REQUEST: {
+        draft.st_questionMyDetailLoading = true;
+        draft.st_questionMyDetailDone = null;
+        draft.st_questionMyDetailError = false;
+        break;
+      }
+      case QUESTION_MY_DETAIL_SUCCESS: {
+        draft.st_questionMyDetailLoading = false;
+        draft.st_questionMyDetailDone = true;
+        draft.myQuestionDetails = action.data;
+        break;
+      }
+      case QUESTION_MY_DETAIL_FAILURE: {
+        draft.st_questionMyDetailLoading = false;
+        draft.st_questionMyDetailDone = false;
+        draft.st_questionMyDetailError = action.error;
         break;
       }
       case QUESTION_DELETE_REQUEST: {
@@ -153,6 +215,24 @@ const reducer = (state = initailState, action) =>
         draft.st_questionCreateLoading = false;
         draft.st_questionCreateDone = false;
         draft.st_questionCreateError = action.error;
+        break;
+      }
+      case NOT_USER_CREATE_REQUEST: {
+        draft.st_notUserCreateLoading = true;
+        draft.st_notUserCreateDone = null;
+        draft.st_notUserCreateError = false;
+        break;
+      }
+      case NOT_USER_CREATE_SUCCESS: {
+        draft.st_notUserCreateLoading = false;
+        draft.st_notUserCreateDone = true;
+        draft.questions = action.data;
+        break;
+      }
+      case NOT_USER_CREATE_FAILURE: {
+        draft.st_notUserCreateLoading = false;
+        draft.st_notUserCreateDone = false;
+        draft.st_notUserCreateError = action.error;
         break;
       }
       // ************************************************
