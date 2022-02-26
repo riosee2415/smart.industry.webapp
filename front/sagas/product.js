@@ -92,6 +92,18 @@ import {
   PRODUCT_ADMIN_QUESTION_LIST_REQUEST,
   PRODUCT_ADMIN_QUESTION_LIST_SUCCESS,
   PRODUCT_ADMIN_QUESTION_LIST_FAILURE,
+  //
+  PRODUCT_QUESTION_NOT_USER_CREATE_REQUEST,
+  PRODUCT_QUESTION_NOT_USER_CREATE_SUCCESS,
+  PRODUCT_QUESTION_NOT_USER_CREATE_FAILURE,
+  //
+  PRODUCT_QUESTION_LIST_PROD_REQUEST,
+  PRODUCT_QUESTION_LIST_PROD_SUCCESS,
+  PRODUCT_QUESTION_LIST_PROD_FAILURE,
+  //
+  PRODUCT_QUESTION_MY_LIST_REQUEST,
+  PRODUCT_QUESTION_MY_LIST_SUCCESS,
+  PRODUCT_QUESTION_MY_LIST_FAILURE,
 } from "../reducers/product";
 
 // SAGA AREA ********************************************************************************************************
@@ -716,6 +728,108 @@ function* prodQuestionAdminList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function prodQuestionNotUserCreateAPI(data) {
+  return axios.post(`/api/prodQuestion/notUser/create`, data);
+}
+
+function* prodQuestionNotUserCreate(action) {
+  try {
+    const result = yield call(prodQuestionNotUserCreateAPI, action.data);
+
+    yield put({
+      type: PRODUCT_QUESTION_NOT_USER_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_QUESTION_NOT_USER_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function prodQuestionListProdAPI(data) {
+  return axios.get(`/api/prodQuestion/product/list/${data.ProductId}`, data);
+}
+
+function* prodQuestionListProd(action) {
+  try {
+    const result = yield call(prodQuestionListProdAPI, action.data);
+
+    yield put({
+      type: PRODUCT_QUESTION_LIST_PROD_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_QUESTION_LIST_PROD_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function prodQuestionMyListAPI(data) {
+  return axios.get(`/api/prodQuestion/myList`, data);
+}
+
+function* prodQuestionMyList(action) {
+  try {
+    const result = yield call(prodQuestionMyListAPI, action.data);
+
+    yield put({
+      type: PRODUCT_QUESTION_MY_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_QUESTION_MY_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchProductDetail() {
   yield takeLatest(PRODUCT_DETAIL_REQUEST, productDetail);
@@ -809,6 +923,21 @@ function* watchProdQuestionAdminList() {
   yield takeLatest(PRODUCT_ADMIN_QUESTION_LIST_REQUEST, prodQuestionAdminList);
 }
 
+function* watchProdQuestionNotUserCreate() {
+  yield takeLatest(
+    PRODUCT_QUESTION_NOT_USER_CREATE_REQUEST,
+    prodQuestionNotUserCreate
+  );
+}
+
+function* watchProdQuestionListProd() {
+  yield takeLatest(PRODUCT_QUESTION_LIST_PROD_REQUEST, prodQuestionListProd);
+}
+
+function* watchProdQuestionMyList() {
+  yield takeLatest(PRODUCT_QUESTION_MY_LIST_REQUEST, prodQuestionMyList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* productSaga() {
   yield all([
@@ -836,6 +965,9 @@ export default function* productSaga() {
     fork(watchProdQuestionCreate),
     fork(watchProdQuestionUpdate),
     fork(watchProdQuestionAdminList),
+    fork(watchProdQuestionNotUserCreate),
+    fork(watchProdQuestionListProd),
+    fork(watchProdQuestionMyList),
     //
   ]);
 }

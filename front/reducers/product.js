@@ -21,8 +21,13 @@ export const initailState = {
   productDetailImagePath: null,
 
   productQuestionList: null,
+  productQuestionListLastPage: 1,
+  productQuestionListLen: 1,
+
   productQuestionDetail: null,
   productAdminQuestionList: null,
+  productQuestionListProd: null,
+  productQuestionMyList: null,
 
   createModal: false,
   prodCompanyModal: false,
@@ -121,6 +126,18 @@ export const initailState = {
   st_productAdminQuestionListLoading: false,
   st_productAdminQuestionListDone: false,
   st_productAdminQuestionListError: null,
+  //
+  st_productQuestionNotUserCreateLoading: false,
+  st_productQuestionNotUserCreateDone: false,
+  st_productQuestionNotUserCreateError: null,
+  //
+  st_productQuestionListProdLoading: false,
+  st_productQuestionListProdDone: false,
+  st_productQuestionListProdError: null,
+  //
+  st_productQuestionMyListLoading: false,
+  st_productQuestionMyListDone: false,
+  st_productQuestionMyListError: null,
 };
 
 export const PRODUCT_LIST_REQUEST = "PRODUCT_LIST_REQUEST";
@@ -221,7 +238,6 @@ export const PRODUCT_QUESTION_UPDATE_FAILURE =
   "PRODUCT_QUESTION_UPDATE_FAILURE";
 //
 
-//
 export const PRODUCT_ADMIN_QUESTION_LIST_REQUEST =
   "PRODUCT_ADMIN_QUESTION_LIST_REQUEST";
 export const PRODUCT_ADMIN_QUESTION_LIST_SUCCESS =
@@ -229,7 +245,27 @@ export const PRODUCT_ADMIN_QUESTION_LIST_SUCCESS =
 export const PRODUCT_ADMIN_QUESTION_LIST_FAILURE =
   "PRODUCT_ADMIN_QUESTION_LIST_FAILURE";
 //
-
+export const PRODUCT_QUESTION_NOT_USER_CREATE_REQUEST =
+  "PRODUCT_QUESTION_NOT_USER_CREATE_REQUEST";
+export const PRODUCT_QUESTION_NOT_USER_CREATE_SUCCESS =
+  "PRODUCT_QUESTION_NOT_USER_CREATE_SUCCESS";
+export const PRODUCT_QUESTION_NOT_USER_CREATE_FAILURE =
+  "PRODUCT_QUESTION_NOT_USER_CREATE_FAILURE";
+//
+export const PRODUCT_QUESTION_LIST_PROD_REQUEST =
+  "PRODUCT_QUESTION_LIST_PROD_REQUEST";
+export const PRODUCT_QUESTION_LIST_PROD_SUCCESS =
+  "PRODUCT_QUESTION_LIST_PROD_SUCCESS";
+export const PRODUCT_QUESTION_LIST_PROD_FAILURE =
+  "PRODUCT_QUESTION_LIST_PROD_FAILURE";
+//
+export const PRODUCT_QUESTION_MY_LIST_REQUEST =
+  "PRODUCT_QUESTION_MY_LIST_REQUEST";
+export const PRODUCT_QUESTION_MY_LIST_SUCCESS =
+  "PRODUCT_QUESTION_MY_LIST_SUCCESS";
+export const PRODUCT_QUESTION_MY_LIST_FAILURE =
+  "PRODUCT_QUESTION_MY_LIST_FAILURE";
+//
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 export const PROD_COMPANY_MODAL_TOGGLE = "PROD_COMPANY_MODAL_TOGGLE";
 export const PROD_COMPANY_CREATE_MODAL_TOGGLE =
@@ -589,7 +625,9 @@ const reducer = (state = initailState, action) =>
       case PRODUCT_QUESTION_LIST_SUCCESS: {
         draft.st_productQuestionListLoading = false;
         draft.st_productQuestionListDone = true;
-        draft.productQuestionList = action.data;
+        draft.productQuestionList = action.data.questions;
+        draft.productQuestionListLastPage = action.data.lastPage;
+        draft.productQuestionListLen = action.data.questionLen;
         break;
       }
       case PRODUCT_QUESTION_LIST_FAILURE: {
@@ -677,6 +715,68 @@ const reducer = (state = initailState, action) =>
         draft.st_productAdminQuestionListLoading = false;
         draft.st_productAdminQuestionListDone = false;
         draft.st_productAdminQuestionListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case PRODUCT_QUESTION_NOT_USER_CREATE_REQUEST: {
+        draft.st_productQuestionNotUserCreateLoading = true;
+        draft.st_productQuestionNotUserCreateDone = null;
+        draft.st_productQuestionNotUserCreateError = false;
+        break;
+      }
+      case PRODUCT_QUESTION_NOT_USER_CREATE_SUCCESS: {
+        draft.st_productQuestionNotUserCreateLoading = false;
+        draft.st_productQuestionNotUserCreateDone = true;
+        break;
+      }
+      case PRODUCT_QUESTION_NOT_USER_CREATE_FAILURE: {
+        draft.st_productQuestionNotUserCreateLoading = false;
+        draft.st_productQuestionNotUserCreateDone = false;
+        draft.st_productQuestionNotUserCreateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case PRODUCT_QUESTION_LIST_PROD_REQUEST: {
+        draft.st_productQuestionListProdLoading = true;
+        draft.st_productQuestionListProdDone = null;
+        draft.st_productQuestionListProdError = false;
+        break;
+      }
+      case PRODUCT_QUESTION_LIST_PROD_SUCCESS: {
+        draft.st_productQuestionListProdLoading = false;
+        draft.st_productQuestionListProdDone = true;
+        draft.productQuestionListProd = action.data;
+        break;
+      }
+      case PRODUCT_QUESTION_LIST_PROD_FAILURE: {
+        draft.st_productQuestionListProdLoading = false;
+        draft.st_productQuestionListProdDone = false;
+        draft.st_productQuestionListProdError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case PRODUCT_QUESTION_MY_LIST_REQUEST: {
+        draft.st_productQuestionMyListLoading = true;
+        draft.st_productQuestionMyListDone = null;
+        draft.st_productQuestionMyListError = false;
+        break;
+      }
+      case PRODUCT_QUESTION_MY_LIST_SUCCESS: {
+        draft.st_productQuestionMyListLoading = false;
+        draft.st_productQuestionMyListDone = true;
+        draft.productQuestionMyList = action.data;
+        break;
+      }
+      case PRODUCT_QUESTION_MY_LIST_FAILURE: {
+        draft.st_productQuestionMyListLoading = false;
+        draft.st_productQuestionMyListDone = false;
+        draft.st_productQuestionMyListError = action.error;
         break;
       }
 

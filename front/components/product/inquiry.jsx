@@ -1,4 +1,4 @@
-import { message, Table, notification, Modal } from "antd";
+import { message, Table, notification, Modal, Checkbox } from "antd";
 import React, { useState, useCallback } from "react";
 import {
   Wrapper,
@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   TextArea,
+  Image,
 } from "../commonComponents";
 import styled from "styled-components";
 import Theme from "../Theme";
@@ -13,9 +14,14 @@ import { useDispatch, useSelector } from "react-redux";
 import wrapper from "../../store/configureStore";
 import axios from "axios";
 import useInput from "../../hooks/useInput";
-import { PRODUCT_QUESTION_CREATE_REQUEST } from "../../reducers/product";
+import {
+  PRODUCT_QUESTION_CREATE_REQUEST,
+  PRODUCT_QUESTION_LIST_PROD_REQUEST,
+  PRODUCT_QUESTION_NOT_USER_CREATE_REQUEST,
+} from "../../reducers/product";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { ConsoleSqlOutlined } from "@ant-design/icons";
 
 const CustomModal = styled(Modal)`
   & .ant-modal-close-x {
@@ -48,17 +54,68 @@ const Inquiry = () => {
 
   const { me } = useSelector((state) => state.user);
 
-  const { st_productQuestionCreateDone, st_productQuestionCreateError } =
-    useSelector((state) => state.product);
+  const {
+    productQuestionListProd,
+
+    st_productQuestionListProdDone,
+    st_productQuestionListProdError,
+    st_productQuestionCreateDone,
+    st_productQuestionCreateError,
+    st_productQuestionNotUserCreateDone,
+    st_productQuestionNotUserCreateError,
+  } = useSelector((state) => state.product);
 
   const dispatch = useDispatch();
 
   const [isModalVisible1, setIsModalVisible1] = useState(false);
   const [isModalVisible2, setIsModalVisible2] = useState(false);
+  const [isModalVisible3, setIsModalVisible3] = useState(false);
 
   const inputTitle = useInput("");
   const inputContent = useInput("");
   const inputPassword = useInput("");
+  const [isSecret1, setIsSecret1] = useState(false);
+
+  const inputNotName = useInput("");
+  const inputNotMobile = useInput("");
+  const inputNotEmail = useInput("");
+  const inputNotTitle = useInput("");
+  const inputNotContent = useInput("");
+  const inputNotPassword = useInput("");
+  const [isSecret2, setIsSecret2] = useState(false);
+  const [isCheckAgree, setIsCheckAgree] = useState(false);
+
+  const inputModalPassword = useInput("");
+  const [code, setCode] = useState("");
+  const [id, setId] = useState("");
+
+  useEffect(() => {
+    dispatch({
+      type: PRODUCT_QUESTION_LIST_PROD_REQUEST,
+      data: {
+        ProductId: router.query.id,
+      },
+    });
+  }, [router.query.id]);
+
+  useEffect(() => {
+    if (st_productQuestionListProdError) {
+    }
+  }, [st_productQuestionListProdError]);
+
+  useEffect(() => {
+    if (st_productQuestionNotUserCreateDone) {
+      notModalToggle();
+
+      return LoadNotification("상품 문의", "상품 문의가 생성 되었습니다.");
+    }
+  }, [st_productQuestionNotUserCreateDone]);
+
+  useEffect(() => {
+    if (st_productQuestionCreateError) {
+      return LoadNotification(st_productQuestionCreateError);
+    }
+  }, [st_productQuestionCreateError]);
 
   useEffect(() => {
     if (st_productQuestionCreateDone) {
@@ -70,58 +127,96 @@ const Inquiry = () => {
   const columns = [
     {
       title: "번호",
-      dataIndex: "id",
-      width: `10%`,
+      render: (data) => <Wrapper>{data.id}</Wrapper>,
     },
     {
       title: "제목",
-      dataIndex: "title",
+      render: (data) => (
+        <Wrapper dr={`row`} ju={`flex-start`}>
+          <Wrapper width={`auto`} margin={`0 17px 0 0`}>
+            {data.title}
+          </Wrapper>
+          <Wrapper width={`10px`} height={`10px`}>
+            {data.isSecret && (
+              <Image
+                height={`100%`}
+                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
+              />
+            )}
+          </Wrapper>
+        </Wrapper>
+      ),
       width: `60%`,
     },
     {
       title: "작성자",
-      dataIndex: "author",
+      render: (data) => <Wrapper>{data.author}</Wrapper>,
       width: `10%`,
     },
     {
       title: "작성일",
-      dataIndex: "createdAt",
+      render: (data) => <Wrapper>{data.createdAt.substring(0, 10)}</Wrapper>,
       width: `10%`,
     },
     {
       title: "조회수",
-      dataIndex: "hit",
+      render: (data) => <Wrapper>{data.hit}</Wrapper>,
       width: `10%`,
-    },
-  ];
-
-  const testData = [
-    {
-      id: 1,
-      title: "상품문의",
-      aouthor: "",
     },
   ];
 
   const ModalToggle = useCallback(() => {
     setIsModalVisible1((prev) => !prev);
 
-    if (!isModalVisible1) {
-      inputTitle.setValue("");
-      inputContent.setValue("");
-      inputPassword.setValue("");
-    }
+    inputTitle.setValue("");
+    inputContent.setValue("");
+    inputPassword.setValue("");
+    setIsSecret1(false);
   }, []);
+
+  console.log(isSecret2);
+
+  const notModalToggle = useCallback(() => {
+    setIsModalVisible2((prev) => !prev);
+
+    inputNotName.setValue("");
+    inputNotMobile.setValue("");
+    inputNotEmail.setValue("");
+    inputNotTitle.setValue("");
+    inputNotContent.setValue("");
+    setIsSecret2(false);
+  }, []);
+
+  const isSecretModalToggle = useCallback(() => {
+    setIsModalVisible3((prev) => !prev);
+  }, []);
+
+  const isSecretModalOk = useCallback(() => {
+    if (!inputModalPassword.value) {
+      return message.error("비밀번호를 입력해주세요.");
+    } else {
+      if (code === inputModalPassword.value) {
+        moveLinkHandler(`/community/productQnA/detail/${id}?Code=${code}`);
+
+        isSecretModalToggle();
+        inputModalPassword.setValue("");
+        return message.success("비밀번호를 확인했습니다.");
+      } else {
+        return message.error("비밀번호가 틀렸습니다.");
+      }
+    }
+  }, [inputModalPassword.value]);
 
   const createProdQnaHandler = useCallback(() => {
     if (!inputTitle.value || inputTitle.value.trim() === "") {
       return LoadNotification("제목", "제목을 입력해주세요.");
     } else if (!inputContent.value || inputContent.value.trim() === "") {
       return LoadNotification("내용", "내용을 입력해주세요.");
+    } else if (isSecret1) {
+      if (!inputPassword.value || inputPassword.value.trim() === "") {
+        return LoadNotification("비밀번호", "비밀번호을 입력해주세요.");
+      }
     }
-    // else if (!inputPassword.value || inputPassword.value.trim() === "") {
-    //   return message.error("제목을 입력해주세요.");
-    // }
 
     dispatch({
       type: PRODUCT_QUESTION_CREATE_REQUEST,
@@ -131,12 +226,62 @@ const Inquiry = () => {
         email: me.email,
         title: inputTitle.value,
         content: inputContent.value,
-        isSecret: inputPassword.value ? true : false,
-        secret: inputPassword.value ? inputPassword.value : null,
+        isSecret: isSecret1,
+        secret: isSecret1 ? inputPassword.value : null,
         ProductId: router.query.id,
       },
     });
-  }, [inputTitle.value, inputPassword.value, inputContent.value, me]);
+  }, [
+    inputTitle.value,
+    inputPassword.value,
+    inputContent.value,
+    me,
+    isSecret1,
+  ]);
+
+  const createNotUserProdQnaHandler = useCallback(() => {
+    if (!inputNotName.value || inputNotName.value.trim() === "") {
+      return LoadNotification("이름", "이름을 입력해주세요.");
+    } else if (!inputNotMobile.value || inputNotMobile.value.trim() === "") {
+      return LoadNotification("연락처", "연락처를 입력해주세요.");
+    } else if (!inputNotEmail.value || inputNotEmail.value.trim() === "") {
+      return LoadNotification("이메일", "이메일을 입력해주세요.");
+    } else if (!inputNotTitle.value || inputNotTitle.value.trim() === "") {
+      return LoadNotification("제목", "제목을 입력해주세요.");
+    } else if (!inputNotContent.value || inputNotContent.value.trim() === "") {
+      return LoadNotification("내용", "내용을 입력해주세요.");
+    } else if (isSecret2) {
+      if (!inputNotPassword.value || inputNotPassword.value.trim() === "") {
+        return LoadNotification("비밀번호", "비밀번호을 입력해주세요.");
+      }
+    }
+
+    // else if (isCheckAgree) {
+    //   return LoadNotification("개인정보", "개인정보 제공에 동의해주세요.");
+    // }
+
+    dispatch({
+      type: PRODUCT_QUESTION_NOT_USER_CREATE_REQUEST,
+      data: {
+        author: inputNotName.value,
+        mobile: inputNotMobile.value,
+        email: inputNotEmail.value,
+        title: inputNotTitle.value,
+        content: inputNotContent.value,
+        isSecret: isSecret2,
+        secret: isSecret2 ? inputNotPassword.value : null,
+        ProductId: router.query.id,
+      },
+    });
+  }, [
+    inputNotName.value,
+    inputNotMobile.value,
+    inputNotEmail.value,
+    inputNotTitle.value,
+    inputNotContent.value,
+    isSecret2,
+    isCheckAgree,
+  ]);
 
   const LoadNotification = (msg, content) => {
     notification.open({
@@ -146,9 +291,43 @@ const Inquiry = () => {
     });
   };
 
+  const onChangeisCheckAgree = useCallback((e) => {
+    setIsCheckAgree(e.target.checked);
+  }, []);
+
+  const isSecretHandler1 = useCallback((e) => {
+    setIsSecret1(e.target.checked);
+  }, []);
+
+  const isSecretHandler2 = useCallback((e) => {
+    setIsSecret2(e.target.checked);
+  }, []);
+
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
   return (
     <Wrapper>
-      <CustomTable style={{ width: `100%` }} size="middle" columns={columns} />
+      <CustomTable
+        onRow={(recode, rowIndex) => {
+          return {
+            onClick: (event) => {
+              if (recode.isSecret) {
+                setCode(recode.secret);
+                setId(recode.id);
+                isSecretModalToggle();
+              } else {
+                moveLinkHandler(`/community/productQnA/detail/${recode.id}`);
+              }
+            },
+          };
+        }}
+        style={{ width: `100%` }}
+        size="middle"
+        columns={columns}
+        dataSource={productQuestionListProd ? productQuestionListProd : []}
+      />
 
       <Wrapper al={`flex-end`}>
         <CommonButton
@@ -157,7 +336,7 @@ const Inquiry = () => {
           height={`40px`}
           fontSize={`15px`}
           padding={`0`}
-          onClick={() => (me ? ModalToggle() : "")}>
+          onClick={() => (me ? ModalToggle() : notModalToggle())}>
           상품 문의하기
         </CommonButton>
       </Wrapper>
@@ -197,20 +376,29 @@ const Inquiry = () => {
             />
           </Wrapper>
 
-          <Wrapper al={`flex-start`}>
-            <Text
-              fontSize={`16px`}
-              width={`60px`}
-              color={Theme.darkGrey_C}
-              margin={`35px 0 0 0`}>
-              비밀번호
-            </Text>
-            <TextInput
-              width={`100%`}
-              margin={`10px 0 0 0`}
-              border={`1px solid ${Theme.basicTheme_C}`}
-            />
+          <Wrapper al={`flex-start`} margin={`35px 0 0 0`}>
+            <Checkbox checked={isSecret1} onChange={(e) => isSecretHandler1(e)}>
+              비밀글 여부
+            </Checkbox>
           </Wrapper>
+
+          {isSecret1 && (
+            <Wrapper al={`flex-start`}>
+              <Text
+                fontSize={`16px`}
+                width={`60px`}
+                color={Theme.darkGrey_C}
+                margin={`35px 0 0 0`}>
+                비밀번호
+              </Text>
+              <TextInput
+                width={`100%`}
+                margin={`10px 0 0 0`}
+                border={`1px solid ${Theme.basicTheme_C}`}
+                {...inputPassword}
+              />
+            </Wrapper>
+          )}
 
           <Wrapper dr={`row`} margin={`40px 0 0 0`}>
             <CommonButton
@@ -230,6 +418,153 @@ const Inquiry = () => {
               작성하기
             </CommonButton>
           </Wrapper>
+        </Wrapper>
+      </CustomModal>
+
+      {/* ///////////////////////////////////////////////////////////////////////// 비회원 모달창 */}
+
+      <CustomModal
+        footer={null}
+        centered={true}
+        width={`1350px`}
+        title="상품 문의작성"
+        visible={isModalVisible2}
+        zIndex={10000}>
+        <Wrapper>
+          <Wrapper al={`flex-start`}>
+            <Text fontSize={`16px`} width={`30px`} color={Theme.darkGrey_C}>
+              이름
+            </Text>
+            <TextInput
+              width={`100%`}
+              margin={`10px 0 0 0`}
+              border={`1px solid ${Theme.basicTheme_C}`}
+              placeholder="이름을 입력해주세요."
+              {...inputNotName}
+            />
+          </Wrapper>
+
+          <Wrapper al={`flex-start`} margin={`35px 0 0 0`}>
+            <Text fontSize={`16px`} width={`50px`} color={Theme.darkGrey_C}>
+              연락처
+            </Text>
+            <TextInput
+              width={`100%`}
+              margin={`10px 0 0 0`}
+              border={`1px solid ${Theme.basicTheme_C}`}
+              placeholder="연락처를 입력해주세요."
+              {...inputNotMobile}
+            />
+          </Wrapper>
+
+          <Wrapper al={`flex-start`} margin={`35px 0 0 0`}>
+            <Text fontSize={`16px`} width={`50px`} color={Theme.darkGrey_C}>
+              이메일
+            </Text>
+            <TextInput
+              width={`100%`}
+              margin={`10px 0 0 0`}
+              border={`1px solid ${Theme.basicTheme_C}`}
+              placeholder="이메일을 입력해주세요."
+              {...inputNotEmail}
+            />
+          </Wrapper>
+
+          <Wrapper al={`flex-start`} margin={`35px 0 0 0`}>
+            <Text fontSize={`16px`} width={`30px`} color={Theme.darkGrey_C}>
+              제목
+            </Text>
+            <TextInput
+              width={`100%`}
+              margin={`10px 0 0 0`}
+              border={`1px solid ${Theme.basicTheme_C}`}
+              placeholder="제목을 입력해주세요."
+              {...inputNotTitle}
+            />
+          </Wrapper>
+
+          <Wrapper al={`flex-start`} margin={`35px 0 0 0`}>
+            <Text fontSize={`16px`} width={`150px`} color={Theme.darkGrey_C}>
+              상품명
+            </Text>
+            <TextArea
+              width={`100%`}
+              height={`300px`}
+              radius={`0px`}
+              margin={`10px 0 0 0`}
+              border={`1px solid ${Theme.basicTheme_C}`}
+              placeholder="문의 내용을 입력해주세요."
+              {...inputNotContent}
+            />
+          </Wrapper>
+
+          <Wrapper al={`flex-start`} margin={`35px 0 0 0`}>
+            <Checkbox checked={isSecret2} onChange={(e) => isSecretHandler2(e)}>
+              비밀글 여부
+            </Checkbox>
+          </Wrapper>
+
+          {isSecret2 && (
+            <Wrapper al={`flex-start`}>
+              <Text
+                fontSize={`16px`}
+                width={`60px`}
+                color={Theme.darkGrey_C}
+                margin={`35px 0 0 0`}>
+                비밀번호
+              </Text>
+              <TextInput
+                width={`100%`}
+                margin={`10px 0 0 0`}
+                border={`1px solid ${Theme.basicTheme_C}`}
+                {...inputNotPassword}
+              />
+            </Wrapper>
+          )}
+
+          {/* <Wrapper al={`flex-start`} margin={`25px 0 0 0`}>
+            <Checkbox
+              value={isCheckAgree}
+              onChange={(e) => onChangeisCheckAgree(e)}>
+              개인정보 제공에 동의합니다.
+            </Checkbox>
+          </Wrapper> */}
+
+          <Wrapper dr={`row`} margin={`40px 0 0 0`}>
+            <CommonButton
+              width={`120px`}
+              height={`38px`}
+              margin={`0 5px 0 0`}
+              fontSize={`14px`}
+              kindOf={`darkgrey`}
+              onClick={() => notModalToggle()}>
+              취소하기
+            </CommonButton>
+            <CommonButton
+              width={`120px`}
+              height={`38px`}
+              fontSize={`14px`}
+              onClick={() => createNotUserProdQnaHandler()}>
+              작성하기
+            </CommonButton>
+          </Wrapper>
+        </Wrapper>
+      </CustomModal>
+
+      <CustomModal
+        title="비밀글 입력"
+        visible={isModalVisible3}
+        onOk={() => isSecretModalOk()}
+        onCancel={() => isSecretModalToggle()}
+        okText="확인"
+        cancelText="취소">
+        <Wrapper dr={`row`}>
+          <Text width={`80px`}>비밀번호</Text>
+          <TextInput
+            placeholder="비밀글 비밀번호를 입력해주세요."
+            width={`calc(100% - 80px)`}
+            {...inputModalPassword}
+          />
         </Wrapper>
       </CustomModal>
     </Wrapper>

@@ -15,6 +15,7 @@ import {
   Wrapper,
   Image,
   Text,
+  Pagenation,
 } from "../../../components/commonComponents";
 
 import { useCallback } from "react";
@@ -23,18 +24,21 @@ import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import { useEffect } from "react";
 import {
-  PRODUCT_QUESTION_DETAIL_REQUEST,
   PRODUCT_QUESTION_LIST_REQUEST,
+  PRODUCT_QUESTION_MY_LIST_REQUEST,
 } from "../../../reducers/product";
-import { message, Modal } from "antd";
+import { message, Modal, Select, Pagination } from "antd";
 import styled from "styled-components";
 import useOnlyNumberInput from "../../../hooks/useOnlyNumberInput";
+import useInput from "../../../hooks/useInput";
 
 const CustomModal = styled(Modal)`
   & .ant-modal-content {
     top: 250px;
   }
 `;
+
+const CustomPagenation = styled(Pagination)``;
 
 const Notice = () => {
   const dispatch = useDispatch();
@@ -43,8 +47,17 @@ const Notice = () => {
     (state) => state.seo
   );
 
+  const { me } = useSelector((state) => state.user);
+
   const {
     productQuestionList,
+    productQuestionListLastPage,
+    productQuestionListLen,
+
+    productQuestionMyList,
+    st_productQuestionMyListDone,
+    st_productQuestionMyListError,
+
     st_productQuestionListDone,
     st_productQuestionListError,
     st_productQuestionDetailDone,
@@ -58,9 +71,16 @@ const Notice = () => {
 
   const inputSecret = useOnlyNumberInput();
 
+  const inputSearch = useInput("");
+  const [selectValue, setSelectValue] = useState("제목");
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [id, setId] = useState("");
   const [code, setCode] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [prodQnAList, setProdQnAList] = useState([]);
   ////// REDUX //////
   ////// USEEFFECT //////
 
@@ -68,11 +88,30 @@ const Notice = () => {
     dispatch({
       type: PRODUCT_QUESTION_LIST_REQUEST,
       data: {
-        listType: "",
-        ProductId: "",
+        listType: 3,
+        searchTitle: "",
+        page: 1,
       },
     });
   }, []);
+
+  useEffect(() => {
+    if (st_productQuestionListDone) {
+      setProdQnAList(productQuestionList);
+    }
+  }, [st_productQuestionListDone]);
+
+  useEffect(() => {
+    if (st_productQuestionMyListDone) {
+      setProdQnAList(productQuestionMyList);
+    }
+  }, [st_productQuestionMyListDone]);
+
+  useEffect(() => {
+    if (st_productQuestionMyListError) {
+      return message.error(st_productQuestionMyListError);
+    }
+  }, [st_productQuestionMyListError]);
 
   useEffect(() => {
     if (st_productQuestionDetailError) {
@@ -124,11 +163,45 @@ const Notice = () => {
     }
   }, [isModalVisible, inputSecret.value]);
 
+  const searchButtonHanlder = useCallback(() => {
+    dispatch({
+      type: PRODUCT_QUESTION_LIST_REQUEST,
+      data: {
+        listType: 3,
+        searchTitle: inputSearch.value,
+        page: 1,
+      },
+    });
+  }, [inputSearch.value]);
+
+  const selectValueHandler = useCallback((e) => {
+    setSelectValue(e);
+  }, []);
+
+  const myListHandler = useCallback(() => {
+    dispatch({
+      type: PRODUCT_QUESTION_MY_LIST_REQUEST,
+    });
+  }, []);
+
   const ModalHandlerCancel = useCallback(() => {
     ModalToggle();
 
     inputSecret.setValue("");
   }, [isModalVisible]);
+
+  const onChangePageHandler = useCallback((page) => {
+    setCurrentPage(page);
+
+    dispatch({
+      type: PRODUCT_QUESTION_LIST_REQUEST,
+      data: {
+        listType: 3,
+        searchTitle: "",
+        page,
+      },
+    });
+  }, []);
 
   ////// DATAVIEW //////
   // const testNotice = [
@@ -268,10 +341,10 @@ const Notice = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper ju={`flex-start`}>
-                {productQuestionList && productQuestionList.length === 0
+                {prodQnAList && prodQnAList.length === 0
                   ? ``
-                  : productQuestionList &&
-                    productQuestionList.map((data) => {
+                  : prodQnAList &&
+                    prodQnAList.map((data) => {
                       return (
                         <Wrapper
                           dr={`row`}
@@ -343,19 +416,100 @@ const Notice = () => {
                 dr={`row`}
                 height={`40px`}
                 ju={`flex-start`}>
-                <Wrapper width={`auto`} display={width < 500 ? `none` : `flex`}>
+                <Wrapper width={`74px`} display={width < 500 ? `none` : `flex`}>
                   검색어
                 </Wrapper>
-                <TextInput
-                  width={`261px`}
-                  height={`100%`}
-                  margin={width < 500 ? `0 10px 0 0` : `0 10px 0 26px`}
-                  border={`1px solid ${Theme.grey2_C}`}
-                />
-                <CommonButton width={`74px`} height={`100%`} radius={`0`}>
-                  찾기
-                </CommonButton>
+
+                <Wrapper
+                  dr={`row`}
+                  width={`350px`}
+                  ju={width < 500 ? `center` : `flex-start`}>
+                  <Select
+                    defaultValue="전체"
+                    margin={`0 10px 0 0`}
+                    width={`100px`}
+                    style={{
+                      margin: "0 10px 0 0",
+                      width: `100px`,
+                    }}>
+                    <Select.Option value={"전체"}>전체</Select.Option>;
+                  </Select>
+                  <Select
+                    style={{
+                      width: `100px`,
+                    }}
+                    defaultValue={selectValue}
+                    onChange={(e) => selectValueHandler(e)}>
+                    <Select.Option value={"제목"}>제목</Select.Option>
+                  </Select>
+                </Wrapper>
+
+                {width > 800 && (
+                  <Wrapper
+                    dr={`row`}
+                    width={`calc(100% -  350px - 40px - 74px)`}
+                    ju={`flex-start`}>
+                    <TextInput
+                      width={`261px`}
+                      height={`100%`}
+                      margin={width < 500 ? `0 10px 0 0` : `0 10px 0 26px`}
+                      border={`1px solid ${Theme.grey2_C}`}
+                      {...inputSearch}
+                    />
+                    <CommonButton
+                      width={`74px`}
+                      height={`100%`}
+                      radius={`0`}
+                      onClick={() => searchButtonHanlder()}>
+                      찾기
+                    </CommonButton>
+                  </Wrapper>
+                )}
               </Wrapper>
+
+              {width < 800 && (
+                <Wrapper
+                  margin={`15px 0 0 0`}
+                  al={width < 800 ? `flex-start` : `flex-end`}
+                  dr={width < 800 ? `row` : `column`}>
+                  <Wrapper dr={`row`} ju={`flex-start`}>
+                    <TextInput
+                      width={`calc(100% - 74px - 10px)`}
+                      height={`100%`}
+                      margin={width < 500 ? `0 10px 0 0` : `0 10px 0 0px`}
+                      border={`1px solid ${Theme.grey2_C}`}
+                    />
+                    <CommonButton
+                      width={`74px`}
+                      height={`100%`}
+                      radius={`0`}
+                      onClick={() => searchButtonHanlder()}>
+                      찾기
+                    </CommonButton>
+                  </Wrapper>
+                </Wrapper>
+              )}
+
+              {!st_productQuestionMyListDone && (
+                <Wrapper margin={`50px 0 0 0`}>
+                  <CustomPagenation
+                    total={productQuestionListLastPage * 10}
+                    onChange={onChangePageHandler}
+                    current={currentPage}
+                  />
+                </Wrapper>
+              )}
+
+              {me && (
+                <Wrapper al={`flex-end`} margin={`30px 0 0 0`}>
+                  <CommonButton
+                    width={`100px`}
+                    height={`100%`}
+                    onClick={() => myListHandler()}>
+                    내가 쓴 글
+                  </CommonButton>
+                </Wrapper>
+              )}
             </Wrapper>
           </RsWrapper>
 
