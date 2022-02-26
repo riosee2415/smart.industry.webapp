@@ -96,6 +96,10 @@ router.get("/product/list", async (req, res, next) => {
   }
 });
 
+router.post("/image", upload.single("image"), async (req, res, next) => {
+  return res.json({ path: req.file.location });
+});
+
 router.post("/create", async (req, res, next) => {
   const { ProductId, title, author, imagePath, content } = req.body;
   try {
