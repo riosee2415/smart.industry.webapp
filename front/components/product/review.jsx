@@ -1,20 +1,120 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
-import { RsWrapper, WholeWrapper, Wrapper, Image } from "../commonComponents";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { Button, Empty, Form, Input, message, Modal } from "antd";
+import { useRouter } from "next/router";
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  CREATE_MODAL_TOGGLE,
+  REVIEW_CREATE_REQUEST,
+  REVIEW_NOTUSER_CREATE_REQUEST,
+  REVIEW_PRODUCT_LIST_REQUEST,
+} from "../../reducers/review";
+import { Wrapper, Image, CommonButton, Text } from "../commonComponents";
 import Theme from "../Theme";
+
+const CustomForm = styled(Form)`
+  width: 100%;
+
+  & .ant-form-item {
+    width: 100%;
+  }
+`;
+
+const TitleInput = styled(Input)`
+  height: 50px;
+`;
+
+const ContentInput = styled(Input.TextArea)`
+  padding: 10px;
+  height: 150px !important;
+`;
+
+const CustomModal = styled(Modal)`
+  top: 180px;
+`;
 
 const Review = () => {
   ////// GLOBAL STATE //////
+  const {
+    productReivewList,
+    createModal,
+    //
+    st_reviewCreateDone,
+    st_reviewCreateError,
+    //
+    st_reviewNotUserCreateDone,
+    st_reviewNotUserCreateError,
+  } = useSelector((state) => state.review);
+
+  const { me } = useSelector((state) => state.user);
+
+  console.log(productReivewList);
 
   ////// HOOKS //////
+
+  const dispatch = useDispatch();
+
   const [datum, setDatum] = useState(null);
 
+  const router = useRouter();
+
+  const [form] = Form.useForm();
+  const formRef = useRef();
+
   ////// REDUX //////
+
   ////// USEEFFECT //////
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    dispatch({
+      type: REVIEW_PRODUCT_LIST_REQUEST,
+      data: {
+        ProductId: router.query.id,
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (st_reviewCreateDone || st_reviewNotUserCreateDone) {
+      form.resetFields();
+
+      dispatch({
+        type: CREATE_MODAL_TOGGLE,
+      });
+
+      dispatch({
+        type: REVIEW_PRODUCT_LIST_REQUEST,
+        data: {
+          ProductId: router.query.id,
+        },
+      });
+
+      return message.success("작성되었습니다.");
+    }
+  }, [st_reviewCreateDone, st_reviewNotUserCreateDone]);
+
+  useEffect(() => {
+    if (st_reviewCreateError) {
+      return message.error(st_reviewCreateError);
+    }
+  }, [st_reviewCreateError]);
+
+  useEffect(() => {
+    if (st_reviewNotUserCreateError) {
+      return message.error(st_reviewNotUserCreateError);
+    }
+  }, [st_reviewNotUserCreateError]);
 
   ////// TOGGLE //////
+
+  const createModalToggle = useCallback(() => {
+    form.resetFields();
+
+    dispatch({
+      type: CREATE_MODAL_TOGGLE,
+    });
+  }, [createModal]);
+
   ////// HANDLER //////
   const onClickToggleHandler = useCallback(
     (data) => {
@@ -26,6 +126,36 @@ const Review = () => {
     },
     [datum]
   );
+
+  const onSubmit = useCallback(
+    (data) => {
+      if (me) {
+        dispatch({
+          type: REVIEW_CREATE_REQUEST,
+          data: {
+            ProductId: router.query.id,
+            title: data.title,
+            author: me,
+            imagePath: "test",
+            content: data.content,
+          },
+        });
+      } else {
+        dispatch({
+          type: REVIEW_NOTUSER_CREATE_REQUEST,
+          data: {
+            ProductId: router.query.id,
+            title: data.title,
+            author: data.author,
+            imagePath: "test",
+            content: data.content,
+          },
+        });
+      }
+    },
+    [me, router.query]
+  );
+
   ////// DATAVIEW //////
   const testReview = [
     // {
@@ -68,7 +198,7 @@ const Review = () => {
 
   return (
     <>
-      <Wrapper margin={`40px 0 180px`}>
+      <Wrapper margin={`40px 0 0`}>
         <Wrapper
           bgColor={Theme.lightGrey2_C}
           height={`40px`}
@@ -81,10 +211,13 @@ const Review = () => {
           <Wrapper width={`10%`}>작성일</Wrapper>
           <Wrapper width={`10%`}>조회수</Wrapper>
         </Wrapper>
-        {testReview && testReview.length === 0
-          ? ``
-          : testReview &&
-            testReview.reverse().map((data, idx) => {
+        {productReivewList &&
+          (productReivewList.length === 0 ? (
+            <Wrapper>
+              <Empty description="상품에 해당하는 후기가 없습니다."></Empty>
+            </Wrapper>
+          ) : (
+            productReivewList.map((data, idx) => {
               return (
                 <Wrapper ju={`flex-start`}>
                   <Wrapper
@@ -101,7 +234,7 @@ const Review = () => {
                       {data.title}
                     </Wrapper>
                     <Wrapper width={`10%`}>
-                      {data.user.replace(/(?<=.{1})./gi, "*")}
+                      {data.author.replace(/(?<=.{1})./gi, "*")}
                     </Wrapper>
                     <Wrapper width={`10%`}>
                       {data.createdAt.substring(0, 10)}
@@ -111,26 +244,105 @@ const Review = () => {
 
                   {datum && datum.id === data.id && (
                     <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
-                      <Wrapper width={`90%`}>
-                        <Image
-                          width={`600px`}
-                          height={`600px`}
-                          src={`${data.thumbnail}`}
-                        />
-                      </Wrapper>
-                      <Wrapper
-                        width={`90%`}
-                        al={`flex-start`}
-                        padding={`60px 0 40px`}
-                      >
-                        {data.content}
+                      <Wrapper al={`flex-end`}>
+                        <Wrapper width={`90%`}>
+                          <Wrapper>
+                            <Image
+                              width={`300px`}
+                              height={`300px`}
+                              src={data.imagePath}
+                            />
+                          </Wrapper>
+                          <Wrapper al={`flex-start`} padding={`60px 0 40px`}>
+                            {data.content}
+                          </Wrapper>
+                        </Wrapper>
                       </Wrapper>
                     </Wrapper>
                   )}
                 </Wrapper>
               );
-            })}
+            })
+          ))}
       </Wrapper>
+
+      <Wrapper al={`flex-end`} margin={`20px 0 80px`}>
+        <CommonButton
+          width={`106px`}
+          height={`40px`}
+          fontSize={`15px`}
+          padding={`0`}
+          onClick={createModalToggle}
+        >
+          후기 작성하기
+        </CommonButton>
+      </Wrapper>
+
+      <CustomModal
+        width={`1350px`}
+        visible={createModal}
+        onCancel={createModalToggle}
+        closable={false}
+        footer={null}
+      >
+        <Wrapper
+          al={`flex-start`}
+          borderBottom={`1px solid ${Theme.grey_C}`}
+          padding={`0 0 20px`}
+          margin={`0 0 20px`}
+        >
+          <Text fontSize={`18px`} fontWeight={`bold`}>
+            상품 후기작성
+          </Text>
+        </Wrapper>
+
+        <CustomForm onFinish={onSubmit} form={form} ref={formRef}>
+          <Wrapper al={`flex-start`}>
+            <Text margin={`0 0 10px`}>제목</Text>
+            <Form.Item
+              name="title"
+              rules={[{ required: true, message: "제목을 입력해주세요." }]}
+            >
+              <TitleInput placeholder="제목을 입력해주세요." />
+            </Form.Item>
+          </Wrapper>
+
+          <Wrapper al={`flex-start`}>
+            <Text margin={`0 0 10px`}>상품명이 들어갑니다.</Text>
+            <Form.Item
+              name="content"
+              rules={[{ required: true, message: "후기내용을 입력해주세요." }]}
+            >
+              <ContentInput placeholder="후기내용을 입력해주세요." />
+            </Form.Item>
+          </Wrapper>
+
+          {!me && (
+            <Wrapper al={`flex-start`}>
+              <Text margin={`0 0 10px`}>작성자</Text>
+              <Form.Item
+                name="author"
+                rules={[{ required: true, message: "작성자를 입력해주세요." }]}
+              >
+                <TitleInput placeholder="작성자를 입력해주세요." />
+              </Form.Item>
+            </Wrapper>
+          )}
+
+          <Wrapper dr={`row`}>
+            <CommonButton
+              margin={`0 3px 0 0`}
+              kindOf={`darkgrey`}
+              onClick={createModalToggle}
+            >
+              취소하기
+            </CommonButton>
+            <CommonButton margin={`0 0 0 3px`} htmlType="submit">
+              작성하기
+            </CommonButton>
+          </Wrapper>
+        </CustomForm>
+      </CustomModal>
     </>
   );
 };
