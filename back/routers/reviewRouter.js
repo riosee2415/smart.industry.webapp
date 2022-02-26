@@ -86,7 +86,7 @@ router.get("/product/list", async (req, res, next) => {
           model: Product,
         },
       ],
-      isDelete: false,
+      order: [["createdAt", "DESC"]],
     });
 
     return res.status(200).json(reviews);
