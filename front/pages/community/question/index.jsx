@@ -69,7 +69,13 @@ const Question = () => {
     (state) => state.seo
   );
   const { me } = useSelector((state) => state.user);
-  const { st_questionCreateDone } = useSelector((state) => state.question);
+  const {
+    st_questionCreateDone,
+    st_notUserCreateDone,
+    //
+    st_questionCreateError,
+    st_notUserCreateError,
+  } = useSelector((state) => state.question);
 
   const width = useWidth();
   const router = useRouter();
@@ -88,6 +94,18 @@ const Question = () => {
   ////// REDUX //////
   ////// USEEFFECT //////
   useEffect(() => {
+    if (st_questionCreateError) {
+      return message.error(st_questionCreateError);
+    }
+  }, [st_questionCreateError]);
+
+  useEffect(() => {
+    if (st_notUserCreateError) {
+      return message.error(st_notUserCreateError);
+    }
+  }, [st_notUserCreateError]);
+
+  useEffect(() => {
     if (st_questionCreateDone) {
       LoadNotification("문의하기가 접수되었습니다.");
 
@@ -95,6 +113,27 @@ const Question = () => {
       inputContent.setValue("");
     }
   }, [st_questionCreateDone, inputContent.value, isTerms]);
+
+  useEffect(() => {
+    if (st_notUserCreateDone) {
+      LoadNotification("문의하기가 접수되었습니다.");
+
+      setIsTerms(false);
+      inputName.setValue("");
+      inputMobile.setValue("");
+      inputEmail.setValue("");
+      inputTitle.setValue("");
+      inputContent.setValue("");
+    }
+  }, [
+    st_notUserCreateDone,
+    inputContent.value,
+    isTerms,
+    inputName.value,
+    inputMobile.value,
+    inputEmail.value,
+    inputTitle.value,
+  ]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
@@ -110,6 +149,9 @@ const Question = () => {
 
   const QuestionHandler = useCallback(() => {
     if (me) {
+      if (!inputTitle.value || inputTitle.value.trim() === "") {
+        return LoadNotification("제목을 입력해주세요.");
+      }
       if (!inputContent.value || inputContent.value.trim() === "") {
         return LoadNotification("문의내용을 입력해주세요.");
       }
@@ -123,7 +165,7 @@ const Question = () => {
           author: me.username,
           mobile: me.mobile,
           email: me.email,
-          title: me.username,
+          title: inputTitle.value,
           content: inputContent.value,
           term: isTerms,
           password: parseInt("0000"),
@@ -255,6 +297,7 @@ const Question = () => {
                       placeholder={me ? me.username : `이름을 입력해주세요.`}
                       width={`100%`}
                       readOnly={me ? true : false}
+                      border={`1px solid ${Theme.grey2_C}`}
                       {...inputName}
                     />
                   </Wrapper>
@@ -277,6 +320,7 @@ const Question = () => {
                       placeholder={me ? me.mobile : `연락처를 입력해주세요.`}
                       width={`100%`}
                       readOnly={me ? true : false}
+                      border={`1px solid ${Theme.grey2_C}`}
                       {...inputMobile}
                     />
                   </Wrapper>
@@ -295,6 +339,7 @@ const Question = () => {
                     placeholder={me ? me.email : `이메일을 입력해주세요.`}
                     width={`100%`}
                     readOnly={me ? true : false}
+                    border={`1px solid ${Theme.grey2_C}`}
                     {...inputEmail}
                   />
                 </Wrapper>
