@@ -3,6 +3,42 @@ const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
 const { Review, Product } = require("../models");
 const { Op } = require("sequelize");
+const fs = require("fs");
+const multer = require("multer");
+const path = require("path");
+const AWS = require("aws-sdk");
+const multerS3 = require("multer-s3");
+
+try {
+  fs.accessSync("uploads");
+} catch (error) {
+  console.log(
+    "uploads 폴더가 존재하지 않습니다. 새로 uploads 폴더를 생성합니다."
+  );
+  fs.mkdirSync("uploads");
+}
+
+AWS.config.update({
+  accessKeyId: process.env.S3_ACCESS_KEY_Id,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  region: "ap-northeast-2",
+});
+
+const upload = multer({
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: process.env.S3_BUCKET_NAME,
+    key(req, file, cb) {
+      cb(
+        null,
+        `${
+          process.env.S3_STORAGE_FOLDER_NAME
+        }/original/${Date.now()}_${path.basename(file.originalname)}`
+      );
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+});
 
 const router = express.Router();
 
