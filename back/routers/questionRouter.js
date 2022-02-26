@@ -2,6 +2,7 @@ const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const { Question } = require("../models");
+const { Op } = require("sequelize");
 
 const router = express.Router();
 
@@ -61,11 +62,13 @@ router.get(
   }
 );
 
-router.post("/detail", async (req, res, next) => {
-  const { id, password } = req.body;
+router.get("/detail/:questionId", async (req, res, next) => {
+  const { password } = req.query;
+  const { questionId } = req.params;
+
   try {
     const exQuestion = await Question.findOne({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(questionId) },
     });
 
     if (!exQuestion) {
@@ -87,52 +90,54 @@ router.post("/detail", async (req, res, next) => {
   }
 });
 
-// router.get("/next/:noticeId", async (req, res, next) => {
-//   const { noticeId } = req.params;
+router.get("/next/:questionId", async (req, res, next) => {
+  const { questionId } = req.params;
 
-//   try {
-//     const notices = await Notice.findAll({
-//       where: {
-//         id: {
-//           [Op.gt]: parseInt(noticeId),
-//         },
-//       },
-//       limit: 1,
-//     });
+  try {
+    const questions = await Question.findAll({
+      where: {
+        id: {
+          [Op.gt]: parseInt(questionId),
+        },
+      },
+      limit: 1,
+    });
 
-//     if (!notices[0]) {
-//       return res.status(401).send("마지막 게시글 입니다.");
-//     }
+    if (!questions[0]) {
+      return res.status(401).send("마지막 문의 입니다.");
+    }
 
-//     return res.redirect(`/api/notice/list/${notices[0].id}`);
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(401).send("게시글 정보를 불러올 수 없습니다. [CODE 107]");
-//   }
-// });
+    return res.redirect(`/api/question/detail/${questions[0].id}`);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("문의 정보를 불러올 수 없습니다. [CODE 107]");
+  }
+});
 
-// router.get("/prev/:noticeId", async (req, res, next) => {
-//   const { noticeId } = req.params;
+router.get("/prev/:questionId", async (req, res, next) => {
+  const { questionId } = req.params;
 
-//   try {
-//     const notices = await Notice.findAll({
-//       where: {
-//         id: {
-//           [Op.lt]: parseInt(noticeId),
-//         },
-//       },
-//     });
+  try {
+    const questions = await Question.findAll({
+      where: {
+        id: {
+          [Op.lt]: parseInt(questionId),
+        },
+      },
+    });
 
-//     if (!notices[0]) {
-//       return res.status(401).send("첫번째 게시글 입니다.");
-//     }
+    if (!questions[0]) {
+      return res.status(401).send("첫번째 문의 입니다.");
+    }
 
-//     return res.redirect(`/api/notice/list/${notices[notices.length - 1].id}`);
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(401).send("게시글 정보를 불러올 수 없습니다. [CODE 107]");
-//   }
-// });
+    return res.redirect(
+      `/api/question/detail/${questions[questions.length - 1].id}`
+    );
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("문의 정보를 불러올 수 없습니다. [CODE 107]");
+  }
+});
 
 router.get("/myList", isLoggedIn, async (req, res, next) => {
   if (!req.user) {
