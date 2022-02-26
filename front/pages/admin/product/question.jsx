@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Col, Modal, Table, notification, Input, message } from "antd";
 import {
-  PRODUCT_QUESTION_LIST_REQUEST,
+  PRODUCT_ADMIN_QUESTION_LIST_REQUEST,
   PRODUCT_QUESTION_UPDATE_REQUEST,
 } from "../../../reducers/product";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
@@ -68,23 +68,32 @@ const Question = () => {
   const answer = useInput("");
 
   const {
-    productQuestionList,
-    types,
+    productAdminQuestionList,
+
+    st_productAdminQuestionListDone,
+    st_productAdminQuestionListError,
 
     st_productQuestionUpdateDone,
-    st_questionDeleteDone,
-
-    st_questionUpdateError,
     st_productQuestionUpdateError,
   } = useSelector((state) => state.product);
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_productAdminQuestionListError) {
+      return LoadNotification(
+        "ADMIN SYSTEM ERRLR",
+        st_productAdminQuestionListError
+      );
+    }
+  }, [st_productAdminQuestionListError]);
+
   useEffect(() => {
     const qs = router.query;
 
     dispatch({
-      type: PRODUCT_QUESTION_LIST_REQUEST,
-      data: { listType: qs.type ? qs.type : 3, ProductId: 0 },
+      type: PRODUCT_ADMIN_QUESTION_LIST_REQUEST,
+      data: { listType: qs.type ? qs.type : 3 },
     });
   }, [router.query]);
 
@@ -93,8 +102,8 @@ const Question = () => {
       const qs = router.query;
 
       dispatch({
-        type: PRODUCT_QUESTION_LIST_REQUEST,
-        data: { listType: qs.type ? qs.type : 3, ProductId: 0 },
+        type: PRODUCT_ADMIN_QUESTION_LIST_REQUEST,
+        data: { listType: qs.type ? qs.type : 3 },
       });
 
       setUpdateModal(false);
@@ -103,25 +112,11 @@ const Question = () => {
   }, [st_productQuestionUpdateDone]);
 
   useEffect(() => {
-    if (st_questionUpdateError) {
-      return message.error(st_questionUpdateError);
-    }
-  }, [st_questionUpdateError]);
-
-  useEffect(() => {
-    if (st_questionDeleteDone) {
-      const qs = router.query;
-
-      dispatch({
-        type: PRODUCT_QUESTION_LIST_REQUEST,
-        data: { listType: qs.type ? qs.type : 3, ProductId: 0 },
-      });
-    }
-  }, [st_questionDeleteDone]);
-
-  useEffect(() => {
     if (st_productQuestionUpdateError) {
-      return message.error(st_productQuestionUpdateError);
+      return LoadNotification(
+        "ADMIN SYSTEM ERRLR",
+        st_productQuestionUpdateError
+      );
     }
   }, [st_productQuestionUpdateError]);
 
@@ -230,11 +225,9 @@ const Question = () => {
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={productQuestionList ? productQuestionList : []}
+          dataSource={productAdminQuestionList ? productAdminQuestionList : []}
           size="middle"
         />
-
-        {console.log(productQuestionList, "productQuestionList")}
       </AdminContent>
 
       <Modal

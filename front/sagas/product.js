@@ -88,6 +88,10 @@ import {
   PRODUCT_QUESTION_UPDATE_REQUEST,
   PRODUCT_QUESTION_UPDATE_SUCCESS,
   PRODUCT_QUESTION_UPDATE_FAILURE,
+  //
+  PRODUCT_ADMIN_QUESTION_LIST_REQUEST,
+  PRODUCT_ADMIN_QUESTION_LIST_SUCCESS,
+  PRODUCT_ADMIN_QUESTION_LIST_FAILURE,
 } from "../reducers/product";
 
 // SAGA AREA ********************************************************************************************************
@@ -678,6 +682,40 @@ function* prodQuestionUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function prodQuestionAdminListAPI(data) {
+  return axios.post(`/api/prodQuestion/admin/list`, data);
+}
+
+function* prodQuestionAdminList(action) {
+  try {
+    const result = yield call(prodQuestionAdminListAPI, action.data);
+
+    yield put({
+      type: PRODUCT_ADMIN_QUESTION_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: PRODUCT_ADMIN_QUESTION_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchProductDetail() {
   yield takeLatest(PRODUCT_DETAIL_REQUEST, productDetail);
@@ -767,6 +805,10 @@ function* watchProdQuestionUpdate() {
   yield takeLatest(PRODUCT_QUESTION_UPDATE_REQUEST, prodQuestionUpdate);
 }
 
+function* watchProdQuestionAdminList() {
+  yield takeLatest(PRODUCT_ADMIN_QUESTION_LIST_REQUEST, prodQuestionAdminList);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* productSaga() {
   yield all([
@@ -793,6 +835,7 @@ export default function* productSaga() {
     fork(watchProdQuestionDetail),
     fork(watchProdQuestionCreate),
     fork(watchProdQuestionUpdate),
+    fork(watchProdQuestionAdminList),
     //
   ]);
 }

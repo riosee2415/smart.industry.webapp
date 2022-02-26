@@ -22,6 +22,7 @@ export const initailState = {
 
   productQuestionList: null,
   productQuestionDetail: null,
+  productAdminQuestionList: null,
 
   createModal: false,
   prodCompanyModal: false,
@@ -116,6 +117,10 @@ export const initailState = {
   st_productQuestionUpdateLoading: false,
   st_productQuestionUpdateDone: false,
   st_productQuestionUpdateError: null,
+  //
+  st_productAdminQuestionListLoading: false,
+  st_productAdminQuestionListDone: false,
+  st_productAdminQuestionListError: null,
 };
 
 export const PRODUCT_LIST_REQUEST = "PRODUCT_LIST_REQUEST";
@@ -215,6 +220,16 @@ export const PRODUCT_QUESTION_UPDATE_SUCCESS =
 export const PRODUCT_QUESTION_UPDATE_FAILURE =
   "PRODUCT_QUESTION_UPDATE_FAILURE";
 //
+
+//
+export const PRODUCT_ADMIN_QUESTION_LIST_REQUEST =
+  "PRODUCT_ADMIN_QUESTION_LIST_REQUEST";
+export const PRODUCT_ADMIN_QUESTION_LIST_SUCCESS =
+  "PRODUCT_ADMIN_QUESTION_LIST_SUCCESS";
+export const PRODUCT_ADMIN_QUESTION_LIST_FAILURE =
+  "PRODUCT_ADMIN_QUESTION_LIST_FAILURE";
+//
+
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 export const PROD_COMPANY_MODAL_TOGGLE = "PROD_COMPANY_MODAL_TOGGLE";
 export const PROD_COMPANY_CREATE_MODAL_TOGGLE =
@@ -641,6 +656,27 @@ const reducer = (state = initailState, action) =>
         draft.st_productQuestionUpdateLoading = false;
         draft.st_productQuestionUpdateDone = false;
         draft.st_productQuestionUpdateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
+      case PRODUCT_ADMIN_QUESTION_LIST_REQUEST: {
+        draft.st_productAdminQuestionListLoading = true;
+        draft.st_productAdminQuestionListDone = null;
+        draft.st_productAdminQuestionListError = false;
+        break;
+      }
+      case PRODUCT_ADMIN_QUESTION_LIST_SUCCESS: {
+        draft.st_productAdminQuestionListLoading = false;
+        draft.st_productAdminQuestionListDone = true;
+        draft.productAdminQuestionList = action.data;
+        break;
+      }
+      case PRODUCT_ADMIN_QUESTION_LIST_FAILURE: {
+        draft.st_productAdminQuestionListLoading = false;
+        draft.st_productAdminQuestionListDone = false;
+        draft.st_productAdminQuestionListError = action.error;
         break;
       }
 
