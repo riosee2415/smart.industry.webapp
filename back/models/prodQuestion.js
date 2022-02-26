@@ -60,5 +60,6 @@ module.exports = class ProdQuestion extends Model {
   }
   static associate(db) {
     db.ProdQuestion.belongsTo(db.Product);
+    db.ProdQuestion.belongsTo(db.User);
   }
 };

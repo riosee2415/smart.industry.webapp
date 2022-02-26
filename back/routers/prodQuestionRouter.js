@@ -1,11 +1,14 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
-const { ProdQuestion, Product } = require("../models");
+const { ProdQuestion, Product, User } = require("../models");
+const { Op } = require("sequelize");
+const isLoggedIn = require("../middlewares/isLoggedIn");
+const isNanCheck = require("../middlewares/isNanCheck");
 
 const router = express.Router();
 
 router.post("/list", async (req, res, next) => {
-  const { listType, ProductId } = req.body;
+  const { listType, searchTitle } = req.body;
 
   let nanFlag = isNaN(listType);
 
@@ -23,13 +26,20 @@ router.post("/list", async (req, res, next) => {
     _listType = 3;
   }
 
+  const _searchTitle = searchTitle ? searchTitle : "";
+
   try {
     let questions = [];
 
     switch (_listType) {
       case 1:
         questions = await ProdQuestion.findAll({
-          where: { isComplete: false, ProductId: parseInt(ProductId) },
+          where: {
+            isComplete: false,
+            title: {
+              [Op.like]: `%${_searchTitle}%`,
+            },
+          },
           include: [
             {
               model: Product,
@@ -40,7 +50,12 @@ router.post("/list", async (req, res, next) => {
         break;
       case 2:
         questions = await ProdQuestion.findAll({
-          where: { isComplete: true, ProductId: parseInt(ProductId) },
+          where: {
+            isComplete: true,
+            title: {
+              [Op.like]: `%${_searchTitle}%`,
+            },
+          },
           include: [
             {
               model: Product,
@@ -51,7 +66,11 @@ router.post("/list", async (req, res, next) => {
         break;
       case 3:
         questions = await ProdQuestion.findAll({
-          ProductId: parseInt(ProductId),
+          where: {
+            title: {
+              [Op.like]: `%${_searchTitle}%`,
+            },
+          },
           include: [
             {
               model: Product,
@@ -67,6 +86,61 @@ router.post("/list", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("상품 문의 목록을 불러올 수 없습니다.");
+  }
+});
+
+router.get("/product/list/:ProductId", async (req, res, next) => {
+  const { ProductId } = req.params;
+
+  if (isNanCheck(ProductId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(ProductId) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const lists = await ProdQuestion.findAll({
+      where: { ProductId: parseInt(ProductId) },
+    });
+
+    return res.status(200).json(lists);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품 문의 목록을 불러올 수 없습니다.");
+  }
+});
+
+router.get("/myList", isLoggedIn, async (req, res, next) => {
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const questions = await ProdQuestion.findAll({
+      where: {
+        UserId: parseInt(req.user.id),
+      },
+      include: [
+        {
+          model: Product,
+        },
+      ],
+    });
+
+    if (!questions) {
+      return res.status(200).json([]);
+    }
+
+    return res.status(200).json(questions);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("내가 작성한 상품 문의를 불러올 수 없습니다.");
   }
 });
 
@@ -188,7 +262,47 @@ router.post("/detail", async (req, res, next) => {
 
 // 프론트에서 비밀글 설정 체크 했을 땐 무조건 secret을 입력해야하고,
 // 체크 안했을 땐 무조건 null을 넘겨줘야한다.
-router.post("/create", async (req, res, next) => {
+router.post("/create", isLoggedIn, async (req, res, next) => {
+  const { author, mobile, email, title, content, isSecret, secret, ProductId } =
+    req.body;
+
+  if (!req.user) {
+    return res.status(403).send("로그인 후 이용 가능합니다.");
+  }
+
+  try {
+    const exProd = await Product.findOne({
+      where: { id: parseInt(ProductId) },
+    });
+
+    if (!exProd) {
+      return res.status(401).send("존재하지 않는 상품입니다.");
+    }
+
+    const createResult = await ProdQuestion.create({
+      author,
+      mobile,
+      email,
+      title,
+      content,
+      isSecret,
+      secret: Boolean(isSecret) === true ? secret : null,
+      ProductId: parseInt(ProductId),
+      UserId: parseInt(req.user.id),
+    });
+
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품 문의를 작성할 수 없습니다.");
+  }
+});
+
+router.post("/notUser/create", async (req, res, next) => {
   const { author, mobile, email, title, content, isSecret, secret, ProductId } =
     req.body;
   try {
@@ -209,6 +323,7 @@ router.post("/create", async (req, res, next) => {
       isSecret,
       secret: Boolean(isSecret) === true ? secret : null,
       ProductId: parseInt(ProductId),
+      UserId: null,
     });
 
     if (!createResult) {
