@@ -28,6 +28,8 @@ const Notice = () => {
 
   const { myQuestionDetails } = useSelector((state) => state.question);
 
+  console.log(myQuestionDetails);
+
   const width = useWidth();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -40,7 +42,7 @@ const Notice = () => {
       type: QUESTION_MY_DETAIL_REQUEST,
       data: {
         id: parseInt(router.query.id),
-        password: parseInt("0000"),
+        password: "0",
       },
     });
   }, [router.query]);

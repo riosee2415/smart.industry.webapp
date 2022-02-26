@@ -101,7 +101,8 @@ function* questionMyList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function questionMyDetailAPI(data) {
-  return axios.post(`/api/question/detail/${data.id}`, data);
+  console.log(data);
+  return axios.post(`/api/question/detail`, data);
 }
 
 function* questionMyDetail(action) {

@@ -8,14 +8,23 @@ import {
   REVIEW_CREATE_REQUEST,
   REVIEW_NOTUSER_CREATE_REQUEST,
   REVIEW_PRODUCT_LIST_REQUEST,
+  REVIEW_UPLOAD_REQUEST,
 } from "../../reducers/review";
 import { Wrapper, Image, CommonButton, Text } from "../commonComponents";
 import Theme from "../Theme";
+import useWidth from "../../hooks/useWidth";
+
+const REVIEW_WIDTH = `600`;
+const REVIEW_HEIGHT = `600`;
 
 const CustomForm = styled(Form)`
-  width: 100%;
+  width: 50%;
 
   & .ant-form-item {
+    width: 100%;
+  }
+
+  @media (max-width: 900px) {
     width: 100%;
   }
 `;
@@ -29,8 +38,42 @@ const ContentInput = styled(Input.TextArea)`
   height: 150px !important;
 `;
 
-const CustomModal = styled(Modal)`
-  top: 180px;
+const ThumbnailImage = styled.img`
+  width: 600px;
+  height: 600px;
+  object-fit: cover;
+
+  @media (max-width: 1280px) {
+    width: 400px;
+    height: 400px;
+  }
+
+  @media (max-width: 700px) {
+    width: 100%;
+    height: 100%;
+  }
+`;
+const UploadWrapper = styled.div`
+  width: 600px;
+  margin: 5px 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+
+  @media (max-width: 1280px) {
+    width: 400px;
+  }
+
+  @media (max-width: 700px) {
+    width: 100%;
+  }
+`;
+
+const PreviewGuide = styled.p`
+  font-weight: 700;
+  color: #b1b1b1;
 `;
 
 const Review = () => {
@@ -38,6 +81,9 @@ const Review = () => {
   const {
     productReivewList,
     createModal,
+    //
+    reviewImagePath,
+    st_reviewUploadLoading,
     //
     st_reviewCreateDone,
     st_reviewCreateError,
@@ -48,11 +94,11 @@ const Review = () => {
 
   const { me } = useSelector((state) => state.user);
 
-  console.log(productReivewList);
-
   ////// HOOKS //////
 
   const dispatch = useDispatch();
+
+  const width = useWidth();
 
   const [datum, setDatum] = useState(null);
 
@@ -60,6 +106,8 @@ const Review = () => {
 
   const [form] = Form.useForm();
   const formRef = useRef();
+
+  const imageRef = useRef();
 
   ////// REDUX //////
 
@@ -129,6 +177,10 @@ const Review = () => {
 
   const onSubmit = useCallback(
     (data) => {
+      if (!reviewImagePath) {
+        LoadNotification("안내", "첨부이미지를 등록해주세요.");
+      }
+
       if (me) {
         dispatch({
           type: REVIEW_CREATE_REQUEST,
@@ -136,7 +188,7 @@ const Review = () => {
             ProductId: router.query.id,
             title: data.title,
             author: me,
-            imagePath: "test",
+            imagePath: reviewImagePath,
             content: data.content,
           },
         });
@@ -147,54 +199,33 @@ const Review = () => {
             ProductId: router.query.id,
             title: data.title,
             author: data.author,
-            imagePath: "test",
+            imagePath: reviewImagePath,
             content: data.content,
           },
         });
       }
     },
-    [me, router.query]
+    [me, router.query, reviewImagePath]
   );
 
+  const clickImageUpload = useCallback(() => {
+    imageRef.current.click();
+  }, []);
+
+  const onChangeImages = useCallback((e) => {
+    const formData = new FormData();
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("image", file);
+    });
+
+    dispatch({
+      type: REVIEW_UPLOAD_REQUEST,
+      data: formData,
+    });
+  }, []);
+
   ////// DATAVIEW //////
-  const testReview = [
-    // {
-    //   type: "전체",
-    // },
-    {
-      id: 1,
-      product: "상품1",
-      title: "상품1에 대한 제목",
-      content: "상품문의답변",
-      user: "사용자",
-      createdAt: "2022-02-13-00:00",
-      hit: "234",
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-    },
-    {
-      id: 2,
-      product: "상품2",
-      title: "상품2에 대한 제목",
-      content: "배송문의답변",
-      user: "사용자2",
-      createdAt: "2022-02-14-00:00",
-      hit: "123",
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-    },
-    {
-      id: 3,
-      product: "상품3",
-      title: "상품3에 대한 제목",
-      content: "취소/반품/교환답변",
-      user: "사용자3",
-      createdAt: "2022-02-15-00:00",
-      hit: "45",
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-    },
-  ];
 
   return (
     <>
@@ -248,8 +279,8 @@ const Review = () => {
                         <Wrapper width={`90%`}>
                           <Wrapper>
                             <Image
-                              width={`300px`}
-                              height={`300px`}
+                              width={width < 700 ? `100%` : `600px`}
+                              height={`auto`}
                               src={data.imagePath}
                             />
                           </Wrapper>
@@ -278,7 +309,7 @@ const Review = () => {
         </CommonButton>
       </Wrapper>
 
-      <CustomModal
+      <Modal
         width={`1350px`}
         visible={createModal}
         onCancel={createModalToggle}
@@ -296,53 +327,93 @@ const Review = () => {
           </Text>
         </Wrapper>
 
-        <CustomForm onFinish={onSubmit} form={form} ref={formRef}>
-          <Wrapper al={`flex-start`}>
-            <Text margin={`0 0 10px`}>제목</Text>
-            <Form.Item
-              name="title"
-              rules={[{ required: true, message: "제목을 입력해주세요." }]}
-            >
-              <TitleInput placeholder="제목을 입력해주세요." />
-            </Form.Item>
-          </Wrapper>
+        <Wrapper dr={`row`} al={`flex-start`}>
+          <Wrapper width={width < 900 ? `100%` : `50%`}>
+            <ThumbnailImage
+              src={
+                reviewImagePath
+                  ? `${reviewImagePath}`
+                  : `https://via.placeholder.com/${REVIEW_WIDTH}x${REVIEW_HEIGHT}`
+              }
+              alt="review_image"
+            />
+            <PreviewGuide>
+              {reviewImagePath && `이미지 미리보기 입니다.`}
+            </PreviewGuide>
 
-          <Wrapper al={`flex-start`}>
-            <Text margin={`0 0 10px`}>상품명이 들어갑니다.</Text>
-            <Form.Item
-              name="content"
-              rules={[{ required: true, message: "후기내용을 입력해주세요." }]}
-            >
-              <ContentInput placeholder="후기내용을 입력해주세요." />
-            </Form.Item>
-          </Wrapper>
-
-          {!me && (
-            <Wrapper al={`flex-start`}>
-              <Text margin={`0 0 10px`}>작성자</Text>
-              <Form.Item
-                name="author"
-                rules={[{ required: true, message: "작성자를 입력해주세요." }]}
+            <UploadWrapper>
+              <input
+                type="file"
+                name="image"
+                accept=".png, .jpg"
+                // multiple
+                hidden
+                ref={imageRef}
+                onChange={onChangeImages}
+              />
+              <Button
+                size="small"
+                type="primary"
+                onClick={clickImageUpload}
+                loading={st_reviewUploadLoading}
               >
-                <TitleInput placeholder="작성자를 입력해주세요." />
+                UPLOAD
+              </Button>
+            </UploadWrapper>
+          </Wrapper>
+
+          <CustomForm onFinish={onSubmit} form={form} ref={formRef}>
+            <Wrapper al={`flex-start`}>
+              <Text margin={`0 0 10px`}>제목</Text>
+              <Form.Item
+                name="title"
+                rules={[{ required: true, message: "제목을 입력해주세요." }]}
+              >
+                <TitleInput placeholder="제목을 입력해주세요." />
               </Form.Item>
             </Wrapper>
-          )}
 
-          <Wrapper dr={`row`}>
-            <CommonButton
-              margin={`0 3px 0 0`}
-              kindOf={`darkgrey`}
-              onClick={createModalToggle}
-            >
-              취소하기
-            </CommonButton>
-            <CommonButton margin={`0 0 0 3px`} htmlType="submit">
-              작성하기
-            </CommonButton>
-          </Wrapper>
-        </CustomForm>
-      </CustomModal>
+            <Wrapper al={`flex-start`}>
+              <Text margin={`0 0 10px`}>상품명이 들어갑니다.</Text>
+              <Form.Item
+                name="content"
+                rules={[
+                  { required: true, message: "후기내용을 입력해주세요." },
+                ]}
+              >
+                <ContentInput placeholder="후기내용을 입력해주세요." />
+              </Form.Item>
+            </Wrapper>
+
+            {!me && (
+              <Wrapper al={`flex-start`}>
+                <Text margin={`0 0 10px`}>작성자</Text>
+                <Form.Item
+                  name="author"
+                  rules={[
+                    { required: true, message: "작성자를 입력해주세요." },
+                  ]}
+                >
+                  <TitleInput placeholder="작성자를 입력해주세요." />
+                </Form.Item>
+              </Wrapper>
+            )}
+
+            <Wrapper dr={`row`}>
+              <CommonButton
+                margin={`0 3px 0 0`}
+                kindOf={`darkgrey`}
+                onClick={createModalToggle}
+              >
+                취소하기
+              </CommonButton>
+              <CommonButton margin={`0 0 0 3px`} htmlType="submit">
+                작성하기
+              </CommonButton>
+            </Wrapper>
+          </CustomForm>
+        </Wrapper>
+      </Modal>
     </>
   );
 };
