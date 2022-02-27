@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
@@ -6,20 +6,22 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   RsWrapper,
   WholeWrapper,
   Wrapper,
   Image,
 } from "../../../components/commonComponents";
-import { useState } from "react";
-import { useCallback } from "react";
+
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { REVIEW_LIST_REQUEST } from "../../../reducers/review";
-import { Empty } from "antd";
+import {
+  REVIEW_HIT_REQUEST,
+  REVIEW_LIST_REQUEST,
+} from "../../../reducers/review";
+import { Empty, message } from "antd";
 
 const Review = () => {
   ////// GLOBAL STATE //////
@@ -27,7 +29,9 @@ const Review = () => {
     (state) => state.seo
   );
 
-  const { reviewList } = useSelector((state) => state.review);
+  const { reviewList, st_reviewHitDone, st_reviewHitError } = useSelector(
+    (state) => state.review
+  );
 
   console.log(reviewList);
 
@@ -35,10 +39,41 @@ const Review = () => {
   const router = useRouter();
 
   ////// HOOKS //////
+
+  const dispatch = useDispatch();
+
   const [datum, setDatum] = useState(null);
 
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_reviewHitDone) {
+      dispatch({
+        type: REVIEW_LIST_REQUEST,
+      });
+    }
+  }, [st_reviewHitDone]);
+
+  useEffect(() => {
+    if (st_reviewHitError) {
+      dispatch({
+        type: REVIEW_LIST_REQUEST,
+      });
+    }
+  }, [st_reviewHitError]);
+
+  useEffect(() => {
+    if (datum) {
+      dispatch({
+        type: REVIEW_HIT_REQUEST,
+        data: {
+          id: datum.id,
+        },
+      });
+    }
+  }, [datum]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
@@ -50,50 +85,13 @@ const Review = () => {
       setDatum(data);
 
       if (datum && datum.id === data.id) {
-        setDatum("");
+        setDatum(null);
       }
     },
     [datum]
   );
+
   ////// DATAVIEW //////
-  const testReview = [
-    // {
-    //   type: "전체",
-    // },
-    {
-      id: 1,
-      product: "상품1",
-      title: "상품1에 대한 제목",
-      content: "상품문의답변",
-      user: "사용자",
-      createdAt: "2022-02-13-00:00",
-      hit: "234",
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-    },
-    {
-      id: 2,
-      product: "상품2",
-      title: "상품2에 대한 제목",
-      content: "배송문의답변",
-      user: "사용자2",
-      createdAt: "2022-02-14-00:00",
-      hit: "123",
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-    },
-    {
-      id: 3,
-      product: "상품3",
-      title: "상품3에 대한 제목",
-      content: "취소/반품/교환답변",
-      user: "사용자3",
-      createdAt: "2022-02-15-00:00",
-      hit: "45",
-      thumbnail:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-    },
-  ];
 
   return (
     <>
