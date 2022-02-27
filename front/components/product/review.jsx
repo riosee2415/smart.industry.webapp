@@ -188,8 +188,6 @@ const Review = () => {
         return LoadNotification("안내", "첨부이미지를 등록해주세요.");
       }
 
-      console.log(reviewImagePath);
-
       if (me) {
         dispatch({
           type: REVIEW_CREATE_REQUEST,
