@@ -18,12 +18,18 @@ import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
+import { REVIEW_LIST_REQUEST } from "../../../reducers/review";
+import { Empty } from "antd";
 
 const Review = () => {
   ////// GLOBAL STATE //////
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
+
+  const { reviewList } = useSelector((state) => state.review);
+
+  console.log(reviewList);
 
   const width = useWidth();
   const router = useRouter();
@@ -197,10 +203,13 @@ const Review = () => {
                 <Wrapper width={`10%`}>작성일</Wrapper>
                 <Wrapper width={`10%`}>조회수</Wrapper>
               </Wrapper>
-              {testReview && testReview.length === 0
-                ? ``
-                : testReview &&
-                  testReview.reverse().map((data, idx) => {
+              {reviewList &&
+                (reviewList.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="후기가 없습니다." />
+                  </Wrapper>
+                ) : (
+                  reviewList.map((data, idx) => {
                     return (
                       <Wrapper ju={`flex-start`}>
                         <Wrapper
@@ -216,20 +225,20 @@ const Review = () => {
                             <Image
                               width={`50px`}
                               height={`50px`}
-                              src={data.thumbnail}
+                              src={data.Product.thumbnail}
                             />
                             <Wrapper
                               width={`calc(100% - 50px)`}
                               al={`flex-start`}
                               padding={`0 0 0 10px`}
                             >
-                              {data.product}
+                              {data.Product.title}
                             </Wrapper>
                           </Wrapper>
                           <Wrapper width={`50%`} al={`flex-start`}>
                             {data.title}
                           </Wrapper>
-                          <Wrapper width={`10%`}>{data.user}</Wrapper>
+                          <Wrapper width={`10%`}>{data.author}</Wrapper>
                           <Wrapper width={`10%`}>
                             {data.createdAt.substring(0, 10)}
                           </Wrapper>
@@ -242,7 +251,7 @@ const Review = () => {
                               <Image
                                 width={`600px`}
                                 height={`600px`}
-                                src={`${data.thumbnail}`}
+                                src={data.imagePath}
                               />
                             </Wrapper>
                             <Wrapper
@@ -256,7 +265,8 @@ const Review = () => {
                         )}
                       </Wrapper>
                     );
-                  })}
+                  })
+                ))}
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
@@ -282,6 +292,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: REVIEW_LIST_REQUEST,
     });
 
     // 구현부 종료
