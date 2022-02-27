@@ -44,12 +44,36 @@ const Board = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
+  const getQs = () => {
+    const qs = router.query;
+
+    let value = "";
+
+    if (!qs.page) {
+      setCurrentPage(1);
+      value = "?page=1";
+    } else {
+      setCurrentPage(qs.page);
+      value = `?page=${qs.page}`;
+    }
+
+    if (qs.search) {
+      value += `&search=${qs.search}`;
+    }
+
+    return value;
+  };
+
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
   useEffect(() => {
+    const qs = getQs();
     dispatch({
       type: QUESTION_MY_LIST_REQUEST,
+      data: {
+        qs,
+      },
     });
   }, []);
   ////// TOGGLE //////
@@ -178,7 +202,7 @@ const Board = () => {
                   <Empty description="문의내역이 없습니다." />
                 ) : (
                   myQuestions &&
-                  myQuestions.map((data) => {
+                  myQuestions.myList.map((data) => {
                     return (
                       <Wrapper
                         dr={`row`}

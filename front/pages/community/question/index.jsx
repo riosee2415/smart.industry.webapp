@@ -111,6 +111,7 @@ const Question = () => {
 
       setIsTerms(false);
       inputContent.setValue("");
+      inputTitle.setValue("");
     }
   }, [st_questionCreateDone, inputContent.value, isTerms]);
 

@@ -17,7 +17,11 @@ import { useCallback } from "react";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { QUESTION_MY_DETAIL_REQUEST } from "../../../../reducers/question";
+import {
+  QUESTION_MY_DETAIL_REQUEST,
+  QUESTION_PREVPAGE_REQUEST,
+  QUESTION_NEXTPAGE_REQUEST,
+} from "../../../../reducers/question";
 import { useEffect } from "react";
 
 const Notice = () => {
@@ -26,7 +30,9 @@ const Notice = () => {
     (state) => state.seo
   );
 
-  const { myQuestionDetails } = useSelector((state) => state.question);
+  const { myQuestionDetails, questionPrev, questionNext } = useSelector(
+    (state) => state.question
+  );
 
   const width = useWidth();
   const router = useRouter();
@@ -41,6 +47,24 @@ const Notice = () => {
       data: {
         questionId: router.query.id,
         password: "0",
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    dispatch({
+      type: QUESTION_PREVPAGE_REQUEST,
+      data: {
+        questionId: router.query.id,
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    dispatch({
+      type: QUESTION_NEXTPAGE_REQUEST,
+      data: {
+        questionId: router.query.id,
       },
     });
   }, [router.query]);
@@ -237,11 +261,19 @@ const Notice = () => {
               borderBottom={`1px solid ${Theme.darkGrey_C}`}
               margin={`0 0 110px`}
             >
-              <Wrapper dr={`row`} borderBottom={`1px solid ${Theme.grey2_C}`}>
+              <Wrapper
+                dr={`row`}
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                display={questionPrev === null ? `none` : `flex`}
+                onClick={() =>
+                  moveLinkHandler(`./${questionPrev && questionPrev.id}`)
+                }
+                cursor={`pointer`}
+              >
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
+                  padding={`10px 0`}
                   borderRight={`1px solid ${Theme.grey2_C}`}
-                  padding={`8px 0`}
                 >
                   ▲ 이전글
                 </Wrapper>
@@ -250,14 +282,21 @@ const Notice = () => {
                   al={`flex-start`}
                   padding={`0 0 0 25px`}
                 >
-                  안녕하세요 이전글입니다.
+                  {questionPrev && questionPrev.title}
                 </Wrapper>
               </Wrapper>
-              <Wrapper dr={`row`}>
+              <Wrapper
+                dr={`row`}
+                display={questionNext === null ? `none` : `flex`}
+                onClick={() =>
+                  moveLinkHandler(`./${questionNext && questionNext.id}`)
+                }
+                cursor={`pointer`}
+              >
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
+                  padding={`10px 0`}
                   borderRight={`1px solid ${Theme.grey2_C}`}
-                  padding={`8px 0`}
                 >
                   ▼ 다음글
                 </Wrapper>
@@ -266,7 +305,7 @@ const Notice = () => {
                   al={`flex-start`}
                   padding={`0 0 0 25px`}
                 >
-                  다음글 입니다.
+                  {questionNext && questionNext.title}
                 </Wrapper>
               </Wrapper>
             </Wrapper>
