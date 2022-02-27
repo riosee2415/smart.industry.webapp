@@ -38,7 +38,16 @@ const CustomModal = styled(Modal)`
   }
 `;
 
-const CustomPagenation = styled(Pagination)``;
+const CustomPagination = styled(Pagination)`
+  & .ant-pagination-item-active {
+    border: none;
+    border-bottom: 1px solid ${Theme.basicTheme_C} !important;
+  }
+
+  & .ant-pagination-item-link {
+    border: none;
+  }
+`;
 
 const Notice = () => {
   const dispatch = useDispatch();
@@ -492,7 +501,7 @@ const Notice = () => {
 
               {!st_productQuestionMyListDone && (
                 <Wrapper margin={`50px 0 0 0`}>
-                  <CustomPagenation
+                  <CustomPagination
                     total={productQuestionListLastPage * 10}
                     onChange={onChangePageHandler}
                     current={currentPage}
