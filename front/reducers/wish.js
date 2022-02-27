@@ -21,6 +21,10 @@ export const initailState = {
   st_wishAdminListDone: false,
   st_wishAdminListError: null,
   //
+  st_wishCompletedLoading: false, // 구매 승인
+  st_wishCompletedDone: false,
+  st_wishCompletedError: null,
+  //
   st_boughtHistoryCreateLoading: false, // 구매 내역 만들기
   st_boughtHistoryCreateDone: false,
   st_boughtHistoryCreateError: null,
@@ -59,6 +63,10 @@ export const WISH_LIST_DETAIL_FAILURE = "WISH_LIST_DETAIL_FAILURE";
 export const WISH_ADMIN_LIST_REQUEST = "WISH_ADMIN_LIST_REQUEST";
 export const WISH_ADMIN_LIST_SUCCESS = "WISH_ADMIN_LIST_SUCCESS";
 export const WISH_ADMIN_LIST_FAILURE = "WISH_ADMIN_LIST_FAILURE";
+
+export const WISH_COMPLETED_REQUEST = "WISH_COMPLETED_REQUEST";
+export const WISH_COMPLETED_SUCCESS = "WISH_COMPLETED_SUCCESS";
+export const WISH_COMPLETED_FAILURE = "WISH_COMPLETED_FAILURE";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -100,6 +108,25 @@ const reducer = (state = initailState, action) =>
         draft.st_wishAdminListLoading = false;
         draft.st_wishAdminListDone = false;
         draft.st_wishAdminListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case WISH_COMPLETED_REQUEST: {
+        draft.st_wishCompletedLoading = true;
+        draft.st_wishCompletedDone = null;
+        draft.st_wishCompletedError = false;
+        break;
+      }
+      case WISH_COMPLETED_SUCCESS: {
+        draft.st_wishCompletedLoading = false;
+        draft.st_wishCompletedDone = true;
+        break;
+      }
+
+      case WISH_COMPLETED_FAILURE: {
+        draft.st_wishCompletedLoading = false;
+        draft.st_wishCompletedDone = false;
+        draft.st_wishCompletedError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
