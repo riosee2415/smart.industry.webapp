@@ -391,6 +391,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       secret: Boolean(isSecret) === true ? secret : null,
       ProductId: parseInt(ProductId),
       UserId: parseInt(req.user.id),
+      terms: null,
     });
 
     if (!createResult) {
@@ -405,8 +406,21 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/notUser/create", async (req, res, next) => {
-  const { author, mobile, email, title, content, isSecret, secret, ProductId } =
-    req.body;
+  const {
+    author,
+    mobile,
+    email,
+    title,
+    content,
+    isSecret,
+    secret,
+    ProductId,
+    terms,
+  } = req.body;
+
+  if (!terms) {
+    return res.status(401).send("약관에 동의해주세요.");
+  }
   try {
     const exProd = await Product.findOne({
       where: { id: parseInt(ProductId) },
@@ -426,6 +440,7 @@ router.post("/notUser/create", async (req, res, next) => {
       secret: Boolean(isSecret) === true ? secret : null,
       ProductId: parseInt(ProductId),
       UserId: null,
+      terms,
     });
 
     if (!createResult) {

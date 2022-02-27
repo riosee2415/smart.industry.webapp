@@ -48,6 +48,11 @@ module.exports = class ProdQuestion extends Model {
           allowNull: false,
           defaultValue: false,
         },
+        terms: {
+          type: DataTypes.BOOLEAN,
+          defaultValue: false,
+          allowNull: true,
+        },
       },
       {
         modelName: "ProdQuestion",
