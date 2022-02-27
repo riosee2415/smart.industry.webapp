@@ -647,6 +647,7 @@ const DetailProduct = () => {
                                 )) *
                                 productCount
                             ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          원
                         </Text>
                         <Image
                           margin={`0 0 0 16px`}
@@ -686,6 +687,7 @@ const DetailProduct = () => {
                             productDetailData[0].deliveryPay) *
                             productCount
                         ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      원
                       <SpanText
                         fontSize={`14px`}
                         fontWeight={`500`}

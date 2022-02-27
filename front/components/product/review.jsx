@@ -197,6 +197,10 @@ const Review = () => {
   ////// TOGGLE //////
 
   const createModalToggle = useCallback(() => {
+    if (!me) {
+      return message.error("로그인 후 작성하실 수 있습니다.");
+    }
+
     form.resetFields();
 
     dispatch({
@@ -222,29 +226,29 @@ const Review = () => {
         return LoadNotification("안내", "첨부이미지를 등록해주세요.");
       }
 
-      if (me) {
-        dispatch({
-          type: REVIEW_CREATE_REQUEST,
-          data: {
-            ProductId: router.query.id,
-            title: data.title,
-            author: me.username,
-            imagePath: reviewImagePath,
-            content: data.content,
-          },
-        });
-      } else {
-        dispatch({
-          type: REVIEW_NOTUSER_CREATE_REQUEST,
-          data: {
-            ProductId: router.query.id,
-            title: data.title,
-            author: data.author,
-            imagePath: reviewImagePath,
-            content: data.content,
-          },
-        });
-      }
+      // if (me) {
+      dispatch({
+        type: REVIEW_CREATE_REQUEST,
+        data: {
+          ProductId: router.query.id,
+          title: data.title,
+          author: me.username,
+          imagePath: reviewImagePath,
+          content: data.content,
+        },
+      });
+      // } else {
+      //   dispatch({
+      //     type: REVIEW_NOTUSER_CREATE_REQUEST,
+      //     data: {
+      //       ProductId: router.query.id,
+      //       title: data.title,
+      //       author: data.author,
+      //       imagePath: reviewImagePath,
+      //       content: data.content,
+      //     },
+      //   });
+      // }
     },
     [me, router.query, reviewImagePath]
   );
