@@ -4,7 +4,7 @@ import Head from "next/head";
 import axios from "axios";
 import { END } from "redux-saga";
 import { useDispatch, useSelector } from "react-redux";
-import { Empty, message, Pagination } from "antd";
+import { Empty, message, Pagination, Select } from "antd";
 import { useRouter } from "next/dist/client/router";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
@@ -15,6 +15,8 @@ import {
   WholeWrapper,
   Wrapper,
   Image,
+  TextInput,
+  CommonButton,
 } from "../../../components/commonComponents";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
@@ -22,9 +24,10 @@ import {
   REVIEW_HIT_REQUEST,
   REVIEW_LIST_REQUEST,
 } from "../../../reducers/review";
+import useInput from "../../../hooks/useInput";
 
 const CustomPagination = styled(Pagination)`
-  margin: 0 0 60px;
+  margin: 40px 0 60px;
   & .ant-pagination-item-active {
     border: none;
   }
@@ -36,10 +39,9 @@ const Review = () => {
     (state) => state.seo
   );
 
-  const { reviewList, maxPage, st_reviewHitDone, st_reviewHitError } =
-    useSelector((state) => state.review);
-
-  console.log(reviewList);
+  const { reviewList, maxPage, st_reviewHitDone } = useSelector(
+    (state) => state.review
+  );
 
   const width = useWidth();
   const router = useRouter();
@@ -49,7 +51,11 @@ const Review = () => {
   const dispatch = useDispatch();
 
   const [datum, setDatum] = useState(null);
-  const [currentPage, setCurrentPage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [searchType, setSearchType] = useState(null);
+
+  const searchInput = useInput(``);
 
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -58,17 +64,14 @@ const Review = () => {
     if (st_reviewHitDone) {
       dispatch({
         type: REVIEW_LIST_REQUEST,
+        data: {
+          page: currentPage ? currentPage : 1,
+          searchTitle: "",
+          searchAuthor: "",
+        },
       });
     }
   }, [st_reviewHitDone]);
-
-  useEffect(() => {
-    if (st_reviewHitError) {
-      dispatch({
-        type: REVIEW_LIST_REQUEST,
-      });
-    }
-  }, [st_reviewHitError]);
 
   useEffect(() => {
     if (datum) {
@@ -80,6 +83,17 @@ const Review = () => {
       });
     }
   }, [datum]);
+
+  useEffect(() => {
+    dispatch({
+      type: REVIEW_LIST_REQUEST,
+      data: {
+        page: currentPage ? currentPage : 1,
+        searchTitle: searchType === "제목" ? searchInput.value : "",
+        searchAuthor: searchType === "작성자" ? searchInput.value : "",
+      },
+    });
+  }, [searchType]);
 
   ////// TOGGLE //////
   ////// HANDLER //////
@@ -104,10 +118,34 @@ const Review = () => {
     dispatch({
       type: REVIEW_LIST_REQUEST,
       data: {
-        qs: queryString || "",
+        page: parseInt(changePage),
+        searchTitle: "",
+        searchAuthor: "",
       },
     });
   }, []);
+
+  const selectValueHandler = useCallback(
+    (type) => {
+      setSearchType(type);
+    },
+    [searchType]
+  );
+  console.log(searchInput.value);
+
+  const searchButtonHanlder = useCallback(() => {
+    if (datum) {
+      setDatum(null);
+    }
+    dispatch({
+      type: REVIEW_LIST_REQUEST,
+      data: {
+        page: 1,
+        searchTitle: searchType === "제목" ? searchInput.value : "",
+        searchAuthor: searchType === "작성자" ? searchInput.value : "",
+      },
+    });
+  }, [searchType, searchInput.value, datum]);
 
   ////// DATAVIEW //////
 
@@ -205,7 +243,7 @@ const Review = () => {
               상품후기
             </Wrapper>
 
-            <Wrapper margin={width < 700 ? `0 0 40px` : `0 0 180px`}>
+            <Wrapper margin={`0 0 40px`}>
               <Wrapper
                 dr={`row`}
                 bgColor={Theme.lightGrey2_C}
@@ -338,6 +376,56 @@ const Review = () => {
                   })
                 ))}
             </Wrapper>
+
+            <Wrapper
+              margin={`40px 0 0`}
+              dr={`row`}
+              height={`40px`}
+              ju={`flex-start`}
+            >
+              <Wrapper width={`74px`} display={width < 700 ? `none` : `flex`}>
+                검색어
+              </Wrapper>
+
+              <Wrapper
+                dr={`row`}
+                width={width < 700 ? `20%` : `100px`}
+                ju={width < 700 ? `center` : `flex-start`}
+              >
+                <Select
+                  style={{
+                    width: `100px`,
+                  }}
+                  defaultValue={searchType}
+                  onChange={selectValueHandler}
+                >
+                  <Select.Option value={"제목"}>제목</Select.Option>
+                  <Select.Option value={"작성자"}>작성자</Select.Option>
+                </Select>
+              </Wrapper>
+
+              <Wrapper
+                dr={`row`}
+                width={width < 700 ? `80%` : `calc(100% - 180px)`}
+                ju={`flex-start`}
+              >
+                <TextInput
+                  width={width < 700 ? `calc(80% - 50px)` : `261px`}
+                  height={`100%`}
+                  margin={`0 10px 0 26px`}
+                  border={`1px solid ${Theme.grey2_C}`}
+                  {...searchInput}
+                />
+                <CommonButton
+                  width={width < 700 ? `20%` : `74px`}
+                  height={`42px`}
+                  radius={`0`}
+                  onClick={searchButtonHanlder}
+                >
+                  찾기
+                </CommonButton>
+              </Wrapper>
+            </Wrapper>
             <CustomPagination
               size="small"
               defaultCurrent={1}
@@ -375,6 +463,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: REVIEW_LIST_REQUEST,
+      data: {
+        page: 1,
+        searchTitle: "",
+        searchAuthor: "",
+      },
     });
 
     // 구현부 종료

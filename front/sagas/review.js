@@ -63,8 +63,11 @@ function* reviewProductList(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
-function reviewListAPI() {
-  return axios.get(`/api/review/list`);
+function reviewListAPI(data) {
+  return axios.get(
+    `/api/review/list?page=${data.page}&searchTitle=${data.searchTitle}&searchAuthor=${data.searchAuthor}`,
+    data
+  );
 }
 
 function* reviewList(action) {
