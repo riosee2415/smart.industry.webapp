@@ -131,7 +131,6 @@ const Review = () => {
     },
     [searchType]
   );
-  console.log(searchInput.value);
 
   const searchButtonHanlder = useCallback(() => {
     if (datum) {
