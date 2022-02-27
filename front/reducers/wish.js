@@ -9,6 +9,8 @@ export const initailState = {
 
   historyId: null,
 
+  detailModal: false,
+
   st_wishListLoading: false, // 구매 리스트
   st_wishListDone: false,
   st_wishListError: null,
@@ -67,6 +69,8 @@ export const WISH_ADMIN_LIST_FAILURE = "WISH_ADMIN_LIST_FAILURE";
 export const WISH_COMPLETED_REQUEST = "WISH_COMPLETED_REQUEST";
 export const WISH_COMPLETED_SUCCESS = "WISH_COMPLETED_SUCCESS";
 export const WISH_COMPLETED_FAILURE = "WISH_COMPLETED_FAILURE";
+
+export const DETAIL_MODAL_TOGGLE = "DETAIL_MODAL_TOGGLE";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -208,6 +212,10 @@ const reducer = (state = initailState, action) =>
         break;
 
       ///////////////////////////////////////////////////////
+
+      case DETAIL_MODAL_TOGGLE:
+        draft.detailModal = !draft.detailModal;
+        break;
 
       default:
         break;

@@ -1,15 +1,21 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { Table, Button } from "antd";
-import AdminLayout from "../../../components/AdminLayout";
-import PageHeader from "../../../components/admin/PageHeader";
+import { Table, Button, Popconfirm, Modal, Image } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import { useRouter, withRouter } from "next/router";
+import AdminLayout from "../../../components/AdminLayout";
+import PageHeader from "../../../components/admin/PageHeader";
+import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
-import { WISH_ADMIN_LIST_REQUEST } from "../../../reducers/wish";
+import {
+  DETAIL_MODAL_TOGGLE,
+  WISH_ADMIN_LIST_REQUEST,
+  WISH_COMPLETED_REQUEST,
+} from "../../../reducers/wish";
+import { Wrapper, Text } from "../../../components/commonComponents";
+import Theme from "../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -35,8 +41,37 @@ const BoughtList = () => {
   /////////////////////////////////////////////////////////////////////////
 
   ////// HOOKS //////
-  const { adminBoughtList } = useSelector((state) => state.wish);
-  console.log(adminBoughtList);
+  const { adminBoughtList, detailModal } = useSelector((state) => state.wish);
+  const dispatch = useDispatch();
+
+  const [detailData, setDetailData] = useState(null);
+
+  ////// TOGGLE //////
+  const detailModalToggle = useCallback(
+    (data) => {
+      if (data) {
+        setDetailData(data);
+      } else {
+        setDetailData(null);
+      }
+      dispatch({
+        type: DETAIL_MODAL_TOGGLE,
+      });
+    },
+    [detailModal]
+  );
+
+  console.log(detailData);
+
+  ////// HANDLER //////
+  const completedUpdate = useCallback((id) => {
+    dispatch({
+      type: WISH_COMPLETED_REQUEST,
+      data: {
+        id,
+      },
+    });
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -67,14 +102,25 @@ const BoughtList = () => {
     },
     {
       title: "주문상세",
-      render: (data) => <Button size="small">주문상세</Button>,
+      render: (data) => (
+        <Button size="small" onClick={() => detailModalToggle(data)}>
+          주문상세
+        </Button>
+      ),
     },
     {
       title: "승인",
       render: (data) => (
-        <Button size="small" type="primary">
-          승인
-        </Button>
+        <Popconfirm
+          title="승인하시겠습니까?"
+          onConfirm={() => completedUpdate(data.id)}
+          okText="삭제"
+          cancelText="취소"
+        >
+          <Button size="small" type="primary">
+            승인
+          </Button>
+        </Popconfirm>
       ),
     },
   ];
@@ -93,6 +139,197 @@ const BoughtList = () => {
           dataSource={adminBoughtList ? adminBoughtList : []}
         />
       </AdminContent>
+      {console.log(detailData)}
+      <Modal
+        title="주문상세"
+        width={`900px`}
+        visible={detailModal}
+        onCancel={() => detailModalToggle(null)}
+        footer={null}
+      >
+        <Wrapper border={`1px solid ${Theme.basicTheme_C}`}>
+          <Wrapper dr={`row`} borderBottom={`1px solid ${Theme.basicTheme_C}`}>
+            <Wrapper width={`calc(100% / 3)`} dr={`row`}>
+              <Wrapper
+                width={`30%`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                padding={`20px 0`}
+              >
+                주문자
+              </Wrapper>
+              <Wrapper
+                width={`70%`}
+                padding={`20px 0`}
+                borderLeft={`1px solid ${Theme.basicTheme_C}`}
+                borderRight={`1px solid ${Theme.basicTheme_C}`}
+              >
+                {detailData && detailData.name}
+              </Wrapper>
+            </Wrapper>
+            <Wrapper width={`calc(100% / 3)`} dr={`row`}>
+              <Wrapper
+                width={`30%`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                padding={`20px 0`}
+              >
+                전화번호
+              </Wrapper>
+              <Wrapper
+                width={`70%`}
+                padding={`20px 0`}
+                borderLeft={`1px solid ${Theme.basicTheme_C}`}
+                borderRight={`1px solid ${Theme.basicTheme_C}`}
+              >
+                {detailData && detailData.mobile}
+              </Wrapper>
+            </Wrapper>
+            <Wrapper width={`calc(100% / 3)`} dr={`row`}>
+              <Wrapper
+                width={`30%`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+                padding={`20px 0`}
+              >
+                작성일
+              </Wrapper>
+              <Wrapper
+                width={`70%`}
+                padding={`20px 0`}
+                borderLeft={`1px solid ${Theme.basicTheme_C}`}
+              >
+                {detailData && detailData.createdAt.substring(0, 10)}
+              </Wrapper>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            dr={`row`}
+            ju={`flex-end`}
+            position={`relative`}
+            borderBottom={`1px solid ${Theme.basicTheme_C}`}
+          >
+            <Wrapper
+              width={`30%`}
+              height={`100%`}
+              bgColor={Theme.basicTheme_C}
+              color={Theme.white_C}
+              position={`absolute`}
+              top={`0`}
+              left={`0`}
+            >
+              주문 내용
+            </Wrapper>
+            <Wrapper
+              width={`70%`}
+              padding={`20px 0`}
+              borderLeft={`1px solid ${Theme.basicTheme_C}`}
+            >
+              <Text>{detailData && detailData.content}</Text>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper dr={`row`} ju={`flex-end`} position={`relative`}>
+            <Wrapper
+              width={`30%`}
+              height={`100%`}
+              bgColor={Theme.basicTheme_C}
+              color={Theme.white_C}
+              position={`absolute`}
+              top={`0`}
+              left={`0`}
+            >
+              주문 번호
+            </Wrapper>
+            <Wrapper
+              width={`70%`}
+              padding={`20px 0`}
+              borderLeft={`1px solid ${Theme.basicTheme_C}`}
+            >
+              <Text>{detailData && detailData.orderNum}</Text>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper
+            padding={`10px`}
+            borderTop={`1px solid ${Theme.basicTheme_C}`}
+          >
+            {detailData &&
+              detailData.WishItems.map((data, idx) => {
+                return (
+                  <Wrapper
+                    border={`1px solid ${Theme.basicTheme_C}`}
+                    margin={`0 0 10px`}
+                  >
+                    <Wrapper
+                      dr={`row`}
+                      borderBottom={`1px solid ${Theme.basicTheme_C}`}
+                    >
+                      <Wrapper
+                        width={`30%`}
+                        bgColor={Theme.basicTheme_C}
+                        color={Theme.white_C}
+                        padding={`10px 0`}
+                      >
+                        상품이름
+                      </Wrapper>
+                      <Wrapper
+                        width={`70%`}
+                        padding={`10px 0`}
+                        borderLeft={`1px solid ${Theme.basicTheme_C}`}
+                      >
+                        {data.Product.title}
+                      </Wrapper>
+                    </Wrapper>
+                    <Wrapper
+                      dr={`row`}
+                      borderBottom={`1px solid ${Theme.basicTheme_C}`}
+                    >
+                      <Wrapper
+                        width={`30%`}
+                        bgColor={Theme.basicTheme_C}
+                        color={Theme.white_C}
+                        padding={`10px 0`}
+                      >
+                        상품가격
+                      </Wrapper>
+                      <Wrapper
+                        width={`70%`}
+                        padding={`10px 0`}
+                        borderLeft={`1px solid ${Theme.basicTheme_C}`}
+                      >
+                        {String(
+                          data.Product.price -
+                            data.Product.price * (data.Product.discount / 100) +
+                            data.Product.deliveryPay
+                        ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        원
+                      </Wrapper>
+                    </Wrapper>
+                    <Wrapper dr={`row`}>
+                      <Wrapper
+                        width={`30%`}
+                        bgColor={Theme.basicTheme_C}
+                        color={Theme.white_C}
+                        padding={`10px 0`}
+                      >
+                        상품수량
+                      </Wrapper>
+                      <Wrapper
+                        width={`70%`}
+                        padding={`10px 0`}
+                        borderLeft={`1px solid ${Theme.basicTheme_C}`}
+                      >
+                        {data.count}개
+                      </Wrapper>
+                    </Wrapper>
+                  </Wrapper>
+                );
+              })}
+          </Wrapper>
+        </Wrapper>
+      </Modal>
     </AdminLayout>
   );
 };
