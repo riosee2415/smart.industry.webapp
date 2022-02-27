@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
@@ -6,7 +6,7 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   RsWrapper,
   WholeWrapper,
@@ -21,6 +21,8 @@ import { useRouter } from "next/dist/client/router";
 import { Empty } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import styled from "styled-components";
+import { WISH_LIST_REQUEST } from "../../../reducers/wish";
+import { numberWithCommas } from "../../../components/commonUtils";
 
 const RightArrow = styled(RightOutlined)`
   width: auto;
@@ -38,7 +40,15 @@ const Order = () => {
 
   ////// HOOKS //////
   ////// REDUX //////
+  const { boughtHistorys } = useSelector((state) => state.wish);
+  const dispatch = useDispatch();
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: WISH_LIST_REQUEST,
+    });
+  }, [router.query]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
@@ -159,12 +169,13 @@ const Order = () => {
             >
               주문내역조회
             </Wrapper>
+            {console.log(boughtHistorys)}
             <Wrapper margin={`0 0 110px`}>
-              {testData && testData.length === 0 ? (
+              {boughtHistorys && boughtHistorys.length === 0 ? (
                 <Empty description="주문내역이 없습니다." />
               ) : (
-                testData &&
-                testData.map((data) => {
+                boughtHistorys &&
+                boughtHistorys.map((data) => {
                   return (
                     <>
                       <Wrapper al={`flex-start`}>
@@ -188,7 +199,12 @@ const Order = () => {
                         }
                       >
                         <Wrapper al={`flex-start`} width={`auto`}>
-                          {data.productName}
+                          {data.WishItems[0] &&
+                            data.WishItems[0].Product &&
+                            data.WishItems[0].Product.title}
+                          &nbsp;
+                          {data.WishItems.length - 1 >= 0 &&
+                            `외 ${data.WishItems.length - 1}개`}
                         </Wrapper>
                         <RightArrow />
                       </Wrapper>
@@ -207,7 +223,11 @@ const Order = () => {
                           <Image
                             width={`100px`}
                             height={`100px`}
-                            src={data.productImg}
+                            src={
+                              data.WishItems[0] &&
+                              data.WishItems[0].Product &&
+                              data.WishItems[0].Product.thumbnail
+                            }
                           />
                           <Wrapper
                             width={`calc(100% - 100px)`}
@@ -218,7 +238,7 @@ const Order = () => {
                               주문번호 : {data.orderNum}
                             </Wrapper>
                             <Wrapper width={`auto`}>
-                              결제금액 : {data.payment}원
+                              결제금액 : {numberWithCommas(data.price)}원
                             </Wrapper>
                           </Wrapper>
                         </Wrapper>

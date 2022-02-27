@@ -1,6 +1,14 @@
 import { all, call, delay, fork, put, takeLatest } from "redux-saga/effects";
 import axios from "axios";
 import {
+  WISH_LIST_REQUEST,
+  WISH_LIST_SUCCESS,
+  WISH_LIST_FAILURE,
+  //
+  WISH_LIST_DETAIL_REQUEST,
+  WISH_LIST_DETAIL_SUCCESS,
+  WISH_LIST_DETAIL_FAILURE,
+  //
   WISH_CREATE_REQUEST,
   WISH_CREATE_SUCCESS,
   WISH_CREATE_FAILURE,
@@ -13,6 +21,60 @@ import {
   WISH_WISH_CREATE_SUCCESS,
   WISH_WISH_CREATE_FAILURE,
 } from "../reducers/wish";
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function wishListAPI(data) {
+  return axios.get(`/api/wish/list`, data);
+}
+
+function* wishList(action) {
+  try {
+    const result = yield call(wishListAPI, action.data);
+
+    yield put({
+      type: WISH_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: WISH_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function wishDetailListAPI(data) {
+  return axios.get(`/api/wish/detail/${data.boughtId}`, data);
+}
+
+function* wishDetailList(action) {
+  try {
+    const result = yield call(wishDetailListAPI, action.data);
+
+    yield put({
+      type: WISH_LIST_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: WISH_LIST_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
@@ -71,7 +133,7 @@ function* wishNotUserCreate(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function wishWishCreateAPI(data) {
-  return axios.post(`/api/wish/notUser/wishcreate`, data);
+  return axios.post(`/api/wish/user/wishcreate`, data);
 }
 
 function* wishWishCreate(action) {
@@ -97,6 +159,14 @@ function* wishWishCreate(action) {
 
 //////////////////////////////////////////////////////////////
 
+function* watchWishList() {
+  yield takeLatest(WISH_LIST_REQUEST, wishList);
+}
+
+function* watchWishDetailList() {
+  yield takeLatest(WISH_LIST_DETAIL_REQUEST, wishDetailList);
+}
+
 function* watchWishCreate() {
   yield takeLatest(WISH_CREATE_REQUEST, wishCreate);
 }
@@ -112,6 +182,8 @@ function* watchWishCreateWish() {
 //////////////////////////////////////////////////////////////
 export default function* wishSaga() {
   yield all([
+    fork(watchWishList),
+    fork(watchWishDetailList),
     fork(watchWishCreate),
     fork(watchWishCreateNotUser),
     fork(watchWishCreateWish),

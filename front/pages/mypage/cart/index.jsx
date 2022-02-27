@@ -6,7 +6,7 @@ import wrapper from "../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   RsWrapper,
   WholeWrapper,
@@ -22,13 +22,28 @@ import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { Checkbox, Empty, message } from "antd";
+import { Checkbox, Empty, message, notification } from "antd";
 import styled from "styled-components";
 import { MinusOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import { INTEREST_CREATE_REQUEST } from "../../../reducers/interest";
 import { numberWithCommas } from "../../../components/commonUtils";
 import useInput from "../../../hooks/useInput";
+import {
+  WISH_CREATE_REQUEST,
+  WISH_LIST_REQUEST,
+  WISH_WISH_CREATE_REQUEST,
+} from "../../../reducers/wish";
+
+const LoadNotification = (msg, content) => {
+  notification.open({
+    top: 50,
+    placement: `topRight`,
+    message: msg,
+    description: content,
+    onClick: () => {},
+  });
+};
 
 const CommonCheckBox = styled(Checkbox)`
   .ant-checkbox-checked .ant-checkbox-inner {
@@ -144,19 +159,48 @@ const Cart = () => {
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [localDataum, setLocalDataum] = useState([]);
   const [allPrice, setAllPrice] = useState(0);
+  const [len, setLen] = useState(0);
 
   // 문의
   const inputName = useInput(``);
   const inputMobile = useInput(``);
   const inputContent = useInput(``);
   ////// REDUX //////
+  const dispatch = useDispatch();
 
   const { st_interestCreateDone, st_interestCreateError } = useSelector(
     (state) => state.interest
   );
   const { me } = useSelector((state) => state.user);
 
+  const { historyId, st_boughtHistoryCreateDone, boughtHistorys } = useSelector(
+    (state) => state.wish
+  );
+
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: WISH_LIST_REQUEST,
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    let len = 0;
+    boughtHistorys &&
+      boughtHistorys.map((data) => {
+        len += data.WishItems.length;
+      });
+    setLen(len);
+  }, [boughtHistorys]);
+
+  useEffect(() => {
+    if (isOrderForm) {
+      moveLinkHandler(`/mypage/cart?isOrder=true`);
+    } else {
+      moveLinkHandler(`/mypage/cart`);
+    }
+  }, [isOrderForm]);
 
   useEffect(() => {
     if (me) {
@@ -180,8 +224,6 @@ const Cart = () => {
 
     setDatum(data);
     setLocalDataum(data);
-    // console.log(toggleArr, "<<<");
-    // console.log(isCheck, "<<<");
   }, [router.query]);
 
   useEffect(() => {
@@ -197,9 +239,6 @@ const Cart = () => {
     }
 
     setIsCheck(toggleArr);
-
-    // console.log(toggleArr, "<<<");
-    // console.log(isCheck, "<<<");
   }, [isOrderForm, datum]);
 
   // useEffect(() => {
@@ -232,7 +271,7 @@ const Cart = () => {
     for (let i = 0; i < datum.length; i++) {
       tempData += datum[i].price * datum[i].productNum + datum[i].deliveryPay;
     }
-    console.log(tempData);
+
     setAllPrice(tempData);
   }, [datum]);
 
@@ -243,6 +282,54 @@ const Cart = () => {
       datum && setShowDatum(datum);
     }
   }, [datum, orderDatum, isOrderForm]);
+
+  //order
+
+  useEffect(() => {
+    if (
+      st_boughtHistoryCreateDone
+      // || st_boughtHistoryNotUserCreateDone
+    ) {
+      const prodId = [];
+      const count = [];
+      orderDatum.map((data) => {
+        prodId.push(data.id);
+        count.push(data.productNum);
+      });
+
+      dispatch({
+        type: WISH_WISH_CREATE_REQUEST,
+        data: {
+          BoughtHistoryId: historyId,
+          prodId,
+          count,
+        },
+      });
+
+      let result = [];
+      for (let i = 0; i < datum.length; i++) {
+        for (let j = 0; j < orderDatum.length; j++) {
+          console.log(datum[i].id === orderDatum[j].id);
+          console.log(datum[i].id, orderDatum[j].id);
+          if (datum[i].id === orderDatum[j].id) {
+            result.push(datum[i]);
+            console.log(datum[i]);
+          }
+        }
+      }
+      console.log(result);
+      // localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
+      // setIsOrderForm(false);
+
+      inputContent.setValue(``);
+    }
+  }, [
+    st_boughtHistoryCreateDone,
+    // st_boughtHistoryNotUserCreateDone,
+    historyId,
+    orderDatum,
+    datum,
+  ]);
 
   ////// TOGGLE //////
 
@@ -316,7 +403,6 @@ const Cart = () => {
       });
 
       setIsCheck(result);
-      console.log(result);
     },
     [isCheck]
   );
@@ -348,10 +434,9 @@ const Cart = () => {
       let result = localStorgeDatum.filter((data, idx) => {
         return !isCheck[idx];
       });
-      console.log(isCheck);
-      localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
 
       setDatum(result);
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
     },
     [isCheck, datum]
   );
@@ -375,6 +460,8 @@ const Cart = () => {
     setDatum([]);
   }, []);
 
+  // order
+
   const orderAllHandler = useCallback(() => {
     let checkHandle = isCheck.map(() => {
       return false;
@@ -393,7 +480,7 @@ const Cart = () => {
       });
       setIsCheck(checkHandle);
       setIsCheckAll(false);
-      console.log("<<<");
+
       setIsOrderForm(true);
       setOrderDatum(orderData);
     },
@@ -410,13 +497,12 @@ const Cart = () => {
     let result = datum.filter((data, idx) => {
       return isCheck[idx];
     });
-    console.log(result);
+
     setOrderDatum(result);
     setIsOrderForm(true);
   }, [datum, isCheck]);
 
   const goBackHandler = useCallback(() => {
-    setOrderDatum(null);
     setIsOrderForm(false);
   }, []);
 
@@ -424,10 +510,61 @@ const Cart = () => {
     let result = orderDatum.filter((data, idx) => {
       return !isCheck[idx];
     });
-    console.log(isCheck);
 
     setOrderDatum(result);
   }, [isCheck, orderDatum]);
+
+  // orderMode
+
+  const paymentOrderHandler = useCallback(() => {
+    if (!inputName.value || inputName.value.trim() === "") {
+      return LoadNotification("이름을 입력해주세요.");
+    }
+    if (!inputMobile.value || inputMobile.value.trim() === "") {
+      return LoadNotification("연락처를 입력해주세요.");
+    }
+    if (!inputContent.value || inputContent.value.trim() === "") {
+      return LoadNotification("문의내용을 입력해주세요.");
+    }
+    if (!orderDatum || orderDatum.length === 0) {
+      return LoadNotification(
+        "주문할 상품이 없습니다.",
+        "상품 선택 후 주문해주세요."
+      );
+    }
+
+    const d = new Date();
+
+    let year = d.getFullYear() + "";
+    let month = d.getMonth() + 1 + "";
+    let date = d.getDate() + "";
+    let hour = d.getHours() + "";
+    let min = d.getMinutes() + "";
+    let sec = d.getSeconds() + "";
+    let mSec = d.getMilliseconds() + "";
+
+    month = month < 10 ? "0" + month : month;
+    date = date < 10 ? "0" + date : date;
+    hour = hour < 10 ? "0" + hour : hour;
+    min = min < 10 ? "0" + min : min;
+    sec = sec < 10 ? "0" + sec : sec;
+    mSec = mSec < 10 ? "0" + mSec : mSec;
+
+    let orderPK = "ORD" + year + month + date + hour + min + sec + mSec;
+
+    dispatch({
+      type: WISH_CREATE_REQUEST,
+      data: {
+        orderNum: orderPK,
+        price: allPrice,
+        discount: "-",
+        deliveryPrice: "0",
+        name: inputName.value,
+        content: inputContent.value,
+        mobile: inputMobile.value,
+      },
+    });
+  }, [allPrice, inputName, inputContent, orderDatum]);
 
   ////// DATAVIEW //////
   const testData = [
@@ -553,8 +690,9 @@ const Cart = () => {
                 width={width < 500 ? `150px` : `209px`}
                 height={width < 500 ? `35px` : `53px`}
                 radius={`0`}
+                onClick={() => moveLinkHandler(`/mypage/order`)}
               >
-                배송상품 (2)
+                배송상품 ({len})
               </CommonButton>
             </Wrapper>
             <Wrapper
@@ -564,7 +702,7 @@ const Cart = () => {
               al={`flex-start`}
               bgColor={Theme.lightGrey2_C}
             >
-              일반상품 (2)
+              일반상품 ({showDatum && showDatum.length})
             </Wrapper>
 
             {width < 900 ? (
@@ -837,7 +975,6 @@ const Cart = () => {
                           padding={`0 20px`}
                         >
                           {data.title}
-                          {/* {console.log(data)} */}
                         </Wrapper>
                         <Wrapper
                           width={
@@ -1108,27 +1245,40 @@ const Cart = () => {
               </Wrapper>
             )}
             <Wrapper dr={`row`} position={`relative`} margin={`0 0 120px`}>
-              <Wrapper width={`auto`} dr={`row`}>
-                <Lightgrey1Btn margin={`0 6px 0 0`} onClick={orderHandler}>
-                  선택상품주문
-                </Lightgrey1Btn>
+              {isOrderForm ? (
                 <CommonButton
                   width={width < 500 ? `100px` : `145px`}
                   height={width < 500 ? `35px` : `50px`}
                   fontSize={width < 500 ? `14px` : `18px`}
-                  onClick={orderAllHandler}
+                  onClick={paymentOrderHandler}
                 >
-                  전체상품주문
+                  상품 주문하기
                 </CommonButton>
-              </Wrapper>
-              <Wrapper
-                width={`auto`}
-                position={width < 500 ? `` : `absolute`}
-                right={`0`}
-                margin={width < 500 ? `0 0 0 6px` : `0`}
-              >
-                <Lightgrey1Btn>쇼핑계속하기</Lightgrey1Btn>
-              </Wrapper>
+              ) : (
+                <Wrapper width={`auto`} dr={`row`}>
+                  <Lightgrey1Btn margin={`0 6px 0 0`} onClick={orderHandler}>
+                    선택상품주문
+                  </Lightgrey1Btn>
+                  <CommonButton
+                    width={width < 500 ? `100px` : `145px`}
+                    height={width < 500 ? `35px` : `50px`}
+                    fontSize={width < 500 ? `14px` : `18px`}
+                    onClick={orderAllHandler}
+                  >
+                    전체상품주문
+                  </CommonButton>
+                </Wrapper>
+              )}
+              {!isOrderForm && (
+                <Wrapper
+                  width={`auto`}
+                  position={width < 500 ? `` : `absolute`}
+                  right={`0`}
+                  margin={width < 500 ? `0 0 0 6px` : `0`}
+                >
+                  <Lightgrey1Btn>쇼핑계속하기</Lightgrey1Btn>
+                </Wrapper>
+              )}
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ClientLayout from "../../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../../reducers/seo";
 import Head from "next/head";
@@ -6,7 +6,7 @@ import wrapper from "../../../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   RsWrapper,
   WholeWrapper,
@@ -19,6 +19,8 @@ import Theme from "../../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import styled from "styled-components";
 import { useCallback } from "react";
+import { WISH_LIST_DETAIL_REQUEST } from "../../../../reducers/wish";
+import { numberWithCommas } from "../../../../components/commonUtils";
 
 const DelTag = styled.del`
   color: ${Theme.grey_C};
@@ -35,20 +37,52 @@ const Order = () => {
   const router = useRouter();
 
   ////// HOOKS //////
+
+  const [price, setPrice] = useState(null);
+  const [dPrice, setDPrice] = useState(null);
   ////// REDUX //////
+  const dispatch = useDispatch();
+
+  const { boughtHistoryDetail, deliveryDetail } = useSelector(
+    (state) => state.wish
+  );
+
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: WISH_LIST_DETAIL_REQUEST,
+      data: {
+        boughtId: router.query.id,
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    let pay = 0;
+    let dPay = 0;
+    boughtHistoryDetail &&
+      boughtHistoryDetail[0].WishItems &&
+      boughtHistoryDetail[0].WishItems.map((data) => {
+        pay += data.Product.price;
+        dPay += data.Product.deliveryPay;
+      });
+    setPrice(pay);
+    setDPrice(dPay);
+  }, [boughtHistoryDetail]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
   ////// DATAVIEW //////
-  const testData = {
-    orderNum: "123443122",
-    payment: "1,568,000",
-    productImg:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
-  };
+  // const boughtHistoryDetail = {
+  //   orderNum: "123443122",
+  //   payment: "1,568,000",
+  //   productImg:
+  //     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSxza-raAsJHK8wZ03T55ti77CChtEvLRpCQ&usqp=CAU",
+  // };
 
   return (
     <>
@@ -170,7 +204,8 @@ const Order = () => {
                   주문번호
                 </Wrapper>
                 <Wrapper width={`auto`}>
-                  {testData && testData.orderNum}
+                  {console.log(deliveryDetail)}
+                  {/* {deliveryDetail && deliveryDetail[0].orderNum} */}
                 </Wrapper>
               </Wrapper>
               <Wrapper
@@ -189,7 +224,9 @@ const Order = () => {
                   <Image
                     width={`100px`}
                     height={`100px`}
-                    src={testData && testData.productImg}
+                    src={
+                      boughtHistoryDetail && boughtHistoryDetail[0].productImg
+                    }
                   />
                   <Wrapper
                     width={`calc(100% - 100px)`}
@@ -202,15 +239,21 @@ const Order = () => {
                         주문번호
                       </Wrapper>
                       <Wrapper width={`auto`}>
-                        {testData && testData.orderNum}
+                        {boughtHistoryDetail && boughtHistoryDetail[0].orderNum}
                       </Wrapper>
                     </Wrapper>
                     <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+                      <DelTag>
+                        {boughtHistoryDetail && boughtHistoryDetail[0].price}원
+                      </DelTag>
                       <Wrapper width={`auto`}>
-                        {testData && testData.payment}원
+                        {boughtHistoryDetail && boughtHistoryDetail[0].price}원
                       </Wrapper>
-                      <DelTag>1,200,000원</DelTag>
-                      <Wrapper width={`auto`}>| 1개</Wrapper>
+                      <Wrapper width={`auto`}>
+                        &nbsp;|{" "}
+                        {boughtHistoryDetail &&
+                          boughtHistoryDetail[0].WishItems.length}
+                      </Wrapper>
                     </Wrapper>
                   </Wrapper>
                 </Wrapper>
@@ -229,7 +272,11 @@ const Order = () => {
                     </CommonButton>
                   </Wrapper>
                   <Wrapper width={`107px`} height={`50px`}>
-                    <CommonButton width={`100%`} height={`100%`}>
+                    <CommonButton
+                      width={`100%`}
+                      height={`100%`}
+                      onClick={() => moveLinkHandler(`/mypage/cart`)}
+                    >
                       장바구니
                     </CommonButton>
                   </Wrapper>
@@ -244,16 +291,34 @@ const Order = () => {
               >
                 배송조회
               </Wrapper>
-              <Wrapper
-                dr={`row`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-                borderTop={`1px solid ${Theme.darkGrey_C}`}
-                padding={`60px 20px`}
-                margin={`0 0 65px`}
-                fontSize={`16px`}
-              >
-                배송중 단계부터 배송상태 확인이 가능합니다.
-              </Wrapper>
+              {deliveryDetail && deliveryDetail.length === 0 ? (
+                <Wrapper
+                  dr={`row`}
+                  borderBottom={`1px solid ${Theme.grey2_C}`}
+                  borderTop={`1px solid ${Theme.darkGrey_C}`}
+                  padding={`60px 20px`}
+                  margin={`0 0 65px`}
+                  fontSize={`16px`}
+                >
+                  배송중 단계부터 배송상태 확인이 가능합니다.
+                </Wrapper>
+              ) : (
+                deliveryDetail &&
+                deliveryDetail.map((data, idx) => {
+                  return (
+                    <Wrapper
+                      dr={`row`}
+                      borderBottom={`1px solid ${Theme.grey2_C}`}
+                      borderTop={`1px solid ${Theme.darkGrey_C}`}
+                      padding={`60px 20px`}
+                      margin={`0 0 65px`}
+                      fontSize={`16px`}
+                    >
+                      {data.text}
+                    </Wrapper>
+                  );
+                })
+              )}
               <Wrapper
                 al={`flex-start`}
                 margin={`0 0 11px`}
@@ -277,7 +342,9 @@ const Order = () => {
                   fontSize={`16px`}
                 >
                   <Wrapper width={`auto`}>상품금액</Wrapper>
-                  <Wrapper width={`auto`}>1,200,000원</Wrapper>
+                  <Wrapper width={`auto`}>
+                    {price && numberWithCommas(price)}원
+                  </Wrapper>
                 </Wrapper>
                 <Wrapper
                   dr={`row`}
@@ -286,7 +353,9 @@ const Order = () => {
                   fontSize={`16px`}
                 >
                   <Wrapper width={`auto`}>배송비</Wrapper>
-                  <Wrapper width={`auto`}>0원</Wrapper>
+                  <Wrapper width={`auto`}>
+                    {dPrice && numberWithCommas(dPrice)}원
+                  </Wrapper>
                 </Wrapper>
                 <Wrapper
                   dr={`row`}
@@ -295,7 +364,7 @@ const Order = () => {
                   fontSize={`16px`}
                 >
                   <Wrapper width={`auto`}>상품할인금액</Wrapper>
-                  <Wrapper width={`auto`}>-83,000원</Wrapper>
+                  <Wrapper width={`auto`}>-0원</Wrapper>
                 </Wrapper>
                 <Wrapper
                   dr={`row`}
@@ -304,11 +373,13 @@ const Order = () => {
                   fontSize={`16px`}
                 >
                   <Wrapper width={`auto`}>결제금액</Wrapper>
-                  <Wrapper width={`auto`}>1,117,000원</Wrapper>
+                  <Wrapper width={`auto`}>
+                    {numberWithCommas(price + dPrice)}원
+                  </Wrapper>
                 </Wrapper>
                 <Wrapper dr={`row`} ju={`space-between`} fontSize={`16px`}>
                   <Wrapper width={`auto`}>결제방법</Wrapper>
-                  <Wrapper width={`auto`}>무통장입금</Wrapper>
+                  <Wrapper width={`auto`}>-</Wrapper>
                 </Wrapper>
               </Wrapper>
               <Wrapper
@@ -333,7 +404,7 @@ const Order = () => {
                     주문번호
                   </Wrapper>
                   <Wrapper width={`calc(100% - 182px)`} al={`flex-start`}>
-                    1564564948461
+                    {boughtHistoryDetail && boughtHistoryDetail[0].orderNum}
                   </Wrapper>
                 </Wrapper>
                 <Wrapper dr={`row`} margin={`0 0 25px`}>
@@ -341,7 +412,7 @@ const Order = () => {
                     주문자명
                   </Wrapper>
                   <Wrapper width={`calc(100% - 182px)`} al={`flex-start`}>
-                    이름아무개
+                    {boughtHistoryDetail && boughtHistoryDetail[0].name}
                   </Wrapper>
                 </Wrapper>
                 <Wrapper dr={`row`} margin={`0 0 25px`}>
@@ -357,7 +428,7 @@ const Order = () => {
                     결제일시
                   </Wrapper>
                   <Wrapper width={`calc(100% - 182px)`} al={`flex-start`}>
-                    2022-02-17 14:24:23
+                    -
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
