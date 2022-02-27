@@ -1,27 +1,33 @@
 import React, { useEffect, useState, useCallback } from "react";
-import ClientLayout from "../../../components/ClientLayout";
-import { SEO_LIST_REQUEST } from "../../../reducers/seo";
+import styled from "styled-components";
 import Head from "next/head";
-import wrapper from "../../../store/configureStore";
-import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
 import { useDispatch, useSelector } from "react-redux";
+import { Empty, message, Pagination } from "antd";
+import { useRouter } from "next/dist/client/router";
+import ClientLayout from "../../../components/ClientLayout";
+import { SEO_LIST_REQUEST } from "../../../reducers/seo";
+import wrapper from "../../../store/configureStore";
+import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import {
   RsWrapper,
   WholeWrapper,
   Wrapper,
   Image,
 } from "../../../components/commonComponents";
-
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
-import { useRouter } from "next/dist/client/router";
 import {
   REVIEW_HIT_REQUEST,
   REVIEW_LIST_REQUEST,
 } from "../../../reducers/review";
-import { Empty, message } from "antd";
+
+const CustomPagination = styled(Pagination)`
+  & .ant-pagination-item-active {
+    border: none;
+  }
+`;
 
 const Review = () => {
   ////// GLOBAL STATE //////
@@ -29,9 +35,8 @@ const Review = () => {
     (state) => state.seo
   );
 
-  const { reviewList, st_reviewHitDone, st_reviewHitError } = useSelector(
-    (state) => state.review
-  );
+  const { reviewList, maxPage, st_reviewHitDone, st_reviewHitError } =
+    useSelector((state) => state.review);
 
   console.log(reviewList);
 
@@ -43,6 +48,7 @@ const Review = () => {
   const dispatch = useDispatch();
 
   const [datum, setDatum] = useState(null);
+  const [currentPage, setCurrentPage] = useState(null);
 
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -90,6 +96,17 @@ const Review = () => {
     },
     [datum]
   );
+
+  const otherPageCall = useCallback((changePage) => {
+    setCurrentPage(changePage);
+
+    dispatch({
+      type: REVIEW_LIST_REQUEST,
+      data: {
+        qs: queryString || "",
+      },
+    });
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -265,6 +282,16 @@ const Review = () => {
                     );
                   })
                 ))}
+
+              <CustomPagination
+                size="small"
+                defaultCurrent={1}
+                current={parseInt(currentPage)}
+                total={maxPage * 10}
+                onChange={(page) => otherPageCall(page)}
+                showQuickJumper={false}
+                showSizeChanger={false}
+              />
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
