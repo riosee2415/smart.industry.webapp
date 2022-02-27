@@ -66,6 +66,7 @@ const List = ({ location }) => {
   const {
     questions,
     types,
+    listMaxPage,
     updateModal,
 
     st_questionUpdateDone,
@@ -153,6 +154,17 @@ const List = ({ location }) => {
   }, [st_questionDeleteError]);
 
   ////// TOGGLE //////
+  const otherPageCall = useCallback((changePage) => {
+    setCurrentPage(changePage);
+    const queryString = `?page=${changePage}`;
+
+    dispatch({
+      type: QUESTION_GET_REQUEST,
+      data: {
+        qs: queryString || "",
+      },
+    });
+  }, []);
 
   const updateModalOpen = useCallback(
     (data) => {
@@ -280,6 +292,13 @@ const List = ({ location }) => {
           columns={columns}
           dataSource={questions ? questions.questions : []}
           size="small"
+          pagination={{
+            defaultCurrent: 1,
+            current: parseInt(currentPage),
+
+            total: listMaxPage * 10,
+            onChange: (page) => otherPageCall(page),
+          }}
         />
       </AdminContent>
 
