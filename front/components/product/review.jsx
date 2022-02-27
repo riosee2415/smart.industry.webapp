@@ -9,6 +9,7 @@ import {
   REVIEW_NOTUSER_CREATE_REQUEST,
   REVIEW_PRODUCT_LIST_REQUEST,
   REVIEW_UPLOAD_REQUEST,
+  REVIEW_HIT_REQUEST,
 } from "../../reducers/review";
 import { Wrapper, Image, CommonButton, Text } from "../commonComponents";
 import Theme from "../Theme";
@@ -97,6 +98,9 @@ const Review = () => {
     //
     st_reviewNotUserCreateDone,
     st_reviewNotUserCreateError,
+    //
+    st_reviewHitDone,
+    st_reviewHitError,
   } = useSelector((state) => state.review);
 
   const { me } = useSelector((state) => state.user);
@@ -130,6 +134,17 @@ const Review = () => {
   }, []);
 
   useEffect(() => {
+    if (datum) {
+      dispatch({
+        type: REVIEW_HIT_REQUEST,
+        data: {
+          id: datum.id,
+        },
+      });
+    }
+  }, [datum]);
+
+  useEffect(() => {
     if (st_reviewCreateDone || st_reviewNotUserCreateDone) {
       form.resetFields();
 
@@ -147,6 +162,25 @@ const Review = () => {
       return message.success("작성되었습니다.");
     }
   }, [st_reviewCreateDone, st_reviewNotUserCreateDone]);
+
+  useEffect(() => {
+    if (st_reviewHitDone) {
+      dispatch({
+        type: REVIEW_PRODUCT_LIST_REQUEST,
+        data: {
+          ProductId: router.query.id,
+        },
+      });
+    }
+  }, [st_reviewHitDone]);
+
+  useEffect(() => {
+    if (st_reviewHitError) {
+      dispatch({
+        type: REVIEW_LIST_REQUEST,
+      });
+    }
+  }, [st_reviewHitError]);
 
   useEffect(() => {
     if (st_reviewCreateError) {
@@ -176,7 +210,7 @@ const Review = () => {
       setDatum(data);
 
       if (datum && datum.id === data.id) {
-        setDatum("");
+        setDatum(null);
       }
     },
     [datum]
