@@ -18,7 +18,17 @@ import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import { QUESTION_MY_LIST_REQUEST } from "../../../reducers/question";
 import { useEffect } from "react";
-import { Empty } from "antd";
+import { Empty, Pagination } from "antd";
+import styled from "styled-components";
+import { useState } from "react";
+
+const CustomPagination = styled(Pagination)`
+  margin: 0 0 110px;
+
+  & .ant-pagination-item-active {
+    border: none;
+  }
+`;
 
 const Board = () => {
   ////// GLOBAL STATE //////
@@ -26,11 +36,13 @@ const Board = () => {
     (state) => state.seo
   );
 
-  const { myQuestions } = useSelector((state) => state.question);
+  const { myQuestions, maxPage } = useSelector((state) => state.question);
 
   const width = useWidth();
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   ////// HOOKS //////
   ////// REDUX //////
@@ -41,6 +53,17 @@ const Board = () => {
     });
   }, []);
   ////// TOGGLE //////
+  const otherPageCall = useCallback((changePage) => {
+    setCurrentPage(changePage);
+    const queryString = `?page=${changePage}`;
+
+    dispatch({
+      type: QUESTION_MY_LIST_REQUEST,
+      data: {
+        qs: queryString || "",
+      },
+    });
+  }, []);
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -150,7 +173,7 @@ const Board = () => {
                 <Wrapper width={`15%`}>작성일</Wrapper>
                 <Wrapper width={`15%`}>답변여부</Wrapper>
               </Wrapper>
-              <Wrapper ju={`flex-start`} margin={`0 0 180px`}>
+              <Wrapper ju={`flex-start`}>
                 {myQuestions && myQuestions.length === 0 ? (
                   <Empty description="문의내역이 없습니다." />
                 ) : (
@@ -186,6 +209,15 @@ const Board = () => {
                 )}
               </Wrapper>
             </Wrapper>
+            <CustomPagination
+              size="small"
+              defaultCurrent={1}
+              current={parseInt(currentPage)}
+              total={maxPage * 10}
+              onChange={(page) => otherPageCall(page)}
+              showQuickJumper={false}
+              showSizeChanger={false}
+            />
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>

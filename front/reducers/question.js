@@ -3,6 +3,7 @@ import produce from "../util/produce";
 export const initailState = {
   questions: null,
   myQuestions: null,
+  maxPage: 1,
   myQuestionDetails: null,
   types: null,
 
@@ -139,6 +140,7 @@ const reducer = (state = initailState, action) =>
         draft.st_questionMyListLoading = false;
         draft.st_questionMyListDone = true;
         draft.myQuestions = action.data;
+        draft.maxPage = action.data.lastPage;
         break;
       }
       case QUESTION_MY_LIST_FAILURE: {

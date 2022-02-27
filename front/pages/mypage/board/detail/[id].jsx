@@ -39,7 +39,7 @@ const Notice = () => {
     dispatch({
       type: QUESTION_MY_DETAIL_REQUEST,
       data: {
-        id: parseInt(router.query.id),
+        questionId: router.query.id,
         password: "0",
       },
     });
