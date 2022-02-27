@@ -12,7 +12,6 @@ router.get(
   isAdminCheck,
   async (req, res, next) => {
     const { listType } = req.params;
-    const { page } = req.query;
 
     const LIMIT = 10;
 
@@ -39,28 +38,10 @@ router.get(
 
     try {
       let questions = [];
-      let totalQuestion = [];
-      let lastPage = 0;
-      let questionLen = 0;
 
       switch (_listType) {
         case 1:
-          totalQuestion = await Question.findAll({
-            where: {
-              isCompleted: false,
-            },
-          });
-
-          questionLen = totalQuestion.length;
-
-          lastPage =
-            questionLen % LIMIT > 0
-              ? questionLen / LIMIT + 1
-              : questionLen / LIMIT;
-
           questions = await Question.findAll({
-            offset: OFFSET,
-            limit: LIMIT,
             where: {
               isCompleted: false,
             },
@@ -68,22 +49,7 @@ router.get(
           });
           break;
         case 2:
-          totalQuestion = await Question.findAll({
-            where: {
-              isCompleted: true,
-            },
-          });
-
-          questionLen = totalQuestion.length;
-
-          lastPage =
-            questionLen % LIMIT > 0
-              ? questionLen / LIMIT + 1
-              : questionLen / LIMIT;
-
           questions = await Question.findAll({
-            offset: OFFSET,
-            limit: LIMIT,
             where: {
               isCompleted: true,
             },
@@ -92,18 +58,7 @@ router.get(
           break;
 
         case 3:
-          totalQuestion = await Question.findAll({});
-
-          questionLen = totalQuestion.length;
-
-          lastPage =
-            questionLen % LIMIT > 0
-              ? questionLen / LIMIT + 1
-              : questionLen / LIMIT;
-
           questions = await Question.findAll({
-            offset: OFFSET,
-            limit: LIMIT,
             order: [["createdAt", "DESC"]],
           });
           break;
@@ -111,11 +66,7 @@ router.get(
           break;
       }
 
-      return res.status(200).json({
-        questions,
-        lastPage: parseInt(lastPage),
-        questionLen: parseInt(questionLen),
-      });
+      return res.status(200).json({ questions });
     } catch (error) {
       console.error(error);
       return res
@@ -236,13 +187,11 @@ router.get("/myList", isLoggedIn, async (req, res, next) => {
       return res.status(200).json([]);
     }
 
-    return res
-      .status(200)
-      .json({
-        myList,
-        lastPage: parseInt(lastPage),
-        questionLen: parseInt(questionLen),
-      });
+    return res.status(200).json({
+      myList,
+      lastPage: parseInt(lastPage),
+      questionLen: parseInt(questionLen),
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("");
