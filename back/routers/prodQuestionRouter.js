@@ -1,6 +1,6 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
-const { ProdQuestion, Product, User } = require("../models");
+const { ProdQuestion, Product } = require("../models");
 const { Op } = require("sequelize");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
@@ -8,7 +8,7 @@ const isNanCheck = require("../middlewares/isNanCheck");
 const router = express.Router();
 
 router.post("/list", async (req, res, next) => {
-  const { listType, searchTitle, page } = req.body;
+  const { listType, searchTitle } = req.body;
 
   let nanFlag = isNaN(listType);
 
@@ -26,47 +26,14 @@ router.post("/list", async (req, res, next) => {
     _listType = 3;
   }
 
-  const LIMIT = 10;
-
-  const _page = page ? page : 1;
-
-  const __page = _page - 1;
-  const OFFSET = __page * 10;
-
   const _searchTitle = searchTitle ? searchTitle : "";
 
   try {
     let questions = [];
-    let totalQuestions = [];
-    let questionLen = 0;
-    let lastPage = 0;
 
     switch (_listType) {
       case 1:
-        totalQuestions = await ProdQuestion.findAll({
-          where: {
-            isComplete: false,
-            title: {
-              [Op.like]: `%${_searchTitle}%`,
-            },
-          },
-          include: [
-            {
-              model: Product,
-            },
-          ],
-        });
-
-        questionLen = totalQuestions.length;
-
-        lastPage =
-          questionLen % LIMIT > 0
-            ? questionLen / LIMIT + 1
-            : questionLen / LIMIT;
-
         questions = await ProdQuestion.findAll({
-          offset: OFFSET,
-          limit: LIMIT,
           where: {
             isComplete: false,
             title: {
@@ -82,27 +49,6 @@ router.post("/list", async (req, res, next) => {
         });
         break;
       case 2:
-        totalQuestions = await ProdQuestion.findAll({
-          where: {
-            isComplete: true,
-            title: {
-              [Op.like]: `%${_searchTitle}%`,
-            },
-          },
-          include: [
-            {
-              model: Product,
-            },
-          ],
-        });
-
-        questionLen = totalQuestions.length;
-
-        lastPage =
-          questionLen % LIMIT > 0
-            ? questionLen / LIMIT + 1
-            : questionLen / LIMIT;
-
         questions = await ProdQuestion.findAll({
           where: {
             isComplete: true,
@@ -119,26 +65,6 @@ router.post("/list", async (req, res, next) => {
         });
         break;
       case 3:
-        totalQuestions = await ProdQuestion.findAll({
-          where: {
-            title: {
-              [Op.like]: `%${_searchTitle}%`,
-            },
-          },
-          include: [
-            {
-              model: Product,
-            },
-          ],
-        });
-
-        questionLen = totalQuestions.length;
-
-        lastPage =
-          questionLen % LIMIT > 0
-            ? questionLen / LIMIT + 1
-            : questionLen / LIMIT;
-
         questions = await ProdQuestion.findAll({
           where: {
             title: {
@@ -156,11 +82,7 @@ router.post("/list", async (req, res, next) => {
         break;
     }
 
-    return res.status(200).json({
-      questions,
-      lastPage: parseInt(lastPage),
-      questionLen: parseInt(questionLen),
-    });
+    return res.status(200).json({ questions });
   } catch (error) {
     console.error(error);
     return res.status(401).send("상품 문의 목록을 불러올 수 없습니다.");
