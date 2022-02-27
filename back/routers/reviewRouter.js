@@ -1,7 +1,7 @@
 const express = require("express");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
-const { Review, Product } = require("../models");
+const { Review, Product, BoughtHistory, WishItem } = require("../models");
 const { Op } = require("sequelize");
 const fs = require("fs");
 const multer = require("multer");
@@ -147,20 +147,44 @@ router.post("/create", async (req, res, next) => {
       return res.status(401).send("존재하지 않는 상품입니다.");
     }
 
-    const createResult = await Review.create({
-      title,
-      author,
-      imagePath,
-      content,
-      ProductId: parseInt(ProductId),
-      UserId: parseInt(req.user.id),
+    const boughtProds = await BoughtHistory.findAll({
+      where: { UserId: parseInt(req.user.id), isCompleted: true },
     });
 
-    if (!createResult) {
-      return res.status(401).send("처리중 문제가 발생하였습니다.");
-    }
+    let boughts = [];
 
-    return res.status(201).json({ result: true });
+    await Promise.all(
+      boughtProds.map(async (data) => {
+        boughts = await WishItem.findAll({
+          where: { BoughtHistoryId: parseInt(data.id) },
+        });
+      })
+    );
+
+    const filt = boughts.filter((data) => {
+      return data.ProductId === exProd.id;
+    });
+
+    if (filt.length < 1) {
+      return res
+        .status(401)
+        .send("자신이 구매하지 않는 상품은 리뷰를 작성할 수 없습니다.");
+    } else {
+      const createResult = await Review.create({
+        title,
+        author,
+        imagePath,
+        content,
+        ProductId: parseInt(ProductId),
+        UserId: parseInt(req.user.id),
+      });
+
+      if (!createResult) {
+        return res.status(401).send("처리중 문제가 발생하였습니다.");
+      }
+
+      return res.status(201).json({ result: true });
+    }
   } catch (error) {
     console.error(error);
     return res.status(401).send("후기를 작성할 수 없습니다.");
