@@ -168,7 +168,7 @@ router.post("/create", async (req, res, next) => {
     if (filt.length < 1) {
       return res
         .status(401)
-        .send("자신이 구매하지 않는 상품은 리뷰를 작성할 수 없습니다.");
+        .send("구매하지 않은 상품은 후기를 작성할 수 없습니다.");
     } else {
       const createResult = await Review.create({
         title,
