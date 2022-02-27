@@ -391,10 +391,9 @@ const DetailProduct = () => {
           content={seo_ogImage.length < 1 ? "" : seo_ogImage[0].content}
         />
       </Head>
-      {console.log(productDetailData)}
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`250px`}>
+          <RsWrapper margin={width < 700 ? `80px 0 0` : `240px 0 0`}>
             <Wrapper margin={`40px 0 0`} ju={`flex-start`} dr={`row`}>
               <Wrapper
                 width={`auto`}

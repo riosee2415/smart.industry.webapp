@@ -369,8 +369,73 @@ const ProductList = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper>
-            <Wrapper margin={`280px 0 0`}>
+          <RsWrapper margin={width < 700 ? `80px 0 0` : `240px 0 0`}>
+            <Wrapper margin={`40px 0 48px`}>
+              <Wrapper margin={`0 0 20px`} ju={`flex-start`} dr={`row`}>
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 8px 0 0`}
+                  onClick={() => moveLinkHandler(`/`)}
+                  cursor={`pointer`}
+                >
+                  HOME
+                </Wrapper>
+                |
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 8px`}
+                  onClick={() =>
+                    moveLinkHandler(
+                      `/product?menu=${
+                        productDetailData && productDetailData[0].MenuId
+                      }`
+                    )
+                  }
+                  cursor={`pointer`}
+                >
+                  건셜기계
+                </Wrapper>
+              </Wrapper>
+              <Wrapper position={`relative`}>
+                <Image
+                  width={`100%`}
+                  height={width < 700 ? `200px` : `320px`}
+                  src={
+                    "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/product_bg.png"
+                  }
+                />
+
+                <Wrapper
+                  position={`absolute`}
+                  height={`100%`}
+                  top={`0`}
+                  left={`0`}
+                  bgColor={`rgba(0, 0, 0, 0.6)`}
+                  color={Theme.white_C}
+                >
+                  <Text
+                    fontSize={width < 700 ? `26px` : `36px`}
+                    fontWeight={`bold`}
+                    lineHeight={`1.43`}
+                  >
+                    건설기계
+                  </Text>
+                  <Wrapper
+                    width={`24px`}
+                    height={`4px`}
+                    bgColor={Theme.basicTheme_C}
+                    margin={`5px 0 25px`}
+                  />
+                  <Text lineHeight={`1.19`}>
+                    건설기계 관련 내용이 들어갑니다.
+                  </Text>
+                  <Text lineHeight={`1.19`}>
+                    건설기계 관련 내용이 들어갑니다.
+                  </Text>
+                </Wrapper>
+              </Wrapper>
+            </Wrapper>
+            <Wrapper>
               {!router.query.menu &&
                 !router.query.category &&
                 !router.query.isSale &&
