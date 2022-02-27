@@ -248,14 +248,27 @@ const ProductList = () => {
     router.push(link);
   }, []);
 
+  console.log(
+    router.asPath.substring(0, router.asPath.indexOf("category") + 9)
+  );
+
   const productTypeChangeHandler = useCallback(
     (type) => {
-      router.replace(
-        `${router.asPath.substring(
-          0,
-          router.asPath.indexOf("category") + 9
-        )}${type}`
-      );
+      if (router.asPath.indexOf("category") === -1) {
+        router.replace(
+          `${router.asPath.substring(
+            0,
+            router.asPath.indexOf("menu") + 6
+          )}&category=${type}`
+        );
+      } else {
+        router.replace(
+          `${router.asPath.substring(
+            0,
+            router.asPath.indexOf("category") + 9
+          )}${type}`
+        );
+      }
       setProductType(type);
     },
     [productType]
@@ -377,7 +390,8 @@ const ProductList = () => {
                     <Text
                       fontSize={`20px`}
                       fontWeight={`bold`}
-                      margin={`25px 0`}>
+                      margin={`25px 0`}
+                    >
                       상품검색
                     </Text>
                   </Wrapper>
@@ -397,7 +411,8 @@ const ProductList = () => {
                           key={data.id}
                           bgColor={productType === data.id && Theme.subTheme_C}
                           color={productType === data.id && Theme.white_C}
-                          onClick={() => productTypeChangeHandler(data.id)}>
+                          onClick={() => productTypeChangeHandler(data.id)}
+                        >
                           {data.value}
                         </ProductTypeWrapper>
                       );
@@ -415,7 +430,8 @@ const ProductList = () => {
                   router.query.search
                     ? `0`
                     : `54px 0 0`
-                }>
+                }
+              >
                 <Text fontSize={`14px`}>
                   총&nbsp;
                   <SpanText color={Theme.red_C}>{totalProduct}</SpanText>
@@ -424,7 +440,8 @@ const ProductList = () => {
                 <Wrapper width={`auto`}>
                   <CustomSelect
                     defaultValue="신상품"
-                    onChange={chagneSelectHandler}>
+                    onChange={chagneSelectHandler}
+                  >
                     {selectArr.map((data) => {
                       return <Select.Option value={data}>{data}</Select.Option>;
                     })}
@@ -432,7 +449,8 @@ const ProductList = () => {
                   {selectType === "제조사" && prodCompanyList && (
                     <CustomSelect
                       placeholder="제조사를 선택해주세요."
-                      onChange={chagneSelectCompanyHandler}>
+                      onChange={chagneSelectCompanyHandler}
+                    >
                       {prodCompanyList.map((data) => {
                         return (
                           <Select.Option value={data.id}>
@@ -447,7 +465,8 @@ const ProductList = () => {
               <Wrapper
                 dr={`row`}
                 ju={`flex-start`}
-                margin={width < 700 && `40px 0 0`}>
+                margin={width < 700 && `40px 0 0`}
+              >
                 {productList &&
                   (productList.length === 0 ? (
                     <Wrapper>
@@ -457,12 +476,12 @@ const ProductList = () => {
                     productList.map((data) => {
                       return (
                         <ProductWrapper
-                          onClick={() =>
-                            moveLinkHandler(`/product/${data.id}`)
-                          }>
+                          onClick={() => moveLinkHandler(`/product/${data.id}`)}
+                        >
                           <Wrapper
                             padding={width < 700 ? `0px` : `20px`}
-                            border={`1px solid ${Theme.lightGrey_C}`}>
+                            border={`1px solid ${Theme.lightGrey_C}`}
+                          >
                             <Image
                               width={width < 700 ? `100%` : `216px`}
                               src={data.thumbnail}
@@ -474,11 +493,13 @@ const ProductList = () => {
                           </Text>
                           <Wrapper
                             dr={width < 900 ? `column` : `row`}
-                            fontSize={width < 900 ? `16px` : `18px`}>
+                            fontSize={width < 900 ? `16px` : `18px`}
+                          >
                             <Text
                               margin={width < 900 ? `0` : `0 5px 0 0`}
                               textDecoration={`line-through`}
-                              color={Theme.grey_C}>
+                              color={Theme.grey_C}
+                            >
                               {String(
                                 parseInt(data.price * (data.discount / 100))
                               ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -486,7 +507,8 @@ const ProductList = () => {
                             </Text>
                             <Text
                               margin={width < 900 ? `0` : `0 0 0 5px`}
-                              fontWeight={`bold`}>
+                              fontWeight={`bold`}
+                            >
                               {String(
                                 data.price -
                                   parseInt(data.price * (data.discount / 100))

@@ -285,7 +285,7 @@ const Review = () => {
         </Wrapper>
         {productReivewList &&
           (productReivewList.length === 0 ? (
-            <Wrapper>
+            <Wrapper margin={`100px 0`}>
               <Empty description="상품에 해당하는 후기가 없습니다."></Empty>
             </Wrapper>
           ) : (

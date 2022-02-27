@@ -335,6 +335,9 @@ const DetailProduct = () => {
     setIsModalVisible((prev) => !prev);
   }, []);
 
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
   ////// DATAIVEW //////
 
   return (
@@ -388,11 +391,66 @@ const DetailProduct = () => {
           content={seo_ogImage.length < 1 ? "" : seo_ogImage[0].content}
         />
       </Head>
-
+      {console.log(productDetailData)}
       <ClientLayout>
         <WholeWrapper>
           <RsWrapper>
-            <Wrapper margin={`280px 0 0`}>
+            <Wrapper margin={`280px 0 0`} ju={`flex-start`} dr={`row`}>
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px 0 0`}
+                onClick={() => moveLinkHandler(`/`)}
+                cursor={`pointer`}
+              >
+                HOME
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() =>
+                  moveLinkHandler(
+                    `/product?menu=${
+                      productDetailData && productDetailData[0].MenuId
+                    }`
+                  )
+                }
+                cursor={`pointer`}
+              >
+                건셜기계
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() =>
+                  moveLinkHandler(
+                    `/product?menu=${
+                      productDetailData && productDetailData[0].MenuId
+                    }&category=${
+                      productDetailData && productDetailData[0].CategoryId
+                    }`
+                  )
+                }
+                cursor={`pointer`}
+              >
+                {productDetailData && productDetailData[0].categoryId}
+              </Wrapper>
+              |
+              <Wrapper
+                width={`auto`}
+                margin={`0 8px`}
+                onClick={() =>
+                  moveLinkHandler(
+                    `/product/${productDetailData && productDetailData[0].id}`
+                  )
+                }
+                cursor={`pointer`}
+              >
+                {productDetailData && productDetailData[0].title}
+              </Wrapper>
+            </Wrapper>
+            <Wrapper margin={`60px 0 0`}>
               <Wrapper
                 dr={width < 900 ? `column` : `row`}
                 ju={`space-between`}
