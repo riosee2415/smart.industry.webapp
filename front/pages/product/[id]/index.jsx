@@ -708,7 +708,11 @@ const DetailProduct = () => {
                   <Wrapper dr={`row`} ju={`space-between`}>
                     <CommonButton
                       width={
-                        width < 700 ? `calc(50% - 3px)` : `calc(20% - 6px)`
+                        width < 700
+                          ? `calc(50% - 3px)`
+                          : width < 1280
+                          ? `calc(30% - 6px)`
+                          : `calc(20% - 6px)`
                       }
                       height={`50px`}
                       radius={`0`}
@@ -720,7 +724,11 @@ const DetailProduct = () => {
                     </CommonButton>
                     <CommonButton
                       width={
-                        width < 700 ? `calc(50% - 3px)` : `calc(20% - 6px)`
+                        width < 700
+                          ? `calc(50% - 3px)`
+                          : width < 1280
+                          ? `calc(30% - 6px)`
+                          : `calc(20% - 6px)`
                       }
                       height={`50px`}
                       radius={`0`}
@@ -748,7 +756,9 @@ const DetailProduct = () => {
                     </CommonButton>
                     <CommonButton
                       margin={width < 700 && `6px 0 0`}
-                      width={width < 700 ? `100%` : `60%`}
+                      width={
+                        width < 700 ? `100%` : width < 1280 ? `40%` : `60%`
+                      }
                       height={`50px`}
                       radius={`0`}
                     >

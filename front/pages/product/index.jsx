@@ -560,16 +560,18 @@ const ProductList = () => {
                             dr={width < 900 ? `column` : `row`}
                             fontSize={width < 900 ? `16px` : `18px`}
                           >
-                            <Text
-                              margin={width < 900 ? `0` : `0 5px 0 0`}
-                              textDecoration={`line-through`}
-                              color={Theme.grey_C}
-                            >
-                              {String(
-                                parseInt(data.price * (data.discount / 100))
-                              ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                              원
-                            </Text>
+                            {data.discount > 0 && (
+                              <Text
+                                margin={width < 900 ? `0` : `0 5px 0 0`}
+                                textDecoration={`line-through`}
+                                color={Theme.grey_C}
+                              >
+                                {String(
+                                  parseInt(data.price * (data.discount / 100))
+                                ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                원
+                              </Text>
+                            )}
                             <Text
                               margin={width < 900 ? `0` : `0 0 0 5px`}
                               fontWeight={`bold`}
@@ -581,6 +583,20 @@ const ProductList = () => {
                               원
                             </Text>
                           </Wrapper>
+                          {data.discount > 0 && (
+                            <Wrapper
+                              position={`absolute`}
+                              top={`14px`}
+                              left={`14px`}
+                              color={Theme.white_C}
+                              bgColor={Theme.red_C}
+                              width={`46px`}
+                              height={`46px`}
+                              radius={`200px`}
+                            >
+                              {data.discount}%
+                            </Wrapper>
+                          )}
                         </ProductWrapper>
                       );
                     })
