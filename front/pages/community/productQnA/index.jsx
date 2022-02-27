@@ -15,7 +15,6 @@ import {
   Wrapper,
   Image,
   Text,
-  Pagenation,
 } from "../../../components/commonComponents";
 
 import { useCallback } from "react";
@@ -90,6 +89,8 @@ const Notice = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [prodQnAList, setProdQnAList] = useState([]);
+
+  const [toggle, setToggle] = useState(false);
   ////// REDUX //////
   ////// USEEFFECT //////
 
@@ -99,6 +100,7 @@ const Notice = () => {
       data: {
         listType: 3,
         searchTitle: "",
+        searchAuthor: "",
         page: 1,
       },
     });
@@ -177,21 +179,36 @@ const Notice = () => {
       type: PRODUCT_QUESTION_LIST_REQUEST,
       data: {
         listType: 3,
-        searchTitle: inputSearch.value,
+        searchTitle: selectValue === "제목" ? inputSearch.value : "",
+        searchAuthor: selectValue === "작성자" ? inputSearch.value : "",
         page: 1,
       },
     });
-  }, [inputSearch.value]);
+  }, [inputSearch.value, selectValue]);
 
   const selectValueHandler = useCallback((e) => {
     setSelectValue(e);
   }, []);
 
   const myListHandler = useCallback(() => {
+    setToggle(true);
     dispatch({
       type: PRODUCT_QUESTION_MY_LIST_REQUEST,
     });
   }, []);
+
+  const ListbackHanlder = useCallback(() => {
+    setToggle(false);
+    dispatch({
+      type: PRODUCT_QUESTION_LIST_REQUEST,
+      data: {
+        listType: 3,
+        searchTitle: "",
+        searchAuthor: "",
+        page: 1,
+      },
+    });
+  }, [selectValue, inputSearch.value]);
 
   const ModalHandlerCancel = useCallback(() => {
     ModalToggle();
@@ -450,6 +467,7 @@ const Notice = () => {
                     defaultValue={selectValue}
                     onChange={(e) => selectValueHandler(e)}>
                     <Select.Option value={"제목"}>제목</Select.Option>
+                    <Select.Option value={"작성자"}>작성자</Select.Option>
                   </Select>
                 </Wrapper>
 
@@ -463,6 +481,9 @@ const Notice = () => {
                       height={`100%`}
                       margin={width < 500 ? `0 10px 0 0` : `0 10px 0 26px`}
                       border={`1px solid ${Theme.grey2_C}`}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && searchButtonHanlder()
+                      }
                       {...inputSearch}
                     />
                     <CommonButton
@@ -510,14 +531,27 @@ const Notice = () => {
               )}
 
               {me && (
-                <Wrapper al={`flex-end`} margin={`30px 0 0 0`}>
-                  <CommonButton
-                    width={`100px`}
-                    height={`100%`}
-                    onClick={() => myListHandler()}>
-                    내가 쓴 글
-                  </CommonButton>
-                </Wrapper>
+                <>
+                  {toggle ? (
+                    <Wrapper al={`flex-end`} margin={`30px 0 0 0`}>
+                      <CommonButton
+                        width={`100px`}
+                        height={`100%`}
+                        onClick={() => ListbackHanlder()}>
+                        뒤로가기
+                      </CommonButton>
+                    </Wrapper>
+                  ) : (
+                    <Wrapper al={`flex-end`} margin={`30px 0 0 0`}>
+                      <CommonButton
+                        width={`100px`}
+                        height={`100%`}
+                        onClick={() => myListHandler()}>
+                        내가 쓴 글
+                      </CommonButton>
+                    </Wrapper>
+                  )}
+                </>
               )}
             </Wrapper>
           </RsWrapper>

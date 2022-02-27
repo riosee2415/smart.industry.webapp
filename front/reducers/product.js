@@ -27,6 +27,9 @@ export const initailState = {
   productQuestionDetail: null,
   productAdminQuestionList: null,
   productQuestionListProd: null,
+  productQuestionListProdLastPage: 1,
+  productQuestionListProdLen: 1,
+
   productQuestionMyList: null,
 
   createModal: false,
@@ -749,7 +752,10 @@ const reducer = (state = initailState, action) =>
       case PRODUCT_QUESTION_LIST_PROD_SUCCESS: {
         draft.st_productQuestionListProdLoading = false;
         draft.st_productQuestionListProdDone = true;
-        draft.productQuestionListProd = action.data;
+        draft.productQuestionListProd = action.data.questions;
+        draft.productQuestionListProdLastPage = action.data.lastPage;
+        draft.productQuestionListProdLen = action.data.questionLen;
+
         break;
       }
       case PRODUCT_QUESTION_LIST_PROD_FAILURE: {
