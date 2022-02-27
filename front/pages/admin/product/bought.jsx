@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { Table, Button, Popconfirm, Modal, Image } from "antd";
+import { Table, Button, Popconfirm, Modal, Image, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { END } from "redux-saga";
 import axios from "axios";
@@ -41,10 +41,16 @@ const BoughtList = () => {
   /////////////////////////////////////////////////////////////////////////
 
   ////// HOOKS //////
-  const { adminBoughtList, detailModal } = useSelector((state) => state.wish);
+  const {
+    adminBoughtList,
+    detailModal,
+    st_wishCompletedDone,
+    st_wishCompletedError,
+  } = useSelector((state) => state.wish);
   const dispatch = useDispatch();
 
   const [detailData, setDetailData] = useState(null);
+  const [listType, setListType] = useState(1);
 
   ////// TOGGLE //////
   const detailModalToggle = useCallback(
@@ -61,7 +67,43 @@ const BoughtList = () => {
     [detailModal]
   );
 
-  console.log(detailData);
+  ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_wishCompletedDone) {
+      dispatch({
+        type: WISH_ADMIN_LIST_REQUEST,
+        data: {
+          listType: listType,
+        },
+      });
+
+      return message.success("승인되었습니다.");
+    }
+  }, [st_wishCompletedDone]);
+
+  useEffect(() => {
+    if (st_wishCompletedError) {
+      return message.error(st_wishCompletedError);
+    }
+  }, [st_wishCompletedError]);
+
+  useEffect(() => {
+    dispatch({
+      type: WISH_ADMIN_LIST_REQUEST,
+      data: {
+        listType: listType,
+      },
+    });
+  }, [listType]);
+
+  ////// TOGGLE //////
+  const listTypeHandler = useCallback(
+    (data) => {
+      setListType(data);
+    },
+    [listType]
+  );
 
   ////// HANDLER //////
   const completedUpdate = useCallback((id) => {
@@ -114,13 +156,48 @@ const BoughtList = () => {
         <Popconfirm
           title="승인하시겠습니까?"
           onConfirm={() => completedUpdate(data.id)}
-          okText="삭제"
+          okText="승인"
           cancelText="취소"
         >
           <Button size="small" type="primary">
             승인
           </Button>
         </Popconfirm>
+      ),
+    },
+  ];
+
+  const completedColumns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+    {
+      title: "주문자",
+      dataIndex: "name",
+    },
+    {
+      title: "결제금액",
+      dataIndex: "price",
+      render: (data) =>
+        String(data).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원",
+    },
+    {
+      title: "처리현황",
+      dataIndex: "isCompleted",
+      render: (data) => (data ? "승인" : "미승인"),
+    },
+    {
+      title: "주문일",
+      dataIndex: "createdAt",
+      render: (data) => data.substring(0, 10),
+    },
+    {
+      title: "주문상세",
+      render: (data) => (
+        <Button size="small" onClick={() => detailModalToggle(data)}>
+          주문상세
+        </Button>
       ),
     },
   ];
@@ -133,13 +210,38 @@ const BoughtList = () => {
         subTitle={`홈페이지에서 신청한 상품 주문을 관리할 수 있습니다.`}
       />
       <AdminContent>
+        <Wrapper dr={`row`} ju={`flex-start`}>
+          <Button
+            style={{ width: `70px` }}
+            size="small"
+            type={listType === 1 && "primary"}
+            onClick={() => listTypeHandler(1)}
+          >
+            미승인
+          </Button>
+          <Button
+            style={{ width: `70px`, margin: `0 5px` }}
+            size="small"
+            type={listType === 2 && "primary"}
+            onClick={() => listTypeHandler(2)}
+          >
+            승인
+          </Button>
+          <Button
+            style={{ width: `70px` }}
+            size="small"
+            type={listType === 3 && "primary"}
+            onClick={() => listTypeHandler(3)}
+          >
+            전체조회
+          </Button>
+        </Wrapper>
         <Table
           size="small"
-          columns={columns}
+          columns={listType !== 1 ? completedColumns : columns}
           dataSource={adminBoughtList ? adminBoughtList : []}
         />
       </AdminContent>
-      {console.log(detailData)}
       <Modal
         title="주문상세"
         width={`900px`}

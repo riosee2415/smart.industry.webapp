@@ -60,7 +60,7 @@ function* wishList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function wishAdminListAPI(data) {
-  return axios.get(`/api/wish/admin/list`, data);
+  return axios.get(`/api/wish/admin/list/${data.listType}`);
 }
 
 function* wishAdminList(action) {
@@ -87,7 +87,7 @@ function* wishAdminList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function wishCompletedAPI(data) {
-  return axios.patch(`/api/wish/upadate`, data);
+  return axios.patch(`/api/wish/update`, data);
 }
 
 function* wishCompleted(action) {
