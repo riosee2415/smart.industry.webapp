@@ -12,6 +12,14 @@ router.get(
   isAdminCheck,
   async (req, res, next) => {
     const { listType } = req.params;
+    const { page } = req.query;
+
+    const LIMIT = 10;
+
+    const _page = page ? page : 1;
+
+    const __page = _page - 1;
+    const OFFSET = __page * 10;
 
     let nanFlag = isNaN(listType);
 
@@ -31,28 +39,83 @@ router.get(
 
     try {
       let questions = [];
+      let totalQuestion = [];
+      let lastPage = 0;
+      let questionLen = 0;
 
       switch (_listType) {
         case 1:
+          totalQuestion = await Question.findAll({
+            where: {
+              isCompleted: false,
+            },
+          });
+
+          questionLen = totalQuestion.length;
+
+          lastPage =
+            questionLen % LIMIT > 0
+              ? questionLen / LIMIT + 1
+              : questionLen / LIMIT;
+
           questions = await Question.findAll({
-            where: { isCompleted: false },
-            //
+            offset: OFFSET,
+            limit: LIMIT,
+            where: {
+              isCompleted: false,
+            },
+            order: [["createdAt", "DESC"]],
           });
           break;
         case 2:
+          totalQuestion = await Question.findAll({
+            where: {
+              isCompleted: true,
+            },
+          });
+
+          questionLen = totalQuestion.length;
+
+          lastPage =
+            questionLen % LIMIT > 0
+              ? questionLen / LIMIT + 1
+              : questionLen / LIMIT;
+
           questions = await Question.findAll({
-            where: { isCompleted: true },
-            //
+            offset: OFFSET,
+            limit: LIMIT,
+            where: {
+              isCompleted: true,
+            },
+            order: [["createdAt", "DESC"]],
           });
           break;
+
         case 3:
-          questions = await Question.findAll({});
+          totalQuestion = await Question.findAll({});
+
+          questionLen = totalQuestion.length;
+
+          lastPage =
+            questionLen % LIMIT > 0
+              ? questionLen / LIMIT + 1
+              : questionLen / LIMIT;
+
+          questions = await Question.findAll({
+            offset: OFFSET,
+            limit: LIMIT,
+            order: [["createdAt", "DESC"]],
+          });
           break;
         default:
           break;
       }
 
-      return res.status(200).json(questions);
+      return res.status(200).json({
+        questions,
+        lastPage: parseInt(lastPage),
+        questionLen: parseInt(questionLen),
+      });
     } catch (error) {
       console.error(error);
       return res

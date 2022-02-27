@@ -119,7 +119,7 @@ router.get(
       switch (_listType) {
         case 1:
           boughts = await BoughtHistory.findAll({
-            where: { isComplete: false },
+            where: { isCompleted: false },
             include: [
               {
                 model: WishItem,
@@ -134,7 +134,7 @@ router.get(
           break;
         case 2:
           boughts = await BoughtHistory.findAll({
-            where: { isComplete: true },
+            where: { isCompleted: true },
             include: [
               {
                 model: WishItem,
