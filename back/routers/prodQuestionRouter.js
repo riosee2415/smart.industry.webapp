@@ -160,6 +160,9 @@ router.post("/list", async (req, res, next) => {
             title: {
               [Op.like]: `%${_searchTitle}%`,
             },
+            author: {
+              [Op.like]: `%${_searchAuthor}%`,
+            },
           },
           include: [
             {
