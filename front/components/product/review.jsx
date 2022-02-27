@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { Button, Empty, Form, Input, message, Modal } from "antd";
+import { Button, Empty, Form, Input, message, Modal, notification } from "antd";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -76,6 +76,13 @@ const PreviewGuide = styled.p`
   color: #b1b1b1;
 `;
 
+const LoadNotification = (msg, content) => {
+  notification.open({
+    message: msg,
+    description: content,
+    onClick: () => {},
+  });
+};
 const Review = () => {
   ////// GLOBAL STATE //////
   const {
@@ -178,8 +185,10 @@ const Review = () => {
   const onSubmit = useCallback(
     (data) => {
       if (!reviewImagePath) {
-        LoadNotification("안내", "첨부이미지를 등록해주세요.");
+        return LoadNotification("안내", "첨부이미지를 등록해주세요.");
       }
+
+      console.log(reviewImagePath);
 
       if (me) {
         dispatch({
@@ -187,7 +196,7 @@ const Review = () => {
           data: {
             ProductId: router.query.id,
             title: data.title,
-            author: me,
+            author: me.username,
             imagePath: reviewImagePath,
             content: data.content,
           },
