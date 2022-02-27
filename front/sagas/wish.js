@@ -20,6 +20,10 @@ import {
   WISH_WISH_CREATE_REQUEST,
   WISH_WISH_CREATE_SUCCESS,
   WISH_WISH_CREATE_FAILURE,
+  //
+  WISH_ADMIN_LIST_REQUEST,
+  WISH_ADMIN_LIST_SUCCESS,
+  WISH_ADMIN_LIST_FAILURE,
 } from "../reducers/wish";
 
 // SAGA AREA ********************************************************************************************************
@@ -40,6 +44,33 @@ function* wishList(action) {
     console.error(err);
     yield put({
       type: WISH_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function wishAdminListAPI(data) {
+  return axios.get(`/api/wish/admin/list`, data);
+}
+
+function* wishAdminList(action) {
+  try {
+    const result = yield call(wishAdminListAPI, action.data);
+
+    yield put({
+      type: WISH_ADMIN_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: WISH_ADMIN_LIST_FAILURE,
       error: err.response.data,
     });
   }
@@ -163,6 +194,10 @@ function* watchWishList() {
   yield takeLatest(WISH_LIST_REQUEST, wishList);
 }
 
+function* watchWishAdminList() {
+  yield takeLatest(WISH_ADMIN_LIST_REQUEST, wishAdminList);
+}
+
 function* watchWishDetailList() {
   yield takeLatest(WISH_LIST_DETAIL_REQUEST, wishDetailList);
 }
@@ -183,6 +218,7 @@ function* watchWishCreateWish() {
 export default function* wishSaga() {
   yield all([
     fork(watchWishList),
+    fork(watchWishAdminList),
     fork(watchWishDetailList),
     fork(watchWishCreate),
     fork(watchWishCreateNotUser),
