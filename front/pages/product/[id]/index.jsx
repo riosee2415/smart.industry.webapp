@@ -394,8 +394,8 @@ const DetailProduct = () => {
       {console.log(productDetailData)}
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper>
-            <Wrapper margin={`280px 0 0`} ju={`flex-start`} dr={`row`}>
+          <RsWrapper margin={`250px`}>
+            <Wrapper margin={`40px 0 0`} ju={`flex-start`} dr={`row`}>
               <Wrapper
                 width={`auto`}
                 margin={`0 8px 0 0`}

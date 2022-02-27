@@ -24,6 +24,7 @@ import {
 } from "../../../reducers/review";
 
 const CustomPagination = styled(Pagination)`
+  margin: 0 0 60px;
   & .ant-pagination-item-active {
     border: none;
   }
@@ -164,7 +165,7 @@ const Review = () => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper margin={`250px 0 0`}>
+          <RsWrapper margin={width < 700 ? `80px 0 0` : `250px 0 0`}>
             <Wrapper margin={`40px 0 25px`} ju={`flex-start`} dr={`row`}>
               <Wrapper
                 width={`auto`}
@@ -204,19 +205,50 @@ const Review = () => {
               상품후기
             </Wrapper>
 
-            <Wrapper margin={`0 0 180px`}>
+            <Wrapper margin={width < 700 ? `0 0 40px` : `0 0 180px`}>
               <Wrapper
+                dr={`row`}
                 bgColor={Theme.lightGrey2_C}
                 height={`40px`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
               >
-                <Wrapper width={`5%`}>번호</Wrapper>
-                <Wrapper width={`15%`}>상품명</Wrapper>
-                <Wrapper width={`50%`}>제목</Wrapper>
-                <Wrapper width={`10%`}>작성자</Wrapper>
-                <Wrapper width={`10%`}>작성일</Wrapper>
-                <Wrapper width={`10%`}>조회수</Wrapper>
+                <Wrapper
+                  fontSize={width < 700 && `12px`}
+                  width={width < 700 ? `7%` : `5%`}
+                >
+                  번호
+                </Wrapper>
+                <Wrapper
+                  fontSize={width < 700 && `12px`}
+                  width={width < 700 ? `20%` : `15%`}
+                >
+                  상품명
+                </Wrapper>
+                <Wrapper
+                  fontSize={width < 700 && `12px`}
+                  width={width < 700 ? `25%` : `50%`}
+                >
+                  제목
+                </Wrapper>
+                <Wrapper
+                  fontSize={width < 700 && `12px`}
+                  width={width < 700 ? `15%` : `10%`}
+                >
+                  작성자
+                </Wrapper>
+                <Wrapper
+                  fontSize={width < 700 && `12px`}
+                  width={width < 700 ? `22%` : `10%`}
+                >
+                  작성일
+                </Wrapper>
+                <Wrapper
+                  fontSize={width < 700 && `12px`}
+                  width={width < 700 ? `10%` : `10%`}
+                >
+                  조회수
+                </Wrapper>
               </Wrapper>
               {reviewList &&
                 (reviewList.length === 0 ? (
@@ -235,37 +267,60 @@ const Review = () => {
                           borderBottom={`1px solid ${Theme.grey2_C}`}
                           onClick={() => onClickToggleHandler(data)}
                         >
-                          <Wrapper width={`5%`}>{data.id}</Wrapper>
-                          <Wrapper width={`15%`} dr={`row`}>
+                          <Wrapper width={width < 700 ? `7%` : `5%`}>
+                            {data.id}
+                          </Wrapper>
+                          <Wrapper
+                            fontSize={width < 700 && `12px`}
+                            width={width < 700 ? `20%` : `15%`}
+                            dr={width < 900 ? `column` : `row`}
+                          >
                             <Image
                               width={`50px`}
                               height={`50px`}
                               src={data.Product.thumbnail}
                             />
                             <Wrapper
-                              width={`calc(100% - 50px)`}
+                              width={width < 900 ? `100%` : `calc(100% - 50px)`}
                               al={`flex-start`}
                               padding={`0 0 0 10px`}
                             >
                               {data.Product.title}
                             </Wrapper>
                           </Wrapper>
-                          <Wrapper width={`50%`} al={`flex-start`}>
+                          <Wrapper
+                            fontSize={width < 700 && `12px`}
+                            width={width < 700 ? `25%` : `50%`}
+                            al={`flex-start`}
+                          >
                             {data.title}
                           </Wrapper>
-                          <Wrapper width={`10%`}>{data.author}</Wrapper>
-                          <Wrapper width={`10%`}>
+                          <Wrapper
+                            fontSize={width < 700 && `12px`}
+                            width={width < 700 ? `15%` : `10%`}
+                          >
+                            {data.author}
+                          </Wrapper>
+                          <Wrapper
+                            fontSize={width < 700 && `12px`}
+                            width={width < 700 ? `22%` : `10%`}
+                          >
                             {data.createdAt.substring(0, 10)}
                           </Wrapper>
-                          <Wrapper width={`10%`}>{data.hit}</Wrapper>
+                          <Wrapper
+                            fontSize={width < 700 && `12px`}
+                            width={width < 700 ? `10%` : `10%`}
+                          >
+                            {data.hit}
+                          </Wrapper>
                         </Wrapper>
 
                         {datum && datum.id === data.id && (
                           <Wrapper borderBottom={`1px solid ${Theme.grey2_C}`}>
                             <Wrapper width={`90%`}>
                               <Image
-                                width={`600px`}
-                                height={`600px`}
+                                width={width < 700 ? `100%` : `600px`}
+                                height={width < 700 ? `100%` : `600px`}
                                 src={data.imagePath}
                               />
                             </Wrapper>
@@ -282,17 +337,16 @@ const Review = () => {
                     );
                   })
                 ))}
-
-              <CustomPagination
-                size="small"
-                defaultCurrent={1}
-                current={parseInt(currentPage)}
-                total={maxPage * 10}
-                onChange={(page) => otherPageCall(page)}
-                showQuickJumper={false}
-                showSizeChanger={false}
-              />
             </Wrapper>
+            <CustomPagination
+              size="small"
+              defaultCurrent={1}
+              current={parseInt(currentPage)}
+              total={maxPage * 10}
+              onChange={(page) => otherPageCall(page)}
+              showQuickJumper={false}
+              showSizeChanger={false}
+            />
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
