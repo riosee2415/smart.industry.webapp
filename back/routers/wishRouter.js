@@ -95,7 +95,7 @@ router.get(
   ["/admin/list", "/admin/list/:listType"],
   isAdminCheck,
   async (req, res, next) => {
-    const { listType } = req.body;
+    const { listType } = req.params;
 
     let nanFlag = isNaN(listType);
 
