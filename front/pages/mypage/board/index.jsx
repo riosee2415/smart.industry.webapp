@@ -75,7 +75,7 @@ const Board = () => {
         qs,
       },
     });
-  }, []);
+  }, [router.query]);
   ////// TOGGLE //////
   const otherPageCall = useCallback((changePage) => {
     setCurrentPage(changePage);

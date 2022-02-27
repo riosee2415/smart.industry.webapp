@@ -51,7 +51,9 @@ const Notice = () => {
     });
   }, [router.query]);
 
-  useEffect(() => {
+  ////// TOGGLE //////
+  ////// HANDLER //////
+  const prevHandler = useCallback(() => {
     dispatch({
       type: QUESTION_PREVPAGE_REQUEST,
       data: {
@@ -60,7 +62,7 @@ const Notice = () => {
     });
   }, [router.query]);
 
-  useEffect(() => {
+  const nextHandler = useCallback(() => {
     dispatch({
       type: QUESTION_NEXTPAGE_REQUEST,
       data: {
@@ -68,8 +70,7 @@ const Notice = () => {
       },
     });
   }, [router.query]);
-  ////// TOGGLE //////
-  ////// HANDLER //////
+
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
@@ -265,8 +266,9 @@ const Notice = () => {
                 dr={`row`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
                 display={questionPrev === null ? `none` : `flex`}
-                onClick={() =>
-                  moveLinkHandler(`./${questionPrev && questionPrev.id}`)
+                onClick={
+                  (() => prevHandler(),
+                  moveLinkHandler(`./${questionPrev && questionPrev.id}`))
                 }
                 cursor={`pointer`}
               >
@@ -288,8 +290,9 @@ const Notice = () => {
               <Wrapper
                 dr={`row`}
                 display={questionNext === null ? `none` : `flex`}
-                onClick={() =>
-                  moveLinkHandler(`./${questionNext && questionNext.id}`)
+                onClick={
+                  (() => nextHandler(),
+                  moveLinkHandler(`./${questionNext && questionNext.id}`))
                 }
                 cursor={`pointer`}
               >
