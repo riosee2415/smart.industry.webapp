@@ -37,6 +37,12 @@ import {
 import { Empty, message, Modal, Form, Input, Pagination } from "antd";
 import { useRouter } from "next/router";
 
+const CustomPagination = styled(Pagination)`
+  & .ant-pagination-item-active {
+    border: none;
+  }
+`;
+
 const CustomForm = styled(Form)`
   width: 100%;
 
@@ -654,7 +660,7 @@ const Index = () => {
             </Wrapper>
 
             <Wrapper margin={`0 0 110px`}>
-              <Pagination
+              <CustomPagination
                 size="small"
                 defaultCurrent={1}
                 current={parseInt(currentPage)}
