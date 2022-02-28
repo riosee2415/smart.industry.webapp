@@ -2,11 +2,12 @@ import produce from "../util/produce";
 
 export const initailState = {
   contacts: null,
+  contactTotal: 0,
 
   questionPrev: null,
   questionNext: null,
 
-  listMaxPage: null,
+  listMaxPage: 1,
   //
   st_contactLoading: false, // 문의 정보 가져오기
   st_contactDone: false,
@@ -30,8 +31,9 @@ const reducer = (state = initailState, action) =>
       case CONTACT_GET_SUCCESS: {
         draft.st_contactLoading = false;
         draft.st_contactDone = true;
-        draft.contacts = action.data;
+        draft.contacts = action.data.lists;
         draft.listMaxPage = action.data.lastPage;
+        draft.contactTotal = action.data.leaseLen;
         break;
       }
       case CONTACT_GET_FAILURE: {

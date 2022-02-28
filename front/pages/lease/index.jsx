@@ -29,6 +29,9 @@ import {
 } from "../../components/commonComponents";
 import { CaretDownOutlined, DownCircleTwoTone } from "@ant-design/icons";
 import { useCallback } from "react";
+import { CONTACT_GET_REQUEST } from "../../reducers/contact";
+import { Empty, message } from "antd";
+import { useRouter } from "next/router";
 
 const Index = () => {
   const width = useWidth();
@@ -37,11 +40,23 @@ const Index = () => {
     (state) => state.seo
   );
 
+  const { contacts, contactTotal, listMaxPage } = useSelector(
+    (state) => state.contact
+  );
+
+  console.log(contacts);
+
   ////// HOOKS //////
+
+  const router = useRouter();
+
   const [combo, setCombo] = useState(false);
   const [comboValue, setComboValue] = useState("전체");
   const [combo2, setCombo2] = useState(false);
   const [comboValue2, setComboValue2] = useState("제목");
+
+  const [selectLease, setSelectLease] = useState("제목");
+  const secretInput = useInput("");
 
   ////// REDUX //////
   ////// USEEFFECT //////
@@ -68,6 +83,28 @@ const Index = () => {
     },
     [combo2, comboValue2]
   );
+
+  const secretLeaseHandler = useCallback(
+    (id) => {
+      if (selectLease === id) {
+        return setSelectLease(null);
+      }
+      setSelectLease(id);
+    },
+    [selectLease]
+  );
+
+  const secretCheckMoveHandler = useCallback(
+    (secret) => {
+      if (secretInput.value === secret) {
+        router.push(`lease/${selectLease}`);
+      } else {
+        return message.error("비밀번호가 틀립니다.");
+      }
+    },
+    [secretInput.value, selectLease]
+  );
+
   ////// DATAVIEW //////
 
   return (
@@ -191,109 +228,142 @@ const Index = () => {
                   조회수
                 </Wrapper>
               </Wrapper>
-              <Wrapper
-                dr={`row`}
-                height={`60px`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-              >
-                <Wrapper
-                  fontSize={width < 700 ? `11px` : `14px`}
-                  width={width < 700 ? `40px` : `80px`}
-                  height={`100%`}
-                >
-                  번호
-                </Wrapper>
-                <Wrapper
-                  width={
-                    width < 700
-                      ? `calc(100% - 40px - 80px - 80px)`
-                      : `calc(100% - 80px - 115px - 115px - 115px)`
-                  }
-                  height={`100%`}
-                  dr={`row`}
-                  ju={`flex-start`}
-                >
-                  <Text
-                    fontSize={width < 700 ? `11px` : `14px`}
-                    maxWidth={`calc(100% - 10px - 17px - 58px)`}
-                    width={`auto`}
-                    isEllipsis={true}
-                  >
-                    임대문의&nbsp;
-                  </Text>
-                  <Text fontSize={width < 700 ? `11px` : `14px`}>
-                    [답변완료]
-                  </Text>
-                  <Image
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
-                    margin={`0 0 0 17px`}
-                    width={`10px`}
-                  />
-                </Wrapper>
-                <Wrapper
-                  fontSize={width < 700 ? `11px` : `14px`}
-                  width={width < 700 ? `80px` : `115px`}
-                  height={`100%`}
-                >
-                  대한기계공구
-                </Wrapper>
-                <Wrapper
-                  fontSize={width < 700 ? `11px` : `14px`}
-                  width={`115px`}
-                  height={`100%`}
-                  display={width < 700 ? `none` : `flex`}
-                >
-                  작성일
-                </Wrapper>
-                <Wrapper
-                  fontSize={width < 700 ? `11px` : `14px`}
-                  width={width < 700 ? `80px` : `115px`}
-                  height={`100%`}
-                >
-                  조회수
-                </Wrapper>
-              </Wrapper>
-              <Wrapper
-                dr={`row`}
-                ju={`flex-start`}
-                padding={`20px 0`}
-                bgColor={Theme.lightGrey2_C}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-              >
-                <Wrapper width={width < 700 ? `40px` : `80px`}></Wrapper>
-                <Wrapper
-                  width={
-                    width < 700 ? `calc(100% - 40px)` : `calc(100% - 80px)`
-                  }
-                  al={`flex-start`}
-                >
-                  <Text
-                    fontSize={width < 700 ? `11px` : `14px`}
-                    margin={`0 0 10px`}
-                  >
-                    <SpanText color={Theme.red_C}>비공개 글 입니다.</SpanText>{" "}
-                    글 작성시 입력한 비밀번호를 입력해주세요.
-                  </Text>
-
-                  <Wrapper dr={`row`} width={`auto`}>
-                    <TextInput
-                      width={width < 700 ? `100px` : `150px`}
-                      height={`25px`}
-                      border={`1px solid ${Theme.grey3_C}`}
-                      margin={`0 10px 0 0`}
-                    />
-                    <CommonButton
-                      kindOf={`darkgrey`}
-                      width={width < 700 ? `30px` : `37px`}
-                      height={`25px`}
-                      fontSize={width < 700 ? `11px` : `14px`}
-                      padding={`0`}
-                    >
-                      확인
-                    </CommonButton>
+              {contacts &&
+                (contacts.length === 0 ? (
+                  <Wrapper>
+                    <Empty description="임대문의가 없습니다." />
                   </Wrapper>
-                </Wrapper>
-              </Wrapper>
+                ) : (
+                  contacts.map((data) => {
+                    return (
+                      <>
+                        <Wrapper
+                          onClick={() =>
+                            data.secret && secretLeaseHandler(data.id)
+                          }
+                          dr={`row`}
+                          height={`60px`}
+                          borderBottom={`1px solid ${Theme.grey2_C}`}
+                          cursor={`pointer`}
+                        >
+                          <Wrapper
+                            fontSize={width < 700 ? `11px` : `14px`}
+                            width={width < 700 ? `40px` : `80px`}
+                            height={`100%`}
+                          >
+                            {data.id}
+                          </Wrapper>
+                          <Wrapper
+                            width={
+                              width < 700
+                                ? `calc(100% - 40px - 80px - 80px)`
+                                : `calc(100% - 80px - 115px - 115px - 115px)`
+                            }
+                            height={`100%`}
+                            dr={`row`}
+                            ju={`flex-start`}
+                          >
+                            <Text
+                              fontSize={width < 700 ? `11px` : `14px`}
+                              maxWidth={`calc(100% - 10px - 17px - 58px)`}
+                              width={`auto`}
+                              isEllipsis={true}
+                            >
+                              임대문의&nbsp;
+                            </Text>
+                            {data.answer && (
+                              <Text fontSize={width < 700 ? `11px` : `14px`}>
+                                [답변완료]
+                              </Text>
+                            )}
+                            {data.secret && (
+                              <Image
+                                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
+                                margin={`0 0 0 17px`}
+                                width={`10px`}
+                              />
+                            )}
+                          </Wrapper>
+                          <Wrapper
+                            fontSize={width < 700 ? `11px` : `14px`}
+                            width={width < 700 ? `80px` : `115px`}
+                            height={`100%`}
+                          >
+                            {data.author}
+                          </Wrapper>
+                          <Wrapper
+                            fontSize={width < 700 ? `11px` : `14px`}
+                            width={`115px`}
+                            height={`100%`}
+                            display={width < 700 ? `none` : `flex`}
+                          >
+                            {data.createdAt}
+                          </Wrapper>
+                          <Wrapper
+                            fontSize={width < 700 ? `11px` : `14px`}
+                            width={width < 700 ? `80px` : `115px`}
+                            height={`100%`}
+                          >
+                            {data.hit}
+                          </Wrapper>
+                        </Wrapper>
+                        {selectLease === data.id && (
+                          <Wrapper
+                            dr={`row`}
+                            ju={`flex-start`}
+                            padding={`20px 0`}
+                            bgColor={Theme.lightGrey2_C}
+                            borderBottom={`1px solid ${Theme.grey2_C}`}
+                          >
+                            <Wrapper
+                              width={width < 700 ? `40px` : `80px`}
+                            ></Wrapper>
+                            <Wrapper
+                              width={
+                                width < 700
+                                  ? `calc(100% - 40px)`
+                                  : `calc(100% - 80px)`
+                              }
+                              al={`flex-start`}
+                            >
+                              <Text
+                                fontSize={width < 700 ? `11px` : `14px`}
+                                margin={`0 0 10px`}
+                              >
+                                <SpanText color={Theme.red_C}>
+                                  비공개 글 입니다.
+                                </SpanText>{" "}
+                                글 작성시 입력한 비밀번호를 입력해주세요.
+                              </Text>
+
+                              <Wrapper dr={`row`} width={`auto`}>
+                                <TextInput
+                                  width={width < 700 ? `100px` : `150px`}
+                                  height={`25px`}
+                                  border={`1px solid ${Theme.grey3_C}`}
+                                  margin={`0 10px 0 0`}
+                                  {...secretInput}
+                                />
+                                <CommonButton
+                                  kindOf={`darkgrey`}
+                                  width={width < 700 ? `30px` : `37px`}
+                                  height={`25px`}
+                                  fontSize={width < 700 ? `11px` : `14px`}
+                                  padding={`0`}
+                                  onClick={() =>
+                                    secretCheckMoveHandler(data.secret)
+                                  }
+                                >
+                                  확인
+                                </CommonButton>
+                              </Wrapper>
+                            </Wrapper>
+                          </Wrapper>
+                        )}
+                      </>
+                    );
+                  })
+                ))}
             </Wrapper>
 
             <Wrapper al={`flex-end`} margin={`0 0 60px`}>
@@ -434,6 +504,14 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: CONTACT_GET_REQUEST,
+      data: {
+        page: 1,
+        type: "임대문의",
+      },
     });
 
     // 구현부 종료
