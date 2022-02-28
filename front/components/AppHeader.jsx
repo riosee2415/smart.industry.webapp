@@ -302,7 +302,7 @@ const AppHeader = () => {
               <>
                 <Link href={`/mypage/order`}>
                   <a>
-                    <Text fontSize={`12px`}>주문조회</Text>
+                    <Text>주문조회</Text>
                   </a>
                 </Link>
                 <Link href={`/mypage`}>
@@ -315,7 +315,7 @@ const AppHeader = () => {
               <>
                 <Link href={`/login`}>
                   <a>
-                    <Text margin={`0 0 0 30px`}>로그인</Text>
+                    <Text>로그인</Text>
                   </a>
                 </Link>
                 <Link href={`/user/signup`}>
