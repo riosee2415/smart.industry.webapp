@@ -37,8 +37,7 @@ module.exports = class Question extends Model {
         },
         password: {
           type: DataTypes.STRING(10),
-          allowNull: false,
-          defaultValue: false,
+          allowNull: true,
         },
         answer: {
           type: DataTypes.TEXT, // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME

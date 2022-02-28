@@ -13,13 +13,6 @@ router.get(
   async (req, res, next) => {
     const { listType } = req.params;
 
-    const LIMIT = 10;
-
-    const _page = page ? page : 1;
-
-    const __page = _page - 1;
-    const OFFSET = __page * 10;
-
     let nanFlag = isNaN(listType);
 
     if (!listType) {
@@ -89,12 +82,14 @@ router.get("/detail/:questionId", async (req, res, next) => {
       return res.status(401).send("존재하지 않는 문의 입니다.");
     }
 
-    if (!password) {
-      return res.status(401).send("비밀번호를 입력 해주세요.");
-    }
+    if (exQuestion.password !== null) {
+      if (!password) {
+        return res.status(401).send("비밀번호를 입력해주세요.");
+      }
 
-    if (String(password) !== exQuestion.password) {
-      return res.status(401).send("비밀번호가 일치하지 않습니다.");
+      if (String(password) !== exQuestion.password) {
+        return res.status(401).send("비밀번호가 일치하지 않습니다.");
+      }
     }
 
     return res.status(200).json(exQuestion);
@@ -199,7 +194,7 @@ router.get("/myList", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const { author, mobile, email, title, content, term, password } = req.body;
+  const { author, mobile, email, title, content, term } = req.body;
 
   try {
     const createResult = await Question.create({
@@ -209,7 +204,6 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       title,
       content,
       term,
-      password,
       UserId: parseInt(req.user.id),
     });
 
