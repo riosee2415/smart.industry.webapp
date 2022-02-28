@@ -120,33 +120,29 @@ router.post("/list", async (req, res, next) => {
   }
 });
 
-router.post("/detail", async (req, res, next) => {
-  const { id, secret } = req.body;
+router.get("/detail/:leaseId", async (req, res, next) => {
+  const { leaseId } = req.params;
+
+  if (isNanCheck(leaseId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
   try {
     const exLease = await Lease.findOne({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(leaseId) },
     });
 
     if (!exLease) {
       return res.status(401).send("존재하지 않는 문의입니다.");
     }
 
-    if (!secret) {
-      return res.status(401).send("비밀번호를 입력하여 주세요.");
-    }
-
     const nextHit = exLease.hit;
-
-    if (String(secret) !== exLease.secret) {
-      return res.status(401).send("비밀번호가 일치하지 않습니다.");
-    }
 
     await Lease.update(
       {
         hit: nextHit + 1,
       },
       {
-        where: { id: parseInt(id) },
+        where: { id: parseInt(leaseId) },
       }
     );
 
