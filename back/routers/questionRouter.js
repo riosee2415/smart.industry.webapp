@@ -99,7 +99,7 @@ router.get("/detail/:questionId", async (req, res, next) => {
   }
 });
 
-router.get("/next/:questionId", async (req, res, next) => {
+router.get("/next/:questionId", isLoggedIn, async (req, res, next) => {
   const { questionId } = req.params;
 
   try {
@@ -108,7 +108,7 @@ router.get("/next/:questionId", async (req, res, next) => {
         id: {
           [Op.gt]: parseInt(questionId),
         },
-        isDelete: false,
+        UserId: parseInt(req.user.id),
       },
       limit: 1,
     });
@@ -124,7 +124,7 @@ router.get("/next/:questionId", async (req, res, next) => {
   }
 });
 
-router.get("/prev/:questionId", async (req, res, next) => {
+router.get("/prev/:questionId", isLoggedIn, async (req, res, next) => {
   const { questionId } = req.params;
 
   try {
@@ -133,7 +133,7 @@ router.get("/prev/:questionId", async (req, res, next) => {
         id: {
           [Op.lt]: parseInt(questionId),
         },
-        isDelete: false,
+        UserId: parseInt(req.user.id),
       },
     });
 
