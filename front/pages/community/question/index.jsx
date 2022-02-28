@@ -127,6 +127,10 @@ const Question = () => {
       inputContent.setValue("");
     }
   }, [st_notUserCreateDone]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {

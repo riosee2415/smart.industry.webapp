@@ -351,6 +351,10 @@ const Home = ({}) => {
     };
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// TOGGLE //////
 
   const isHeartToggle = useCallback(() => {
@@ -838,7 +842,11 @@ const Home = ({}) => {
                         </Text>
                       </Wrapper>
                       <Wrapper al={`flex-end`}>
-                        <MainBottomButton>보러가기</MainBottomButton>
+                        <MainBottomButton
+                          onClick={() => moveLinkHandler(`/community/notice`)}
+                        >
+                          보러가기
+                        </MainBottomButton>
                       </Wrapper>
                     </Wrapper>
                   </MainBlackBackWrapper>
@@ -862,7 +870,11 @@ const Home = ({}) => {
                         </Text>
                       </Wrapper>
                       <Wrapper al={`flex-end`}>
-                        <MainBottomButton>보러가기</MainBottomButton>
+                        <MainBottomButton
+                          onClick={() => moveLinkHandler(`/community/question`)}
+                        >
+                          보러가기
+                        </MainBottomButton>
                       </Wrapper>
                     </Wrapper>
                   </MainBlackBackWrapper>
