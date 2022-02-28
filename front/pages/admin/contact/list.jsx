@@ -12,6 +12,7 @@ import {
   Input,
   message,
   Popconfirm,
+  Select,
 } from "antd";
 
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
@@ -73,7 +74,8 @@ const List = ({ location }) => {
   ////// HOOKS //////
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectType, setSelectType] = useState(3);
+  const [selectType, setSelectType] = useState(1);
+  const [selectValue, setSelectValue] = useState(null);
   const [updateData, setUpdateData] = useState(null);
   const answerInput = useInput("");
 
@@ -83,15 +85,11 @@ const List = ({ location }) => {
       type: CONTACT_GET_REQUEST,
       data: {
         page: currentPage,
-        isCompleted:
-          selectType === 1
-            ? null
-            : selectType === 2
-            ? true
-            : selectType === 3 && false,
+        listType: selectType,
+        type: selectValue,
       },
     });
-  }, [selectType]);
+  }, [selectType, selectValue]);
 
   useEffect(() => {
     if (st_contactCompletedDone) {
@@ -99,12 +97,8 @@ const List = ({ location }) => {
         type: CONTACT_GET_REQUEST,
         data: {
           page: currentPage,
-          isCompleted:
-            selectType === 1
-              ? null
-              : selectType === 2
-              ? true
-              : selectType === 3 && false,
+          listType: selectType,
+          type: selectValue,
         },
       });
       dispatch({
@@ -141,8 +135,18 @@ const List = ({ location }) => {
 
   ////// HANDLER //////
 
+  const selectChangeHandler = useCallback(
+    (data) => {
+      setSelectValue(data);
+    },
+    [selectValue]
+  );
+
   const selectTypeHandler = useCallback(
     (type) => {
+      if (type === 3) {
+        setSelectValue(null);
+      }
       setSelectType(type);
     },
     [selectType]
@@ -166,12 +170,8 @@ const List = ({ location }) => {
         type: CONTACT_GET_REQUEST,
         data: {
           page: changePage,
-          isCompleted:
-            selectType === 1
-              ? null
-              : selectType === 2
-              ? true
-              : selectType === 3 && false,
+          listType: selectType,
+          type: selectValue,
         },
       });
     },
@@ -202,7 +202,7 @@ const List = ({ location }) => {
     },
     {
       title: "처리여부",
-      render: (data) => <div>{data.isCompleted ? `완료` : `미완료`}</div>,
+      render: (data) => <div>{data.isCompleted ? `처리` : `미처리`}</div>,
     },
     ,
     {
@@ -280,8 +280,8 @@ const List = ({ location }) => {
             <Button
               style={{ width: `70px` }}
               size="small"
-              type={selectType === 3 && "primary"}
-              onClick={() => selectTypeHandler(3)}
+              type={selectType === 1 && "primary"}
+              onClick={() => selectTypeHandler(1)}
             >
               미처리
             </Button>
@@ -300,11 +300,25 @@ const List = ({ location }) => {
             <Button
               style={{ width: `70px` }}
               size="small"
-              type={selectType === 1 && "primary"}
-              onClick={() => selectTypeHandler(1)}
+              type={selectType === 3 && "primary"}
+              onClick={() => selectTypeHandler(3)}
             >
               전체
             </Button>
+          </Col>
+
+          <Col>
+            <Select
+              style={{ width: `170px` }}
+              size="small"
+              placeholder={"종류를 선택해주세요."}
+              onChange={selectChangeHandler}
+              value={selectValue}
+            >
+              <Select.Option value={"임대문의"}>임대문의</Select.Option>
+              <Select.Option value={"사업자문의"}>사업자문의</Select.Option>
+              <Select.Option value={"장비판매의뢰"}>장비판매의뢰</Select.Option>
+            </Select>
           </Col>
         </RowWrapper>
         <Table
