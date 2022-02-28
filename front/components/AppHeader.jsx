@@ -296,7 +296,7 @@ const AppHeader = () => {
 
   useEffect(() => {
     if (st_userLogoutDone) {
-      router.push("/");
+      router.replace("/");
       return message.success("로그아웃 되었습니다.");
     }
   }, [st_userLogoutDone]);
@@ -354,7 +354,7 @@ const AppHeader = () => {
               </>
             )}
 
-            {headerScroll && (
+            {headerScroll ? (
               <Wrapper
                 width={`290px`}
                 position={`relative`}
@@ -386,6 +386,8 @@ const AppHeader = () => {
                   </Wrapper>
                 </CustomForm>
               </Wrapper>
+            ) : (
+              ""
             )}
           </RsWrapper>
         </Wrapper>
