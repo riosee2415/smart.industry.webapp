@@ -174,7 +174,11 @@ const AdminMenu = () => {
           icon={<PhoneOutlined />}
           title="문의 관리"
           onTitleClick={titleClickHandler("sub6")}
-        ></SubMenu>
+        >
+          <Menu.Item key="/admin/contact/list">
+            <MenuName>문의 리스트</MenuName>
+          </Menu.Item>
+        </SubMenu>
         <SubMenu
           key="sub8"
           icon={<GiftOutlined />}

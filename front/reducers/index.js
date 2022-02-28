@@ -17,6 +17,7 @@ import faq from "./faq";
 import interest from "./interest";
 import wish from "./wish";
 import review from "./review";
+import contact from "./contact";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -43,6 +44,7 @@ const rootReducer = (state, action) => {
           interest,
           wish,
           review,
+          contact,
         });
         return combinedReducer(state, action);
       }
