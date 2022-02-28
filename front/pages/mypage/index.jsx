@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../reducers/seo";
 import Head from "next/head";

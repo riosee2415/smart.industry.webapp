@@ -300,7 +300,11 @@ const AppHeader = () => {
           <RsWrapper dr={`row`} ju={`flex-end`} fontSize={`14px`}>
             {me ? (
               <>
-                <Text margin={`0 0 0 30px`}>주문조회</Text>
+                <Link href={`/mypage/order`}>
+                  <a>
+                    <Text fontSize={`12px`}>주문조회</Text>
+                  </a>
+                </Link>
                 <Link href={`/mypage`}>
                   <a>
                     <Text margin={`0 0 0 30px`}>마이페이지</Text>
@@ -768,10 +772,13 @@ const AppHeader = () => {
               borderBottom={`1px solid ${Theme.lightGrey_C}`}
               padding={`0 0 15px`}
             >
-              {" "}
               {me ? (
                 <>
-                  <Text fontSize={`12px`}>주문조회</Text>
+                  <Link href={`/mypage/order`}>
+                    <a>
+                      <Text fontSize={`12px`}>주문조회</Text>
+                    </a>
+                  </Link>
                   <Link href={`/mypage`}>
                     <a>
                       <Text fontSize={`12px`} margin={`0 0 0 20px`}>
