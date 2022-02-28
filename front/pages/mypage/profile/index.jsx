@@ -591,6 +591,7 @@ const Profile = () => {
                       al={`flex-start`}
                     >
                       <CustomConInput
+                        type="password"
                         {...inputOriginPassword}
                         width={width < 900 ? `100%` : `70%`}
                       />
@@ -608,6 +609,7 @@ const Profile = () => {
                       al={`flex-start`}
                     >
                       <CustomConInput
+                        type="password"
                         {...inputPassword}
                         width={width < 900 ? `100%` : `70%`}
                       />
@@ -625,6 +627,7 @@ const Profile = () => {
                       al={`flex-start`}
                     >
                       <CustomConInput
+                        type="password"
                         {...inputPasswordCheck}
                         width={width < 900 ? `100%` : `70%`}
                       />
