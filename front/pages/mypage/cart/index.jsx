@@ -225,6 +225,9 @@ const Cart = () => {
     if (me) {
       inputName.setValue(me.username);
       inputMobile.setValue(me.mobile);
+    } else {
+      message.error(`로그인 후애 이용 가능합니다.`);
+      router.push(`/`);
     }
   }, []);
 
@@ -325,24 +328,18 @@ const Cart = () => {
         },
       });
 
-      // // console.log(orderDatum);
-      // let result = [];
-      // for (let i = 0; i < datum.length; i++) {
-      //   for (let j = 0; j < orderDatum.length; j++) {
-      //     if (datum[i].id !== orderDatum[j].id) {
-      //       // result.push(datum[i]);
-      //       console.log(datum[i].id);
-      //       // console.log(orderDatum[j].id);
-      //     }
-      //   }
-      // }
-      // console.log(datum);
-
-      // console.log(result);
-      // localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
-      setIsOrderForm(false);
-
       inputContent.setValue(``);
+
+      let tempArr = datum.map(JSON.stringify);
+      let tempArr2 = orderDatum.map(JSON.stringify);
+
+      const difference = tempArr.filter((x) => !tempArr2.includes(x));
+      const result = difference.map(JSON.parse);
+
+      console.log(result);
+
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
+      moveLinkHandler(`/mypage/cart`);
     }
   }, [
     st_boughtHistoryCreateDone,

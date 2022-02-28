@@ -330,7 +330,7 @@ const DetailProduct = () => {
     }
 
     setCartDatum(resultData);
-    // localStorage.setItem("WKDQKRNSL", JSON.stringify(resultData));
+    localStorage.setItem("WKDQKRNSL", JSON.stringify(resultData));
 
     // dispatch({
     //   type: UPDATE_WISHLIST,
