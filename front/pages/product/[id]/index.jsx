@@ -16,6 +16,8 @@ import {
   Image,
   SpanText,
   CommonButton,
+  TextInput,
+  TextArea,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 import useWidth from "../../../hooks/useWidth";
@@ -124,10 +126,13 @@ const DetailProduct = () => {
 
   //cart
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModal2Visible, setIsModal2Visible] = useState(false);
+  const [isModal3Visible, setIsModal3Visible] = useState(false);
 
   const [prevStorge, setPrevStorge] = useState([]);
 
   const [youtubeLink, setYoutubeLink] = useState(null);
+  const [cartDatum, setCartDatum] = useState(null);
 
   ////// USEEFFECT //////
 
@@ -141,6 +146,8 @@ const DetailProduct = () => {
     dispatch({
       type: INTEREST_LIST_REQUEST,
     });
+
+    setCartDatum(JSON.parse(localStorage.getItem("WKDQKRNSL")));
   }, [router.query]);
 
   useEffect(() => {
@@ -281,9 +288,10 @@ const DetailProduct = () => {
       // });
 
       localStorage.setItem("WKDQKRNSL", JSON.stringify(resultDatum));
+      setCartDatum(resultDatum);
       ModalToggle();
     },
-    [productCount, prevStorge, productDetailData]
+    [productCount, prevStorge, productDetailData, cartDatum]
   );
 
   const basketHandler = useCallback(() => {
@@ -321,7 +329,8 @@ const DetailProduct = () => {
       message.success("상품이 장바구니에 담겼습니다.");
     }
 
-    localStorage.setItem("WKDQKRNSL", JSON.stringify(resultData));
+    setCartDatum(resultData);
+    // localStorage.setItem("WKDQKRNSL", JSON.stringify(resultData));
 
     // dispatch({
     //   type: UPDATE_WISHLIST,
@@ -338,6 +347,20 @@ const DetailProduct = () => {
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
+  const orderHandler = useCallback(() => {
+    const data = {
+      id: productDetailData[0].id,
+      thumbnail: productDetailData[0].thumbnail,
+      title: productDetailData[0].title,
+      productNum: productCount,
+      price: productDetailData[0].price,
+      discount: productDetailData[0].discount,
+      deliveryPay: productDetailData[0].deliveryPay,
+    };
+    localStorage.setItem("WNANSGKRL", JSON.stringify(data));
+    moveLinkHandler(`/mypage/cart?from=prod`);
+  }, [productDetailData]);
   ////// DATAIVEW //////
 
   return (
@@ -712,7 +735,7 @@ const DetailProduct = () => {
                       radius={`0`}
                       color={Theme.black_C}
                       kindOf={`color`}
-                      onClick={basketHandler}
+                      onClick={() => setIsModal2Visible(true)}
                     >
                       장바구니
                     </CommonButton>
@@ -749,6 +772,7 @@ const DetailProduct = () => {
                       width={width < 700 ? `100%` : `60%`}
                       height={`50px`}
                       radius={`0`}
+                      onClick={orderHandler}
                     >
                       주문하기
                     </CommonButton>
@@ -854,6 +878,120 @@ const DetailProduct = () => {
             <Wrapper>
               <Text>장바구니에 동일한 상품이 있습니다.</Text>
               <Text>장바구니에 추가하시겠습니까?</Text>
+            </Wrapper>
+          </Modal>
+          <Modal
+            centered={true}
+            visible={isModal2Visible}
+            footer={null}
+            closable={false}
+            width={`700px`}
+            border={`1px solid ${Theme.basicTheme_C}`}
+          >
+            <Wrapper al={`flex-start`} margin={`0 0 17px`}>
+              <CommonButton
+                onClick={basketHandler}
+                width={width < 700 ? `85px` : `120px`}
+                padding={`0`}
+                height={`40px`}
+              >
+                장바구니 담기
+              </CommonButton>
+            </Wrapper>
+            <Wrapper padding={`0 20px`}>
+              <Wrapper
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+                margin={`0 0 20px`}
+                al={`flex-start`}
+                ju={`flex-start`}
+                maxHeight={`250px`}
+                padding={`0 0 14px`}
+              >
+                <Text>
+                  총&nbsp;<SpanText>{cartDatum && cartDatum.length}</SpanText>개
+                </Text>
+              </Wrapper>
+              <Wrapper
+                dr={`row`}
+                al={`flex-start`}
+                ju={`flex-start`}
+                maxHeight={`280px`}
+                overflowY={`scroll`}
+              >
+                {cartDatum &&
+                  cartDatum.map((data, idx) => {
+                    return (
+                      <Wrapper
+                        width={`calc(100% / 3 - 14px)`}
+                        margin={
+                          (idx + 1) % 3 === 0 ? `0 0 30px` : `0 20px 30px 0`
+                        }
+                        al={`flex-start`}
+                      >
+                        <Wrapper
+                          position={`relative`}
+                          height={`0`}
+                          padding={`0 0 100%`}
+                          border={`1px solid ${Theme.grey2_C}`}
+                        >
+                          <Wrapper
+                            padding={`10px`}
+                            position={`absolute`}
+                            top={`0`}
+                            left={`0`}
+                          >
+                            <Image src={data.thumbnail} alt={`thumbnail`} />
+                          </Wrapper>
+                        </Wrapper>
+                        <Text margin={`13px 0 0 0`} fontSize={`12px`}>
+                          {data.title}
+                        </Text>
+                        <Text
+                          fontSize={`12px`}
+                          margin={`6px 0`}
+                          fontWeight={`700`}
+                        >
+                          {data.price}원
+                        </Text>
+                        <Text fontSize={`12px`} color={Theme.grey_C}>
+                          수량 : {data.productNum}
+                        </Text>
+                      </Wrapper>
+                    );
+                  })}
+              </Wrapper>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  width={width < 700 ? `85px` : `120px`}
+                  padding={`0`}
+                  height={`40px`}
+                >
+                  바로 구매하기
+                </CommonButton>
+
+                <CommonButton
+                  margin={`0 6px`}
+                  width={width < 700 ? `85px` : `120px`}
+                  padding={`0`}
+                  height={`40px`}
+                  kindOf={`color`}
+                  color={Theme.black_C}
+                  onClick={() => moveLinkHandler(`/mypage/cart`)}
+                >
+                  장바구니 이동
+                </CommonButton>
+
+                <CommonButton
+                  onClick={() => setIsModal2Visible(false)}
+                  width={width < 700 ? `85px` : `120px`}
+                  padding={`0`}
+                  height={`40px`}
+                  kindOf={`color`}
+                  color={Theme.black_C}
+                >
+                  쇼핑 계속하기
+                </CommonButton>
+              </Wrapper>
             </Wrapper>
           </Modal>
         </WholeWrapper>

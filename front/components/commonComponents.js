@@ -103,6 +103,7 @@ export const Wrapper = styled.div`
   min-width: ${(props) => props.minWidth};
   height: ${(props) => props.height};
   min-height: ${(props) => props.minHeight};
+  max-height: ${(props) => props.maxHeight};
   display: ${(props) => props.display || `flex`};
   flex-direction: ${(props) => props.dr || `column`};
   align-items: ${(props) => props.al || `center`};

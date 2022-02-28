@@ -34,6 +34,7 @@ const Order = () => {
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
+  const { me } = useSelector((state) => state.user);
 
   const width = useWidth();
   const router = useRouter();
@@ -43,6 +44,13 @@ const Order = () => {
   const { boughtHistorys } = useSelector((state) => state.wish);
   const dispatch = useDispatch();
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (!me) {
+      message.error("로그인 후 이용해주세요.");
+      router.push(`/`);
+    }
+  }, [me]);
 
   useEffect(() => {
     dispatch({
@@ -169,7 +177,7 @@ const Order = () => {
             >
               주문내역조회
             </Wrapper>
-            {console.log(boughtHistorys)}
+
             <Wrapper margin={`0 0 110px`}>
               {boughtHistorys && boughtHistorys.length === 0 ? (
                 <Empty description="주문내역이 없습니다." />
@@ -203,7 +211,7 @@ const Order = () => {
                             data.WishItems[0].Product &&
                             data.WishItems[0].Product.title}
                           &nbsp;
-                          {data.WishItems.length - 1 >= 0 &&
+                          {data.WishItems.length - 1 > 0 &&
                             `외 ${data.WishItems.length - 1}개`}
                         </Wrapper>
                         <RightArrow />
@@ -243,7 +251,13 @@ const Order = () => {
                           </Wrapper>
                         </Wrapper>
                         <Wrapper width={`134px`} height={`50px`}>
-                          <CommonButton width={`100%`} height={`100%`}>
+                          <CommonButton
+                            width={`100%`}
+                            height={`100%`}
+                            onClick={() =>
+                              moveLinkHandler(`/community/question`)
+                            }
+                          >
                             1:1 문의하기
                           </CommonButton>
                         </Wrapper>

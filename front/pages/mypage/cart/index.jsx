@@ -151,15 +151,18 @@ const Cart = () => {
 
   ////// HOOKS //////
   const [datum, setDatum] = useState([]);
+
   const [isCheck, setIsCheck] = useState([]);
   const [isOrderForm, setIsOrderForm] = useState(false);
-  const [orderDatum, setOrderDatum] = useState(null);
-  const [showDatum, setShowDatum] = useState(null);
+  const [orderDatum, setOrderDatum] = useState([]);
+  const [showDatum, setShowDatum] = useState([]);
 
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [localDataum, setLocalDataum] = useState([]);
   const [allPrice, setAllPrice] = useState(0);
   const [len, setLen] = useState(0);
+
+  const [deleteIndex, setDeleteIndex] = useState(0);
 
   // 문의
   const inputName = useInput(``);
@@ -180,6 +183,13 @@ const Cart = () => {
   ////// USEEFFECT //////
 
   useEffect(() => {
+    if (!me) {
+      message.error("로그인 후 이용해주세요.");
+      router.push(`/`);
+    }
+  }, [me]);
+
+  useEffect(() => {
     dispatch({
       type: WISH_LIST_REQUEST,
     });
@@ -195,12 +205,21 @@ const Cart = () => {
   }, [boughtHistorys]);
 
   useEffect(() => {
-    if (isOrderForm) {
-      moveLinkHandler(`/mypage/cart?isOrder=true`);
-    } else {
-      moveLinkHandler(`/mypage/cart`);
+    if (router.query.from && router.query.from === "prod") {
+      setIsOrderForm(true);
+      let result = [];
+      const data = JSON.parse(localStorage.getItem("WNANSGKRL"));
+      result.push(data);
+      setOrderDatum(result);
+
+      return;
     }
-  }, [isOrderForm]);
+    if (router.query.isOrder) {
+      return setIsOrderForm(true);
+    } else {
+      return setIsOrderForm(false);
+    }
+  }, [router.query]);
 
   useEffect(() => {
     if (me) {
@@ -306,18 +325,20 @@ const Cart = () => {
         },
       });
 
+      // console.log(orderDatum);
       let result = [];
       for (let i = 0; i < datum.length; i++) {
         for (let j = 0; j < orderDatum.length; j++) {
-          console.log(datum[i].id === orderDatum[j].id);
-          console.log(datum[i].id, orderDatum[j].id);
-          if (datum[i].id === orderDatum[j].id) {
-            result.push(datum[i]);
-            console.log(datum[i]);
+          if (datum[i].id !== orderDatum[j].id) {
+            // result.push(datum[i]);
+            console.log(datum[i].id);
+            // console.log(orderDatum[j].id);
           }
         }
       }
-      console.log(result);
+      console.log(datum);
+
+      // console.log(result);
       // localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
       // setIsOrderForm(false);
 
@@ -469,20 +490,25 @@ const Cart = () => {
     setIsCheck(checkHandle);
     setIsCheckAll(false);
 
-    setIsOrderForm(true);
+    moveLinkHandler(`/mypage/cart?isOrder=true`);
     setOrderDatum(datum);
   }, [datum, isCheck]);
 
   const orderOneHandler = useCallback(
-    (orderData) => {
+    (orderData, idx) => {
       let checkHandle = isCheck.map(() => {
         return false;
       });
       setIsCheck(checkHandle);
       setIsCheckAll(false);
+      let tempArr = [];
+      tempArr.push(orderData);
+      moveLinkHandler(`/mypage/cart?isOrder=true`);
+      setOrderDatum(tempArr);
 
-      setIsOrderForm(true);
-      setOrderDatum(orderData);
+      let indexArr = [];
+      indexArr.push(deleteIndex);
+      setDeleteIndex(indexArr);
     },
     [isCheck]
   );
@@ -497,13 +523,13 @@ const Cart = () => {
     let result = datum.filter((data, idx) => {
       return isCheck[idx];
     });
-
+    console.log(result);
     setOrderDatum(result);
-    setIsOrderForm(true);
+    moveLinkHandler(`/mypage/cart?isOrder=true`);
   }, [datum, isCheck]);
 
   const goBackHandler = useCallback(() => {
-    setIsOrderForm(false);
+    moveLinkHandler(`/mypage/cart`);
   }, []);
 
   const deleteOrderHandler = useCallback(() => {
@@ -682,7 +708,11 @@ const Cart = () => {
             <Wrapper width={width < 500 ? `300px` : `479px`}>
               <Image
                 width={`100%`}
-                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/order/first_step_title.png`}
+                src={
+                  !isOrderForm
+                    ? `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/order/first_step_title.png`
+                    : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/order/second_step_title.png`
+                }
               />
             </Wrapper>
             <Wrapper al={`flex-start`} margin={`40px 0 20px`}>
@@ -797,7 +827,7 @@ const Cart = () => {
                             <Text width={`auto`}>기본배송</Text>
                             <DarkgreyBtn
                               width={`100px`}
-                              onClick={() => orderOneHandler(data)}
+                              onClick={() => orderOneHandler(data, idx)}
                             >
                               문의하기
                             </DarkgreyBtn>
@@ -1086,7 +1116,9 @@ const Cart = () => {
                           width={`138px`}
                           display={isOrderForm ? `none` : `flex`}
                         >
-                          <DarkgreyBtn onClick={() => orderOneHandler(data)}>
+                          <DarkgreyBtn
+                            onClick={() => orderOneHandler(data, idx)}
+                          >
                             문의하기
                           </DarkgreyBtn>
                           <Lightgrey2Btn
@@ -1276,7 +1308,9 @@ const Cart = () => {
                   right={`0`}
                   margin={width < 500 ? `0 0 0 6px` : `0`}
                 >
-                  <Lightgrey1Btn>쇼핑계속하기</Lightgrey1Btn>
+                  <Lightgrey1Btn onClick={() => moveLinkHandler(`/product`)}>
+                    쇼핑계속하기
+                  </Lightgrey1Btn>
                 </Wrapper>
               )}
             </Wrapper>
