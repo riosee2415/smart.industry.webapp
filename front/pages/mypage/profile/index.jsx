@@ -211,6 +211,11 @@ const Profile = () => {
       LoadNotification(st_userInfoUpdateError);
     }
   }, [st_userInfoUpdateError]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// TOGGLE //////
   ////// HANDLER //////
 

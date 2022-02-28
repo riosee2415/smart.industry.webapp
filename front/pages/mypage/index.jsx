@@ -39,6 +39,11 @@ const Mypage = () => {
   ////// HOOKS //////
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {

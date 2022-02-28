@@ -71,6 +71,10 @@ const Order = () => {
     setDPrice(dPay);
   }, [boughtHistoryDetail]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {

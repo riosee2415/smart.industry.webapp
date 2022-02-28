@@ -347,6 +347,10 @@ const Cart = () => {
     datum,
   ]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// TOGGLE //////
 
   ////// HANDLER //////
@@ -588,24 +592,6 @@ const Cart = () => {
   }, [allPrice, inputName, inputContent, orderDatum]);
 
   ////// DATAVIEW //////
-  const testData = [
-    {
-      id: 1,
-      productImg: "",
-      title: "상품명상품명상품명상품명상품명상품명상품명상품명",
-      price: "1,000,000",
-      total: "1,000,000",
-      count: 1,
-    },
-    {
-      id: 2,
-      productImg: "",
-      title: "상품명",
-      price: "1,000,000",
-      total: "1,000,000",
-      count: 1,
-    },
-  ];
 
   return (
     <>

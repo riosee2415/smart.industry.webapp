@@ -57,6 +57,11 @@ const Order = () => {
       type: WISH_LIST_REQUEST,
     });
   }, [router.query]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {

@@ -68,6 +68,10 @@ const WishList = () => {
     });
   }, [st_interestDeleteDone]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// TOGGLE //////
   const ModalToggle = useCallback(() => {
     setIsModalVisible((prev) => !prev);
