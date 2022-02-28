@@ -291,12 +291,14 @@ const Cart = () => {
   useEffect(() => {
     let tempData = 0;
     for (let i = 0; i < datum.length; i++) {
-      tempData += datum[i].price * datum[i].productNum + datum[i].deliveryPay;
+      tempData +=
+        datum[i].price * (datum[i].discount / 100) * datum[i].productNum +
+        datum[i].deliveryPay;
     }
 
     setAllPrice(tempData);
   }, [datum]);
-
+  console.log(datum);
   useEffect(() => {
     if (isOrderForm) {
       orderDatum && setShowDatum(orderDatum);
@@ -338,6 +340,7 @@ const Cart = () => {
 
       localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
       moveLinkHandler(`/mypage/cart`);
+      message.success("주문이 완료되었습니다.");
     }
   }, [
     st_boughtHistoryCreateDone,

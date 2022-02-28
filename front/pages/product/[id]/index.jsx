@@ -363,9 +363,11 @@ const DetailProduct = () => {
       discount: productDetailData[0].discount,
       deliveryPay: productDetailData[0].deliveryPay,
     };
+
     localStorage.setItem("WNANSGKRL", JSON.stringify(data));
     moveLinkHandler(`/mypage/cart?from=prod`);
-  }, [productDetailData]);
+  }, [productDetailData, productCount]);
+
   ////// DATAIVEW //////
 
   return (
