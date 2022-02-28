@@ -332,7 +332,12 @@ const BoughtList = () => {
             </Wrapper>
           </Wrapper>
 
-          <Wrapper dr={`row`} ju={`flex-end`} position={`relative`}>
+          <Wrapper
+            dr={`row`}
+            ju={`flex-end`}
+            position={`relative`}
+            borderBottom={`1px solid ${Theme.basicTheme_C}`}
+          >
             <Wrapper
               width={`30%`}
               height={`100%`}
@@ -350,6 +355,34 @@ const BoughtList = () => {
               borderLeft={`1px solid ${Theme.basicTheme_C}`}
             >
               <Text>{detailData && detailData.orderNum}</Text>
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper dr={`row`} ju={`flex-end`} position={`relative`}>
+            <Wrapper
+              width={`30%`}
+              height={`100%`}
+              bgColor={Theme.basicTheme_C}
+              color={Theme.white_C}
+              position={`absolute`}
+              top={`0`}
+              left={`0`}
+            >
+              총 가격
+            </Wrapper>
+            <Wrapper
+              width={`70%`}
+              padding={`20px 0`}
+              borderLeft={`1px solid ${Theme.basicTheme_C}`}
+            >
+              <Text>
+                {detailData &&
+                  String(detailData.price).replace(
+                    /\B(?=(\d{3})+(?!\d))/g,
+                    ","
+                  )}
+                원
+              </Text>
             </Wrapper>
           </Wrapper>
 
@@ -403,8 +436,7 @@ const BoughtList = () => {
                       >
                         {String(
                           data.Product.price -
-                            data.Product.price * (data.Product.discount / 100) +
-                            data.Product.deliveryPay
+                            data.Product.price * (data.Product.discount / 100)
                         ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                         원
                       </Wrapper>
@@ -432,6 +464,7 @@ const BoughtList = () => {
           </Wrapper>
         </Wrapper>
       </Modal>
+      {console.log(detailData)}
     </AdminLayout>
   );
 };
