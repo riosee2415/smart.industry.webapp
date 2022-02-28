@@ -325,22 +325,22 @@ const Cart = () => {
         },
       });
 
-      // console.log(orderDatum);
-      let result = [];
-      for (let i = 0; i < datum.length; i++) {
-        for (let j = 0; j < orderDatum.length; j++) {
-          if (datum[i].id !== orderDatum[j].id) {
-            // result.push(datum[i]);
-            console.log(datum[i].id);
-            // console.log(orderDatum[j].id);
-          }
-        }
-      }
-      console.log(datum);
+      // // console.log(orderDatum);
+      // let result = [];
+      // for (let i = 0; i < datum.length; i++) {
+      //   for (let j = 0; j < orderDatum.length; j++) {
+      //     if (datum[i].id !== orderDatum[j].id) {
+      //       // result.push(datum[i]);
+      //       console.log(datum[i].id);
+      //       // console.log(orderDatum[j].id);
+      //     }
+      //   }
+      // }
+      // console.log(datum);
 
       // console.log(result);
       // localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
-      // setIsOrderForm(false);
+      setIsOrderForm(false);
 
       inputContent.setValue(``);
     }
