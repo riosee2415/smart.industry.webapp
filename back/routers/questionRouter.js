@@ -108,6 +108,7 @@ router.get("/next/:questionId", async (req, res, next) => {
         id: {
           [Op.gt]: parseInt(questionId),
         },
+        isDelete: false,
       },
       limit: 1,
     });
@@ -132,6 +133,7 @@ router.get("/prev/:questionId", async (req, res, next) => {
         id: {
           [Op.lt]: parseInt(questionId),
         },
+        isDelete: false,
       },
     });
 

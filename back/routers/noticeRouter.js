@@ -195,7 +195,7 @@ router.get("/list/:noticeId", async (req, res, next) => {
 
   try {
     const exNotice = await Notice.findOne({
-      where: { id: parseInt(noticeId) },
+      where: { id: parseInt(noticeId), isDelete: false },
     });
 
     const nextHit = exNotice.dataValues.hit + 1;
@@ -229,6 +229,7 @@ router.get("/next/:noticeId", async (req, res, next) => {
         id: {
           [Op.gt]: parseInt(noticeId),
         },
+        isDelete: false,
       },
       limit: 1,
     });
@@ -253,6 +254,7 @@ router.get("/prev/:noticeId", async (req, res, next) => {
         id: {
           [Op.lt]: parseInt(noticeId),
         },
+        isDelete: false,
       },
     });
 
