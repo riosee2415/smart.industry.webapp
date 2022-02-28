@@ -593,6 +593,9 @@ const Home = ({}) => {
                           <Wrapper
                             dr={width < 900 ? `column` : `row`}
                             fontSize={width < 900 ? `16px` : `18px`}
+                            onClick={() =>
+                              moveLinkHandler(`/product/${data.id}`)
+                            }
                           >
                             {data.discount > 0 && (
                               <Text
