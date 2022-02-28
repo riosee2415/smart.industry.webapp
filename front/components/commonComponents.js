@@ -143,6 +143,16 @@ export const Wrapper = styled.div`
   text-align: ${(props) => props.textAlign};
   letter-spacing: ${(props) => props.letterSpacing};
   opacity: ${(props) => props.opacity};
+
+  pre {
+    white-space: pre-wrap;
+    line-height: 1.4;
+    font-size: 14px;
+
+    @media (max-width: 700px) {
+      font-size: 12px;
+    }
+  }
 `;
 
 export const RsWrapper = styled.article`
