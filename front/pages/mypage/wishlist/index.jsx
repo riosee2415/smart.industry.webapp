@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
@@ -13,12 +13,13 @@ import {
   WholeWrapper,
   Wrapper,
   Image,
+  Text,
 } from "../../../components/commonComponents";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { Empty } from "antd";
+import { Empty, message, Modal } from "antd";
 import styled from "styled-components";
 import {
   INTEREST_LIST_REQUEST,
@@ -45,6 +46,13 @@ const WishList = () => {
   ////// HOOKS //////
 
   const dispatch = useDispatch();
+
+  const [prevStorge, setPrevStorge] = useState([]);
+  const [currentData, setCurrentData] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [cartDatum, setCartDatum] = useState(null);
+
   ////// REDUX //////
   ////// USEEFFECT //////
 
@@ -61,6 +69,10 @@ const WishList = () => {
   }, [st_interestDeleteDone]);
 
   ////// TOGGLE //////
+  const ModalToggle = useCallback(() => {
+    setIsModalVisible((prev) => !prev);
+  }, []);
+
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -74,6 +86,86 @@ const WishList = () => {
       },
     });
   }, []);
+
+  //cart
+  const ModalHandleOk = useCallback(
+    // 중복 상품 기능
+    () => {
+      const resultDatum = prevStorge.map((data, idx) => {
+        if (data.id === currentData.Product.id) {
+          return {
+            ...data,
+            productNum: data.productNum + 1,
+          };
+        } else {
+          return data;
+        }
+      });
+
+      // dispatch({
+      //   type: UPDATE_WISHLIST,
+      //   data: {
+      //     list: true,
+      //   },
+      // });
+
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(resultDatum));
+      setCartDatum(resultDatum);
+      ModalToggle();
+      setCurrentData(null);
+    },
+    [prevStorge, cartDatum, currentData]
+  );
+
+  const basketHandler = useCallback(
+    (productDetailData) => {
+      setCurrentData(productDetailData);
+      const datum = localStorage.getItem("WKDQKRNSL")
+        ? JSON.parse(localStorage.getItem("WKDQKRNSL"))
+        : [];
+
+      let checkWish = false;
+
+      const resultData = datum.map((data) => {
+        if (data.id === productDetailData.Product.id) {
+          ModalToggle();
+          setPrevStorge(datum);
+          checkWish = true;
+
+          return {
+            ...data,
+          };
+        } else {
+          return data;
+        }
+      });
+
+      if (!checkWish) {
+        resultData.push({
+          id: productDetailData.Product.id,
+          thumbnail: productDetailData.Product.thumbnail,
+          title: productDetailData.Product.title,
+          productNum: 1,
+          price: productDetailData.Product.price,
+          discount: productDetailData.Product.discount,
+          deliveryPay: productDetailData.Product.deliveryPay,
+        });
+
+        message.success("상품이 장바구니에 담겼습니다.");
+      }
+
+      setCartDatum(resultData);
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(resultData));
+
+      // dispatch({
+      //   type: UPDATE_WISHLIST,
+      //   data: {
+      //     list: true,
+      //   },
+      // });
+    },
+    [prevStorge]
+  );
 
   ////// DATAVIEW //////
   const testData = [
@@ -247,7 +339,11 @@ const WishList = () => {
                           >
                             삭제
                           </CommonButton>
-                          <CommonButton width={`107px`} height={`44px`}>
+                          <CommonButton
+                            onClick={() => basketHandler(data)}
+                            width={`107px`}
+                            height={`44px`}
+                          >
                             장바구니
                           </CommonButton>
                         </Wrapper>
@@ -257,6 +353,18 @@ const WishList = () => {
                 ))}
             </Wrapper>
           </RsWrapper>
+          <Modal
+            centered={true}
+            title="알림"
+            visible={isModalVisible}
+            onOk={ModalHandleOk}
+            onCancel={ModalToggle}
+          >
+            <Wrapper>
+              <Text>장바구니에 동일한 상품이 있습니다.</Text>
+              <Text>장바구니에 추가하시겠습니까?</Text>
+            </Wrapper>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>
