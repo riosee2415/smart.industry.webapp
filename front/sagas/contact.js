@@ -10,7 +10,7 @@ import {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function contactListAPI(data) {
-  return axios.post(`/api/lease/list`);
+  return axios.post(`/api/lease/list`, data);
 }
 
 function* contactList(action) {
