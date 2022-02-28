@@ -984,6 +984,7 @@ const DetailProduct = () => {
                   width={width < 700 ? `85px` : `120px`}
                   padding={`0`}
                   height={`40px`}
+                  onClick={orderHandler}
                 >
                   바로 구매하기
                 </CommonButton>
