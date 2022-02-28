@@ -295,7 +295,7 @@ const Index = () => {
                     fontSize={width < 700 ? `11px` : `14px`}
                     al={`flex-start`}
                   >
-                    안녕하세요.
+                    {detailContact && detailContact.answer}
                   </Wrapper>
                 </Wrapper>
               )}

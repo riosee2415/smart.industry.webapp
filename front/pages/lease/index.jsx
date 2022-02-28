@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -29,9 +29,34 @@ import {
 } from "../../components/commonComponents";
 import { CaretDownOutlined, DownCircleTwoTone } from "@ant-design/icons";
 import { useCallback } from "react";
-import { CONTACT_GET_REQUEST } from "../../reducers/contact";
-import { Empty, message } from "antd";
+import {
+  CONTACT_CREATE_REQUEST,
+  CONTACT_GET_REQUEST,
+  CREATE_MODAL_TOGGLE,
+} from "../../reducers/contact";
+import { Empty, message, Modal, Form, Input } from "antd";
 import { useRouter } from "next/router";
+
+const CustomForm = styled(Form)`
+  width: 100%;
+
+  & .ant-form-item {
+    width: 100%;
+  }
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+`;
+
+const TitleInput = styled(Input)`
+  height: 50px;
+`;
+
+const ContentInput = styled(Input.TextArea)`
+  padding: 10px;
+  height: 150px !important;
+`;
 
 const Index = () => {
   const width = useWidth();
@@ -40,15 +65,21 @@ const Index = () => {
     (state) => state.seo
   );
 
-  const { contacts, contactTotal, listMaxPage } = useSelector(
-    (state) => state.contact
-  );
+  const { me } = useSelector((state) => state.user);
 
-  console.log(contacts);
+  const {
+    contacts,
+    contactTotal,
+    listMaxPage,
+    createModal,
+    st_contactCreateDone,
+    st_contactCreateError,
+  } = useSelector((state) => state.contact);
 
   ////// HOOKS //////
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [combo, setCombo] = useState(false);
   const [comboValue, setComboValue] = useState("전체");
@@ -58,12 +89,57 @@ const Index = () => {
   const [selectLease, setSelectLease] = useState("제목");
   const secretInput = useInput("");
 
+  const [form] = Form.useForm();
+  const formRef = useRef();
+
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: CONTACT_GET_REQUEST,
+      data: {
+        page: 1,
+        type: router.query && router.query.type,
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    if (st_contactCreateDone) {
+      dispatch({
+        type: CREATE_MODAL_TOGGLE,
+      });
+
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: 1,
+          type: router.query && router.query.type,
+        },
+      });
+
+      form.resetFields();
+      return message.success("생성되었습니다.");
+    }
+  }, [st_contactCreateDone]);
+
+  useEffect(() => {
+    if (st_contactCreateError) {
+      return message.error(st_contactCreateError);
+    }
+  }, [st_contactCreateError]);
+
   ////// TOGGLE //////
   const comboToggle = useCallback(() => {
     setCombo(!combo);
   }, [combo]);
+
+  const createModalToggle = useCallback(() => {
+    dispatch({
+      type: CREATE_MODAL_TOGGLE,
+    });
+  }, [createModal]);
   const comboToggle2 = useCallback(() => {
     setCombo2(!combo2);
   }, [combo2]);
@@ -103,6 +179,26 @@ const Index = () => {
       }
     },
     [secretInput.value, selectLease]
+  );
+
+  const onSubmit = useCallback(
+    (data) => {
+      if (!router.query.type) {
+        return message.error("올바른 주소가 아닙니다.");
+      }
+      dispatch({
+        type: CONTACT_CREATE_REQUEST,
+        data: {
+          type: router.query.type,
+          title: data.title,
+          author: me ? me.username : data.author,
+          content: data.content,
+          email: data.email,
+          secret: data.secret,
+        },
+      });
+    },
+    [router.query]
   );
 
   ////// DATAVIEW //////
@@ -166,7 +262,9 @@ const Index = () => {
               al={`flex-start`}
               margin={width < 700 ? `50px 0 20px` : `100px 0 26px`}
             >
-              <Text fontSize={`14px`}>HOME | 임대문의</Text>
+              <Text fontSize={`14px`}>
+                HOME | {router.query && router.query.type}
+              </Text>
             </Wrapper>
 
             <Wrapper
@@ -175,7 +273,7 @@ const Index = () => {
               borderBottom={`1px solid ${Theme.grey2_C}`}
             >
               <Text fontSize={`20px`} fontWeight={`700`}>
-                임대문의
+                {router.query && router.query.type}
               </Text>
             </Wrapper>
 
@@ -269,7 +367,7 @@ const Index = () => {
                               width={`auto`}
                               isEllipsis={true}
                             >
-                              임대문의&nbsp;
+                              {data.title}&nbsp;
                             </Text>
                             {data.answer && (
                               <Text fontSize={width < 700 ? `11px` : `14px`}>
@@ -372,6 +470,7 @@ const Index = () => {
                 height={width < 700 ? `40px` : `50px`}
                 fontSize={width < 700 ? `14px` : `18px`}
                 padding={`0`}
+                onClick={createModalToggle}
               >
                 문의 작성하기
               </CommonButton>
@@ -481,6 +580,108 @@ const Index = () => {
 
             <Wrapper margin={`0 0 110px`}>페이지네이션</Wrapper>
           </RsWrapper>
+
+          <Modal
+            width={`1350px`}
+            visible={createModal}
+            onCancel={createModalToggle}
+            closable={false}
+            footer={null}
+          >
+            <Wrapper
+              al={`flex-start`}
+              borderBottom={`1px solid ${Theme.grey_C}`}
+              padding={`0 0 20px`}
+              margin={`0 0 20px`}
+            >
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                상품 문의내용
+              </Text>
+            </Wrapper>
+
+            <Wrapper dr={`row`} al={`flex-start`}>
+              <CustomForm onFinish={onSubmit} form={form} ref={formRef}>
+                <Wrapper al={`flex-start`}>
+                  <Text margin={`0 0 10px`}>제목</Text>
+                  <Form.Item
+                    name="title"
+                    rules={[
+                      { required: true, message: "제목을 입력해주세요." },
+                    ]}
+                  >
+                    <TitleInput placeholder="제목을 입력해주세요." />
+                  </Form.Item>
+                </Wrapper>
+
+                <Wrapper al={`flex-start`}>
+                  <Text margin={`0 0 10px`}>문의내용</Text>
+                  <Form.Item
+                    name="content"
+                    rules={[
+                      { required: true, message: "문의내용을 입력해주세요." },
+                    ]}
+                  >
+                    <ContentInput placeholder="문의내용을 입력해주세요." />
+                  </Form.Item>
+                </Wrapper>
+
+                {!me && (
+                  <Wrapper al={`flex-start`}>
+                    <Text margin={`0 0 10px`}>작성자</Text>
+                    <Form.Item
+                      name="author"
+                      rules={[
+                        { required: true, message: "작성자를 입력해주세요." },
+                      ]}
+                    >
+                      <TitleInput placeholder="작성자를 입력해주세요." />
+                    </Form.Item>
+                  </Wrapper>
+                )}
+
+                <Wrapper al={`flex-start`}>
+                  <Text margin={`0 0 10px`}>이메일</Text>
+                  <Form.Item
+                    name="email"
+                    rules={[
+                      { required: true, message: "이메일를 입력해주세요." },
+                    ]}
+                  >
+                    <TitleInput
+                      type="email"
+                      placeholder="이메일를 입력해주세요."
+                    />
+                  </Form.Item>
+                </Wrapper>
+                <Wrapper al={`flex-start`}>
+                  <Text margin={`0 0 10px`}>비밀번호</Text>
+                  <Form.Item
+                    name="secret"
+                    rules={[
+                      { required: true, message: "비밀번호를 입력해주세요." },
+                    ]}
+                  >
+                    <TitleInput
+                      type="password"
+                      placeholder="비밀번호를 입력해주세요."
+                    />
+                  </Form.Item>
+                </Wrapper>
+                <Wrapper dr={`row`}>
+                  <CommonButton
+                    margin={`0 3px 0 0`}
+                    kindOf={`darkgrey`}
+                    onClick={createModalToggle}
+                  >
+                    취소하기
+                  </CommonButton>
+                  <CommonButton margin={`0 0 0 3px`} htmlType="submit">
+                    작성하기
+                  </CommonButton>
+                </Wrapper>
+              </CustomForm>
+            </Wrapper>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

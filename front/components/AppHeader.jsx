@@ -673,14 +673,20 @@ const AppHeader = () => {
               </SubMenuCol>
               <SubMenuCol
                 width={`calc(100% / 7)`}
-                onClick={() => moveLinkHandler(`/lease`)}
+                onClick={() => moveLinkHandler(`/lease?type=임대문의`)}
               >
                 <Text>임대문의</Text>
               </SubMenuCol>
-              <SubMenuCol width={`calc(100% / 7)`}>
+              <SubMenuCol
+                width={`calc(100% / 7)`}
+                onClick={() => moveLinkHandler(`/lease?type=사업자문의`)}
+              >
                 <Text>사업자문의</Text>
               </SubMenuCol>
-              <SubMenuCol width={`calc(100% / 7)`}>
+              <SubMenuCol
+                width={`calc(100% / 7)`}
+                onClick={() => moveLinkHandler(`/lease?type=장비판매의뢰`)}
+              >
                 <Text>장비판매의뢰</Text>
               </SubMenuCol>
               <SubMenuCol width={`calc(100% / 7)`}>

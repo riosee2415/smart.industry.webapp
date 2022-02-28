@@ -3,12 +3,13 @@ import produce from "../util/produce";
 export const initailState = {
   contacts: null,
   contactTotal: 0,
+  listMaxPage: 1,
   detailContact: null,
 
   questionPrev: null,
   questionNext: null,
 
-  listMaxPage: 1,
+  createModal: false,
   //
   st_contactLoading: false, // 문의 정보 가져오기
   st_contactDone: false,
@@ -17,6 +18,10 @@ export const initailState = {
   st_contactDetailLoading: false, // 문의 상세 가져오기
   st_contactDetailDone: false,
   st_contactDetailError: null,
+  //
+  st_contactCreateLoading: false, // 문의 생성하기
+  st_contactCreateDone: false,
+  st_contactCreateError: null,
   //
 };
 
@@ -27,6 +32,12 @@ export const CONTACT_GET_FAILURE = "CONTACT_GET_FAILURE";
 export const CONTACT_DETAIL_REQUEST = "CONTACT_DETAIL_REQUEST";
 export const CONTACT_DETAIL_SUCCESS = "CONTACT_DETAIL_SUCCESS";
 export const CONTACT_DETAIL_FAILURE = "CONTACT_DETAIL_FAILURE";
+
+export const CONTACT_CREATE_REQUEST = "CONTACT_CREATE_REQUEST";
+export const CONTACT_CREATE_SUCCESS = "CONTACT_CREATE_SUCCESS";
+export const CONTACT_CREATE_FAILURE = "CONTACT_CREATE_FAILURE";
+
+export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -69,6 +80,30 @@ const reducer = (state = initailState, action) =>
         draft.st_contactDetailLoading = false;
         draft.st_contactDetailDone = false;
         draft.st_contactDetailError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
+      case CONTACT_CREATE_REQUEST: {
+        draft.st_contactCreateLoading = true;
+        draft.st_contactCreateDone = null;
+        draft.st_contactCreateError = false;
+        break;
+      }
+      case CONTACT_CREATE_SUCCESS: {
+        draft.st_contactCreateLoading = false;
+        draft.st_contactCreateDone = true;
+        break;
+      }
+      case CONTACT_CREATE_FAILURE: {
+        draft.st_contactCreateLoading = false;
+        draft.st_contactCreateDone = false;
+        draft.st_contactCreateError = action.error;
+        break;
+      }
+
+      case CREATE_MODAL_TOGGLE: {
+        draft.createModal = !draft.createModal;
         break;
       }
       default:
