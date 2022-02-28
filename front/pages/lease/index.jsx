@@ -34,7 +34,7 @@ import {
   CONTACT_GET_REQUEST,
   CREATE_MODAL_TOGGLE,
 } from "../../reducers/contact";
-import { Empty, message, Modal, Form, Input } from "antd";
+import { Empty, message, Modal, Form, Input, Pagination } from "antd";
 import { useRouter } from "next/router";
 
 const CustomForm = styled(Form)`
@@ -82,12 +82,15 @@ const Index = () => {
   const dispatch = useDispatch();
 
   const [combo, setCombo] = useState(false);
-  const [comboValue, setComboValue] = useState("전체");
+  const [comboValue, setComboValue] = useState("1");
   const [combo2, setCombo2] = useState(false);
   const [comboValue2, setComboValue2] = useState("제목");
 
-  const [selectLease, setSelectLease] = useState("제목");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [selectLease, setSelectLease] = useState("");
   const secretInput = useInput("");
+  const searchInput = useInput("");
 
   const [form] = Form.useForm();
   const formRef = useRef();
@@ -101,6 +104,10 @@ const Index = () => {
       data: {
         page: 1,
         type: router.query && router.query.type,
+        date: comboValue,
+        searchTitle: comboValue2 === "제목" ? searchInput.value : "",
+        searchAuthor: comboValue2 === "작성자" ? searchInput.value : "",
+        searchContent: comboValue2 === "내용" ? searchInput.value : "",
       },
     });
   }, [router.query]);
@@ -116,6 +123,10 @@ const Index = () => {
         data: {
           page: 1,
           type: router.query && router.query.type,
+          date: comboValue,
+          searchTitle: comboValue2 === "제목" ? searchInput.value : "",
+          searchAuthor: comboValue2 === "작성자" ? searchInput.value : "",
+          searchContent: comboValue2 === "내용" ? searchInput.value : "",
         },
       });
 
@@ -148,8 +159,27 @@ const Index = () => {
     (data) => {
       setComboValue(data);
       comboToggle();
+
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: currentPage,
+          type: router.query && router.query.type,
+          date: data,
+          searchTitle: comboValue2 === "제목" ? searchInput.value : null,
+          searchAuthor: comboValue2 === "작성자" ? searchInput.value : null,
+          searchContent: comboValue2 === "내용" ? searchInput.value : null,
+        },
+      });
     },
-    [combo, comboValue]
+    [
+      combo,
+      comboValue,
+      currentPage,
+      router.query,
+      comboValue2,
+      searchInput.value,
+    ]
   );
 
   const comboHandler2 = useCallback(
@@ -200,6 +230,39 @@ const Index = () => {
     },
     [router.query]
   );
+
+  const otherPageCall = useCallback(
+    (changePage) => {
+      setCurrentPage(changePage);
+
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: changePage,
+          type: router.query && router.query.type,
+          date: comboValue,
+          searchTitle: comboValue2 === "제목" ? searchInput.value : "",
+          searchAuthor: comboValue2 === "작성자" ? searchInput.value : "",
+          searchContent: comboValue2 === "내용" ? searchInput.value : "",
+        },
+      });
+    },
+    [comboValue, comboValue2, searchInput.value, currentPage]
+  );
+
+  const searchHandler = useCallback(() => {
+    dispatch({
+      type: CONTACT_GET_REQUEST,
+      data: {
+        page: currentPage,
+        type: router.query && router.query.type,
+        date: comboValue,
+        searchTitle: comboValue2 === "제목" ? searchInput.value : "",
+        searchAuthor: comboValue2 === "작성자" ? searchInput.value : "",
+        searchContent: comboValue2 === "내용" ? searchInput.value : "",
+      },
+    });
+  }, [comboValue, comboValue2, searchInput.value, currentPage]);
 
   ////// DATAVIEW //////
 
@@ -328,8 +391,12 @@ const Index = () => {
               </Wrapper>
               {contacts &&
                 (contacts.length === 0 ? (
-                  <Wrapper>
-                    <Empty description="임대문의가 없습니다." />
+                  <Wrapper margin={`50px 0`}>
+                    <Empty
+                      description={`${
+                        router.query && router.query.type
+                      }가 없습니다.`}
+                    />
                   </Wrapper>
                 ) : (
                   contacts.map((data) => {
@@ -430,8 +497,8 @@ const Index = () => {
                               >
                                 <SpanText color={Theme.red_C}>
                                   비공개 글 입니다.
-                                </SpanText>{" "}
-                                글 작성시 입력한 비밀번호를 입력해주세요.
+                                </SpanText>
+                                &nbsp; 글 작성시 입력한 비밀번호를 입력해주세요.
                               </Text>
 
                               <Wrapper dr={`row`} width={`auto`}>
@@ -487,31 +554,37 @@ const Index = () => {
                 </Text>
 
                 <Combo margin={`0 10px 0 0`}>
-                  <Text fontSize={`14px`}>{comboValue}</Text>
+                  <Text fontSize={`14px`}>
+                    {comboValue === "1"
+                      ? "전체"
+                      : comboValue === "2"
+                      ? "일주일"
+                      : comboValue === "3" && "한달"}
+                  </Text>
                   <CaretDownOutlined onClick={comboToggle} />
 
                   {combo && (
                     <ComboOptionWrapper>
                       <ComboOption
-                        beforeWidth={comboValue === "전체" ? `100%` : `0`}
+                        beforeWidth={comboValue === "1" ? `100%` : `0`}
                         onClick={() => {
-                          comboHandler("전체");
+                          comboHandler("1");
                         }}
                       >
                         전체
                       </ComboOption>
                       <ComboOption
-                        beforeWidth={comboValue === "한달" ? `100%` : `0`}
+                        beforeWidth={comboValue === "3" ? `100%` : `0`}
                         onClick={() => {
-                          comboHandler("한달");
+                          comboHandler("3");
                         }}
                       >
                         한달
                       </ComboOption>
                       <ComboOption
-                        beforeWidth={comboValue === "일주일" ? `100%` : `0`}
+                        beforeWidth={comboValue === "2" ? `100%` : `0`}
                         onClick={() => {
-                          comboHandler("일주일");
+                          comboHandler("2");
                         }}
                       >
                         일주일
@@ -566,9 +639,11 @@ const Index = () => {
                   border={`1px solid ${Theme.grey2_C}`}
                   width={width < 700 ? `calc(100% - 75px - 10px)` : `260px`}
                   height={`40px`}
+                  {...searchInput}
                 />
 
                 <CommonButton
+                  onClick={searchHandler}
                   kindOf={`darkgrey2`}
                   width={`75px`}
                   height={`40px`}
@@ -578,7 +653,17 @@ const Index = () => {
               </Wrapper>
             </Wrapper>
 
-            <Wrapper margin={`0 0 110px`}>페이지네이션</Wrapper>
+            <Wrapper margin={`0 0 110px`}>
+              <Pagination
+                size="small"
+                defaultCurrent={1}
+                current={parseInt(currentPage)}
+                total={listMaxPage * 10}
+                onChange={(page) => otherPageCall(page)}
+                showQuickJumper={false}
+                showSizeChanger={false}
+              />
+            </Wrapper>
           </RsWrapper>
 
           <Modal
