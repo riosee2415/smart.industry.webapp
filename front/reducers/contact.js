@@ -23,6 +23,10 @@ export const initailState = {
   st_contactCreateDone: false,
   st_contactCreateError: null,
   //
+  st_contactCompletedLoading: false, // 문의 처리완료
+  st_contactCompletedDone: false,
+  st_contactCompletedError: null,
+  //
 };
 
 export const CONTACT_GET_REQUEST = "CONTACT_GET_REQUEST";
@@ -36,6 +40,10 @@ export const CONTACT_DETAIL_FAILURE = "CONTACT_DETAIL_FAILURE";
 export const CONTACT_CREATE_REQUEST = "CONTACT_CREATE_REQUEST";
 export const CONTACT_CREATE_SUCCESS = "CONTACT_CREATE_SUCCESS";
 export const CONTACT_CREATE_FAILURE = "CONTACT_CREATE_FAILURE";
+
+export const CONTACT_COMPLETED_REQUEST = "CONTACT_COMPLETED_REQUEST";
+export const CONTACT_COMPLETED_SUCCESS = "CONTACT_COMPLETED_SUCCESS";
+export const CONTACT_COMPLETED_FAILURE = "CONTACT_COMPLETED_FAILURE";
 
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
@@ -99,6 +107,25 @@ const reducer = (state = initailState, action) =>
         draft.st_contactCreateLoading = false;
         draft.st_contactCreateDone = false;
         draft.st_contactCreateError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
+      case CONTACT_COMPLETED_REQUEST: {
+        draft.st_contactCompletedLoading = true;
+        draft.st_contactCompletedDone = null;
+        draft.st_contactCompletedError = false;
+        break;
+      }
+      case CONTACT_COMPLETED_SUCCESS: {
+        draft.st_contactCompletedLoading = false;
+        draft.st_contactCompletedDone = true;
+        break;
+      }
+      case CONTACT_COMPLETED_FAILURE: {
+        draft.st_contactCompletedLoading = false;
+        draft.st_contactCompletedDone = false;
+        draft.st_contactCompletedError = action.error;
         break;
       }
 
