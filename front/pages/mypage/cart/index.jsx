@@ -336,8 +336,6 @@ const Cart = () => {
       const difference = tempArr.filter((x) => !tempArr2.includes(x));
       const result = difference.map(JSON.parse);
 
-      console.log(result);
-
       localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
       moveLinkHandler(`/mypage/cart`);
     }
@@ -520,7 +518,7 @@ const Cart = () => {
     let result = datum.filter((data, idx) => {
       return isCheck[idx];
     });
-    console.log(result);
+
     setOrderDatum(result);
     moveLinkHandler(`/mypage/cart?isOrder=true`);
   }, [datum, isCheck]);
