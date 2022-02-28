@@ -731,7 +731,7 @@ const Cart = () => {
             </Wrapper>
 
             {width < 900 ? (
-              <Wrapper width={width < 500 ? `100%` : `60%`}>
+              <Wrapper width={width < 700 ? `100%` : `60%`}>
                 <Wrapper dr={`row`}>
                   {showDatum && showDatum.length === 0 ? (
                     <Empty />
@@ -1287,6 +1287,7 @@ const Cart = () => {
                     선택상품주문
                   </Lightgrey1Btn>
                   <CommonButton
+                    padding={`0`}
                     width={width < 500 ? `100px` : `145px`}
                     height={width < 500 ? `35px` : `50px`}
                     fontSize={width < 500 ? `14px` : `18px`}
