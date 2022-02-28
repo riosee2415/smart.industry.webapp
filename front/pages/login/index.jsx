@@ -181,12 +181,14 @@ const Index = () => {
                 {...inputUserId}
                 placeholder="아이디"
                 margin={`0 0 5px`}
+                onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
               />
               <CustomInput
                 {...inputPassword}
                 placeholder="비밀번호"
                 margin={`0 0 20px`}
                 type={`password`}
+                onKeyDown={(e) => e.keyCode === 13 && loginHandler()}
               />
               <CommonButton
                 width={`100%`}
