@@ -52,6 +52,11 @@ import {
   EMAIL_CHECK_REQUEST,
   EMAIL_CHECK_SUCCESS,
   EMAIL_CHECK_FAILURE,
+  /////////////////////////////
+  USER_LOGOUT_REQUEST,
+  USER_LOGOUT_SUCCESS,
+  USER_LOGOUT_FAILURE,
+  /////////////////////////////
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -403,6 +408,33 @@ function* checkEmail(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function logoutAPI() {
+  return axios.get(`/api/user/logout`);
+}
+
+function* logout(action) {
+  try {
+    const result = yield call(logoutAPI, action.data);
+
+    yield put({
+      type: USER_LOGOUT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_LOGOUT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -456,6 +488,10 @@ function* watchCheckEmail() {
   yield takeLatest(EMAIL_CHECK_REQUEST, checkEmail);
 }
 
+function* watchLogout() {
+  yield takeLatest(USER_LOGOUT_REQUEST, logout);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -472,6 +508,7 @@ export default function* userSaga() {
     fork(watchUserInfoUpdate),
     fork(watchFindUserCheckSecret),
     fork(watchCheckEmail),
+    fork(watchLogout),
     //
   ]);
 }

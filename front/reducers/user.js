@@ -67,6 +67,10 @@ export const initailState = {
   st_emailCheckLoading: false, // 이메일 중복체크
   st_emailCheckDone: false,
   st_emailCheckError: null,
+  //
+  st_userLogoutLoading: false, // 로그아웃
+  st_userLogoutDone: false,
+  st_userLogoutError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -120,6 +124,10 @@ export const FIND_USER_CHECK_SECRET_FAILURE = "FIND_USER_CHECK_SECRET_FAILURE";
 export const EMAIL_CHECK_REQUEST = "EMAIL_CHECK_REQUEST";
 export const EMAIL_CHECK_SUCCESS = "EMAIL_CHECK_SUCCESS";
 export const EMAIL_CHECK_FAILURE = "EMAIL_CHECK_FAILURE";
+
+export const USER_LOGOUT_REQUEST = "USER_LOGOUT_REQUEST";
+export const USER_LOGOUT_SUCCESS = "USER_LOGOUT_SUCCESS";
+export const USER_LOGOUT_FAILURE = "USER_LOGOUT_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -390,6 +398,26 @@ const reducer = (state = initailState, action) =>
         draft.st_emailCheckLoading = false;
         draft.st_emailCheckDone = false;
         draft.st_emailCheckError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case USER_LOGOUT_REQUEST: {
+        draft.st_userLogoutLoading = true;
+        draft.st_userLogoutDone = null;
+        draft.st_userLogoutError = false;
+        break;
+      }
+      case USER_LOGOUT_SUCCESS: {
+        draft.st_userLogoutLoading = false;
+        draft.st_userLogoutDone = true;
+        draft.st_userLogoutError = null;
+        break;
+      }
+      case USER_LOGOUT_FAILURE: {
+        draft.st_userLogoutLoading = false;
+        draft.st_userLogoutDone = false;
+        draft.st_userLogoutError = action.error;
         break;
       }
       //////////////////////////////////////////////

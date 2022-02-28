@@ -22,13 +22,13 @@ import {
   DownOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-import { Drawer, Empty, Form, Button } from "antd";
+import { Drawer, Empty, Form, Button, message } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useDispatch, useSelector } from "react-redux";
 import { MENU_HEADER_LIST_REQUEST, MENU_LIST_REQUEST } from "../reducers/menu";
 import { CATEGORY_HEADER_LIST_REQUEST } from "../reducers/category";
-import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
+import { LOAD_MY_INFO_REQUEST, USER_LOGOUT_REQUEST } from "../reducers/user";
 
 const WebRow = styled(RowWrapper)`
   z-index: 10000;
@@ -218,7 +218,9 @@ const AppHeader = () => {
   const { headerCategoryList } = useSelector((state) => state.category);
   const { headerMenuList } = useSelector((state) => state.menu);
 
-  const { me } = useSelector((state) => state.user);
+  const { me, st_userLogoutDone, st_userLogoutError } = useSelector(
+    (state) => state.user
+  );
 
   // const documentRef = useRef(document);
 
@@ -271,6 +273,12 @@ const AppHeader = () => {
     [router]
   );
 
+  const logoutHandler = useCallback(() => {
+    dispatch({
+      type: USER_LOGOUT_REQUEST,
+    });
+  }, []);
+
   ////////////// - USE EFFECT- //////////////
 
   useEffect(() => {
@@ -285,6 +293,19 @@ const AppHeader = () => {
       type: MENU_HEADER_LIST_REQUEST,
     });
   }, [router.query]);
+
+  useEffect(() => {
+    if (st_userLogoutDone) {
+      router.push("/");
+      return message.success("로그아웃 되었습니다.");
+    }
+  }, [st_userLogoutDone]);
+
+  useEffect(() => {
+    if (st_userLogoutError) {
+      return message.error(st_userLogoutError);
+    }
+  }, [st_userLogoutError]);
 
   useEffect(() => {
     document.addEventListener("scroll", handleScroll);
@@ -310,6 +331,13 @@ const AppHeader = () => {
                     <Text margin={`0 0 0 30px`}>마이페이지</Text>
                   </a>
                 </Link>
+                <Text
+                  margin={`0 0 0 30px`}
+                  onClick={logoutHandler}
+                  cursor={`pointer`}
+                >
+                  로그아웃
+                </Text>
               </>
             ) : (
               <>
@@ -786,6 +814,14 @@ const AppHeader = () => {
                       </Text>
                     </a>
                   </Link>
+
+                  <Text
+                    margin={`0 0 0 30px`}
+                    onClick={logoutHandler}
+                    cursor={`pointer`}
+                  >
+                    로그아웃
+                  </Text>
                 </>
               ) : (
                 <>
