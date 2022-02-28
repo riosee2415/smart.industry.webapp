@@ -197,6 +197,10 @@ const Review = () => {
   ////// TOGGLE //////
 
   const createModalToggle = useCallback(() => {
+    if (!me) {
+      return message.error("로그인 후 작성하실 수 있습니다.");
+    }
+
     form.resetFields();
 
     dispatch({
@@ -222,29 +226,29 @@ const Review = () => {
         return LoadNotification("안내", "첨부이미지를 등록해주세요.");
       }
 
-      if (me) {
-        dispatch({
-          type: REVIEW_CREATE_REQUEST,
-          data: {
-            ProductId: router.query.id,
-            title: data.title,
-            author: me.username,
-            imagePath: reviewImagePath,
-            content: data.content,
-          },
-        });
-      } else {
-        dispatch({
-          type: REVIEW_NOTUSER_CREATE_REQUEST,
-          data: {
-            ProductId: router.query.id,
-            title: data.title,
-            author: data.author,
-            imagePath: reviewImagePath,
-            content: data.content,
-          },
-        });
-      }
+      // if (me) {
+      dispatch({
+        type: REVIEW_CREATE_REQUEST,
+        data: {
+          ProductId: router.query.id,
+          title: data.title,
+          author: me.username,
+          imagePath: reviewImagePath,
+          content: data.content,
+        },
+      });
+      // } else {
+      //   dispatch({
+      //     type: REVIEW_NOTUSER_CREATE_REQUEST,
+      //     data: {
+      //       ProductId: router.query.id,
+      //       title: data.title,
+      //       author: data.author,
+      //       imagePath: reviewImagePath,
+      //       content: data.content,
+      //     },
+      //   });
+      // }
     },
     [me, router.query, reviewImagePath]
   );
@@ -275,8 +279,7 @@ const Review = () => {
           bgColor={Theme.lightGrey2_C}
           height={`40px`}
           borderTop={`1px solid ${Theme.grey2_C}`}
-          borderBottom={`1px solid ${Theme.grey2_C}`}
-        >
+          borderBottom={`1px solid ${Theme.grey2_C}`}>
           <Wrapper width={`10%`}>번호</Wrapper>
           <Wrapper width={`60%`}>제목</Wrapper>
           <Wrapper width={`10%`}>작성자</Wrapper>
@@ -298,8 +301,7 @@ const Review = () => {
                     padding={`14px 0px`}
                     cursor={`pointer`}
                     borderBottom={`1px solid ${Theme.grey2_C}`}
-                    onClick={() => onClickToggleHandler(data)}
-                  >
+                    onClick={() => onClickToggleHandler(data)}>
                     <Wrapper width={`10%`}>{data.id}</Wrapper>
 
                     <Wrapper width={`60%`} al={`flex-start`}>
@@ -344,8 +346,7 @@ const Review = () => {
           height={`40px`}
           fontSize={`15px`}
           padding={`0`}
-          onClick={createModalToggle}
-        >
+          onClick={createModalToggle}>
           후기 작성하기
         </CommonButton>
       </Wrapper>
@@ -355,14 +356,12 @@ const Review = () => {
         visible={createModal}
         onCancel={createModalToggle}
         closable={false}
-        footer={null}
-      >
+        footer={null}>
         <Wrapper
           al={`flex-start`}
           borderBottom={`1px solid ${Theme.grey_C}`}
           padding={`0 0 20px`}
-          margin={`0 0 20px`}
-        >
+          margin={`0 0 20px`}>
           <Text fontSize={`18px`} fontWeight={`bold`}>
             상품 후기작성
           </Text>
@@ -396,8 +395,7 @@ const Review = () => {
                 size="small"
                 type="primary"
                 onClick={clickImageUpload}
-                loading={st_reviewUploadLoading}
-              >
+                loading={st_reviewUploadLoading}>
                 UPLOAD
               </Button>
             </UploadWrapper>
@@ -408,8 +406,7 @@ const Review = () => {
               <Text margin={`0 0 10px`}>제목</Text>
               <Form.Item
                 name="title"
-                rules={[{ required: true, message: "제목을 입력해주세요." }]}
-              >
+                rules={[{ required: true, message: "제목을 입력해주세요." }]}>
                 <TitleInput placeholder="제목을 입력해주세요." />
               </Form.Item>
             </Wrapper>
@@ -420,8 +417,7 @@ const Review = () => {
                 name="content"
                 rules={[
                   { required: true, message: "후기내용을 입력해주세요." },
-                ]}
-              >
+                ]}>
                 <ContentInput placeholder="후기내용을 입력해주세요." />
               </Form.Item>
             </Wrapper>
@@ -433,8 +429,7 @@ const Review = () => {
                   name="author"
                   rules={[
                     { required: true, message: "작성자를 입력해주세요." },
-                  ]}
-                >
+                  ]}>
                   <TitleInput placeholder="작성자를 입력해주세요." />
                 </Form.Item>
               </Wrapper>
@@ -444,8 +439,7 @@ const Review = () => {
               <CommonButton
                 margin={`0 3px 0 0`}
                 kindOf={`darkgrey`}
-                onClick={createModalToggle}
-              >
+                onClick={createModalToggle}>
                 취소하기
               </CommonButton>
               <CommonButton margin={`0 0 0 3px`} htmlType="submit">

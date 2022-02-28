@@ -769,7 +769,9 @@ function* prodQuestionNotUserCreate(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function prodQuestionListProdAPI(data) {
-  return axios.get(`/api/prodQuestion/product/list/${data.ProductId}`, data);
+  return axios.get(
+    `/api/prodQuestion/product/list/${data.ProductId}?page=${data.page}`
+  );
 }
 
 function* prodQuestionListProd(action) {

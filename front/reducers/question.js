@@ -3,8 +3,13 @@ import produce from "../util/produce";
 export const initailState = {
   questions: null,
   myQuestions: null,
+  listMaxPage: 1,
+  maxPage: 1,
   myQuestionDetails: null,
   types: null,
+
+  questionPrev: null,
+  questionNext: null,
 
   createTypeModal: false, // 문의 유형 create 모달 실행
 
@@ -38,6 +43,14 @@ export const initailState = {
   st_questionUpdateLoading: false, // 문의 정보 수정하기
   st_questionUpdateDone: false,
   st_questionUpdateError: null,
+  //
+  st_questionPrevPageLoading: false, // 문의 이전글
+  st_questionPrevPageDone: false,
+  st_questionPrevPageError: null,
+  //
+  st_questionNextPageLoading: false, // 문의 다음글
+  st_questionNextPageDone: false,
+  st_questionNextPageError: null,
   ////////////////////////////////////////////////////////////////////////
   st_questionTypeLoading: false, // 문의 유형 정보 가져오기
   st_questionTypeDone: false,
@@ -101,6 +114,14 @@ export const QUESTION_TYPE_CREATE_REQUEST = "QUESTION_TYPE_CREATE_REQUEST";
 export const QUESTION_TYPE_CREATE_SUCCESS = "QUESTION_TYPE_CREATE_SUCCESS";
 export const QUESTION_TYPE_CREATE_FAILURE = "QUESTION_TYPE_CREATE_FAILURE";
 
+export const QUESTION_PREVPAGE_REQUEST = "QUESTION_PREVPAGE_REQUEST";
+export const QUESTION_PREVPAGE_SUCCESS = "QUESTION_PREVPAGE_SUCCESS";
+export const QUESTION_PREVPAGE_FAILURE = "QUESTION_PREVPAGE_FAILURE";
+
+export const QUESTION_NEXTPAGE_REQUEST = "QUESTION_NEXTPAGE_REQUEST";
+export const QUESTION_NEXTPAGE_SUCCESS = "QUESTION_NEXTPAGE_SUCCESS";
+export const QUESTION_NEXTPAGE_FAILURE = "QUESTION_NEXTPAGE_FAILURE";
+
 export const CREATE_TYPE_MODAL_OPEN_REQUEST = "CREATE_TYPE_MODAL_OPEN_REQUEST";
 export const CREATE_TYPE_MODAL_CLOSE_REQUEST =
   "CREATE_TYPE_MODAL_CLOSE_REQUEST";
@@ -121,6 +142,7 @@ const reducer = (state = initailState, action) =>
         draft.st_questionLoading = false;
         draft.st_questionDone = true;
         draft.questions = action.data;
+        draft.listMaxPage = action.data.lastPage;
         break;
       }
       case QUESTION_GET_FAILURE: {
@@ -139,6 +161,7 @@ const reducer = (state = initailState, action) =>
         draft.st_questionMyListLoading = false;
         draft.st_questionMyListDone = true;
         draft.myQuestions = action.data;
+        draft.maxPage = action.data.lastPage;
         break;
       }
       case QUESTION_MY_LIST_FAILURE: {
@@ -305,6 +328,46 @@ const reducer = (state = initailState, action) =>
         draft.st_questionTypeCreateError = action.error;
         break;
       }
+      ///////////////////////////////////////////////////////
+      case QUESTION_PREVPAGE_REQUEST: {
+        draft.st_questionPrevPageLoading = true;
+        draft.st_questionPrevPageDone = null;
+        draft.st_questionPrevPageError = false;
+        break;
+      }
+      case QUESTION_PREVPAGE_SUCCESS: {
+        draft.st_questionPrevPageLoading = false;
+        draft.st_questionPrevPageDone = true;
+        draft.questionPrev = action.data;
+        break;
+      }
+      case QUESTION_PREVPAGE_FAILURE: {
+        draft.st_questionPrevPageLoading = false;
+        draft.st_questionPrevPageDone = false;
+        draft.st_questionPrevPageError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case QUESTION_NEXTPAGE_REQUEST: {
+        draft.st_questionNextPageLoading = true;
+        draft.st_questionNextPageDone = null;
+        draft.st_questionNextPageError = false;
+        break;
+      }
+      case QUESTION_NEXTPAGE_SUCCESS: {
+        draft.st_questionNextPageLoading = false;
+        draft.st_questionNextPageDone = true;
+        draft.questionNext = action.data;
+        break;
+      }
+      case QUESTION_NEXTPAGE_FAILURE: {
+        draft.st_questionNextPageLoading = false;
+        draft.st_questionNextPageDone = false;
+        draft.st_questionNextPageError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////

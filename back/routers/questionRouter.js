@@ -13,6 +13,13 @@ router.get(
   async (req, res, next) => {
     const { listType } = req.params;
 
+    const LIMIT = 10;
+
+    const _page = page ? page : 1;
+
+    const __page = _page - 1;
+    const OFFSET = __page * 10;
+
     let nanFlag = isNaN(listType);
 
     if (!listType) {
@@ -35,24 +42,31 @@ router.get(
       switch (_listType) {
         case 1:
           questions = await Question.findAll({
-            where: { isCompleted: false },
-            //
+            where: {
+              isCompleted: false,
+            },
+            order: [["createdAt", "DESC"]],
           });
           break;
         case 2:
           questions = await Question.findAll({
-            where: { isCompleted: true },
-            //
+            where: {
+              isCompleted: true,
+            },
+            order: [["createdAt", "DESC"]],
           });
           break;
+
         case 3:
-          questions = await Question.findAll({});
+          questions = await Question.findAll({
+            order: [["createdAt", "DESC"]],
+          });
           break;
         default:
           break;
       }
 
-      return res.status(200).json(questions);
+      return res.status(200).json({ questions });
     } catch (error) {
       console.error(error);
       return res
@@ -140,11 +154,32 @@ router.get("/prev/:questionId", async (req, res, next) => {
 });
 
 router.get("/myList", isLoggedIn, async (req, res, next) => {
+  const { page } = req.query;
+
+  const LIMIT = 10;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 10;
+
   if (!req.user) {
     return res.status(403).send("로그인 후 이용 가능합니다.");
   }
+
   try {
+    const totalmyList = await Question.findAll({
+      where: { UserId: parseInt(req.user.id) },
+    });
+
+    const questionLen = totalmyList.length;
+
+    const lastPage =
+      questionLen % LIMIT > 0 ? questionLen / LIMIT + 1 : questionLen / LIMIT;
+
     const myList = await Question.findAll({
+      offset: OFFSET,
+      limit: LIMIT,
       where: { UserId: parseInt(req.user.id) },
     });
 
@@ -152,7 +187,11 @@ router.get("/myList", isLoggedIn, async (req, res, next) => {
       return res.status(200).json([]);
     }
 
-    return res.status(200).json(myList);
+    return res.status(200).json({
+      myList,
+      lastPage: parseInt(lastPage),
+      questionLen: parseInt(questionLen),
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("");

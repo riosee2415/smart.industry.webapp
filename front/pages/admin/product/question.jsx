@@ -165,6 +165,10 @@ const Question = () => {
       render: (data) => <div>{data.title}</div>,
     },
     {
+      title: "사용자 유형",
+      render: (data) => <div>{data.UserId ? `회원` : `비회원`}</div>,
+    },
+    {
       title: "답변 승인",
       render: (data) => <div>{data.isComplete ? `완료` : `미완료`}</div>,
     },

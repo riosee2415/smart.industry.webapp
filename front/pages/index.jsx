@@ -405,37 +405,6 @@ const Home = ({}) => {
     console.log(contentValue);
   };
 
-  const testBestItem = [
-    {
-      id: 1,
-      thumbnail:
-        "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSoG6WXw7w2G19nQlpKxrAzY-qcDwIix2Uc9hL2m31tGR20AQM_lxvAUKSq5L7dPj3zryYvjJj40s6lHmPrOjy3SYHAK0EdMZtjpTLV8k148vcXGR9IHKW4Pw&usqp=CAE",
-      name: "상품명",
-      viewPrice: "1,100,000원",
-    },
-    {
-      id: 2,
-      thumbnail:
-        "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSoG6WXw7w2G19nQlpKxrAzY-qcDwIix2Uc9hL2m31tGR20AQM_lxvAUKSq5L7dPj3zryYvjJj40s6lHmPrOjy3SYHAK0EdMZtjpTLV8k148vcXGR9IHKW4Pw&usqp=CAE",
-      name: "상품명2",
-      viewPrice: "1,100,000원",
-    },
-    {
-      id: 3,
-      thumbnail:
-        "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSoG6WXw7w2G19nQlpKxrAzY-qcDwIix2Uc9hL2m31tGR20AQM_lxvAUKSq5L7dPj3zryYvjJj40s6lHmPrOjy3SYHAK0EdMZtjpTLV8k148vcXGR9IHKW4Pw&usqp=CAE",
-      name: "상품명3",
-      viewPrice: "1,100,000원",
-    },
-    {
-      id: 4,
-      thumbnail:
-        "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSoG6WXw7w2G19nQlpKxrAzY-qcDwIix2Uc9hL2m31tGR20AQM_lxvAUKSq5L7dPj3zryYvjJj40s6lHmPrOjy3SYHAK0EdMZtjpTLV8k148vcXGR9IHKW4Pw&usqp=CAE",
-      name: "상품명4",
-      viewPrice: "1,100,000원",
-    },
-  ];
-
   return (
     <>
       <Head>
@@ -625,16 +594,18 @@ const Home = ({}) => {
                             dr={width < 900 ? `column` : `row`}
                             fontSize={width < 900 ? `16px` : `18px`}
                           >
-                            <Text
-                              margin={width < 900 ? `0` : `0 5px 0 0`}
-                              textDecoration={`line-through`}
-                              color={Theme.grey_C}
-                            >
-                              {String(
-                                parseInt(data.price * (data.discount / 100))
-                              ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                              원
-                            </Text>
+                            {data.discount > 0 && (
+                              <Text
+                                margin={width < 900 ? `0` : `0 5px 0 0`}
+                                textDecoration={`line-through`}
+                                color={Theme.grey_C}
+                              >
+                                {String(
+                                  parseInt(data.price * (data.discount / 100))
+                                ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                원
+                              </Text>
+                            )}
                             <Text
                               margin={width < 900 ? `0` : `0 0 0 5px`}
                               fontWeight={`bold`}

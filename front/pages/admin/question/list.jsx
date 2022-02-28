@@ -66,6 +66,7 @@ const List = ({ location }) => {
   const {
     questions,
     types,
+    listMaxPage,
     updateModal,
 
     st_questionUpdateDone,
@@ -74,6 +75,28 @@ const List = ({ location }) => {
     st_questionUpdateError,
     st_questionDeleteError,
   } = useSelector((state) => state.question);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const getQs = () => {
+    const qs = router.query;
+
+    let value = "";
+
+    if (!qs.page) {
+      setCurrentPage(1);
+      value = "?page=1";
+    } else {
+      setCurrentPage(qs.page);
+      value = `?page=${qs.page}`;
+    }
+
+    if (qs.search) {
+      value += `&search=${qs.search}`;
+    }
+
+    return value;
+  };
 
   ////// USEEFFECT //////
   useEffect(() => {
@@ -85,7 +108,10 @@ const List = ({ location }) => {
 
     dispatch({
       type: QUESTION_GET_REQUEST,
-      data: { listType: qs.type ? qs.type : 3 },
+      data: {
+        listType: qs.type ? qs.type : 3,
+        page: "",
+      },
     });
   }, [router.query]);
 
@@ -128,6 +154,17 @@ const List = ({ location }) => {
   }, [st_questionDeleteError]);
 
   ////// TOGGLE //////
+  const otherPageCall = useCallback((changePage) => {
+    setCurrentPage(changePage);
+    const queryString = `?page=${changePage}`;
+
+    dispatch({
+      type: QUESTION_GET_REQUEST,
+      data: {
+        qs: queryString || "",
+      },
+    });
+  }, []);
 
   const updateModalOpen = useCallback(
     (data) => {
@@ -156,14 +193,6 @@ const List = ({ location }) => {
     setUpdateData(null);
   }, [updateModal]);
 
-  const deletePopToggle = useCallback(
-    (id) => () => {
-      setDeleteId(id);
-      setDeletePopVisible((prev) => !prev);
-    },
-    [deletePopVisible, deleteId]
-  );
-
   ////// HANDLER //////
   const onSubmitUpdate = useCallback(() => {
     if (!answer.value || answer.value.trim() === "") {
@@ -180,24 +209,6 @@ const List = ({ location }) => {
       },
     });
   }, [updateData, answer]);
-  console.log(updateData);
-
-  const deleteQuestionHandler = useCallback(() => {
-    if (!deleteId) {
-      return LoadNotification(
-        "ADMIN SYSTEM ERRLR",
-        "일시적인 장애가 발생되었습니다. 잠시 후 다시 시도해주세요."
-      );
-    }
-
-    dispatch({
-      type: QUESTION_DELETE_REQUEST,
-      data: { questionId: deleteId },
-    });
-
-    setDeleteId(null);
-    setDeletePopVisible((prev) => !prev);
-  }, [deleteId]);
   ////// DATAVIEW //////
 
   // Table
@@ -279,8 +290,15 @@ const List = ({ location }) => {
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={questions ? questions : []}
+          dataSource={questions ? questions.questions : []}
           size="small"
+          pagination={{
+            defaultCurrent: 1,
+            current: parseInt(currentPage),
+
+            total: listMaxPage * 10,
+            onChange: (page) => otherPageCall(page),
+          }}
         />
       </AdminContent>
 

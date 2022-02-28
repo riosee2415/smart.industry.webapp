@@ -2,11 +2,14 @@ import produce from "../util/produce";
 
 export const initailState = {
   boughtHistorys: null,
+  adminBoughtList: null,
   delivery: null,
   boughtHistoryDetail: null,
   deliveryDetail: null,
 
   historyId: null,
+
+  detailModal: false,
 
   st_wishListLoading: false, // 구매 리스트
   st_wishListDone: false,
@@ -15,6 +18,14 @@ export const initailState = {
   st_wishListDetailLoading: false, // 구매 디테일 리스트
   st_wishListDetailDone: false,
   st_wishListDetailError: null,
+  //
+  st_wishAdminListLoading: false, // 어드민 구매 리스트
+  st_wishAdminListDone: false,
+  st_wishAdminListError: null,
+  //
+  st_wishCompletedLoading: false, // 구매 승인
+  st_wishCompletedDone: false,
+  st_wishCompletedError: null,
   //
   st_boughtHistoryCreateLoading: false, // 구매 내역 만들기
   st_boughtHistoryCreateDone: false,
@@ -51,6 +62,16 @@ export const WISH_LIST_DETAIL_REQUEST = "WISH_LIST_DETAIL_REQUEST";
 export const WISH_LIST_DETAIL_SUCCESS = "WISH_LIST_DETAIL_SUCCESS";
 export const WISH_LIST_DETAIL_FAILURE = "WISH_LIST_DETAIL_FAILURE";
 
+export const WISH_ADMIN_LIST_REQUEST = "WISH_ADMIN_LIST_REQUEST";
+export const WISH_ADMIN_LIST_SUCCESS = "WISH_ADMIN_LIST_SUCCESS";
+export const WISH_ADMIN_LIST_FAILURE = "WISH_ADMIN_LIST_FAILURE";
+
+export const WISH_COMPLETED_REQUEST = "WISH_COMPLETED_REQUEST";
+export const WISH_COMPLETED_SUCCESS = "WISH_COMPLETED_SUCCESS";
+export const WISH_COMPLETED_FAILURE = "WISH_COMPLETED_FAILURE";
+
+export const DETAIL_MODAL_TOGGLE = "DETAIL_MODAL_TOGGLE";
+
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -72,6 +93,44 @@ const reducer = (state = initailState, action) =>
         draft.st_wishListLoading = false;
         draft.st_wishListDone = false;
         draft.st_wishListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case WISH_ADMIN_LIST_REQUEST: {
+        draft.st_wishAdminListLoading = true;
+        draft.st_wishAdminListDone = null;
+        draft.st_wishAdminListError = false;
+        break;
+      }
+      case WISH_ADMIN_LIST_SUCCESS: {
+        draft.st_wishAdminListLoading = false;
+        draft.st_wishAdminListDone = true;
+        draft.adminBoughtList = action.data;
+        break;
+      }
+      case WISH_ADMIN_LIST_FAILURE: {
+        draft.st_wishAdminListLoading = false;
+        draft.st_wishAdminListDone = false;
+        draft.st_wishAdminListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case WISH_COMPLETED_REQUEST: {
+        draft.st_wishCompletedLoading = true;
+        draft.st_wishCompletedDone = null;
+        draft.st_wishCompletedError = false;
+        break;
+      }
+      case WISH_COMPLETED_SUCCESS: {
+        draft.st_wishCompletedLoading = false;
+        draft.st_wishCompletedDone = true;
+        break;
+      }
+
+      case WISH_COMPLETED_FAILURE: {
+        draft.st_wishCompletedLoading = false;
+        draft.st_wishCompletedDone = false;
+        draft.st_wishCompletedError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
@@ -153,6 +212,10 @@ const reducer = (state = initailState, action) =>
         break;
 
       ///////////////////////////////////////////////////////
+
+      case DETAIL_MODAL_TOGGLE:
+        draft.detailModal = !draft.detailModal;
+        break;
 
       default:
         break;

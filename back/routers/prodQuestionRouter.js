@@ -1,6 +1,6 @@
 const express = require("express");
 const isAdminCheck = require("../middlewares/isAdminCheck");
-const { ProdQuestion, Product, User } = require("../models");
+const { ProdQuestion, Product } = require("../models");
 const { Op } = require("sequelize");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const isNanCheck = require("../middlewares/isNanCheck");
@@ -8,7 +8,7 @@ const isNanCheck = require("../middlewares/isNanCheck");
 const router = express.Router();
 
 router.post("/list", async (req, res, next) => {
-  const { listType, searchTitle, page } = req.body;
+  const { listType, searchTitle, searchAuthor, page } = req.body;
 
   let nanFlag = isNaN(listType);
 
@@ -34,6 +34,7 @@ router.post("/list", async (req, res, next) => {
   const OFFSET = __page * 10;
 
   const _searchTitle = searchTitle ? searchTitle : "";
+  const _searchAuthor = searchAuthor ? searchAuthor : "";
 
   try {
     let questions = [];
@@ -48,6 +49,9 @@ router.post("/list", async (req, res, next) => {
             isComplete: false,
             title: {
               [Op.like]: `%${_searchTitle}%`,
+            },
+            author: {
+              [Op.like]: `%${_searchAuthor}%`,
             },
           },
           include: [
@@ -72,6 +76,9 @@ router.post("/list", async (req, res, next) => {
             title: {
               [Op.like]: `%${_searchTitle}%`,
             },
+            author: {
+              [Op.like]: `%${_searchAuthor}%`,
+            },
           },
           include: [
             {
@@ -88,6 +95,9 @@ router.post("/list", async (req, res, next) => {
             title: {
               [Op.like]: `%${_searchTitle}%`,
             },
+            author: {
+              [Op.like]: `%${_searchAuthor}%`,
+            },
           },
           include: [
             {
@@ -109,6 +119,9 @@ router.post("/list", async (req, res, next) => {
             title: {
               [Op.like]: `%${_searchTitle}%`,
             },
+            author: {
+              [Op.like]: `%${_searchAuthor}%`,
+            },
           },
           include: [
             {
@@ -123,6 +136,9 @@ router.post("/list", async (req, res, next) => {
           where: {
             title: {
               [Op.like]: `%${_searchTitle}%`,
+            },
+            author: {
+              [Op.like]: `%${_searchAuthor}%`,
             },
           },
           include: [
@@ -144,6 +160,9 @@ router.post("/list", async (req, res, next) => {
             title: {
               [Op.like]: `%${_searchTitle}%`,
             },
+            author: {
+              [Op.like]: `%${_searchAuthor}%`,
+            },
           },
           include: [
             {
@@ -156,13 +175,11 @@ router.post("/list", async (req, res, next) => {
         break;
     }
 
-    return res
-      .status(200)
-      .json({
-        questions,
-        lastPage: parseInt(lastPage),
-        questionLen: parseInt(questionLen),
-      });
+    return res.status(200).json({
+      questions,
+      lastPage: parseInt(lastPage),
+      questionLen: parseInt(questionLen),
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("상품 문의 목록을 불러올 수 없습니다.");
@@ -171,6 +188,14 @@ router.post("/list", async (req, res, next) => {
 
 router.get("/product/list/:ProductId", async (req, res, next) => {
   const { ProductId } = req.params;
+  const { page } = req.query;
+
+  const LIMIT = 8;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 8;
 
   if (isNanCheck(ProductId)) {
     return res.status(401).send("잘못된 요청입니다.");
@@ -185,11 +210,27 @@ router.get("/product/list/:ProductId", async (req, res, next) => {
       return res.status(401).send("존재하지 않는 상품입니다.");
     }
 
-    const lists = await ProdQuestion.findAll({
+    const totalLists = await ProdQuestion.findAll({
       where: { ProductId: parseInt(ProductId) },
     });
 
-    return res.status(200).json(lists);
+    const questionLen = totalLists.length;
+
+    const lastPage =
+      questionLen % LIMIT > 0 ? questionLen / LIMIT + 1 : questionLen / LIMIT;
+
+    const questions = await ProdQuestion.findAll({
+      offset: OFFSET,
+      limit: LIMIT,
+      where: { ProductId: parseInt(ProductId) },
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json({
+      questions,
+      lastPage: parseInt(lastPage),
+      questionLen: parseInt(questionLen),
+    });
   } catch (error) {
     console.error(error);
     return res.status(401).send("상품 문의 목록을 불러올 수 없습니다.");
@@ -369,6 +410,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       secret: Boolean(isSecret) === true ? secret : null,
       ProductId: parseInt(ProductId),
       UserId: parseInt(req.user.id),
+      terms: null,
     });
 
     if (!createResult) {
@@ -383,8 +425,21 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/notUser/create", async (req, res, next) => {
-  const { author, mobile, email, title, content, isSecret, secret, ProductId } =
-    req.body;
+  const {
+    author,
+    mobile,
+    email,
+    title,
+    content,
+    isSecret,
+    secret,
+    ProductId,
+    terms,
+  } = req.body;
+
+  if (!terms) {
+    return res.status(401).send("약관에 동의해주세요.");
+  }
   try {
     const exProd = await Product.findOne({
       where: { id: parseInt(ProductId) },
@@ -404,6 +459,7 @@ router.post("/notUser/create", async (req, res, next) => {
       secret: Boolean(isSecret) === true ? secret : null,
       ProductId: parseInt(ProductId),
       UserId: null,
+      terms,
     });
 
     if (!createResult) {

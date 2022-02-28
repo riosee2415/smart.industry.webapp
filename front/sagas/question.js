@@ -44,12 +44,22 @@ import {
   QUESTION_TYPE_UPDATE_REQUEST,
   QUESTION_TYPE_UPDATE_SUCCESS,
   QUESTION_TYPE_UPDATE_FAILURE,
+  //
+  QUESTION_PREVPAGE_REQUEST,
+  QUESTION_PREVPAGE_SUCCESS,
+  QUESTION_PREVPAGE_FAILURE,
+  //
+  QUESTION_NEXTPAGE_REQUEST,
+  QUESTION_NEXTPAGE_SUCCESS,
+  QUESTION_NEXTPAGE_FAILURE,
 } from "../reducers/question";
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function questionGetAPI(data) {
-  return axios.get(`/api/question/list/${data.listType}`);
+  return axios.get(
+    `/api/question/list?page=${data.page}&listType=${data.listType}`
+  );
 }
 
 function* questionGet(action) {
@@ -75,7 +85,7 @@ function* questionGet(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function questionMyListAPI(data) {
-  return axios.get(`/api/question/myList`, data);
+  return axios.get(`/api/question/myList/${data.qs}`, data);
 }
 
 function* questionMyList(action) {
@@ -101,8 +111,10 @@ function* questionMyList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function questionMyDetailAPI(data) {
-  console.log(data);
-  return axios.post(`/api/question/detail`, data);
+  return axios.get(
+    `/api/question/detail/${data.questionId}?password=${data.password}`,
+    data
+  );
 }
 
 function* questionMyDetail(action) {
@@ -346,6 +358,58 @@ function* questionTypeUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function questionPrevAPI(data) {
+  return axios.get(`/api/question/prev/${data.questionId}`, data);
+}
+
+function* questionPrev(action) {
+  try {
+    const result = yield call(questionPrevAPI, action.data);
+
+    yield put({
+      type: QUESTION_PREVPAGE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: QUESTION_PREVPAGE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function questionNextAPI(data) {
+  return axios.get(`/api/question/next/${data.questionId}`, data);
+}
+
+function* questionNext(action) {
+  try {
+    const result = yield call(questionNextAPI, action.data);
+
+    yield put({
+      type: QUESTION_NEXTPAGE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: QUESTION_NEXTPAGE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
 
@@ -395,6 +459,14 @@ function* watchQuestionTypeUpdate() {
   yield takeLatest(QUESTION_TYPE_UPDATE_REQUEST, questionTypeUpdate);
 }
 
+function* watchQuestionPrev() {
+  yield takeLatest(QUESTION_PREVPAGE_REQUEST, questionPrev);
+}
+
+function* watchQuestionNext() {
+  yield takeLatest(QUESTION_NEXTPAGE_REQUEST, questionNext);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* bannerSaga() {
   yield all([
@@ -412,6 +484,9 @@ export default function* bannerSaga() {
     fork(watchQuestionTypeCreate),
     fork(watchQuestionTypeDelete),
     fork(watchQuestionTypeUpdate),
+    //
+    fork(watchQuestionPrev),
+    fork(watchQuestionNext),
     //
   ]);
 }

@@ -670,6 +670,7 @@ const DetailProduct = () => {
                                 )) *
                                 productCount
                             ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          원
                         </Text>
                         <Image
                           margin={`0 0 0 16px`}
@@ -709,6 +710,7 @@ const DetailProduct = () => {
                             productDetailData[0].deliveryPay) *
                             productCount
                         ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      원
                       <SpanText
                         fontSize={`14px`}
                         fontWeight={`500`}
@@ -729,7 +731,11 @@ const DetailProduct = () => {
                   <Wrapper dr={`row`} ju={`space-between`}>
                     <CommonButton
                       width={
-                        width < 700 ? `calc(50% - 3px)` : `calc(20% - 6px)`
+                        width < 700
+                          ? `calc(50% - 3px)`
+                          : width < 1280
+                          ? `calc(30% - 6px)`
+                          : `calc(20% - 6px)`
                       }
                       height={`50px`}
                       radius={`0`}
@@ -741,7 +747,11 @@ const DetailProduct = () => {
                     </CommonButton>
                     <CommonButton
                       width={
-                        width < 700 ? `calc(50% - 3px)` : `calc(20% - 6px)`
+                        width < 700
+                          ? `calc(50% - 3px)`
+                          : width < 1280
+                          ? `calc(30% - 6px)`
+                          : `calc(20% - 6px)`
                       }
                       height={`50px`}
                       radius={`0`}
@@ -769,7 +779,9 @@ const DetailProduct = () => {
                     </CommonButton>
                     <CommonButton
                       margin={width < 700 && `6px 0 0`}
-                      width={width < 700 ? `100%` : `60%`}
+                      width={
+                        width < 700 ? `100%` : width < 1280 ? `40%` : `60%`
+                      }
                       height={`50px`}
                       radius={`0`}
                       onClick={orderHandler}

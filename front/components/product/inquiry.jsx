@@ -1,4 +1,11 @@
-import { message, Table, notification, Modal, Checkbox } from "antd";
+import {
+  message,
+  Table,
+  notification,
+  Modal,
+  Checkbox,
+  Pagination,
+} from "antd";
 import React, { useState, useCallback } from "react";
 import {
   Wrapper,
@@ -7,6 +14,7 @@ import {
   TextInput,
   TextArea,
   Image,
+  SpanText,
 } from "../commonComponents";
 import styled from "styled-components";
 import Theme from "../Theme";
@@ -22,6 +30,7 @@ import {
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { ConsoleSqlOutlined } from "@ant-design/icons";
+import useWidth from "../../hooks/useWidth";
 
 const CustomModal = styled(Modal)`
   & .ant-modal-close-x {
@@ -48,17 +57,34 @@ const CustomTable = styled(Table)`
   }
 `;
 
+const CustomPagination = styled(Pagination)`
+  & .ant-pagination-item-active {
+    border: none;
+    border-bottom: 1px solid ${Theme.basicTheme_C} !important;
+  }
+
+  & .ant-pagination-item-link {
+    border: none;
+  }
+`;
+
 const Inquiry = () => {
   const router = useRouter();
+
+  const width = useWidth();
+
   ////// DATAIVEW //////
 
   const { me } = useSelector((state) => state.user);
 
   const {
     productQuestionListProd,
+    productQuestionListProdLastPage,
+    productQuestionListProdLen,
 
     st_productQuestionListProdDone,
     st_productQuestionListProdError,
+
     st_productQuestionCreateDone,
     st_productQuestionCreateError,
     st_productQuestionNotUserCreateDone,
@@ -89,14 +115,37 @@ const Inquiry = () => {
   const [code, setCode] = useState("");
   const [id, setId] = useState("");
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [toggleArr, setToggleArr] = useState([]);
+  const [secretArr, setSecretArr] = useState([]);
+
+  const inputSecretPassword = useInput("");
+
   useEffect(() => {
     dispatch({
       type: PRODUCT_QUESTION_LIST_PROD_REQUEST,
       data: {
         ProductId: router.query.id,
+        page: 1,
       },
     });
   }, [router.query.id]);
+
+  useEffect(() => {
+    if (st_productQuestionListProdDone) {
+      let boolArr = [];
+
+      for (let i = 0; i < productQuestionListProd.length; i++) {
+        boolArr.push(false);
+      }
+
+      let saveSecret = productQuestionListProd.map((data) => data.isSecret);
+
+      setSecretArr(saveSecret);
+      setToggleArr(boolArr);
+    }
+  }, [st_productQuestionListProdDone]);
 
   useEffect(() => {
     if (st_productQuestionListProdError) {
@@ -107,6 +156,13 @@ const Inquiry = () => {
     if (st_productQuestionNotUserCreateDone) {
       notModalToggle();
 
+      dispatch({
+        type: PRODUCT_QUESTION_LIST_PROD_REQUEST,
+        data: {
+          ProductId: router.query.id,
+          page: 1,
+        },
+      });
       return LoadNotification("상품 문의", "상품 문의가 생성 되었습니다.");
     }
   }, [st_productQuestionNotUserCreateDone]);
@@ -120,50 +176,28 @@ const Inquiry = () => {
   useEffect(() => {
     if (st_productQuestionCreateDone) {
       ModalToggle();
+      dispatch({
+        type: PRODUCT_QUESTION_LIST_PROD_REQUEST,
+        data: {
+          ProductId: router.query.id,
+          page: 1,
+        },
+      });
+
       return LoadNotification("상품 문의", "상품 문의가 생성 되었습니다.");
     }
   }, [st_productQuestionCreateDone]);
 
-  const columns = [
-    {
-      title: "번호",
-      render: (data) => <Wrapper>{data.id}</Wrapper>,
+  const onClickToggleHandler = useCallback(
+    (idx2) => {
+      let Arr = toggleArr.map((data2, idx) => {
+        return idx2 === idx && !data2;
+      });
+
+      setToggleArr(Arr);
     },
-    {
-      title: "제목",
-      render: (data) => (
-        <Wrapper dr={`row`} ju={`flex-start`}>
-          <Wrapper width={`auto`} margin={`0 17px 0 0`}>
-            {data.title}
-          </Wrapper>
-          <Wrapper width={`10px`} height={`10px`}>
-            {data.isSecret && (
-              <Image
-                height={`100%`}
-                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
-              />
-            )}
-          </Wrapper>
-        </Wrapper>
-      ),
-      width: `60%`,
-    },
-    {
-      title: "작성자",
-      render: (data) => <Wrapper>{data.author}</Wrapper>,
-      width: `10%`,
-    },
-    {
-      title: "작성일",
-      render: (data) => <Wrapper>{data.createdAt.substring(0, 10)}</Wrapper>,
-      width: `10%`,
-    },
-    {
-      title: "조회수",
-      render: (data) => <Wrapper>{data.hit}</Wrapper>,
-      width: `10%`,
-    },
-  ];
+    [toggleArr]
+  );
 
   const ModalToggle = useCallback(() => {
     setIsModalVisible1((prev) => !prev);
@@ -174,8 +208,6 @@ const Inquiry = () => {
     setIsSecret1(false);
   }, []);
 
-  console.log(isSecret2);
-
   const notModalToggle = useCallback(() => {
     setIsModalVisible2((prev) => !prev);
 
@@ -184,7 +216,9 @@ const Inquiry = () => {
     inputNotEmail.setValue("");
     inputNotTitle.setValue("");
     inputNotContent.setValue("");
+    inputNotPassword.setValue("");
     setIsSecret2(false);
+    setIsCheckAgree(false);
   }, []);
 
   const isSecretModalToggle = useCallback(() => {
@@ -255,10 +289,9 @@ const Inquiry = () => {
         return LoadNotification("비밀번호", "비밀번호을 입력해주세요.");
       }
     }
-
-    // else if (isCheckAgree) {
-    //   return LoadNotification("개인정보", "개인정보 제공에 동의해주세요.");
-    // }
+    if (!isCheckAgree) {
+      return LoadNotification("개인정보", "개인정보 제공에 동의해주세요.");
+    }
 
     dispatch({
       type: PRODUCT_QUESTION_NOT_USER_CREATE_REQUEST,
@@ -271,6 +304,7 @@ const Inquiry = () => {
         isSecret: isSecret2,
         secret: isSecret2 ? inputNotPassword.value : null,
         ProductId: router.query.id,
+        terms: isCheckAgree,
       },
     });
   }, [
@@ -279,6 +313,7 @@ const Inquiry = () => {
     inputNotEmail.value,
     inputNotTitle.value,
     inputNotContent.value,
+    inputNotPassword.value,
     isSecret2,
     isCheckAgree,
   ]);
@@ -307,29 +342,183 @@ const Inquiry = () => {
     router.push(link);
   }, []);
 
+  const onChangePageHandler = useCallback((page) => {
+    setCurrentPage(page);
+
+    dispatch({
+      type: PRODUCT_QUESTION_LIST_PROD_REQUEST,
+      data: {
+        ProductId: router.query.id,
+        page,
+      },
+    });
+  }, []);
+
+  const secretPasswordHandler = useCallback(
+    (secret, idx) => {
+      if (inputSecretPassword.value === secret) {
+        let changeBool = secretArr.map((data, idx2) => {
+          return idx === idx2 ? !data : data;
+        });
+
+        setSecretArr(changeBool);
+        inputSecretPassword.setValue("");
+      }
+    },
+    [inputSecretPassword.value, secretArr]
+  );
+
   return (
     <Wrapper>
-      <CustomTable
-        onRow={(recode, rowIndex) => {
-          return {
-            onClick: (event) => {
-              if (recode.isSecret) {
-                setCode(recode.secret);
-                setId(recode.id);
-                isSecretModalToggle();
-              } else {
-                moveLinkHandler(`/community/productQnA/detail/${recode.id}`);
-              }
-            },
-          };
-        }}
-        style={{ width: `100%` }}
-        size="middle"
-        columns={columns}
-        dataSource={productQuestionListProd ? productQuestionListProd : []}
-      />
+      <Wrapper margin={`40px 0 0`}>
+        <Wrapper
+          bgColor={Theme.lightGrey2_C}
+          height={`40px`}
+          borderTop={`1px solid ${Theme.grey2_C}`}
+          borderBottom={`1px solid ${Theme.grey2_C}`}>
+          <Wrapper width={`10%`}>번호</Wrapper>
+          <Wrapper width={`60%`}>제목</Wrapper>
+          <Wrapper width={`10%`}>작성자</Wrapper>
+          <Wrapper width={`10%`}>작성일</Wrapper>
+          <Wrapper width={`10%`}>조회수</Wrapper>
+        </Wrapper>
+        {productQuestionListProd &&
+          (productQuestionListProd.length === 0 ? (
+            <Wrapper margin={`100px 0`}>
+              <Empty description="상품에 해당하는 문의가 없습니다."></Empty>
+            </Wrapper>
+          ) : (
+            productQuestionListProd.map((data, idx) => {
+              return (
+                <Wrapper ju={`flex-start`}>
+                  <Wrapper
+                    dr={`row`}
+                    ju={`flex-start`}
+                    padding={`14px 0px`}
+                    cursor={`pointer`}
+                    borderBottom={`1px solid ${Theme.grey2_C}`}
+                    onClick={() => onClickToggleHandler(idx)}>
+                    <Wrapper width={`10%`}>{data.id}</Wrapper>
 
-      <Wrapper al={`flex-end`}>
+                    <Wrapper width={`60%`} ju={`flex-start`} dr={`row`}>
+                      <Wrapper width={`auto`} margin={`0 17px 0 0`}>
+                        {data.title}&nbsp;
+                        {data.isComplete ? `[답변완료]` : ""}
+                      </Wrapper>
+                      <Wrapper width={`10px`} height={`10px`}>
+                        {data.isSecret && (
+                          <Image
+                            height={`100%`}
+                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
+                          />
+                        )}
+                      </Wrapper>
+                    </Wrapper>
+                    <Wrapper width={`10%`}>{data.author}</Wrapper>
+                    <Wrapper width={`10%`}>
+                      {data.createdAt.substring(0, 10)}
+                    </Wrapper>
+                    <Wrapper width={`10%`}>{data.hit}</Wrapper>
+                  </Wrapper>
+
+                  {toggleArr[idx] && (
+                    <Wrapper
+                      dr={`row`}
+                      ju={`flex-start`}
+                      padding={`14px 0px`}
+                      cursor={`pointer`}
+                      borderBottom={`1px solid ${Theme.grey2_C}`}>
+                      <Wrapper width={`10%`}></Wrapper>
+
+                      {secretArr[idx] ? (
+                        <Wrapper width={`60%`} ju={`flex-start`} dr={`row`}>
+                          <Wrapper
+                            dr={`row`}
+                            al={`flex-start`}
+                            bgColor={Theme.lightGrey2_C}>
+                            <Wrapper al={`flex-start`}>
+                              <Text color={Theme.red_C}>
+                                비공개 글 입니다.&nbsp;
+                                <SpanText color={Theme.black_C}>
+                                  글 작성시 입력한 비밀번호를 입력해주세요.
+                                </SpanText>
+                              </Text>
+
+                              <Wrapper
+                                dr={`row`}
+                                ju={`flex-start`}
+                                margin={`10px 0 0 0`}>
+                                <TextInput
+                                  margin={`0 16px 0 0`}
+                                  width={`146px`}
+                                  height={`20px`}
+                                  border={`1px solid ${Theme.grey3_C}`}
+                                  type={`password`}
+                                  {...inputSecretPassword}
+                                />
+                                <CommonButton
+                                  color={Theme.darkGrey_C}
+                                  width={`54px`}
+                                  height={`30px`}
+                                  kindOf={`white`}
+                                  fontSize={`14px`}
+                                  onClick={() =>
+                                    secretPasswordHandler(data.secret, idx)
+                                  }>
+                                  확인
+                                </CommonButton>
+                              </Wrapper>
+                            </Wrapper>
+                          </Wrapper>
+                        </Wrapper>
+                      ) : (
+                        <Wrapper
+                          dr={`row`}
+                          ju={`flex-start`}
+                          padding={`14px 0px`}
+                          cursor={`pointer`}
+                          borderBottom={`1px solid ${Theme.grey2_C}`}>
+                          <Wrapper width={`10%`}></Wrapper>
+
+                          <Wrapper width={`60%`} ju={`flex-start`} dr={`row`}>
+                            <Wrapper
+                              dr={`row`}
+                              al={`flex-start`}
+                              bgColor={Theme.lightGrey2_C}>
+                              <Wrapper
+                                width={`20px`}
+                                height={`20px`}
+                                color={Theme.white_C}
+                                radius={`100%`}
+                                bgColor={Theme.red_C}
+                                margin={`23px 26px 0 20px`}>
+                                A
+                              </Wrapper>
+                              <Wrapper
+                                width={`calc(100% - 66px)`}
+                                minHeight={`140px`}
+                                al={`flex-start`}
+                                ju={`flex-start`}
+                                padding={`23px 10px 0 0`}>
+                                {data && data.answer}
+                              </Wrapper>
+                            </Wrapper>
+                          </Wrapper>
+                        </Wrapper>
+                      )}
+
+                      <Wrapper width={`10%`}></Wrapper>
+                      <Wrapper width={`10%`}></Wrapper>
+                      <Wrapper width={`10%`}></Wrapper>
+                    </Wrapper>
+                  )}
+                </Wrapper>
+              );
+            })
+          ))}
+      </Wrapper>
+
+      <Wrapper al={`flex-end`} margin={`20px 0 0 0`}>
         <CommonButton
           radius={`0`}
           width={`106px`}
@@ -339,6 +528,14 @@ const Inquiry = () => {
           onClick={() => (me ? ModalToggle() : notModalToggle())}>
           상품 문의하기
         </CommonButton>
+      </Wrapper>
+
+      <Wrapper margin={`50px 0px`}>
+        <CustomPagination
+          total={productQuestionListProdLastPage * 10}
+          onChange={onChangePageHandler}
+          current={currentPage}
+        />
       </Wrapper>
 
       <CustomModal
@@ -395,6 +592,7 @@ const Inquiry = () => {
                 width={`100%`}
                 margin={`10px 0 0 0`}
                 border={`1px solid ${Theme.basicTheme_C}`}
+                type={`password`}
                 {...inputPassword}
               />
             </Wrapper>
@@ -517,18 +715,19 @@ const Inquiry = () => {
                 width={`100%`}
                 margin={`10px 0 0 0`}
                 border={`1px solid ${Theme.basicTheme_C}`}
+                type={`password`}
                 {...inputNotPassword}
               />
             </Wrapper>
           )}
 
-          {/* <Wrapper al={`flex-start`} margin={`25px 0 0 0`}>
+          <Wrapper al={`flex-start`} margin={`25px 0 0 0`}>
             <Checkbox
-              value={isCheckAgree}
+              checked={isCheckAgree}
               onChange={(e) => onChangeisCheckAgree(e)}>
               개인정보 제공에 동의합니다.
             </Checkbox>
-          </Wrapper> */}
+          </Wrapper>
 
           <Wrapper dr={`row`} margin={`40px 0 0 0`}>
             <CommonButton
