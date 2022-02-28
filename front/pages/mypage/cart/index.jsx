@@ -160,6 +160,9 @@ const Cart = () => {
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [localDataum, setLocalDataum] = useState([]);
   const [allPrice, setAllPrice] = useState(0);
+  const [discountPrice, setDiscountPrice] = useState(0);
+  const [originPrice, setOriginPrice] = useState(0);
+  const [delPrice, setDelPrice] = useState(0);
   const [len, setLen] = useState(0);
 
   const [deleteIndex, setDeleteIndex] = useState(0);
@@ -207,10 +210,10 @@ const Cart = () => {
   useEffect(() => {
     if (router.query.from && router.query.from === "prod") {
       setIsOrderForm(true);
-      let result = [];
+
       const data = JSON.parse(localStorage.getItem("WNANSGKRL"));
-      result.push(data);
-      setOrderDatum(result);
+
+      setOrderDatum(data);
 
       return;
     }
@@ -290,15 +293,29 @@ const Cart = () => {
 
   useEffect(() => {
     let tempData = 0;
-    for (let i = 0; i < datum.length; i++) {
+
+    let tempData2 = 0;
+    let tempData3 = 0;
+    let tempData4 = 0;
+    for (let i = 0; i < showDatum.length; i++) {
       tempData +=
-        datum[i].price * (datum[i].discount / 100) * datum[i].productNum +
-        datum[i].deliveryPay;
+        showDatum[i].price * showDatum[i].productNum -
+        (showDatum[i].price * showDatum[i].productNum * showDatum[i].discount) /
+          100;
+      tempData2 += showDatum[i].deliveryPay;
+      tempData3 +=
+        showDatum[i].price *
+        showDatum[i].productNum *
+        (showDatum[i].discount / 100);
+
+      tempData4 += showDatum[i].price * showDatum[i].productNum;
     }
 
     setAllPrice(tempData);
-  }, [datum]);
-  console.log(datum);
+    setDelPrice(tempData2);
+    setDiscountPrice(tempData3);
+    setOriginPrice(tempData4);
+  }, [showDatum]);
   useEffect(() => {
     if (isOrderForm) {
       orderDatum && setShowDatum(orderDatum);
@@ -584,15 +601,23 @@ const Cart = () => {
       type: WISH_CREATE_REQUEST,
       data: {
         orderNum: orderPK,
-        price: allPrice,
-        discount: "-",
-        deliveryPrice: "0",
+        price: originPrice,
+        discount: discountPrice,
+        deliveryPrice: delPrice,
         name: inputName.value,
         content: inputContent.value,
         mobile: inputMobile.value,
       },
     });
-  }, [allPrice, inputName, inputContent, orderDatum]);
+  }, [
+    allPrice,
+    delPrice,
+    originPrice,
+    discountPrice,
+    inputName,
+    inputContent,
+    orderDatum,
+  ]);
 
   ////// DATAVIEW //////
 
@@ -805,7 +830,8 @@ const Cart = () => {
                               )}
                             </Wrapper>
                             <Text width={`auto`}>
-                              {data.price * data.productNum + data.deliveryPay}
+                              {data.price * data.productNum +
+                                data.deliveryPay * data.productNum}
                               원
                             </Text>
                             <Text width={`auto`}>기본배송</Text>
@@ -1093,8 +1119,11 @@ const Cart = () => {
                           borderRight={`1px solid ${Theme.grey2_C}`}
                           height={`100%`}
                         >
-                          {data.price * data.productNum + data.deliveryPay}원
-                          {/* 보류 */}
+                          {data.price * data.productNum -
+                            (data.price * data.productNum * data.discount) /
+                              100 +
+                            data.deliveryPay}
+                          원{/* 보류 */}
                         </Wrapper>
                         <Wrapper
                           width={`138px`}
@@ -1143,7 +1172,7 @@ const Cart = () => {
                 ju={`flex-end`}
               >
                 상품구매금액 {numberWithCommas(allPrice)} +
-                {/* 부가세 200,000 배송비 */}0 (무료) = 합계:
+                {/* 부가세 200,000 */}배송비 {delPrice} (무료) = 합계:
                 <Wrapper
                   width={`auto`}
                   color={Theme.red_C}
@@ -1151,7 +1180,7 @@ const Cart = () => {
                   fontWeight={`bold`}
                   margin={`0 13px 0 22px`}
                 >
-                  {numberWithCommas(allPrice)}원
+                  {numberWithCommas(allPrice + delPrice)}원
                 </Wrapper>
               </Wrapper>
             </Wrapper>

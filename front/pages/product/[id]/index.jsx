@@ -354,6 +354,8 @@ const DetailProduct = () => {
   }, []);
 
   const orderHandler = useCallback(() => {
+    let result = [];
+
     const data = {
       id: productDetailData[0].id,
       thumbnail: productDetailData[0].thumbnail,
@@ -363,10 +365,17 @@ const DetailProduct = () => {
       discount: productDetailData[0].discount,
       deliveryPay: productDetailData[0].deliveryPay,
     };
+    result.push(data);
 
-    localStorage.setItem("WNANSGKRL", JSON.stringify(data));
+    localStorage.setItem("WNANSGKRL", JSON.stringify(result));
     moveLinkHandler(`/mypage/cart?from=prod`);
   }, [productDetailData, productCount]);
+
+  const allOrderHandler = useCallback(() => {
+    localStorage.setItem("WNANSGKRL", localStorage.getItem("WKDQKRNSL"));
+
+    moveLinkHandler(`/mypage/cart?from=prod`);
+  }, [productDetailData]);
 
   ////// DATAIVEW //////
 
@@ -984,7 +993,7 @@ const DetailProduct = () => {
                   width={width < 700 ? `85px` : `120px`}
                   padding={`0`}
                   height={`40px`}
-                  onClick={orderHandler}
+                  onClick={allOrderHandler}
                 >
                   바로 구매하기
                 </CommonButton>
