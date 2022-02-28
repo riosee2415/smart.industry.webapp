@@ -108,10 +108,7 @@ const List = ({ location }) => {
 
     dispatch({
       type: QUESTION_GET_REQUEST,
-      data: {
-        listType: qs.type ? qs.type : 3,
-        page: "",
-      },
+      data: { listType: qs.type ? qs.type : 3 },
     });
   }, [router.query]);
 

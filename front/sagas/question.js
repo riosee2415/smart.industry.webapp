@@ -57,9 +57,7 @@ import {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function questionGetAPI(data) {
-  return axios.get(
-    `/api/question/list?page=${data.page}&listType=${data.listType}`
-  );
+  return axios.get(`/api/question/list?listType=${data.listType}`);
 }
 
 function* questionGet(action) {
