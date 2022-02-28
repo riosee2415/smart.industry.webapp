@@ -202,6 +202,10 @@ const DetailProduct = () => {
     }
   }, [productDetailData, productDetailImages]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// HANDLER //////
 
   const interestChangeHandler = useCallback(
@@ -339,6 +343,7 @@ const DetailProduct = () => {
     //   },
     // });
   }, [prevStorge, productDetailData, productCount]);
+
   ////// TOGGLE //////
   const ModalToggle = useCallback(() => {
     setIsModalVisible((prev) => !prev);

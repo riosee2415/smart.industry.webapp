@@ -242,6 +242,10 @@ const ProductList = () => {
     }
   }, [productType]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// HANDLER //////
 
   const moveLinkHandler = useCallback((link) => {
