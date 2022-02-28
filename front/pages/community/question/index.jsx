@@ -113,7 +113,7 @@ const Question = () => {
       inputContent.setValue("");
       inputTitle.setValue("");
     }
-  }, [st_questionCreateDone, inputContent.value, isTerms]);
+  }, [st_questionCreateDone]);
 
   useEffect(() => {
     if (st_notUserCreateDone) {
@@ -126,15 +126,7 @@ const Question = () => {
       inputTitle.setValue("");
       inputContent.setValue("");
     }
-  }, [
-    st_notUserCreateDone,
-    inputContent.value,
-    isTerms,
-    inputName.value,
-    inputMobile.value,
-    inputEmail.value,
-    inputTitle.value,
-  ]);
+  }, [st_notUserCreateDone]);
   ////// TOGGLE //////
   ////// HANDLER //////
   const moveLinkHandler = useCallback((link) => {
