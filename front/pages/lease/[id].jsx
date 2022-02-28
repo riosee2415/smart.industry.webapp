@@ -28,6 +28,7 @@ import {
   SpanText,
 } from "../../components/commonComponents";
 import { useRouter } from "next/dist/client/router";
+import { CONTACT_DETAIL_REQUEST } from "../../reducers/contact";
 
 const Index = () => {
   const width = useWidth();
@@ -37,9 +38,22 @@ const Index = () => {
   );
 
   ////// HOOKS //////
+
+  const dispatch = useDispatch();
+
   ////// REDUX //////
   const router = useRouter();
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: CONTACT_DETAIL_REQUEST,
+      data: {
+        leaseId: router.query.id,
+      },
+    });
+  }, [router.query]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
