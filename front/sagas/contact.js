@@ -41,7 +41,7 @@ function* contactList(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 function contactDetailAPI(data) {
-  return axios.get(`/api/lease/detail${data.leaseId}`);
+  return axios.get(`/api/lease/detail/${data.leaseId}`);
 }
 
 function* contactDetail(action) {
