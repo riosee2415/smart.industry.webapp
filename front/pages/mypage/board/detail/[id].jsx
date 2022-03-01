@@ -23,6 +23,11 @@ import {
   QUESTION_NEXTPAGE_REQUEST,
 } from "../../../../reducers/question";
 import { useEffect } from "react";
+import styled from "styled-components";
+
+const TitleWrapper = styled(Wrapper)`
+  word-break: break-all;
+`;
 
 const Notice = () => {
   ////// GLOBAL STATE //////
@@ -46,7 +51,6 @@ const Notice = () => {
       type: QUESTION_MY_DETAIL_REQUEST,
       data: {
         questionId: router.query.id,
-        password: "0",
       },
     });
   }, [router.query]);
@@ -190,9 +194,9 @@ const Notice = () => {
                 padding={`21px 0 21px 20px`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
               >
-                <Wrapper width={`70%`} al={`flex-start`}>
+                <TitleWrapper width={`70%`} al={`flex-start`}>
                   {myQuestionDetails && myQuestionDetails.title}
-                </Wrapper>
+                </TitleWrapper>
                 <Wrapper width={`15%`}>
                   {myQuestionDetails &&
                     myQuestionDetails.createdAt.substring(0, 10)}
