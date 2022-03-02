@@ -10,7 +10,7 @@ router.post("/list", async (req, res, next) => {
   const {
     page,
     type,
-    isCompleted,
+    listType,
     date,
     searchTitle,
     searchAuthor,
@@ -25,10 +25,25 @@ router.post("/list", async (req, res, next) => {
   const OFFSET = __page * 10;
 
   let _type = type || null;
-  let _isCompleted = isCompleted || null;
   let _searchTitle = searchTitle || "";
   let _searchAuthor = searchAuthor || "";
   let _searchContent = searchContent || "";
+
+  let nanFlag = isNaN(listType);
+
+  if (!listType) {
+    nanFlag = false;
+  }
+
+  if (nanFlag) {
+    return res.status(400).send("잘못된 요청 입니다.");
+  }
+
+  let _listType = Number(listType);
+
+  if (_listType > 3 || !listType) {
+    _listType = 3;
+  }
 
   if (parseInt(date) > 3) {
     date === ``;
@@ -54,6 +69,7 @@ router.post("/list", async (req, res, next) => {
             email,
             secret,
             answer,
+            isCompleted,
             DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
             DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
             answerdAt
@@ -67,7 +83,15 @@ router.post("/list", async (req, res, next) => {
                   content LIKE "%${_searchContent}%"
             )
  ${_type ? `AND  type = '${_type}'` : ``}
- ${_isCompleted ? `AND  isCompleted = ${_isCompleted}` : ``}
+ ${
+   _listType === 1
+     ? `AND isCompleted = false`
+     : _listType === 2
+     ? `AND isCompleted = true`
+     : _listType === 3
+     ? ``
+     : ``
+ }
  ${searchDate}
     `;
 
@@ -81,6 +105,7 @@ router.post("/list", async (req, res, next) => {
             email,
             secret,
             answer,
+            isCompleted,
             DATE_FORMAT(createdAt,     "%Y년 %m월 %d일 %H시 %i분")							    AS	createdAt,
             DATE_FORMAT(updatedAt,     "%Y년 %m월 %d일 %H시 %i분") 					      		AS	updatedAt,
             answerdAt
@@ -94,7 +119,15 @@ router.post("/list", async (req, res, next) => {
               content LIKE "%${_searchContent}%"
             )
   ${_type ? `AND  type = '${_type}'` : ``} 
-  ${_isCompleted ? `AND isCompleted = ${_isCompleted}` : ``}
+  ${
+    _listType === 1
+      ? `AND isCompleted = false`
+      : _listType === 2
+      ? `AND isCompleted = true`
+      : _listType === 3
+      ? ``
+      : ``
+  }
   ${searchDate}
      LIMIT  ${LIMIT}
     OFFSET  ${OFFSET}
@@ -120,33 +153,29 @@ router.post("/list", async (req, res, next) => {
   }
 });
 
-router.post("/detail", async (req, res, next) => {
-  const { id, secret } = req.body;
+router.get("/detail/:leaseId", async (req, res, next) => {
+  const { leaseId } = req.params;
+
+  if (isNanCheck(leaseId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
   try {
     const exLease = await Lease.findOne({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(leaseId) },
     });
 
     if (!exLease) {
       return res.status(401).send("존재하지 않는 문의입니다.");
     }
 
-    if (!secret) {
-      return res.status(401).send("비밀번호를 입력하여 주세요.");
-    }
-
     const nextHit = exLease.hit;
-
-    if (String(secret) !== exLease.secret) {
-      return res.status(401).send("비밀번호가 일치하지 않습니다.");
-    }
 
     await Lease.update(
       {
         hit: nextHit + 1,
       },
       {
-        where: { id: parseInt(id) },
+        where: { id: parseInt(leaseId) },
       }
     );
 

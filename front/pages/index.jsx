@@ -1,24 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  KAKAO_LOGIN_REQUEST,
-  LOAD_MY_INFO_REQUEST,
-  LOGIN_REQUEST,
-} from "../reducers/user";
-import useInput from "../hooks/useInput";
+import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 import ClientLayout from "../components/ClientLayout";
 import axios from "axios";
 import wrapper from "../store/configureStore";
 import { END } from "redux-saga";
 import {
-  ColWrapper,
-  RowWrapper,
   Image,
   WholeWrapper,
   Wrapper,
   Text,
   RsWrapper,
-  CommonButton,
   SubTitle,
 } from "../components/commonComponents";
 import useWidth from "../hooks/useWidth";
@@ -26,12 +18,10 @@ import Theme from "../components/Theme";
 import styled from "styled-components";
 import { SEO_LIST_REQUEST } from "../reducers/seo";
 import Head from "next/head";
-import Popup from "../components/popup/popup";
+// import Popup from "../components/popup/popup";
 import Mainslider from "../components/slide/MainSlider";
-import ToastEditorComponent from "../components/editor/ToastEditorComponent";
-import { useRef } from "react";
+
 import { Empty, Button, message } from "antd";
-import { HeartFilled, PlusOutlined } from "@ant-design/icons";
 import { CATEGORY_LIST_REQUEST } from "../reducers/category";
 import {
   PRODUCT_BEST_LIST_REQUEST,
@@ -512,7 +502,7 @@ const Home = ({}) => {
                       return (
                         <ProductWrapper key={data.id}>
                           <Wrapper
-                            border={`1px solid ${Theme.lightGrey_C}`}
+                            // border={`1px solid ${Theme.lightGrey_C}`}
                             position={`relative`}
                           >
                             <Image
@@ -668,7 +658,7 @@ const Home = ({}) => {
                       return (
                         <ProductWrapper>
                           <Wrapper
-                            border={`1px solid ${Theme.lightGrey_C}`}
+                            // border={`1px solid ${Theme.lightGrey_C}`}
                             position={`relative`}
                           >
                             <Image

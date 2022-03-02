@@ -24,6 +24,7 @@ import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import { Checkbox, notification, message } from "antd";
 import useInput from "../../../hooks/useInput";
+import useOnlyNumberInput from "../../../hooks/useOnlyNumberInput";
 import {
   QUESTION_CREATE_REQUEST,
   NOT_USER_CREATE_REQUEST,
@@ -87,7 +88,7 @@ const Question = () => {
   const inputContent = useInput("");
   const inputPassword = useInput("");
   const inputName = useInput("");
-  const inputMobile = useInput("");
+  const inputMobile = useOnlyNumberInput("");
   const inputEmail = useInput("");
 
   ////// HOOKS //////
@@ -125,6 +126,9 @@ const Question = () => {
       inputEmail.setValue("");
       inputTitle.setValue("");
       inputContent.setValue("");
+      inputPassword.setValue("");
+
+      window.scrollTo(0, 0);
     }
   }, [st_notUserCreateDone]);
 
@@ -165,7 +169,6 @@ const Question = () => {
           title: inputTitle.value,
           content: inputContent.value,
           term: isTerms,
-          password: parseInt("0000"),
         },
       });
     } else {
@@ -184,6 +187,9 @@ const Question = () => {
       if (!inputContent.value || inputContent.value.trim() === "") {
         return LoadNotification("문의내용을 입력해주세요.");
       }
+      if (!inputPassword.value || inputPassword.value.trim() === "") {
+        return LoadNotification("비밀번호를 입력해주세요.");
+      }
       if (!isTerms) {
         return LoadNotification("개인정보 제공에 동의해주세요.");
       }
@@ -197,7 +203,7 @@ const Question = () => {
           title: inputTitle.value,
           content: inputContent.value,
           term: isTerms,
-          password: parseInt("1111"),
+          password: inputPassword.value,
         },
       });
     }
@@ -209,6 +215,7 @@ const Question = () => {
     inputMobile.value,
     inputEmail.value,
     inputTitle.value,
+    inputPassword.value,
   ]);
   ////// DATAVIEW //////
   return (
@@ -375,14 +382,19 @@ const Question = () => {
                   {...inputContent}
                 />
               </Wrapper>
-              {/* <Wrapper al={`flex-start`} margin={`35px 0 0`}>
+              <Wrapper
+                display={me ? `none` : `flex`}
+                al={`flex-start`}
+                margin={`35px 0 0`}
+              >
                 <Wrapper
-                  al={`flex-start`}
+                  ju={`flex-start`}
                   fontSize={`18px`}
                   fontWeight={`bold`}
+                  dr={`row`}
                   margin={width < 500 ? `0 0 10px` : `0 0 20px`}
                 >
-                  비밀번호
+                  비밀번호<SpanText color={Theme.red_C}>*</SpanText>
                 </Wrapper>
                 <TextInput
                   width={`100%`}
@@ -391,7 +403,7 @@ const Question = () => {
                   maxLength={4}
                   {...inputPassword}
                 />
-              </Wrapper> */}
+              </Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`} margin={`25px 0 60px`}>
                 <Wrapper width={`auto`} padding={`0 12px 0 0`}>
                   <CommonCheckBox

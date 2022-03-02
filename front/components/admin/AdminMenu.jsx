@@ -136,8 +136,8 @@ const AdminMenu = () => {
           {/* <Menu.Item key="/admin/question/type">
             <MenuName>문의 유형 리스트</MenuName>
           </Menu.Item> */}
-          <Menu.Item key="/admin/question/list">
-            <MenuName>문의 리스트</MenuName>
+          <Menu.Item key="/admin/question/list?type=1">
+            <MenuName>1:1 문의 리스트</MenuName>
           </Menu.Item>
           <Menu.Item key="/admin/faq/type">
             <MenuName>FAQ 유형 리스트</MenuName>

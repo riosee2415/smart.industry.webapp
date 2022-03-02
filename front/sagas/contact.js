@@ -5,6 +5,17 @@ import {
   CONTACT_GET_SUCCESS,
   CONTACT_GET_FAILURE,
   //
+  CONTACT_DETAIL_REQUEST,
+  CONTACT_DETAIL_SUCCESS,
+  CONTACT_DETAIL_FAILURE,
+  //
+  CONTACT_CREATE_REQUEST,
+  CONTACT_CREATE_SUCCESS,
+  CONTACT_CREATE_FAILURE,
+  //
+  CONTACT_COMPLETED_REQUEST,
+  CONTACT_COMPLETED_SUCCESS,
+  CONTACT_COMPLETED_FAILURE,
 } from "../reducers/contact";
 
 // SAGA AREA ********************************************************************************************************
@@ -34,16 +45,112 @@ function* contactList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function contactDetailAPI(data) {
+  return axios.get(`/api/lease/detail/${data.leaseId}`);
+}
+
+function* contactDetail(action) {
+  try {
+    const result = yield call(contactDetailAPI, action.data);
+
+    yield put({
+      type: CONTACT_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: CONTACT_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function contactCreateAPI(data) {
+  return axios.post(`/api/lease/create`, data);
+}
+
+function* contactCreate(action) {
+  try {
+    const result = yield call(contactCreateAPI, action.data);
+
+    yield put({
+      type: CONTACT_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: CONTACT_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function contactCompletedAPI(data) {
+  return axios.patch(`/api/lease/update`, data);
+}
+
+function* contactCompleted(action) {
+  try {
+    const result = yield call(contactCompletedAPI, action.data);
+
+    yield put({
+      type: CONTACT_COMPLETED_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: CONTACT_COMPLETED_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchContactList() {
   yield takeLatest(CONTACT_GET_REQUEST, contactList);
 }
 
+function* watchContactDetail() {
+  yield takeLatest(CONTACT_DETAIL_REQUEST, contactDetail);
+}
+
+function* watchContactCreate() {
+  yield takeLatest(CONTACT_CREATE_REQUEST, contactCreate);
+}
+
+function* watchContactCompleted() {
+  yield takeLatest(CONTACT_COMPLETED_REQUEST, contactCompleted);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* contactSaga() {
   yield all([
     fork(watchContactList),
+    fork(watchContactDetail),
+    fork(watchContactCreate),
+    fork(watchContactCompleted),
 
     //
   ]);

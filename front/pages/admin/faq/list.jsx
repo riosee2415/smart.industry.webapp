@@ -279,7 +279,6 @@ const List = () => {
           typeId: value.typeId,
         },
       });
-      console.log(value);
     },
     [updateData]
   );
@@ -488,7 +487,6 @@ const List = () => {
             <Form.Item name={"type"} label="유형" rules={[{ required: true }]}>
               <Select style={{ width: 200 }} placeholder="FAQ 유형">
                 <Select.Option value={``}>유형 선택</Select.Option>
-
                 {types &&
                   types.map((data) => {
                     return (

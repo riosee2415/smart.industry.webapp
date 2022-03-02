@@ -11,6 +11,7 @@ import {
   RsWrapper,
   WholeWrapper,
   Wrapper,
+  Text,
 } from "../../../components/commonComponents";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
@@ -218,8 +219,9 @@ const Board = () => {
                           al={`flex-start`}
                           padding={`0 20px`}
                           width={`70%`}
+                          display={`block`}
                         >
-                          {data.title}
+                          <Text isEllipsis={true}>{data.title}</Text>
                         </Wrapper>
                         <Wrapper width={`15%`}>
                           {data.createdAt.substring(0, 10)}

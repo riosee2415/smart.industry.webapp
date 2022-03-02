@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -29,9 +29,40 @@ import {
 } from "../../components/commonComponents";
 import { CaretDownOutlined, DownCircleTwoTone } from "@ant-design/icons";
 import { useCallback } from "react";
-import { CONTACT_GET_REQUEST } from "../../reducers/contact";
-import { Empty, message } from "antd";
+import {
+  CONTACT_CREATE_REQUEST,
+  CONTACT_GET_REQUEST,
+  CREATE_MODAL_TOGGLE,
+} from "../../reducers/contact";
+import { Empty, message, Modal, Form, Input, Pagination } from "antd";
 import { useRouter } from "next/router";
+
+const CustomPagination = styled(Pagination)`
+  & .ant-pagination-item-active {
+    border: none;
+  }
+`;
+
+const CustomForm = styled(Form)`
+  width: 100%;
+
+  & .ant-form-item {
+    width: 100%;
+  }
+
+  @media (max-width: 900px) {
+    width: 100%;
+  }
+`;
+
+const TitleInput = styled(Input)`
+  height: 50px;
+`;
+
+const ContentInput = styled(Input.TextArea)`
+  padding: 10px;
+  height: 150px !important;
+`;
 
 const Index = () => {
   const width = useWidth();
@@ -40,30 +71,96 @@ const Index = () => {
     (state) => state.seo
   );
 
-  const { contacts, contactTotal, listMaxPage } = useSelector(
-    (state) => state.contact
-  );
+  const { me } = useSelector((state) => state.user);
 
-  console.log(contacts);
+  const {
+    contacts,
+    contactTotal,
+    listMaxPage,
+    createModal,
+    st_contactCreateDone,
+    st_contactCreateError,
+  } = useSelector((state) => state.contact);
 
   ////// HOOKS //////
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const [combo, setCombo] = useState(false);
-  const [comboValue, setComboValue] = useState("전체");
+  const [comboValue, setComboValue] = useState("1");
   const [combo2, setCombo2] = useState(false);
   const [comboValue2, setComboValue2] = useState("제목");
 
-  const [selectLease, setSelectLease] = useState("제목");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [selectLease, setSelectLease] = useState("");
   const secretInput = useInput("");
+  const searchInput = useInput("");
+
+  const [form] = Form.useForm();
+  const formRef = useRef();
 
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: CONTACT_GET_REQUEST,
+      data: {
+        page: 1,
+        type: router.query && router.query.type,
+        date: comboValue,
+        searchTitle: comboValue2 === "제목" ? searchInput.value : "",
+        searchAuthor: comboValue2 === "작성자" ? searchInput.value : "",
+        searchContent: comboValue2 === "내용" ? searchInput.value : "",
+      },
+    });
+  }, [router.query]);
+
+  useEffect(() => {
+    if (st_contactCreateDone) {
+      dispatch({
+        type: CREATE_MODAL_TOGGLE,
+      });
+
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: 1,
+          type: router.query && router.query.type,
+          date: comboValue,
+          searchTitle: comboValue2 === "제목" ? searchInput.value : "",
+          searchAuthor: comboValue2 === "작성자" ? searchInput.value : "",
+          searchContent: comboValue2 === "내용" ? searchInput.value : "",
+        },
+      });
+
+      form.resetFields();
+      return message.success("생성되었습니다.");
+    }
+  }, [st_contactCreateDone]);
+
+  useEffect(() => {
+    if (st_contactCreateError) {
+      return message.error(st_contactCreateError);
+    }
+  }, [st_contactCreateError]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// TOGGLE //////
   const comboToggle = useCallback(() => {
     setCombo(!combo);
   }, [combo]);
+
+  const createModalToggle = useCallback(() => {
+    dispatch({
+      type: CREATE_MODAL_TOGGLE,
+    });
+  }, [createModal]);
   const comboToggle2 = useCallback(() => {
     setCombo2(!combo2);
   }, [combo2]);
@@ -72,8 +169,27 @@ const Index = () => {
     (data) => {
       setComboValue(data);
       comboToggle();
+
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: currentPage,
+          type: router.query && router.query.type,
+          date: data,
+          searchTitle: comboValue2 === "제목" ? searchInput.value : null,
+          searchAuthor: comboValue2 === "작성자" ? searchInput.value : null,
+          searchContent: comboValue2 === "내용" ? searchInput.value : null,
+        },
+      });
     },
-    [combo, comboValue]
+    [
+      combo,
+      comboValue,
+      currentPage,
+      router.query,
+      comboValue2,
+      searchInput.value,
+    ]
   );
 
   const comboHandler2 = useCallback(
@@ -104,6 +220,59 @@ const Index = () => {
     },
     [secretInput.value, selectLease]
   );
+
+  const onSubmit = useCallback(
+    (data) => {
+      if (!router.query.type) {
+        return message.error("올바른 주소가 아닙니다.");
+      }
+      dispatch({
+        type: CONTACT_CREATE_REQUEST,
+        data: {
+          type: router.query.type,
+          title: data.title,
+          author: me ? me.username : data.author,
+          content: data.content,
+          email: data.email,
+          secret: data.secret,
+        },
+      });
+    },
+    [router.query]
+  );
+
+  const otherPageCall = useCallback(
+    (changePage) => {
+      setCurrentPage(changePage);
+
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: changePage,
+          type: router.query && router.query.type,
+          date: comboValue,
+          searchTitle: comboValue2 === "제목" ? searchInput.value : "",
+          searchAuthor: comboValue2 === "작성자" ? searchInput.value : "",
+          searchContent: comboValue2 === "내용" ? searchInput.value : "",
+        },
+      });
+    },
+    [comboValue, comboValue2, searchInput.value, currentPage]
+  );
+
+  const searchHandler = useCallback(() => {
+    dispatch({
+      type: CONTACT_GET_REQUEST,
+      data: {
+        page: currentPage,
+        type: router.query && router.query.type,
+        date: comboValue,
+        searchTitle: comboValue2 === "제목" ? searchInput.value : "",
+        searchAuthor: comboValue2 === "작성자" ? searchInput.value : "",
+        searchContent: comboValue2 === "내용" ? searchInput.value : "",
+      },
+    });
+  }, [comboValue, comboValue2, searchInput.value, currentPage]);
 
   ////// DATAVIEW //////
 
@@ -166,7 +335,9 @@ const Index = () => {
               al={`flex-start`}
               margin={width < 700 ? `50px 0 20px` : `100px 0 26px`}
             >
-              <Text fontSize={`14px`}>HOME | 임대문의</Text>
+              <Text fontSize={`14px`}>
+                HOME | {router.query && router.query.type}
+              </Text>
             </Wrapper>
 
             <Wrapper
@@ -175,7 +346,7 @@ const Index = () => {
               borderBottom={`1px solid ${Theme.grey2_C}`}
             >
               <Text fontSize={`20px`} fontWeight={`700`}>
-                임대문의
+                {router.query && router.query.type}
               </Text>
             </Wrapper>
 
@@ -230,8 +401,12 @@ const Index = () => {
               </Wrapper>
               {contacts &&
                 (contacts.length === 0 ? (
-                  <Wrapper>
-                    <Empty description="임대문의가 없습니다." />
+                  <Wrapper margin={`50px 0`}>
+                    <Empty
+                      description={`${
+                        router.query && router.query.type
+                      }가 없습니다.`}
+                    />
                   </Wrapper>
                 ) : (
                   contacts.map((data) => {
@@ -269,7 +444,7 @@ const Index = () => {
                               width={`auto`}
                               isEllipsis={true}
                             >
-                              임대문의&nbsp;
+                              {data.title}&nbsp;
                             </Text>
                             {data.answer && (
                               <Text fontSize={width < 700 ? `11px` : `14px`}>
@@ -332,12 +507,13 @@ const Index = () => {
                               >
                                 <SpanText color={Theme.red_C}>
                                   비공개 글 입니다.
-                                </SpanText>{" "}
-                                글 작성시 입력한 비밀번호를 입력해주세요.
+                                </SpanText>
+                                &nbsp; 글 작성시 입력한 비밀번호를 입력해주세요.
                               </Text>
 
                               <Wrapper dr={`row`} width={`auto`}>
                                 <TextInput
+                                  type="password"
                                   width={width < 700 ? `100px` : `150px`}
                                   height={`25px`}
                                   border={`1px solid ${Theme.grey3_C}`}
@@ -372,6 +548,7 @@ const Index = () => {
                 height={width < 700 ? `40px` : `50px`}
                 fontSize={width < 700 ? `14px` : `18px`}
                 padding={`0`}
+                onClick={createModalToggle}
               >
                 문의 작성하기
               </CommonButton>
@@ -388,31 +565,37 @@ const Index = () => {
                 </Text>
 
                 <Combo margin={`0 10px 0 0`}>
-                  <Text fontSize={`14px`}>{comboValue}</Text>
+                  <Text fontSize={`14px`}>
+                    {comboValue === "1"
+                      ? "전체"
+                      : comboValue === "2"
+                      ? "일주일"
+                      : comboValue === "3" && "한달"}
+                  </Text>
                   <CaretDownOutlined onClick={comboToggle} />
 
                   {combo && (
                     <ComboOptionWrapper>
                       <ComboOption
-                        beforeWidth={comboValue === "전체" ? `100%` : `0`}
+                        beforeWidth={comboValue === "1" ? `100%` : `0`}
                         onClick={() => {
-                          comboHandler("전체");
+                          comboHandler("1");
                         }}
                       >
                         전체
                       </ComboOption>
                       <ComboOption
-                        beforeWidth={comboValue === "한달" ? `100%` : `0`}
+                        beforeWidth={comboValue === "3" ? `100%` : `0`}
                         onClick={() => {
-                          comboHandler("한달");
+                          comboHandler("3");
                         }}
                       >
                         한달
                       </ComboOption>
                       <ComboOption
-                        beforeWidth={comboValue === "일주일" ? `100%` : `0`}
+                        beforeWidth={comboValue === "2" ? `100%` : `0`}
                         onClick={() => {
-                          comboHandler("일주일");
+                          comboHandler("2");
                         }}
                       >
                         일주일
@@ -467,9 +650,11 @@ const Index = () => {
                   border={`1px solid ${Theme.grey2_C}`}
                   width={width < 700 ? `calc(100% - 75px - 10px)` : `260px`}
                   height={`40px`}
+                  {...searchInput}
                 />
 
                 <CommonButton
+                  onClick={searchHandler}
                   kindOf={`darkgrey2`}
                   width={`75px`}
                   height={`40px`}
@@ -479,8 +664,120 @@ const Index = () => {
               </Wrapper>
             </Wrapper>
 
-            <Wrapper margin={`0 0 110px`}>페이지네이션</Wrapper>
+            <Wrapper margin={`0 0 110px`}>
+              <CustomPagination
+                size="small"
+                defaultCurrent={1}
+                current={parseInt(currentPage)}
+                total={listMaxPage * 10}
+                onChange={(page) => otherPageCall(page)}
+                showQuickJumper={false}
+                showSizeChanger={false}
+              />
+            </Wrapper>
           </RsWrapper>
+
+          <Modal
+            width={`1350px`}
+            visible={createModal}
+            onCancel={createModalToggle}
+            closable={false}
+            footer={null}
+          >
+            <Wrapper
+              al={`flex-start`}
+              borderBottom={`1px solid ${Theme.grey_C}`}
+              padding={`0 0 20px`}
+              margin={`0 0 20px`}
+            >
+              <Text fontSize={`18px`} fontWeight={`bold`}>
+                상품 문의내용
+              </Text>
+            </Wrapper>
+
+            <Wrapper dr={`row`} al={`flex-start`}>
+              <CustomForm onFinish={onSubmit} form={form} ref={formRef}>
+                <Wrapper al={`flex-start`}>
+                  <Text margin={`0 0 10px`}>제목</Text>
+                  <Form.Item
+                    name="title"
+                    rules={[
+                      { required: true, message: "제목을 입력해주세요." },
+                    ]}
+                  >
+                    <TitleInput placeholder="제목을 입력해주세요." />
+                  </Form.Item>
+                </Wrapper>
+
+                <Wrapper al={`flex-start`}>
+                  <Text margin={`0 0 10px`}>문의내용</Text>
+                  <Form.Item
+                    name="content"
+                    rules={[
+                      { required: true, message: "문의내용을 입력해주세요." },
+                    ]}
+                  >
+                    <ContentInput placeholder="문의내용을 입력해주세요." />
+                  </Form.Item>
+                </Wrapper>
+
+                {!me && (
+                  <Wrapper al={`flex-start`}>
+                    <Text margin={`0 0 10px`}>작성자</Text>
+                    <Form.Item
+                      name="author"
+                      rules={[
+                        { required: true, message: "작성자를 입력해주세요." },
+                      ]}
+                    >
+                      <TitleInput placeholder="작성자를 입력해주세요." />
+                    </Form.Item>
+                  </Wrapper>
+                )}
+
+                <Wrapper al={`flex-start`}>
+                  <Text margin={`0 0 10px`}>이메일</Text>
+                  <Form.Item
+                    name="email"
+                    rules={[
+                      { required: true, message: "이메일를 입력해주세요." },
+                    ]}
+                  >
+                    <TitleInput
+                      type="email"
+                      placeholder="이메일를 입력해주세요."
+                    />
+                  </Form.Item>
+                </Wrapper>
+                <Wrapper al={`flex-start`}>
+                  <Text margin={`0 0 10px`}>비밀번호</Text>
+                  <Form.Item
+                    name="secret"
+                    rules={[
+                      { required: true, message: "비밀번호를 입력해주세요." },
+                    ]}
+                  >
+                    <TitleInput
+                      type="password"
+                      placeholder="비밀번호를 입력해주세요."
+                    />
+                  </Form.Item>
+                </Wrapper>
+                <Wrapper dr={`row`}>
+                  <CommonButton
+                    margin={`0 3px 0 0`}
+                    kindOf={`darkgrey`}
+                    onClick={createModalToggle}
+                  >
+                    취소하기
+                  </CommonButton>
+                  <CommonButton margin={`0 0 0 3px`} htmlType="submit">
+                    작성하기
+                  </CommonButton>
+                </Wrapper>
+              </CustomForm>
+            </Wrapper>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

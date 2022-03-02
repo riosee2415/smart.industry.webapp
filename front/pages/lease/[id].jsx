@@ -28,6 +28,7 @@ import {
   SpanText,
 } from "../../components/commonComponents";
 import { useRouter } from "next/dist/client/router";
+import { CONTACT_DETAIL_REQUEST } from "../../reducers/contact";
 
 const Index = () => {
   const width = useWidth();
@@ -36,10 +37,27 @@ const Index = () => {
     (state) => state.seo
   );
 
+  const { detailContact } = useSelector((state) => state.contact);
+
+  console.log(detailContact);
+
   ////// HOOKS //////
+
+  const dispatch = useDispatch();
+
   ////// REDUX //////
   const router = useRouter();
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    dispatch({
+      type: CONTACT_DETAIL_REQUEST,
+      data: {
+        leaseId: router.query.id,
+      },
+    });
+  }, [router.query]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
@@ -148,16 +166,20 @@ const Index = () => {
                     width={`auto`}
                     isEllipsis={true}
                   >
-                    임대문의&nbsp;
+                    {detailContact && detailContact.title}&nbsp;
                   </Text>
-                  <Text fontSize={width < 700 ? `11px` : `14px`}>
-                    [답변완료]
-                  </Text>
-                  <Image
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
-                    margin={`0 0 0 17px`}
-                    width={`10px`}
-                  />
+                  {detailContact && detailContact.answerdAt && (
+                    <Text fontSize={width < 700 ? `11px` : `14px`}>
+                      [답변완료]
+                    </Text>
+                  )}
+                  {detailContact && detailContact.secret && (
+                    <Image
+                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/question/icon_lock.png`}
+                      margin={`0 0 0 17px`}
+                      width={`10px`}
+                    />
+                  )}
                 </Wrapper>
               </Wrapper>
 
@@ -183,7 +205,7 @@ const Index = () => {
                   height={`100%`}
                   al={`flex-start`}
                 >
-                  000
+                  {detailContact && detailContact.author}
                 </Wrapper>
               </Wrapper>
 
@@ -208,7 +230,7 @@ const Index = () => {
                   height={`100%`}
                   al={`flex-start`}
                 >
-                  2022-01-22
+                  {detailContact && detailContact.createdAt.substring(0, 10)}
                 </Wrapper>
                 <Wrapper
                   fontSize={width < 700 ? `11px` : `14px`}
@@ -229,7 +251,7 @@ const Index = () => {
                   height={`100%`}
                   al={`flex-start`}
                 >
-                  2
+                  {detailContact && detailContact.hit}
                 </Wrapper>
               </Wrapper>
 
@@ -242,39 +264,41 @@ const Index = () => {
                 padding={`20px`}
                 fontSize={width < 700 ? `11px` : `14px`}
               >
-                안녕하세요.
+                {detailContact && detailContact.content}
               </Wrapper>
 
-              <Wrapper
-                dr={`row`}
-                minHeight={`100px`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}
-                al={`flex-start`}
-                ju={`flex-start`}
-                padding={`20px`}
-                bgColor={Theme.lightGrey2_C}
-                dr={`row`}
-              >
+              {detailContact && detailContact.answerdAt && (
                 <Wrapper
-                  width={`20px`}
-                  height={`20px`}
-                  bgColor={Theme.red_C}
-                  radius={`50%`}
-                  fontSize={width < 700 ? `11px` : `14px`}
-                  color={Theme.white_C}
-                  padding={`0 0 1px`}
-                  margin={`0 25px 0 0`}
-                >
-                  A
-                </Wrapper>
-                <Wrapper
-                  width={`calc(100% - 20px - 25px)`}
-                  fontSize={width < 700 ? `11px` : `14px`}
+                  dr={`row`}
+                  minHeight={`100px`}
+                  borderBottom={`1px solid ${Theme.grey2_C}`}
                   al={`flex-start`}
+                  ju={`flex-start`}
+                  padding={`20px`}
+                  bgColor={Theme.lightGrey2_C}
+                  dr={`row`}
                 >
-                  안녕하세요.
+                  <Wrapper
+                    width={`20px`}
+                    height={`20px`}
+                    bgColor={Theme.red_C}
+                    radius={`50%`}
+                    fontSize={width < 700 ? `11px` : `14px`}
+                    color={Theme.white_C}
+                    padding={`0 0 1px`}
+                    margin={`0 25px 0 0`}
+                  >
+                    A
+                  </Wrapper>
+                  <Wrapper
+                    width={`calc(100% - 20px - 25px)`}
+                    fontSize={width < 700 ? `11px` : `14px`}
+                    al={`flex-start`}
+                  >
+                    {detailContact && detailContact.answer}
+                  </Wrapper>
                 </Wrapper>
-              </Wrapper>
+              )}
             </Wrapper>
 
             <Wrapper

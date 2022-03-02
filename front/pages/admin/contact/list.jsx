@@ -3,25 +3,32 @@ import AdminLayout from "../../../components/AdminLayout";
 import PageHeader from "../../../components/admin/PageHeader";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Col, Modal, Table, notification, Input, message } from "antd";
 import {
-  UPDATE_MODAL_CLOSE_REQUEST,
-  UPDATE_MODAL_OPEN_REQUEST,
-  QUESTION_UPDATE_REQUEST,
-  QUESTION_DELETE_REQUEST,
-  QUESTION_GET_REQUEST,
-  QUESTION_TYPE_GET_REQUEST,
-} from "../../../reducers/question";
+  Button,
+  Col,
+  Modal,
+  Table,
+  notification,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+} from "antd";
+
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import { useRouter } from "next/router";
-import useInput from "../../../hooks/useInput";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import { ColWrapper, RowWrapper } from "../../../components/commonComponents";
 import { saveAs } from "file-saver";
 import Theme from "../../../components/Theme";
-import { CONTACT_GET_REQUEST } from "../../../reducers/contact";
+import {
+  CONTACT_COMPLETED_REQUEST,
+  CONTACT_GET_REQUEST,
+  CREATE_MODAL_TOGGLE,
+} from "../../../reducers/contact";
+import useInput from "../../../hooks/useInput";
 
 const AdminContent = styled.div`
   padding: 20px;
@@ -39,24 +46,137 @@ const List = ({ location }) => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
 
-  const { contacts } = useSelector((state) => state.contact);
+  const moveLinkHandler = useCallback((link) => {
+    router.push(link);
+  }, []);
+
+  useEffect(() => {
+    if (st_loadMyInfoDone) {
+      if (!me || parseInt(me.level) < 3) {
+        moveLinkHandler(`/admin`);
+      }
+    }
+  }, [st_loadMyInfoDone]);
+  /////////////////////////////////////////////////////////////////////////
+
+  const {
+    contacts,
+    listMaxPage,
+    createModal,
+    //
+    st_contactCompletedDone,
+    st_contactCompletedError,
+  } = useSelector((state) => state.contact);
 
   const dispatch = useDispatch();
   const router = useRouter();
 
   ////// HOOKS //////
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectType, setSelectType] = useState(1);
+  const [selectValue, setSelectValue] = useState(null);
+  const [updateData, setUpdateData] = useState(null);
+  const answerInput = useInput("");
+
   ////// USEEFFECT //////
   useEffect(() => {
     dispatch({
       type: CONTACT_GET_REQUEST,
+      data: {
+        page: currentPage,
+        listType: selectType,
+        type: selectValue,
+      },
     });
-  }, []);
+  }, [selectType, selectValue]);
+
+  useEffect(() => {
+    if (st_contactCompletedDone) {
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: currentPage,
+          listType: selectType,
+          type: selectValue,
+        },
+      });
+      dispatch({
+        type: CREATE_MODAL_TOGGLE,
+      });
+      setUpdateData(null);
+      answerInput.setValue("");
+      return message.success("처리완료되었습니다.");
+    }
+  }, [st_contactCompletedDone]);
+
+  useEffect(() => {
+    if (st_contactCompletedError) {
+      return message.error(st_contactCompletedError);
+    }
+  }, [st_contactCompletedError]);
 
   ////// TOGGLE //////
 
+  const updateModalToggle = useCallback(
+    (data) => {
+      if (data) {
+        setUpdateData(data);
+        answerInput.setValue(data.answer);
+      } else {
+        setUpdateData(null);
+      }
+      dispatch({
+        type: CREATE_MODAL_TOGGLE,
+      });
+    },
+    [updateData]
+  );
+
   ////// HANDLER //////
 
+  const selectChangeHandler = useCallback(
+    (data) => {
+      setSelectValue(data);
+    },
+    [selectValue]
+  );
+
+  const selectTypeHandler = useCallback(
+    (type) => {
+      if (type === 3) {
+        setSelectValue(null);
+      }
+      setSelectType(type);
+    },
+    [selectType]
+  );
+
+  const onUpdateHandler = useCallback(() => {
+    dispatch({
+      type: CONTACT_COMPLETED_REQUEST,
+      data: {
+        id: updateData.id,
+        answer: answerInput.value,
+      },
+    });
+  }, [updateData, answerInput.value]);
+
+  const otherPageCall = useCallback(
+    (changePage) => {
+      setCurrentPage(changePage);
+
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: changePage,
+          listType: selectType,
+          type: selectValue,
+        },
+      });
+    },
+    [selectType, currentPage]
+  );
   ////// DATAVIEW //////
 
   // Table
@@ -67,8 +187,60 @@ const List = ({ location }) => {
     },
 
     {
+      title: "종류",
+      dataIndex: "type",
+    },
+
+    {
       title: "제목",
-      render: (data) => <div>{data.title}</div>,
+      dataIndex: "title",
+    },
+
+    {
+      title: "작성자",
+      dataIndex: "author",
+    },
+    {
+      title: "처리여부",
+      render: (data) => <div>{data.isCompleted ? `처리` : `미처리`}</div>,
+    },
+    ,
+    {
+      title: "작성일",
+      dataIndex: "createdAt",
+    },
+    {
+      title: "상세보기",
+      render: (data) => (
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => updateModalToggle(data)}
+        >
+          상세보기
+        </Button>
+      ),
+    },
+  ];
+  const completedColumns = [
+    {
+      title: "번호",
+      dataIndex: "id",
+    },
+
+    {
+      title: "종류",
+      dataIndex: "type",
+    },
+
+    {
+      title: "제목",
+      dataIndex: "title",
+    },
+
+    {
+      title: "작성자",
+      dataIndex: "author",
     },
     {
       title: "처리여부",
@@ -77,13 +249,7 @@ const List = ({ location }) => {
     ,
     {
       title: "작성일",
-      render: (data) => {
-        return <div>{data.createdAt.substring(0, 10)}</div>;
-      },
-    },
-    {
-      title: "처리일",
-      render: (data) => <div>{data.updatedAt.substring(0, 10)}</div>,
+      dataIndex: "createdAt",
     },
     {
       title: "상세보기",
@@ -91,7 +257,7 @@ const List = ({ location }) => {
         <Button
           type="primary"
           size="small"
-          onClick={() => updateModalOpen(data)}
+          onClick={() => updateModalToggle(data)}
         >
           상세보기
         </Button>
@@ -104,7 +270,7 @@ const List = ({ location }) => {
       <PageHeader
         breadcrumbs={["문의 관리", "문의 리스트"]}
         title={`문의 리스트`}
-        subTitle={`홈페이지의 문의를 관리할 수 있습니다.`}
+        subTitle={`홈페이지의 임대문의, 사업자문의, 장비판매의뢰를 관리할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
@@ -112,50 +278,69 @@ const List = ({ location }) => {
         <RowWrapper margin={`0 0 10px 0`} gutter={5}>
           <Col>
             <Button
+              style={{ width: `70px` }}
               size="small"
-              onClick={() => moveLinkHandler(`/admin/question/list?type=3`)}
-            >
-              전체
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              size="small"
-              onClick={() => moveLinkHandler(`/admin/question/list?type=2`)}
-            >
-              처리완료
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              size="small"
-              onClick={() => moveLinkHandler(`/admin/question/list?type=1`)}
+              type={selectType === 1 && "primary"}
+              onClick={() => selectTypeHandler(1)}
             >
               미처리
             </Button>
           </Col>
+          <Col>
+            <Button
+              style={{ width: `70px` }}
+              size="small"
+              type={selectType === 2 && "primary"}
+              onClick={() => selectTypeHandler(2)}
+            >
+              처리
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              style={{ width: `70px` }}
+              size="small"
+              type={selectType === 3 && "primary"}
+              onClick={() => selectTypeHandler(3)}
+            >
+              전체
+            </Button>
+          </Col>
+
+          <Col>
+            <Select
+              style={{ width: `170px` }}
+              size="small"
+              placeholder={"종류를 선택해주세요."}
+              onChange={selectChangeHandler}
+              value={selectValue}
+            >
+              <Select.Option value={"임대문의"}>임대문의</Select.Option>
+              <Select.Option value={"사업자문의"}>사업자문의</Select.Option>
+              <Select.Option value={"장비판매의뢰"}>장비판매의뢰</Select.Option>
+            </Select>
+          </Col>
         </RowWrapper>
         <Table
           rowKey="id"
-          columns={columns}
-          dataSource={contacts ? contacts.contacts : []}
+          columns={selectType !== 3 ? completedColumns : columns}
+          dataSource={contacts ? contacts : []}
           size="small"
-          //   pagination={{
-          //     defaultCurrent: 1,
-          //     current: parseInt(currentPage),
-
-          //     total: listMaxPage * 10,
-          //     onChange: (page) => otherPageCall(page),
-          //   }}
+          pagination={{
+            defaultCurrent: 1,
+            current: parseInt(currentPage),
+            total: listMaxPage * 10,
+            onChange: (page) => otherPageCall(page),
+          }}
         />
       </AdminContent>
 
-      {/* <Modal
-        visible={updateModal}
+      <Modal
+        visible={createModal}
         width={`1000px`}
         title={`문의`}
-        onCancel={updateModalClose}
-        onOk={onSubmitUpdate}
+        onCancel={() => updateModalToggle(null)}
+        onOk={onUpdateHandler}
         okText="처리완료"
         cancelText="취소"
       >
@@ -171,6 +356,7 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
               >
                 이메일
               </ColWrapper>
@@ -182,6 +368,7 @@ const List = ({ location }) => {
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
                 height={`30px`}
+                color={Theme.white_C}
               >
                 문의 제목
               </ColWrapper>
@@ -193,6 +380,7 @@ const List = ({ location }) => {
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
                 height={`30px`}
+                color={Theme.white_C}
               >
                 작성자
               </ColWrapper>
@@ -204,30 +392,41 @@ const List = ({ location }) => {
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
                 height={`30px`}
+                color={Theme.white_C}
               >
                 연락처
               </ColWrapper>
               <ColWrapper>{updateData && updateData.mobile}</ColWrapper>
             </RowWrapper>
             <RowWrapper gutter={5} margin={`10px 0`}>
-              <ColWrapper span={24} width={`100%`} bgColor={Theme.basicTheme_C}>
+              <ColWrapper
+                span={24}
+                width={`100%`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+              >
                 문의 내용
               </ColWrapper>
               <ColWrapper>{updateData && updateData.content}</ColWrapper>
             </RowWrapper>
           </ColWrapper>
           <ColWrapper span={12}>
-            <ColWrapper bgColor={Theme.basicTheme_C} width={`100%`}>
+            <ColWrapper
+              bgColor={Theme.basicTheme_C}
+              width={`100%`}
+              color={Theme.white_C}
+            >
               답변
             </ColWrapper>
             <Input.TextArea
               allowClear
               placeholder="Content..."
               autoSize={{ minRows: 10, maxRows: 10 }}
+              {...answerInput}
             />
           </ColWrapper>
         </RowWrapper>
-      </Modal> */}
+      </Modal>
     </AdminLayout>
   );
 };

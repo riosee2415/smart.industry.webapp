@@ -13,6 +13,7 @@ import {
   TextInput,
   WholeWrapper,
   Wrapper,
+  Text,
 } from "../../../components/commonComponents";
 import styled from "styled-components";
 import { useState } from "react";
@@ -51,6 +52,10 @@ const SearchBtn = styled(CommonButton)`
     border: 1px solid ${Theme.darkGrey_C};
     color: ${Theme.darkGrey_C};
   }
+`;
+
+const TitleText = styled(Text)`
+  word-break: break-all;
 `;
 
 const Faq = () => {
@@ -397,7 +402,7 @@ const Faq = () => {
                             >
                               {data.FaqType.value}
                             </Wrapper>
-                            <Wrapper
+                            <TitleText
                               width={
                                 width < 700
                                   ? `50%`
@@ -408,7 +413,7 @@ const Faq = () => {
                               al={`flex-start`}
                             >
                               {data.question}
-                            </Wrapper>
+                            </TitleText>
                           </Wrapper>
 
                           {datum && datum.id === data.id && (
@@ -437,13 +442,13 @@ const Faq = () => {
                                 >
                                   A
                                 </Wrapper>
-                                <Wrapper
+                                <TitleText
                                   width={`calc(100% - 66px)`}
                                   padding={`24px 0`}
                                   al={`flex-start`}
                                 >
                                   {data.answer}
-                                </Wrapper>
+                                </TitleText>
                               </Wrapper>
                             </Wrapper>
                           )}

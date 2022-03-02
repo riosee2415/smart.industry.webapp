@@ -51,6 +51,8 @@ const Order = () => {
     (state) => state.wish
   );
 
+  console.log(boughtHistoryDetail);
+
   ////// USEEFFECT //////
 
   useEffect(() => {

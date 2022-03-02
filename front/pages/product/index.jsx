@@ -549,7 +549,7 @@ const ProductList = () => {
                         >
                           <Wrapper
                             padding={width < 700 ? `0px` : `20px`}
-                            border={`1px solid ${Theme.lightGrey_C}`}
+                            // border={`1px solid ${Theme.lightGrey_C}`}
                           >
                             <Image
                               width={width < 700 ? `100%` : `216px`}
@@ -590,8 +590,8 @@ const ProductList = () => {
                           {data.discount > 0 && (
                             <Wrapper
                               position={`absolute`}
-                              top={`14px`}
-                              left={`14px`}
+                              top={`16px`}
+                              left={`16px`}
                               color={Theme.white_C}
                               bgColor={Theme.red_C}
                               width={`46px`}

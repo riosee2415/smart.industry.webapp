@@ -673,14 +673,20 @@ const AppHeader = () => {
               </SubMenuCol>
               <SubMenuCol
                 width={`calc(100% / 7)`}
-                onClick={() => moveLinkHandler(`/lease`)}
+                onClick={() => moveLinkHandler(`/lease?type=임대문의`)}
               >
                 <Text>임대문의</Text>
               </SubMenuCol>
-              <SubMenuCol width={`calc(100% / 7)`}>
+              <SubMenuCol
+                width={`calc(100% / 7)`}
+                onClick={() => moveLinkHandler(`/lease?type=사업자문의`)}
+              >
                 <Text>사업자문의</Text>
               </SubMenuCol>
-              <SubMenuCol width={`calc(100% / 7)`}>
+              <SubMenuCol
+                width={`calc(100% / 7)`}
+                onClick={() => moveLinkHandler(`/lease?type=장비판매의뢰`)}
+              >
                 <Text>장비판매의뢰</Text>
               </SubMenuCol>
               <SubMenuCol width={`calc(100% / 7)`}>
@@ -769,22 +775,58 @@ const AppHeader = () => {
           ju={`flex-start`}
           padding={`0 10px`}
         >
-          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+          <Wrapper
+            minWidth={`80px`}
+            margin={`0 5px`}
+            cursor={`pointer`}
+            onClick={() =>
+              moveLinkHandler(
+                `/product?menu=${
+                  headerCategoryList && headerCategoryList[0].MenuId
+                }&category=${headerCategoryList && headerCategoryList[0].id}`
+              )
+            }
+          >
             건설기계
           </Wrapper>
-          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+          <Wrapper
+            minWidth={`80px`}
+            margin={`0 5px`}
+            onClick={() => moveLinkHandler(`/product?isUsed=true`)}
+            cursor={`pointer`}
+          >
             중고장비
           </Wrapper>
-          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+          <Wrapper
+            minWidth={`80px`}
+            margin={`0 5px`}
+            onClick={() => moveLinkHandler(`/product?isSale=true`)}
+            cursor={`pointer`}
+          >
             특가상품
           </Wrapper>
-          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+          <Wrapper
+            minWidth={`80px`}
+            margin={`0 5px`}
+            onClick={() => moveLinkHandler(`/lease?type=임대문의`)}
+            cursor={`pointer`}
+          >
             임대문의
           </Wrapper>
-          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+          <Wrapper
+            minWidth={`80px`}
+            margin={`0 5px`}
+            onClick={() => moveLinkHandler(`/lease?type=사업자문의`)}
+            cursor={`pointer`}
+          >
             사업자문의
           </Wrapper>
-          <Wrapper minWidth={`80px`} margin={`0 5px`}>
+          <Wrapper
+            minWidth={`80px`}
+            margin={`0 5px`}
+            onClick={() => moveLinkHandler(`/lease?type=장비판매의뢰`)}
+            cursor={`pointer`}
+          >
             장비판매의뢰
           </Wrapper>
         </Wrapper>
