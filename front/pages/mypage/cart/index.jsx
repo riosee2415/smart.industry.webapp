@@ -753,7 +753,10 @@ const Cart = () => {
               <Wrapper width={width < 700 ? `100%` : `60%`}>
                 <Wrapper dr={`row`}>
                   {showDatum && showDatum.length === 0 ? (
-                    <Empty />
+                    <Empty
+                      description="조회된 상품이 없습니다."
+                      style={{ margin: "20px 0" }}
+                    />
                   ) : (
                     showDatum &&
                     showDatum.map((data, idx) => {
@@ -973,7 +976,10 @@ const Cart = () => {
                   </Wrapper>
                 </Wrapper>
                 {showDatum && showDatum.length === 0 ? (
-                  <Empty description="조회된 상품이 없습니다." />
+                  <Empty
+                    description="조회된 상품이 없습니다."
+                    style={{ margin: "20px 0" }}
+                  />
                 ) : (
                   showDatum &&
                   showDatum.map((data, idx) => {
