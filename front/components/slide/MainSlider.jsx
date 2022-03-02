@@ -48,6 +48,15 @@ const MainProductButton = styled(Button)`
   height: 50px;
   border-radius: 0;
   background-color: transparent;
+
+  &:hover {
+    color: ${Theme.black_C};
+  }
+
+  @media (max-width: 900px) {
+    width: 115px;
+    height: 40px;
+  }
 `;
 
 const MainSlider = () => {
@@ -77,7 +86,7 @@ const MainSlider = () => {
               <BannerBlackBackWrapper
                 key={idx}
                 span={24}
-                height={width < 800 ? `500px` : `720px`}
+                height={width < 800 ? `400px` : `720px`}
                 bgImg={`url(${
                   width < 800 ? data.mobileImagePath : data.imagePath
                 })`}
@@ -90,7 +99,7 @@ const MainSlider = () => {
                       color={Theme.white_C}
                       fontSize={width < 700 ? `22px` : `40px`}
                       lineHeight={`1.55`}
-                      fontSize={`46px`}
+                      fontSize={width < 700 ? `36px` : `46px`}
                     >
                       <Text>{data.title}</Text>
                     </Wrapper>
