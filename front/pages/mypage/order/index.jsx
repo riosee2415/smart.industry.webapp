@@ -18,7 +18,7 @@ import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { Empty } from "antd";
+import { Empty, message } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import { WISH_LIST_REQUEST } from "../../../reducers/wish";

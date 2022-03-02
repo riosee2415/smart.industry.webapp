@@ -357,7 +357,6 @@ const Cart = () => {
 
       localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
       moveLinkHandler(`/mypage/cart`);
-      message.success("주문이 완료되었습니다.");
     }
   }, [
     st_boughtHistoryCreateDone,
@@ -366,6 +365,12 @@ const Cart = () => {
     orderDatum,
     datum,
   ]);
+
+  useEffect(() => {
+    if (st_boughtHistoryCreateDone) {
+      return message.success("주문이 완료되었습니다.");
+    }
+  }, [st_boughtHistoryCreateDone]);
 
   useEffect(() => {
     window.scrollTo(0, 0);

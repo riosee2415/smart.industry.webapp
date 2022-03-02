@@ -13,6 +13,7 @@ import {
   Wrapper,
   Image,
   CommonButton,
+  Text,
 } from "../../../../components/commonComponents";
 import useWidth from "../../../../hooks/useWidth";
 import Theme from "../../../../components/Theme";
@@ -21,6 +22,7 @@ import styled from "styled-components";
 import { useCallback } from "react";
 import { WISH_LIST_DETAIL_REQUEST } from "../../../../reducers/wish";
 import { numberWithCommas } from "../../../../components/commonUtils";
+import { message, Modal } from "antd";
 
 const DelTag = styled.del`
   color: ${Theme.grey_C};
@@ -44,6 +46,11 @@ const Order = () => {
   const [delPrice, setDelPrice] = useState(null);
   const [prodPrice, setProdPrice] = useState(null);
   const [discountPrice, setDiscountPrice] = useState(null);
+
+  const [prevStorge, setPrevStorge] = useState([]);
+  const [cartDatum, setCartDatum] = useState(null);
+  const [currentData, setCurrentData] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   ////// REDUX //////
   const dispatch = useDispatch();
 
@@ -109,6 +116,93 @@ const Order = () => {
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
+
+  //cart
+  const ModalHandleOk = useCallback(
+    // 중복 상품 기능
+    () => {
+      const resultDatum = prevStorge.map((data, idx) => {
+        if (data.id === currentData.Product.id) {
+          return {
+            ...data,
+            productNum: data.productNum + 1,
+          };
+        } else {
+          return data;
+        }
+      });
+
+      // dispatch({
+      //   type: UPDATE_WISHLIST,
+      //   data: {
+      //     list: true,
+      //   },
+      // });
+
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(resultDatum));
+      setCartDatum(resultDatum);
+      ModalToggle();
+      setCurrentData(null);
+      moveLinkHandler(`/mypage/cart`);
+    },
+    [prevStorge, cartDatum, currentData]
+  );
+
+  const basketHandler = useCallback(
+    (productDetailData) => {
+      setCurrentData(productDetailData);
+      const datum = localStorage.getItem("WKDQKRNSL")
+        ? JSON.parse(localStorage.getItem("WKDQKRNSL"))
+        : [];
+
+      let checkWish = false;
+
+      const resultData = datum.map((data) => {
+        if (data.id === productDetailData.Product.id) {
+          ModalToggle();
+          setPrevStorge(datum);
+          checkWish = true;
+
+          return {
+            ...data,
+          };
+        } else {
+          return data;
+        }
+      });
+
+      if (!checkWish) {
+        resultData.push({
+          id: productDetailData.Product.id,
+          thumbnail: productDetailData.Product.thumbnail,
+          title: productDetailData.Product.title,
+          productNum: 1,
+          price: productDetailData.Product.price,
+          discount: productDetailData.Product.discount,
+          deliveryPay: productDetailData.Product.deliveryPay,
+        });
+
+        message.success("상품이 장바구니에 담겼습니다.");
+        moveLinkHandler(`/mypage/cart`);
+      }
+
+      setCartDatum(resultData);
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(resultData));
+
+      // dispatch({
+      //   type: UPDATE_WISHLIST,
+      //   data: {
+      //     list: true,
+      //   },
+      // });
+    },
+    [prevStorge]
+  );
+
+  const ModalToggle = useCallback(() => {
+    setIsModalVisible((prev) => !prev);
+  }, []);
+
   ////// DATAVIEW //////
   // const boughtHistoryDetail = {
   //   orderNum: "123443122",
@@ -234,7 +328,7 @@ const Order = () => {
                 ju={`flex-start`}
                 borderBottom={`1px solid ${Theme.darkGrey_C}`}
               >
-                <Wrapper margin={`0 14px 0 0`} width={`auto`}>
+                <Wrapper margin={`0 14px 10px 0`} width={`auto`}>
                   주문번호
                 </Wrapper>
                 <Wrapper width={`auto`}>
@@ -331,7 +425,7 @@ const Order = () => {
                               <CommonButton
                                 width={`100%`}
                                 height={`100%`}
-                                onClick={() => moveLinkHandler(`/mypage/cart`)}
+                                onClick={() => basketHandler(data)}
                               >
                                 장바구니
                               </CommonButton>
@@ -496,6 +590,18 @@ const Order = () => {
               </Wrapper>
             </Wrapper>
           </RsWrapper>
+          <Modal
+            centered={true}
+            title="알림"
+            visible={isModalVisible}
+            onOk={ModalHandleOk}
+            onCancel={ModalToggle}
+          >
+            <Wrapper>
+              <Text>장바구니에 동일한 상품이 있습니다.</Text>
+              <Text>장바구니에 추가하시겠습니까?</Text>
+            </Wrapper>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

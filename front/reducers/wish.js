@@ -135,23 +135,23 @@ const reducer = (state = initailState, action) =>
       }
       ///////////////////////////////////////////////////////
       case WISH_LIST_DETAIL_REQUEST: {
-        draft.st_boughtHistoryCreateLoading = true;
-        draft.st_boughtHistoryCreateDone = null;
-        draft.st_boughtHistoryCreateError = false;
+        draft.st_wishListDetailLoading = true;
+        draft.st_wishListDetailDone = null;
+        draft.st_wishListDetailError = false;
         break;
       }
       case WISH_LIST_DETAIL_SUCCESS: {
-        draft.st_boughtHistoryCreateLoading = false;
-        draft.st_boughtHistoryCreateDone = true;
+        draft.st_wishListDetailLoading = false;
+        draft.st_wishListDetailDone = true;
         draft.boughtHistoryDetail = action.data.boughtHistorys;
         draft.deliveryDetail = action.data.delivery;
 
         break;
       }
       case WISH_LIST_DETAIL_FAILURE: {
-        draft.st_boughtHistoryCreateLoading = false;
-        draft.st_boughtHistoryCreateDone = false;
-        draft.st_boughtHistoryCreateError = action.error;
+        draft.st_wishListDetailLoading = false;
+        draft.st_wishListDetailDone = false;
+        draft.st_wishListDetailError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
