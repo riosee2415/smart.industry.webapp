@@ -502,7 +502,7 @@ const Home = ({}) => {
                       return (
                         <ProductWrapper key={data.id}>
                           <Wrapper
-                            border={`1px solid ${Theme.lightGrey_C}`}
+                            // border={`1px solid ${Theme.lightGrey_C}`}
                             position={`relative`}
                           >
                             <Image
@@ -658,7 +658,7 @@ const Home = ({}) => {
                       return (
                         <ProductWrapper>
                           <Wrapper
-                            border={`1px solid ${Theme.lightGrey_C}`}
+                            // border={`1px solid ${Theme.lightGrey_C}`}
                             position={`relative`}
                           >
                             <Image
