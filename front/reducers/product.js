@@ -277,6 +277,7 @@ export const UNIT_MODAL_TOGGLE = "UNIT_MODAL_TOGGLE";
 
 export const PRODUCT_IMAGE_PATH = "PRODUCT_IMAGE_PATH";
 export const PRODUCT_DETAIL_IMAGE_PATH = "PRODUCT_DETAIL_IMAGE_PATH";
+export const RESET_PRODUCT_REQUEST = "RESET_PRODUCT_REQUEST";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -817,6 +818,12 @@ const reducer = (state = initailState, action) =>
 
       case PRODUCT_DETAIL_IMAGE_PATH: {
         draft.productDetailImagePath = action.data;
+        break;
+      }
+
+      case RESET_PRODUCT_REQUEST: {
+        draft.st_productQuestionNotUserCreateDone = false;
+        draft.st_productQuestionCreateDone = false;
         break;
       }
     }

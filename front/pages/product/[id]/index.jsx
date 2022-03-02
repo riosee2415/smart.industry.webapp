@@ -23,7 +23,10 @@ import Theme from "../../../components/Theme";
 import useWidth from "../../../hooks/useWidth";
 import Inquiry from "../../../components/product/inquiry";
 import wrapper from "../../../store/configureStore";
-import { PRODUCT_DETAIL_REQUEST } from "../../../reducers/product";
+import {
+  PRODUCT_DETAIL_REQUEST,
+  RESET_PRODUCT_REQUEST,
+} from "../../../reducers/product";
 import {
   INTEREST_LIST_REQUEST,
   INTEREST_CREATE_REQUEST,
@@ -32,6 +35,7 @@ import {
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import Review from "../../../components/product/review";
+import { RESET_REVIEW_REQUES } from "../../../reducers/review";
 
 const Video = styled.video`
   width: 100%;
@@ -39,7 +43,7 @@ const Video = styled.video`
 `;
 
 const DetailButton = styled.button`
-  width: calc(100% / 4);
+  width: calc(100% / 3);
   height: 60px;
   cursor: pointer;
   background: none;
@@ -239,6 +243,12 @@ const DetailProduct = () => {
 
   const tabChangeHandler = useCallback(
     (value) => {
+      dispatch({
+        type: RESET_REVIEW_REQUES,
+      });
+      dispatch({
+        type: RESET_PRODUCT_REQUEST,
+      });
       setTab(value);
     },
     [tab]
@@ -826,12 +836,12 @@ const DetailProduct = () => {
               >
                 상품구매안내
               </DetailButton>
-              <DetailButton
+              {/* <DetailButton
                 isTab={tab === 3}
                 onClick={() => tabChangeHandler(3)}
               >
                 상품사용후기
-              </DetailButton>
+              </DetailButton> */}
               <DetailButton
                 isTab={tab === 4}
                 onClick={() => tabChangeHandler(4)}
