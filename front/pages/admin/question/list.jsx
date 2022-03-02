@@ -251,9 +251,9 @@ const List = ({ location }) => {
   return (
     <AdminLayout>
       <PageHeader
-        breadcrumbs={["문의 관리", "문의 리스트"]}
-        title={`문의 리스트`}
-        subTitle={`홈페이지의 문의를 관리할 수 있습니다.`}
+        breadcrumbs={["문의 관리", "1:1 문의 리스트"]}
+        title={`1:1 문의 리스트`}
+        subTitle={`홈페이지의 1:1 문의를 관리할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
@@ -261,26 +261,32 @@ const List = ({ location }) => {
         <RowWrapper margin={`0 0 10px 0`} gutter={5}>
           <Col>
             <Button
+              style={{ width: "70px" }}
               size="small"
-              onClick={() => moveLinkHandler(`/admin/question/list?type=3`)}
-            >
-              전체
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              size="small"
-              onClick={() => moveLinkHandler(`/admin/question/list?type=2`)}
-            >
-              처리완료
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              size="small"
+              type={router.query && router.query.type === "1" && "primary"}
               onClick={() => moveLinkHandler(`/admin/question/list?type=1`)}
             >
               미처리
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              style={{ width: "70px" }}
+              size="small"
+              type={router.query && router.query.type === "2" && "primary"}
+              onClick={() => moveLinkHandler(`/admin/question/list?type=2`)}
+            >
+              처리
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              style={{ width: "70px" }}
+              size="small"
+              type={router.query && router.query.type === "3" && "primary"}
+              onClick={() => moveLinkHandler(`/admin/question/list?type=3`)}
+            >
+              전체
             </Button>
           </Col>
         </RowWrapper>
@@ -320,6 +326,7 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
               >
                 이메일
               </ColWrapper>
@@ -331,6 +338,7 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
                 height={`30px`}
               >
                 문의 제목
@@ -342,6 +350,7 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
                 height={`30px`}
               >
                 작성자
@@ -353,6 +362,7 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
                 height={`30px`}
               >
                 연락처
@@ -361,14 +371,23 @@ const List = ({ location }) => {
             </RowWrapper>
             {/*  */}
             <RowWrapper gutter={5} margin={`10px 0`}>
-              <ColWrapper span={24} width={`100%`} bgColor={Theme.basicTheme_C}>
+              <ColWrapper
+                span={24}
+                width={`100%`}
+                bgColor={Theme.basicTheme_C}
+                color={Theme.white_C}
+              >
                 문의 내용
               </ColWrapper>
               <ColWrapper>{updateData && updateData.content}</ColWrapper>
             </RowWrapper>
           </ColWrapper>
           <ColWrapper span={12}>
-            <ColWrapper bgColor={Theme.basicTheme_C} width={`100%`}>
+            <ColWrapper
+              bgColor={Theme.basicTheme_C}
+              width={`100%`}
+              color={Theme.white_C}
+            >
               답변
             </ColWrapper>
             <Input.TextArea
