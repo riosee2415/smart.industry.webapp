@@ -56,7 +56,9 @@ router.get("/list", async (req, res, next) => {
     const selectQuery = `
     SELECT	id,
             value,
-            imagePath
+            imagePath,
+            imagePath2,
+            content
       FROM	menus
      WHERE	1 = 1
        AND	isDelete  = FALSE
@@ -117,7 +119,7 @@ router.get("/menuInCat", async (req, res, next) => {
 });
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
-  const { value, imagePath } = req.body;
+  const { value, imagePath, imagePath2, content } = req.body;
   try {
     if (req.body.sort < 0) {
       return res.status(401).send("0보다 작은 수를 입력할 수 없습니다.");
@@ -126,6 +128,8 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
     const createResult = await Menu.create({
       value,
       imagePath,
+      imagePath2,
+      content,
     });
 
     if (!createResult) {
@@ -140,7 +144,7 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
 });
 
 router.patch("/update", isAdminCheck, async (req, res, next) => {
-  const { id, value, imagePath } = req.body;
+  const { id, value, imagePath, imagePath2, content } = req.body;
   try {
     const exMenu = await Menu.findOne({
       where: { id: parseInt(id) },
@@ -154,6 +158,8 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
       {
         value,
         imagePath,
+        imagePath2,
+        content,
       },
       {
         where: { id: parseInt(id) },
