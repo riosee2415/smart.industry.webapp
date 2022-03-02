@@ -929,19 +929,37 @@ const AppHeader = () => {
                 카테고리
                 <DownOutlined style={{ color: Theme.basicTheme_C }} />
               </Wrapper>
-              {subMenu === 0 && (
-                <Wrapper bgColor={Theme.lightGrey_C}>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    건설기계
-                  </Wrapper>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    건설기계
-                  </Wrapper>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    건설기계
-                  </Wrapper>
-                </Wrapper>
-              )}
+              {subMenu === 0 &&
+                headerMenuList &&
+                (headerMenuList.length === 0 ? (
+                  <Empty description="카테고리가 없습니다." />
+                ) : (
+                  headerMenuList.map((data) => {
+                    return (
+                      <Wrapper>
+                        <Wrapper bgColor={Theme.lightGrey_C}>
+                          {data.value}
+                        </Wrapper>
+
+                        {data.Categories.map((value) => {
+                          return (
+                            <Wrapper
+                              al={`flex-start`}
+                              padding={`5px`}
+                              onClick={() =>
+                                moveLinkHandler(
+                                  `/product?menu=${data.id}&category=${value.id}`
+                                )
+                              }
+                            >
+                              {value.value}
+                            </Wrapper>
+                          );
+                        })}
+                      </Wrapper>
+                    );
+                  })
+                ))}
               <Wrapper
                 dr={`row`}
                 ju={`space-between`}

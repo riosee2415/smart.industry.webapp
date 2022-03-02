@@ -99,9 +99,12 @@ const GlobalStyles = createGlobalStyle`
   }
 
   .ant-modal-wrap,
-  .ant-modal-mask {
+  .ant-modal-mask,
+  .ant-select-dropdown {
     z-index: 10000 !important;
   }
+
+  
 `;
 
 export default GlobalStyles;
