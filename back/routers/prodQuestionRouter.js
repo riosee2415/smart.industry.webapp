@@ -114,6 +114,8 @@ router.post("/list", async (req, res, next) => {
             : questionLen / LIMIT;
 
         questions = await ProdQuestion.findAll({
+          offset: OFFSET,
+          limit: LIMIT,
           where: {
             isComplete: true,
             title: {
@@ -156,6 +158,8 @@ router.post("/list", async (req, res, next) => {
             : questionLen / LIMIT;
 
         questions = await ProdQuestion.findAll({
+          offset: OFFSET,
+          limit: LIMIT,
           where: {
             title: {
               [Op.like]: `%${_searchTitle}%`,
