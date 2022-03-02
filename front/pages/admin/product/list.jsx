@@ -650,17 +650,6 @@ const ProductList = () => {
           ProdCompanyId: data.prodCompany,
         },
       });
-
-      for (let i = 0; i < data.image.length; i++) {
-        const formData = new FormData();
-
-        formData.append("image", data.image[i].originFileObj);
-
-        dispatch({
-          type: PRODUCT_DETAIL_UPLOAD_REQUEST,
-          data: formData,
-        });
-      }
     },
     [productImagePath]
   );
