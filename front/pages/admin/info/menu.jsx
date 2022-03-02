@@ -23,6 +23,8 @@ import PageHeader from "../../../components/admin/PageHeader";
 import { Wrapper } from "../../../components/commonComponents";
 import {
   CREATE_MODAL_TOGGLE,
+  MENU_BANNER_IMAGE_PATH,
+  MENU_BANNER_UPLOAD_REQUEST,
   MENU_CREATE_REQUEST,
   MENU_DELETE_REQUEST,
   MENU_IMAGE_PATH,
@@ -35,6 +37,9 @@ import { useState } from "react";
 const MENU_WIDTH = `194`;
 const MENU_HEIGHT = `296`;
 
+const MENU_BANNER_WIDTH = `1350`;
+const MENU_BANNER_HEIGHT = `320`;
+
 const AdminContent = styled.div`
   padding: 20px;
 `;
@@ -42,6 +47,12 @@ const AdminContent = styled.div`
 const MenuImage = styled.img`
   width: 194px;
   height: 296px;
+  object-fit: cover;
+`;
+
+const MenuImage2 = styled.img`
+  width: 1350px;
+  height: 320px;
   object-fit: cover;
 `;
 const UploadWrapper = styled.div`
@@ -106,8 +117,11 @@ const MenuList = () => {
     menuList,
     createModal,
     menuImagePath,
+    menuImageBannerPath,
     st_menuUploadLoading,
     st_menuUploadError,
+    st_menuBannerUploadLoading,
+    st_menuBannerUploadError,
     //
     st_menuCreateDone,
     st_menuCreateError,
@@ -124,6 +138,7 @@ const MenuList = () => {
   const dispatch = useDispatch();
 
   const imageRef = useRef();
+  const imageBannerRef = useRef();
 
   const [menuForm] = Form.useForm();
   const menuFormRef = useRef();
@@ -135,6 +150,12 @@ const MenuList = () => {
       return message.error(st_menuUploadError);
     }
   }, [st_menuUploadError]);
+
+  useEffect(() => {
+    if (st_menuBannerUploadError) {
+      return message.error(st_menuBannerUploadError);
+    }
+  }, [st_menuBannerUploadError]);
 
   useEffect(() => {
     if (st_menuCreateDone) {
@@ -192,11 +213,17 @@ const MenuList = () => {
       if (updateMenuData) {
         menuFormRef.current.setFieldsValue({
           value: updateMenuData.value,
+          content: updateMenuData.content,
         });
 
         dispatch({
           type: MENU_IMAGE_PATH,
           data: updateMenuData.imagePath,
+        });
+
+        dispatch({
+          type: MENU_BANNER_IMAGE_PATH,
+          data: updateMenuData.imagePath2,
         });
       }
     }
@@ -215,6 +242,10 @@ const MenuList = () => {
           type: MENU_IMAGE_PATH,
           data: null,
         });
+        dispatch({
+          type: MENU_BANNER_IMAGE_PATH,
+          data: null,
+        });
       }
       dispatch({
         type: CREATE_MODAL_TOGGLE,
@@ -229,6 +260,10 @@ const MenuList = () => {
     imageRef.current.click();
   }, [imageRef.current]);
 
+  const clickBannerImageUpload = useCallback(() => {
+    imageBannerRef.current.click();
+  }, [imageBannerRef.current]);
+
   const onChangeImages = useCallback((e) => {
     const formData = new FormData();
 
@@ -242,21 +277,42 @@ const MenuList = () => {
     });
   }, []);
 
+  const onChangeBannerImages = useCallback((e) => {
+    const formData = new FormData();
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("image", file);
+    });
+
+    dispatch({
+      type: MENU_BANNER_UPLOAD_REQUEST,
+      data: formData,
+    });
+  }, []);
+
   const menuCreateSubmit = useCallback(
     (data) => {
       if (!menuImagePath) {
         return LoadNotification("ADMIN SYSTEM ERROR", "이미지를 등록해주세요");
+      }
+      if (!menuImageBannerPath) {
+        return LoadNotification(
+          "ADMIN SYSTEM ERROR",
+          "배너 이미지를 등록해주세요"
+        );
       }
 
       dispatch({
         type: MENU_CREATE_REQUEST,
         data: {
           imagePath: menuImagePath,
+          imagePath2: menuImageBannerPath,
           value: data.value,
+          content: data.content,
         },
       });
     },
-    [menuImagePath]
+    [menuImagePath, menuImageBannerPath]
   );
 
   const menuUpdateSubmit = useCallback(
@@ -264,17 +320,25 @@ const MenuList = () => {
       if (!menuImagePath) {
         return LoadNotification("ADMIN SYSTEM ERROR", "이미지를 등록해주세요");
       }
+      if (!menuImageBannerPath) {
+        return LoadNotification(
+          "ADMIN SYSTEM ERROR",
+          "배너 이미지를 등록해주세요"
+        );
+      }
 
       dispatch({
         type: MENU_UPDATE_REQUEST,
         data: {
           id: updateMenuData.id,
           imagePath: menuImagePath,
+          imagePath2: menuImageBannerPath,
           value: data.value,
+          content: data.content,
         },
       });
     },
-    [menuImagePath, updateMenuData]
+    [menuImagePath, updateMenuData, menuImageBannerPath]
   );
 
   const menuDeleteSubmit = useCallback((data) => {
@@ -299,7 +363,7 @@ const MenuList = () => {
     {
       title: "이미지",
       render: (data) => (
-        <Image width={`200px`} src={data.imagePath} alt="menu_image" />
+        <Image width={`100px`} src={data.imagePath} alt="menu_image" />
       ),
     },
 
@@ -359,7 +423,7 @@ const MenuList = () => {
 
       {/* MENU CREATE / UPDATE MODAL */}
       <Modal
-        width={`650px`}
+        width={`1400px`}
         title={updateMenuData ? "메뉴 수정" : "메뉴 생성"}
         visible={createModal}
         footer={null}
@@ -409,6 +473,50 @@ const MenuList = () => {
           </Button>
         </UploadWrapper>
 
+        <GuideWrapper>
+          <GuideText>
+            베너 사이즈는 가로 {MENU_BANNER_WIDTH}px 과 세로
+            {MENU_BANNER_HEIGHT}px을 기준으로 합니다.
+          </GuideText>
+          <GuideText>
+            이미지 사이즈가 상이할 경우 화면에 올바르지 않게 보일 수 있으니
+            이미지 사이즈를 확인해주세요.
+          </GuideText>
+        </GuideWrapper>
+        <Wrapper>
+          <MenuImage2
+            src={
+              menuImageBannerPath
+                ? `${menuImageBannerPath}`
+                : `https://via.placeholder.com/${MENU_BANNER_WIDTH}x${MENU_BANNER_HEIGHT}`
+            }
+            alt="main_GALLEY_image"
+          />
+          <PreviewGuide>
+            {menuImageBannerPath && `이미지 미리보기 입니다.`}
+          </PreviewGuide>
+        </Wrapper>
+
+        <UploadWrapper>
+          <input
+            type="file"
+            name="image"
+            accept=".png, .jpg"
+            // multiple
+            hidden
+            ref={imageBannerRef}
+            onChange={onChangeBannerImages}
+          />
+          <Button
+            type="primary"
+            size="small"
+            onClick={clickBannerImageUpload}
+            loading={st_menuBannerUploadLoading}
+          >
+            UPLOAD
+          </Button>
+        </UploadWrapper>
+
         <Form
           form={menuForm}
           ref={menuFormRef}
@@ -420,6 +528,13 @@ const MenuList = () => {
             rules={[{ required: true, message: "이름을 입력해주세요." }]}
           >
             <Input placeholder="이름을 입력해주세요." />
+          </Form.Item>
+          <Form.Item
+            label="설명"
+            name="content"
+            rules={[{ required: true, message: "이름을 입력해주세요." }]}
+          >
+            <Input.TextArea placeholder="설명을 입력해주세요." />
           </Form.Item>
           <Wrapper al={`flex-end`}>
             <Button size="small" htmlType="submit" type="primary">

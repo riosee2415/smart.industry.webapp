@@ -29,6 +29,7 @@ import {
 import { useRouter } from "next/router";
 import { Pagination } from "antd";
 import { DoubleLeftOutlined, DoubleRightOutlined } from "@ant-design/icons";
+import { MENU_DETAIL_REQUEST } from "../../reducers/menu";
 
 const CustomSelect = styled(Select)`
   width: 138px;
@@ -164,6 +165,8 @@ const ProductList = () => {
     (state) => state.product
   );
 
+  const { menuDetail } = useSelector((state) => state.menu);
+
   ////// HOOKS //////
 
   const dispatch = useDispatch();
@@ -211,6 +214,13 @@ const ProductList = () => {
         },
       });
     }
+
+    dispatch({
+      type: MENU_DETAIL_REQUEST,
+      data: {
+        menuId: router.query.menu,
+      },
+    });
   }, [router.query]);
 
   useEffect(() => {
@@ -251,10 +261,6 @@ const ProductList = () => {
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
-
-  console.log(
-    router.asPath.substring(0, router.asPath.indexOf("category") + 9)
-  );
 
   const productTypeChangeHandler = useCallback(
     (type) => {
@@ -404,9 +410,7 @@ const ProductList = () => {
                 <Image
                   width={`100%`}
                   height={width < 700 ? `200px` : `320px`}
-                  src={
-                    "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/product_bg.png"
-                  }
+                  src={menuDetail && menuDetail[0].imagePath2}
                 />
 
                 <Wrapper
@@ -422,7 +426,7 @@ const ProductList = () => {
                     fontWeight={`bold`}
                     lineHeight={`1.43`}
                   >
-                    건설기계
+                    {menuDetail && menuDetail[0].value}
                   </Text>
                   <Wrapper
                     width={`24px`}
@@ -431,10 +435,7 @@ const ProductList = () => {
                     margin={`5px 0 25px`}
                   />
                   <Text lineHeight={`1.19`}>
-                    건설기계 관련 내용이 들어갑니다.
-                  </Text>
-                  <Text lineHeight={`1.19`}>
-                    건설기계 관련 내용이 들어갑니다.
+                    {menuDetail && menuDetail[0].content}
                   </Text>
                 </Wrapper>
               </Wrapper>
