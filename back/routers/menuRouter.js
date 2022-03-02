@@ -99,6 +99,39 @@ router.get("/catInMenu/:menuId", async (req, res, next) => {
   }
 });
 
+router.get("/detail/:menuId", async (req, res, next) => {
+  const { menuId } = req.params;
+
+  if (isNaN(menuId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+  try {
+    const selectQuery = `
+    SELECT	id,
+            value,
+            imagePath,
+            imagePath2,
+            content
+      FROM	menus
+     WHERE	1 = 1
+       AND	isDelete  = FALSE
+       AND  id = ${menuId}
+     ORDER  BY createdAt DESC
+   `;
+
+    const lists = await models.sequelize.query(selectQuery);
+
+    if (lists[0].length === 0) {
+      return res.status(401).send("존재하지 않는 메뉴입니다.");
+    }
+
+    return res.status(200).json(lists[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("메뉴 정보를 불러올 수 없습니다.");
+  }
+});
+
 router.get("/menuInCat", async (req, res, next) => {
   try {
     const lists = await Menu.findAll({
