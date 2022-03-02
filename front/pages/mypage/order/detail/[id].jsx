@@ -314,7 +314,7 @@ const Order = () => {
                             </Wrapper>
                           </Wrapper>
                           <Wrapper width={`auto`} dr={`row`}>
-                            <Wrapper
+                            {/* <Wrapper
                               width={`107px`}
                               height={`50px`}
                               margin={`0 10px 0 0`}
@@ -326,7 +326,7 @@ const Order = () => {
                               >
                                 배송완료
                               </CommonButton>
-                            </Wrapper>
+                            </Wrapper> */}
                             <Wrapper width={`107px`} height={`50px`}>
                               <CommonButton
                                 width={`100%`}
