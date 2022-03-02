@@ -124,6 +124,7 @@ const List = ({ location }) => {
       dispatch({
         type: UPDATE_MODAL_CLOSE_REQUEST,
       });
+      return message.success("처리되었습니다.");
     }
   }, [st_questionUpdateDone]);
 
@@ -141,6 +142,8 @@ const List = ({ location }) => {
         type: QUESTION_GET_REQUEST,
         data: { listType: qs.type ? qs.type : 3 },
       });
+
+      return message.success("삭제되었습니다.");
     }
   }, [st_questionDeleteDone]);
 
@@ -217,7 +220,12 @@ const List = ({ location }) => {
 
     {
       title: "제목",
-      render: (data) => <div>{data.title}</div>,
+      dataIndex: "title",
+    },
+
+    {
+      title: "작성자",
+      dataIndex: "author",
     },
     {
       title: "처리여부",
