@@ -205,6 +205,10 @@ const Review = () => {
     form.resetFields();
 
     dispatch({
+      type: RESET_REVIEW_REQUES,
+    });
+
+    dispatch({
       type: CREATE_MODAL_TOGGLE,
     });
   }, [createModal]);

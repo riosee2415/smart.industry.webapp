@@ -43,7 +43,7 @@ const Video = styled.video`
 `;
 
 const DetailButton = styled.button`
-  width: calc(100% / 4);
+  width: calc(100% / 3);
   height: 60px;
   cursor: pointer;
   background: none;
@@ -836,12 +836,12 @@ const DetailProduct = () => {
               >
                 상품구매안내
               </DetailButton>
-              <DetailButton
+              {/* <DetailButton
                 isTab={tab === 3}
                 onClick={() => tabChangeHandler(3)}
               >
                 상품사용후기
-              </DetailButton>
+              </DetailButton> */}
               <DetailButton
                 isTab={tab === 4}
                 onClick={() => tabChangeHandler(4)}
