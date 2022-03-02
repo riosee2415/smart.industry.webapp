@@ -51,8 +51,6 @@ const Order = () => {
     (state) => state.wish
   );
 
-  console.log(boughtHistoryDetail);
-
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -343,7 +341,7 @@ const Order = () => {
                       );
                     })}
               </Wrapper>
-              {console.log(boughtHistoryDetail)}
+
               <Wrapper
                 al={`flex-start`}
                 margin={`0 0 11px`}
