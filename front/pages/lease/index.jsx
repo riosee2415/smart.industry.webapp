@@ -509,6 +509,7 @@ const Index = () => {
 
                               <Wrapper dr={`row`} width={`auto`}>
                                 <TextInput
+                                  type="password"
                                   width={width < 700 ? `100px` : `150px`}
                                   height={`25px`}
                                   border={`1px solid ${Theme.grey3_C}`}
