@@ -147,6 +147,10 @@ const Index = () => {
     }
   }, [st_contactCreateError]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   ////// TOGGLE //////
   const comboToggle = useCallback(() => {
     setCombo(!combo);

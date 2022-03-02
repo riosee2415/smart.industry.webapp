@@ -127,6 +127,8 @@ const Question = () => {
       inputTitle.setValue("");
       inputContent.setValue("");
       inputPassword.setValue("");
+
+      window.scrollTo(0, 0);
     }
   }, [st_notUserCreateDone]);
 
