@@ -78,6 +78,8 @@ export const REVIEW_UPLOAD_FAILURE = "REVIEW_UPLOAD_FAILURE";
 //
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
+export const RESET_REVIEW_REQUES = "RESET_REVIEW_REQUES";
+
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -129,6 +131,7 @@ const reducer = (state = initailState, action) =>
       case REVIEW_CREATE_SUCCESS: {
         draft.st_reviewCreateLoading = false;
         draft.st_reviewCreateDone = true;
+        draft.reviewImagePath = null;
         break;
       }
       case REVIEW_CREATE_FAILURE: {
@@ -147,6 +150,7 @@ const reducer = (state = initailState, action) =>
       case REVIEW_NOTUSER_CREATE_SUCCESS: {
         draft.st_reviewNotUserCreateLoading = false;
         draft.st_reviewNotUserCreateDone = true;
+        draft.reviewImagePath = null;
         break;
       }
       case REVIEW_NOTUSER_CREATE_FAILURE: {
@@ -234,6 +238,14 @@ const reducer = (state = initailState, action) =>
 
       case CREATE_MODAL_TOGGLE: {
         draft.createModal = !draft.createModal;
+        break;
+      }
+
+      case RESET_REVIEW_REQUES: {
+        draft.reviewImagePath = null;
+        draft.st_reviewCreateDone = false;
+        draft.st_reviewNotUserCreateDone = false;
+        break;
       }
 
       default:

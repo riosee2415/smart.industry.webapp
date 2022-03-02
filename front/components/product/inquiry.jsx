@@ -5,6 +5,7 @@ import {
   Modal,
   Checkbox,
   Pagination,
+  Empty,
 } from "antd";
 import React, { useState, useCallback } from "react";
 import {
@@ -375,11 +376,12 @@ const Inquiry = () => {
           bgColor={Theme.lightGrey2_C}
           height={`40px`}
           borderTop={`1px solid ${Theme.grey2_C}`}
-          borderBottom={`1px solid ${Theme.grey2_C}`}>
+          borderBottom={`1px solid ${Theme.grey2_C}`}
+        >
           <Wrapper width={`10%`}>번호</Wrapper>
-          <Wrapper width={`60%`}>제목</Wrapper>
-          <Wrapper width={`10%`}>작성자</Wrapper>
-          <Wrapper width={`10%`}>작성일</Wrapper>
+          <Wrapper width={width < 700 ? `50%` : `60%`}>제목</Wrapper>
+          <Wrapper width={width < 700 ? `15%` : `10%`}>작성자</Wrapper>
+          <Wrapper width={width < 700 ? `15%` : `10%`}>작성일</Wrapper>
           <Wrapper width={`10%`}>조회수</Wrapper>
         </Wrapper>
         {productQuestionListProd &&
@@ -397,10 +399,15 @@ const Inquiry = () => {
                     padding={`14px 0px`}
                     cursor={`pointer`}
                     borderBottom={`1px solid ${Theme.grey2_C}`}
-                    onClick={() => onClickToggleHandler(idx)}>
+                    onClick={() => onClickToggleHandler(idx)}
+                  >
                     <Wrapper width={`10%`}>{data.id}</Wrapper>
 
-                    <Wrapper width={`60%`} ju={`flex-start`} dr={`row`}>
+                    <Wrapper
+                      width={width < 700 ? `50%` : `60%`}
+                      ju={`flex-start`}
+                      dr={`row`}
+                    >
                       <Wrapper width={`auto`} margin={`0 17px 0 0`}>
                         {data.title}&nbsp;
                         {data.isComplete ? `[답변완료]` : ""}
@@ -414,8 +421,10 @@ const Inquiry = () => {
                         )}
                       </Wrapper>
                     </Wrapper>
-                    <Wrapper width={`10%`}>{data.author}</Wrapper>
-                    <Wrapper width={`10%`}>
+                    <Wrapper width={width < 700 ? `15%` : `10%`}>
+                      {data.author}
+                    </Wrapper>
+                    <Wrapper width={width < 700 ? `15%` : `10%`}>
                       {data.createdAt.substring(0, 10)}
                     </Wrapper>
                     <Wrapper width={`10%`}>{data.hit}</Wrapper>
@@ -427,7 +436,8 @@ const Inquiry = () => {
                       ju={`flex-start`}
                       padding={`14px 0px`}
                       cursor={`pointer`}
-                      borderBottom={`1px solid ${Theme.grey2_C}`}>
+                      borderBottom={`1px solid ${Theme.grey2_C}`}
+                    >
                       <Wrapper width={`10%`}></Wrapper>
 
                       {secretArr[idx] ? (
@@ -435,7 +445,8 @@ const Inquiry = () => {
                           <Wrapper
                             dr={`row`}
                             al={`flex-start`}
-                            bgColor={Theme.lightGrey2_C}>
+                            bgColor={Theme.lightGrey2_C}
+                          >
                             <Wrapper al={`flex-start`}>
                               <Text color={Theme.red_C}>
                                 비공개 글 입니다.&nbsp;
@@ -447,7 +458,8 @@ const Inquiry = () => {
                               <Wrapper
                                 dr={`row`}
                                 ju={`flex-start`}
-                                margin={`10px 0 0 0`}>
+                                margin={`10px 0 0 0`}
+                              >
                                 <TextInput
                                   margin={`0 16px 0 0`}
                                   width={`146px`}
@@ -464,7 +476,8 @@ const Inquiry = () => {
                                   fontSize={`14px`}
                                   onClick={() =>
                                     secretPasswordHandler(data.secret, idx)
-                                  }>
+                                  }
+                                >
                                   확인
                                 </CommonButton>
                               </Wrapper>
@@ -477,21 +490,24 @@ const Inquiry = () => {
                           ju={`flex-start`}
                           padding={`14px 0px`}
                           cursor={`pointer`}
-                          borderBottom={`1px solid ${Theme.grey2_C}`}>
+                          borderBottom={`1px solid ${Theme.grey2_C}`}
+                        >
                           <Wrapper width={`10%`}></Wrapper>
 
                           <Wrapper width={`60%`} ju={`flex-start`} dr={`row`}>
                             <Wrapper
                               dr={`row`}
                               al={`flex-start`}
-                              bgColor={Theme.lightGrey2_C}>
+                              bgColor={Theme.lightGrey2_C}
+                            >
                               <Wrapper
                                 width={`20px`}
                                 height={`20px`}
                                 color={Theme.white_C}
                                 radius={`100%`}
                                 bgColor={Theme.red_C}
-                                margin={`23px 26px 0 20px`}>
+                                margin={`23px 26px 0 20px`}
+                              >
                                 A
                               </Wrapper>
                               <Wrapper
@@ -499,7 +515,8 @@ const Inquiry = () => {
                                 minHeight={`140px`}
                                 al={`flex-start`}
                                 ju={`flex-start`}
-                                padding={`23px 10px 0 0`}>
+                                padding={`23px 10px 0 0`}
+                              >
                                 {data && data.answer}
                               </Wrapper>
                             </Wrapper>
@@ -525,7 +542,8 @@ const Inquiry = () => {
           height={`40px`}
           fontSize={`15px`}
           padding={`0`}
-          onClick={() => (me ? ModalToggle() : notModalToggle())}>
+          onClick={() => (me ? ModalToggle() : notModalToggle())}
+        >
           상품 문의하기
         </CommonButton>
       </Wrapper>
@@ -544,7 +562,8 @@ const Inquiry = () => {
         width={`1350px`}
         title="상품 문의작성"
         visible={isModalVisible1}
-        zIndex={10000}>
+        zIndex={10000}
+      >
         <Wrapper>
           <Wrapper al={`flex-start`}>
             <Text fontSize={`16px`} width={`30px`} color={Theme.darkGrey_C}>
@@ -585,7 +604,8 @@ const Inquiry = () => {
                 fontSize={`16px`}
                 width={`60px`}
                 color={Theme.darkGrey_C}
-                margin={`35px 0 0 0`}>
+                margin={`35px 0 0 0`}
+              >
                 비밀번호
               </Text>
               <TextInput
@@ -605,14 +625,16 @@ const Inquiry = () => {
               margin={`0 5px 0 0`}
               fontSize={`14px`}
               kindOf={`darkgrey`}
-              onClick={() => ModalToggle()}>
+              onClick={() => ModalToggle()}
+            >
               취소하기
             </CommonButton>
             <CommonButton
               width={`120px`}
               height={`38px`}
               fontSize={`14px`}
-              onClick={() => createProdQnaHandler()}>
+              onClick={() => createProdQnaHandler()}
+            >
               작성하기
             </CommonButton>
           </Wrapper>
@@ -627,7 +649,8 @@ const Inquiry = () => {
         width={`1350px`}
         title="상품 문의작성"
         visible={isModalVisible2}
-        zIndex={10000}>
+        zIndex={10000}
+      >
         <Wrapper>
           <Wrapper al={`flex-start`}>
             <Text fontSize={`16px`} width={`30px`} color={Theme.darkGrey_C}>
@@ -708,7 +731,8 @@ const Inquiry = () => {
                 fontSize={`16px`}
                 width={`60px`}
                 color={Theme.darkGrey_C}
-                margin={`35px 0 0 0`}>
+                margin={`35px 0 0 0`}
+              >
                 비밀번호
               </Text>
               <TextInput
@@ -724,7 +748,8 @@ const Inquiry = () => {
           <Wrapper al={`flex-start`} margin={`25px 0 0 0`}>
             <Checkbox
               checked={isCheckAgree}
-              onChange={(e) => onChangeisCheckAgree(e)}>
+              onChange={(e) => onChangeisCheckAgree(e)}
+            >
               개인정보 제공에 동의합니다.
             </Checkbox>
           </Wrapper>
@@ -736,14 +761,16 @@ const Inquiry = () => {
               margin={`0 5px 0 0`}
               fontSize={`14px`}
               kindOf={`darkgrey`}
-              onClick={() => notModalToggle()}>
+              onClick={() => notModalToggle()}
+            >
               취소하기
             </CommonButton>
             <CommonButton
               width={`120px`}
               height={`38px`}
               fontSize={`14px`}
-              onClick={() => createNotUserProdQnaHandler()}>
+              onClick={() => createNotUserProdQnaHandler()}
+            >
               작성하기
             </CommonButton>
           </Wrapper>
@@ -756,7 +783,8 @@ const Inquiry = () => {
         onOk={() => isSecretModalOk()}
         onCancel={() => isSecretModalToggle()}
         okText="확인"
-        cancelText="취소">
+        cancelText="취소"
+      >
         <Wrapper dr={`row`}>
           <Text width={`80px`}>비밀번호</Text>
           <TextInput

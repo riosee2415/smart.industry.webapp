@@ -23,7 +23,10 @@ import Theme from "../../../components/Theme";
 import useWidth from "../../../hooks/useWidth";
 import Inquiry from "../../../components/product/inquiry";
 import wrapper from "../../../store/configureStore";
-import { PRODUCT_DETAIL_REQUEST } from "../../../reducers/product";
+import {
+  PRODUCT_DETAIL_REQUEST,
+  RESET_PRODUCT_REQUEST,
+} from "../../../reducers/product";
 import {
   INTEREST_LIST_REQUEST,
   INTEREST_CREATE_REQUEST,
@@ -32,6 +35,7 @@ import {
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import Review from "../../../components/product/review";
+import { RESET_REVIEW_REQUES } from "../../../reducers/review";
 
 const Video = styled.video`
   width: 100%;
@@ -239,6 +243,12 @@ const DetailProduct = () => {
 
   const tabChangeHandler = useCallback(
     (value) => {
+      dispatch({
+        type: RESET_REVIEW_REQUES,
+      });
+      dispatch({
+        type: RESET_PRODUCT_REQUEST,
+      });
       setTab(value);
     },
     [tab]

@@ -76,13 +76,13 @@ const AppFooter = () => {
                 </Text>
               </a>
             </Link>
-            <Link href={`/contact/advertisement`}>
+            {/* <Link href={`/contact/advertisement`}>
               <a>
                 <Text margin={width < 1000 ? `0 15px 0 0` : `0 40px 0 0`}>
                   고객센터
                 </Text>
               </a>
-            </Link>
+            </Link> */}
           </Wrapper>
           <Wrapper
             width={width < 1000 ? `100%` : `auto`}
