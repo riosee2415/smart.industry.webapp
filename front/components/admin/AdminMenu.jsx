@@ -197,9 +197,9 @@ const AdminMenu = () => {
             <MenuName>상품 문의 리스트</MenuName>
           </Menu.Item>
 
-          <Menu.Item key="/admin/product/review">
+          {/* <Menu.Item key="/admin/product/review">
             <MenuName>상품 후기 리스트</MenuName>
-          </Menu.Item>
+          </Menu.Item> */}
         </SubMenu>
         <SubMenu
           key="sub7"

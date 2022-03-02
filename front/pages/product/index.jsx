@@ -192,6 +192,12 @@ const ProductList = () => {
           menuId: router.query.menu,
         },
       });
+      dispatch({
+        type: MENU_DETAIL_REQUEST,
+        data: {
+          menuId: router.query.menu,
+        },
+      });
     }
 
     if (router.query) {
@@ -214,13 +220,6 @@ const ProductList = () => {
         },
       });
     }
-
-    dispatch({
-      type: MENU_DETAIL_REQUEST,
-      data: {
-        menuId: router.query.menu,
-      },
-    });
   }, [router.query]);
 
   useEffect(() => {
@@ -410,7 +409,11 @@ const ProductList = () => {
                 <Image
                   width={`100%`}
                   height={width < 700 ? `200px` : `320px`}
-                  src={menuDetail && menuDetail[0].imagePath2}
+                  src={
+                    menuDetail
+                      ? menuDetail[0].imagePath2
+                      : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/product_bg.png"
+                  }
                 />
 
                 <Wrapper
@@ -426,7 +429,14 @@ const ProductList = () => {
                     fontWeight={`bold`}
                     lineHeight={`1.43`}
                   >
-                    {menuDetail && menuDetail[0].value}
+                    {menuDetail
+                      ? menuDetail[0].value
+                      : router.query &&
+                        (router.query.isSale
+                          ? "특가상품"
+                          : router.query.isUsed
+                          ? "중고장비"
+                          : router.query.search && "상품검색")}
                   </Text>
                   <Wrapper
                     width={`24px`}
