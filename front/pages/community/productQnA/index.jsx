@@ -26,7 +26,7 @@ import {
   PRODUCT_QUESTION_LIST_REQUEST,
   PRODUCT_QUESTION_MY_LIST_REQUEST,
 } from "../../../reducers/product";
-import { message, Modal, Select, Pagination } from "antd";
+import { message, Modal, Select, Pagination, Empty } from "antd";
 import styled from "styled-components";
 import useOnlyNumberInput from "../../../hooks/useOnlyNumberInput";
 import useInput from "../../../hooks/useInput";
@@ -38,8 +38,11 @@ const CustomModal = styled(Modal)`
 `;
 
 const CustomPagination = styled(Pagination)`
-  & .ant-pagination-item-active {
+  & .ant-pagination-item {
     border: none;
+  }
+
+  & .ant-pagination-item-active {
     border-bottom: 1px solid ${Theme.basicTheme_C} !important;
   }
 
@@ -311,7 +314,8 @@ const Notice = () => {
                 width={`auto`}
                 margin={`0 8px 0 0`}
                 onClick={() => moveLinkHandler(`/`)}
-                cursor={`pointer`}>
+                cursor={`pointer`}
+              >
                 HOME
               </Wrapper>
               |
@@ -319,7 +323,8 @@ const Notice = () => {
                 width={`auto`}
                 margin={`0 8px`}
                 onClick={() => moveLinkHandler(`/community/faq`)}
-                cursor={`pointer`}>
+                cursor={`pointer`}
+              >
                 커뮤니티
               </Wrapper>
               |
@@ -327,7 +332,8 @@ const Notice = () => {
                 width={`auto`}
                 margin={`0 8px`}
                 onClick={() => moveLinkHandler(`/community/productQnA`)}
-                cursor={`pointer`}>
+                cursor={`pointer`}
+              >
                 상품문의
               </Wrapper>
             </Wrapper>
@@ -337,7 +343,8 @@ const Notice = () => {
               al={`flex-start`}
               padding={`0 0 10px`}
               borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 40px`}>
+              margin={`0 0 40px`}
+            >
               상품문의
             </Wrapper>
 
@@ -346,20 +353,23 @@ const Notice = () => {
                 bgColor={Theme.lightGrey2_C}
                 height={`40px`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}>
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
                 <Wrapper width={`5%`} display={width < 500 ? `none` : `flex`}>
                   번호
                 </Wrapper>
                 <Wrapper width={width < 500 ? `30%` : `20%`}>상품명</Wrapper>
                 <Wrapper
-                  width={width < 500 ? `45%` : width < 800 ? `40%` : `45%`}>
+                  width={width < 500 ? `45%` : width < 800 ? `40%` : `45%`}
+                >
                   제목
                 </Wrapper>
                 <Wrapper width={`10%`} display={width < 500 ? `none` : `flex`}>
                   작성자
                 </Wrapper>
                 <Wrapper
-                  width={width < 500 ? `25%` : width < 800 ? `15%` : `10%`}>
+                  width={width < 500 ? `25%` : width < 800 ? `15%` : `10%`}
+                >
                   작성일
                 </Wrapper>
                 <Wrapper width={`10%`} display={width < 500 ? `none` : `flex`}>
@@ -367,9 +377,12 @@ const Notice = () => {
                 </Wrapper>
               </Wrapper>
               <Wrapper ju={`flex-start`}>
-                {prodQnAList && prodQnAList.length === 0
-                  ? ``
-                  : prodQnAList &&
+                {prodQnAList &&
+                  (prodQnAList.length === 0 ? (
+                    <Wrapper margin={`50px 0`}>
+                      <Empty description="상품문의가 없습니다." />
+                    </Wrapper>
+                  ) : (
                     prodQnAList.map((data) => {
                       return (
                         <Wrapper
@@ -378,15 +391,18 @@ const Notice = () => {
                           padding={`14px 0px`}
                           cursor={`pointer`}
                           borderBottom={`1px solid ${Theme.grey2_C}`}
-                          onClick={() => onClickDetailHanlder(data)}>
+                          onClick={() => onClickDetailHanlder(data)}
+                        >
                           <Wrapper
                             width={`5%`}
-                            display={width < 500 ? `none` : `flex`}>
+                            display={width < 500 ? `none` : `flex`}
+                          >
                             {data.id}
                           </Wrapper>
                           <Wrapper
                             width={width < 500 ? `30%` : `20%`}
-                            dr={`row`}>
+                            dr={`row`}
+                          >
                             <Image
                               width={width < 500 ? `40px` : `50px`}
                               height={width < 500 ? `40px` : `50px`}
@@ -395,7 +411,8 @@ const Notice = () => {
                             <Wrapper
                               width={`calc(100% - 50px)`}
                               al={`flex-start`}
-                              padding={`0 0 0 10px`}>
+                              padding={`0 0 0 10px`}
+                            >
                               {data.Product.title}
                             </Wrapper>
                           </Wrapper>
@@ -404,7 +421,8 @@ const Notice = () => {
                               width < 500 ? `45%` : width < 800 ? `40%` : `45%`
                             }
                             ju={`flex-start`}
-                            dr={`row`}>
+                            dr={`row`}
+                          >
                             <Wrapper width={`auto`} margin={`0 17px 0 0`}>
                               {data.title}
                             </Wrapper>
@@ -419,29 +437,34 @@ const Notice = () => {
                           </Wrapper>
                           <Wrapper
                             width={`10%`}
-                            display={width < 500 ? `none` : `flex`}>
+                            display={width < 500 ? `none` : `flex`}
+                          >
                             {data.author}
                           </Wrapper>
                           <Wrapper
                             width={
                               width < 500 ? `25%` : width < 800 ? `15%` : `10%`
-                            }>
+                            }
+                          >
                             {data.createdAt.substring(0, 10)}
                           </Wrapper>
                           <Wrapper
                             width={`10%`}
-                            display={width < 500 ? `none` : `flex`}>
+                            display={width < 500 ? `none` : `flex`}
+                          >
                             {data.hit}
                           </Wrapper>
                         </Wrapper>
                       );
-                    })}
+                    })
+                  ))}
               </Wrapper>
               <Wrapper
                 margin={`40px 0 0`}
                 dr={`row`}
                 height={`40px`}
-                ju={`flex-start`}>
+                ju={`flex-start`}
+              >
                 <Wrapper width={`74px`} display={width < 500 ? `none` : `flex`}>
                   검색어
                 </Wrapper>
@@ -449,7 +472,8 @@ const Notice = () => {
                 <Wrapper
                   dr={`row`}
                   width={`350px`}
-                  ju={width < 500 ? `center` : `flex-start`}>
+                  ju={width < 500 ? `center` : `flex-start`}
+                >
                   <Select
                     defaultValue="전체"
                     margin={`0 10px 0 0`}
@@ -457,7 +481,8 @@ const Notice = () => {
                     style={{
                       margin: "0 10px 0 0",
                       width: `100px`,
-                    }}>
+                    }}
+                  >
                     <Select.Option value={"전체"}>전체</Select.Option>;
                   </Select>
                   <Select
@@ -465,7 +490,8 @@ const Notice = () => {
                       width: `100px`,
                     }}
                     defaultValue={selectValue}
-                    onChange={(e) => selectValueHandler(e)}>
+                    onChange={(e) => selectValueHandler(e)}
+                  >
                     <Select.Option value={"제목"}>제목</Select.Option>
                     <Select.Option value={"작성자"}>작성자</Select.Option>
                   </Select>
@@ -475,7 +501,8 @@ const Notice = () => {
                   <Wrapper
                     dr={`row`}
                     width={`calc(100% -  350px - 40px - 74px)`}
-                    ju={`flex-start`}>
+                    ju={`flex-start`}
+                  >
                     <TextInput
                       width={`261px`}
                       height={`100%`}
@@ -490,7 +517,8 @@ const Notice = () => {
                       width={`74px`}
                       height={`100%`}
                       radius={`0`}
-                      onClick={() => searchButtonHanlder()}>
+                      onClick={() => searchButtonHanlder()}
+                    >
                       찾기
                     </CommonButton>
                   </Wrapper>
@@ -501,7 +529,8 @@ const Notice = () => {
                 <Wrapper
                   margin={`15px 0 0 0`}
                   al={width < 800 ? `flex-start` : `flex-end`}
-                  dr={width < 800 ? `row` : `column`}>
+                  dr={width < 800 ? `row` : `column`}
+                >
                   <Wrapper dr={`row`} ju={`flex-start`}>
                     <TextInput
                       width={`calc(100% - 74px - 10px)`}
@@ -513,7 +542,8 @@ const Notice = () => {
                       width={`74px`}
                       height={`100%`}
                       radius={`0`}
-                      onClick={() => searchButtonHanlder()}>
+                      onClick={() => searchButtonHanlder()}
+                    >
                       찾기
                     </CommonButton>
                   </Wrapper>
@@ -537,7 +567,8 @@ const Notice = () => {
                       <CommonButton
                         width={`100px`}
                         height={`100%`}
-                        onClick={() => ListbackHanlder()}>
+                        onClick={() => ListbackHanlder()}
+                      >
                         뒤로가기
                       </CommonButton>
                     </Wrapper>
@@ -546,7 +577,8 @@ const Notice = () => {
                       <CommonButton
                         width={`100px`}
                         height={`100%`}
-                        onClick={() => myListHandler()}>
+                        onClick={() => myListHandler()}
+                      >
                         내가 쓴 글
                       </CommonButton>
                     </Wrapper>
@@ -562,7 +594,8 @@ const Notice = () => {
             onOk={() => ModalHandleOk()}
             onCancel={() => ModalHandlerCancel()}
             okText="확인"
-            cancelText="취소">
+            cancelText="취소"
+          >
             <Wrapper dr={`row`}>
               <Text width={`80px`}>비밀번호</Text>
               <TextInput
