@@ -453,29 +453,33 @@ const AppHeader = () => {
                       ju={`flex-start`}
                       al={`flex-start`}
                     >
-                      <Wrapper
-                        width={`calc(100% / 3)`}
-                        al={`flex-start`}
-                        color={Theme.black_C}
-                      >
-                        <Title>건설기계</Title>
-                        {headerCategoryList &&
-                          headerCategoryList.map((data) => {
-                            return (
-                              <SubMenuTextCol
-                                margin={`0 0 12px`}
-                                fontSize={`12px`}
-                                onClick={() =>
-                                  moveLinkHandler(
-                                    `/product?menu=${data.MenuId}&category=${data.id}`
-                                  )
-                                }
-                              >
-                                {data.value}
-                              </SubMenuTextCol>
-                            );
-                          })}
-                      </Wrapper>
+                      {headerMenuList &&
+                        headerMenuList.map((data) => {
+                          return (
+                            <Wrapper
+                              width={`calc(100% / 3)`}
+                              al={`flex-start`}
+                              color={Theme.black_C}
+                            >
+                              <Title>{data.value}</Title>
+                              {data.Categories.map((value) => {
+                                return (
+                                  <SubMenuTextCol
+                                    margin={`0 0 12px`}
+                                    fontSize={`12px`}
+                                    onClick={() =>
+                                      moveLinkHandler(
+                                        `/product?menu=${data.id}&category=${value.id}`
+                                      )
+                                    }
+                                  >
+                                    {value.value}
+                                  </SubMenuTextCol>
+                                );
+                              })}
+                            </Wrapper>
+                          );
+                        })}
                     </Wrapper>
                     <Wrapper
                       width={`calc(100% / 5 * 2)`}
