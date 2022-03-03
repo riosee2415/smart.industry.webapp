@@ -400,7 +400,9 @@ const ProductList = () => {
                   onClick={() =>
                     moveLinkHandler(
                       `/product?menu=${
-                        productDetailData && productDetailData[0].MenuId
+                        productDetailData &&
+                        productDetailData.length > 0 &&
+                        productDetailData[0].MenuId
                       }`
                     )
                   }
@@ -433,7 +435,7 @@ const ProductList = () => {
                     fontWeight={`bold`}
                     lineHeight={`1.43`}
                   >
-                    {menuDetail
+                    {menuDetail && menuDetail.length > 0
                       ? menuDetail[0].value
                       : router.query &&
                         (router.query.isSale
@@ -449,7 +451,9 @@ const ProductList = () => {
                     margin={`5px 0 25px`}
                   />
                   <Text lineHeight={`1.19`}>
-                    {menuDetail && menuDetail[0].content}
+                    {menuDetail &&
+                      menuDetail.length > 0 &&
+                      menuDetail[0].content}
                   </Text>
                 </Wrapper>
               </Wrapper>
@@ -489,6 +493,7 @@ const ProductList = () => {
                 </Text>
                 <Wrapper dr={`row`}>
                   {categoryList &&
+                    categoryList.length > 0 &&
                     categoryList.map((data) => {
                       return (
                         <ProductTypeWrapper

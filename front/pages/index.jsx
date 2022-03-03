@@ -232,7 +232,7 @@ const Home = ({}) => {
 
   const [isHeart, setIsHeart] = useState(false);
   const [selectCat, setSelectCat] = useState(
-    categoryList && categoryList[0].id
+    categoryList && categoryList.length > 0 && categoryList[0].id
   );
 
   const router = useRouter();
@@ -478,6 +478,7 @@ const Home = ({}) => {
               </Text>
               <Wrapper dr={`row`} ju={width < 900 && `space-between`}>
                 {categoryList &&
+                  categoryList.length > 0 &&
                   categoryList.slice(0, 5).map((data) => {
                     return (
                       <MainProductTypeBtn
@@ -630,6 +631,7 @@ const Home = ({}) => {
                   moveLinkHandler(
                     `/product?menu=${
                       categoryList &&
+                      categoryList.length > 0 &&
                       categoryList.find((data) => data.id === selectCat).MenuId
                     }`
                   )

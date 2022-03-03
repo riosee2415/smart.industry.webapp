@@ -792,8 +792,14 @@ const AppHeader = () => {
             onClick={() =>
               moveLinkHandler(
                 `/product?menu=${
-                  headerCategoryList && headerCategoryList[0].MenuId
-                }&category=${headerCategoryList && headerCategoryList[0].id}`
+                  headerCategoryList &&
+                  headerCategoryList.length > 0 &&
+                  headerCategoryList[0].MenuId
+                }&category=${
+                  headerCategoryList &&
+                  headerCategoryList.length > 0 &&
+                  headerCategoryList[0].id
+                }`
               )
             }
           >

@@ -896,6 +896,7 @@ const ProductList = () => {
               onChange={(data) => setSelectCategory(data)}
             >
               {categoryList &&
+                categoryList.length > 0 &&
                 categoryList.map((data) => {
                   return (
                     <Select.Option value={data.id}>{data.value}</Select.Option>
@@ -1050,6 +1051,7 @@ const ProductList = () => {
           >
             <Select>
               {categoryList &&
+                categoryList.length > 0 &&
                 categoryList.map((data) => {
                   return (
                     <Select.Option value={data.id}>{data.value}</Select.Option>
