@@ -653,7 +653,7 @@ const Home = ({}) => {
 
               <Wrapper dr={`row`}>
                 {productBestList &&
-                  (productBestList.lenght === 0 ? (
+                  (productBestList.length === 0 ? (
                     <Wrapper>
                       <Empty description="베스트상품이 없습니다." />
                     </Wrapper>
