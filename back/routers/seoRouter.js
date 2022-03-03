@@ -32,7 +32,7 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
-router.get("/list", isAdminCheck, async (req, res, next) => {
+router.get("/list", async (req, res, next) => {
   try {
     const selectQuery = `
     SELECT  id,
