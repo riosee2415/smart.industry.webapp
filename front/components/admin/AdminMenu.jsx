@@ -201,7 +201,7 @@ const AdminMenu = () => {
             <MenuName>상품 후기 리스트</MenuName>
           </Menu.Item> */}
         </SubMenu>
-        <SubMenu
+        {/* <SubMenu
           key="sub7"
           icon={<SettingOutlined />}
           title="환경 설정"
@@ -210,7 +210,7 @@ const AdminMenu = () => {
           <Menu.Item key="/admin/envv/seo">
             <MenuName>SEO 설정</MenuName>
           </Menu.Item>
-        </SubMenu>
+        </SubMenu> */}
       </Menu>
     </>
   );
