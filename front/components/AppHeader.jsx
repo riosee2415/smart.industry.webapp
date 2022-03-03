@@ -538,57 +538,61 @@ const AppHeader = () => {
                         color={Theme.black_C}
                         al={`flex-start`}
                       >
-                        <Title>마이페이지</Title>
-                        <Link href={`/mypage/order`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              주문내역 조회
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
-                        <Link href={`/mypage/profile`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              회원 정보
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
-                        <Link href={`/mypage/cart`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              장바구니
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
-                        <Link href={`/mypage/wishlist`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              관심상품
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
-                        <Link href={`/mypage/board`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              1:1 문의 내역
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
+                        {me && (
+                          <>
+                            <Title>마이페이지</Title>
+                            <Link href={`/mypage/order`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  주문내역 조회
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                            <Link href={`/mypage/profile`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  회원 정보
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                            <Link href={`/mypage/cart`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  장바구니
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                            <Link href={`/mypage/wishlist`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  관심상품
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                            <Link href={`/mypage/board`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  1:1 문의 내역
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                          </>
+                        )}
                       </Wrapper>
                     </Wrapper>
                   </AllMenu>
@@ -747,11 +751,13 @@ const AppHeader = () => {
           fontSize={`1.6rem`}
           padding={`0 10px`}
         >
-          <Link href={`/login`}>
-            <a>
-              <UserOutlined />
-            </a>
-          </Link>
+          {!me && (
+            <Link href={`/login`}>
+              <a>
+                <UserOutlined />
+              </a>
+            </Link>
+          )}
         </ColWrapper>
         <ColWrapper span={16}>
           <ATag width={`auto`} href="/">
