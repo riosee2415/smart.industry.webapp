@@ -18,11 +18,20 @@ const Fourleaf = ({ Component }) => {
         <meta name="author" content="4LEAF SOFTWARE <4leaf.ysh@gmail.com>" />
         {/* <!-- OG tag  --> */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.sample.com/" />
+        <meta property="og:url" content="https://kor09.com/" />
+        <meta property="og:image" content="./og_img.png" />
         <meta property="og:image:width" content="800" />
         <meta property="og:image:height" content="400" />
         <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://www.sample.com" />
+        <link rel="canonical" href="https://kor09.com" />
+        <meta
+          name="keywords"
+          content="건설기계, 집진형건식카타기, 집진형그라인다카타기, 집진형보도블럭카타기, 방음형발전기, 도로카타기, 브로워/분무기, 엔진카타기, 진동로라, 람마, 콤팩타, 발전기, 엔진"
+        />
+        <meta
+          property="og:keywords"
+          content="건설기계, 집진형건식카타기, 집진형그라인다카타기, 집진형보도블럭카타기, 방음형발전기, 도로카타기, 브로워/분무기, 엔진카타기, 진동로라, 람마, 콤팩타, 발전기, 엔진"
+        />
       </Head>
       <Component />
     </ThemeProvider>

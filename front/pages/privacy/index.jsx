@@ -35,39 +35,49 @@ const Privacy = () => {
   return (
     <>
       <Head>
-        <title>{seo_title.length < 1 ? "SELAS" : seo_title[0].content}</title>
+        <title>
+          {seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content}
+        </title>
 
         <meta
           name="subject"
-          content={seo_title.length < 1 ? "SELAS" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta
           name="title"
-          content={seo_title.length < 1 ? "SELAS" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta name="keywords" content={seo_keywords} />
         <meta
           name="description"
           content={
             seo_desc.length < 1
-              ? "셀렉해봐 너만의 라이프 스튜디오"
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
               : seo_desc[0].content
           }
         />
         {/* <!-- OG tag  --> */}
         <meta
           property="og:title"
-          content={seo_title.length < 1 ? "SELAS" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta
           property="og:site_name"
-          content={seo_title.length < 1 ? "SELAS" : seo_title[0].content}
+          content={
+            seo_title.length < 1 ? "대한기계공구(주)" : seo_title[0].content
+          }
         />
         <meta
           property="og:description"
           content={
             seo_desc.length < 1
-              ? "셀렉해봐 너만의 라이프 스튜디오"
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
               : seo_desc[0].content
           }
         />

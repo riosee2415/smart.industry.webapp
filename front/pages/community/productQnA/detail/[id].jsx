@@ -105,7 +105,9 @@ const ProductQnA = () => {
         <meta
           name="description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         {/* <!-- OG tag  --> */}
@@ -124,7 +126,9 @@ const ProductQnA = () => {
         <meta
           property="og:description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         <meta property="og:keywords" content={seo_keywords} />
@@ -142,7 +146,8 @@ const ProductQnA = () => {
                 width={`auto`}
                 margin={`0 8px 0 0`}
                 onClick={() => moveLinkHandler(`/`)}
-                cursor={`pointer`}>
+                cursor={`pointer`}
+              >
                 HOME
               </Wrapper>
               |
@@ -150,7 +155,8 @@ const ProductQnA = () => {
                 width={`auto`}
                 margin={`0 8px`}
                 onClick={() => moveLinkHandler(`/community/faq`)}
-                cursor={`pointer`}>
+                cursor={`pointer`}
+              >
                 커뮤니티
               </Wrapper>
               |
@@ -158,7 +164,8 @@ const ProductQnA = () => {
                 width={`auto`}
                 margin={`0 8px`}
                 onClick={() => moveLinkHandler(`/community/productQnA`)}
-                cursor={`pointer`}>
+                cursor={`pointer`}
+              >
                 상품문의
               </Wrapper>
               |
@@ -172,7 +179,8 @@ const ProductQnA = () => {
               al={`flex-start`}
               padding={`0 0 10px`}
               borderBottom={`1px solid ${Theme.grey2_C}`}
-              margin={`0 0 40px`}>
+              margin={`0 0 40px`}
+            >
               상품문의 상세보기
             </Wrapper>
 
@@ -181,57 +189,66 @@ const ProductQnA = () => {
                 height={`50px`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
-                dr={`row`}>
+                dr={`row`}
+              >
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
                   height={`100%`}
                   bgColor={Theme.lightGrey2_C}
                   padding={`0 0 0 20px`}
-                  al={`flex-start`}>
+                  al={`flex-start`}
+                >
                   제목
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `80%` : `90%`}
                   al={`flex-start`}
-                  padding={`0 0 0 20px`}>
+                  padding={`0 0 0 20px`}
+                >
                   {detailData && detailData.title}
                 </Wrapper>
               </Wrapper>
               <Wrapper
                 height={`50px`}
                 borderBottom={`1px solid ${Theme.grey2_C}`}
-                dr={`row`}>
+                dr={`row`}
+              >
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
                   height={`100%`}
                   padding={`0 0 0 20px`}
-                  al={`flex-start`}>
+                  al={`flex-start`}
+                >
                   작성자
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `80%` : `90%`}
                   al={`flex-start`}
-                  padding={`0 0 0 20px`}>
+                  padding={`0 0 0 20px`}
+                >
                   {detailData && detailData.author}
                 </Wrapper>
               </Wrapper>
               <Wrapper
                 height={`50px`}
                 dr={`row`}
-                borderBottom={`1px solid ${Theme.grey2_C}`}>
+                borderBottom={`1px solid ${Theme.grey2_C}`}
+              >
                 <Wrapper
                   width={width < 500 ? `20%` : `10%`}
                   bgColor={Theme.lightGrey2_C}
                   height={`100%`}
                   padding={`0 0 0 20px`}
-                  al={`flex-start`}>
+                  al={`flex-start`}
+                >
                   작성일
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `30%` : `15%`}
                   al={`flex-start`}
-                  padding={`0 0 0 20px`}>
+                  padding={`0 0 0 20px`}
+                >
                   {detailData &&
                     detailData.createdAt &&
                     detailData.createdAt.substring(0, 10)}
@@ -241,13 +258,15 @@ const ProductQnA = () => {
                   bgColor={Theme.lightGrey2_C}
                   height={`100%`}
                   padding={`0 0 0 20px`}
-                  al={`flex-start`}>
+                  al={`flex-start`}
+                >
                   조회수
                 </Wrapper>
                 <Wrapper
                   width={width < 500 ? `25%` : `65%`}
                   al={`flex-start`}
-                  padding={`0 0 0 20px`}>
+                  padding={`0 0 0 20px`}
+                >
                   {detailData && detailData.hit}
                 </Wrapper>
               </Wrapper>
@@ -255,7 +274,8 @@ const ProductQnA = () => {
                 minHeight={`140px`}
                 al={`flex-start`}
                 ju={`flex-start`}
-                padding={`23px 0 0 20px`}>
+                padding={`23px 0 0 20px`}
+              >
                 {detailData && detailData.content}
               </Wrapper>
               <Wrapper
@@ -263,14 +283,16 @@ const ProductQnA = () => {
                 al={`flex-start`}
                 borderTop={`1px solid ${Theme.grey2_C}`}
                 display={detailData && detailData.answer ? `flex` : `none`}
-                bgColor={Theme.lightGrey2_C}>
+                bgColor={Theme.lightGrey2_C}
+              >
                 <Wrapper
                   width={`20px`}
                   height={`20px`}
                   color={Theme.white_C}
                   radius={`100%`}
                   bgColor={Theme.red_C}
-                  margin={`23px 26px 0 20px`}>
+                  margin={`23px 26px 0 20px`}
+                >
                   A
                 </Wrapper>
 
@@ -279,7 +301,8 @@ const ProductQnA = () => {
                   minHeight={`140px`}
                   al={`flex-start`}
                   ju={`flex-start`}
-                  padding={`23px 10px 0 0`}>
+                  padding={`23px 10px 0 0`}
+                >
                   {detailData && detailData.answer}
                 </Wrapper>
               </Wrapper>
@@ -290,7 +313,8 @@ const ProductQnA = () => {
                 width={`116px`}
                 height={`50px`}
                 radius={`0`}
-                onClick={() => moveLinkHandler(`/community/productQnA`)}>
+                onClick={() => moveLinkHandler(`/community/productQnA`)}
+              >
                 목록
               </CommonButton>
             </Wrapper>
