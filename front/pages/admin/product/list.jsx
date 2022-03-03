@@ -1162,7 +1162,7 @@ const ProductList = () => {
       >
         <GuideUl>
           <GuideLi>베스트상품은 총 4개까지만 존재할 수 있습니다.</GuideLi>
-          <GuideLi>가겨, 할인율, 배송비는 숫자만 입력가능합니다.</GuideLi>
+          <GuideLi>가격, 할인율, 배송비는 숫자만 입력가능합니다.</GuideLi>
           <GuideLi>상품상세링크에는 유튜브 링크만 입력가능합니다.</GuideLi>
           <GuideLi isImpo={true}>
             조작의 실수 및 기능문의는 (주)4LEAF SOFTWARE 1600-4198로

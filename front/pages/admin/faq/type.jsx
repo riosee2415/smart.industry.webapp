@@ -12,6 +12,7 @@ import {
   FAQ_TYPE_DELETE_REQUEST,
   CREATE_TYPE_MODAL_OPEN_REQUEST,
   CREATE_TYPE_MODAL_CLOSE_REQUEST,
+  FAQ_GUIDE_MODAL,
 } from "../../../reducers/faq";
 import useInput from "../../../hooks/useInput";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
@@ -19,10 +20,21 @@ import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { Wrapper } from "../../../components/commonComponents";
+import { ColWrapper, Wrapper } from "../../../components/commonComponents";
+import Theme from "../../../components/Theme";
 
 const AdminContent = styled.div`
   padding: 20px;
+`;
+
+const GuideUl = styled.ul`
+  width: 100%;
+  padding: 5px;
+`;
+const GuideLi = styled.li`
+  width: 100%;
+  margin-bottom: 5px;
+  color: ${(props) => (props.isImpo ? props.theme.red_C : "")};
 `;
 
 const LoadNotification = (msg, content) => {
@@ -56,6 +68,7 @@ const Type = () => {
   const dispatch = useDispatch();
   const {
     types,
+    faqGuideModal,
     createTypeModal,
     st_faqTypeCreateDone,
     st_faqTypeCreateError,
@@ -168,6 +181,12 @@ const Type = () => {
     [deletePopVisible, deleteId]
   );
 
+  const guideModalToggle = useCallback(() => {
+    dispatch({
+      type: FAQ_GUIDE_MODAL,
+    });
+  }, [faqGuideModal]);
+
   ////// HANDLER //////
 
   const createModalOk = useCallback(() => {
@@ -251,6 +270,20 @@ const Type = () => {
       />
       <AdminTop createButton={true} createButtonAction={createModalOpen} />
 
+      <ColWrapper dr={`row`} ju={`flex-start`} padding={`0 0 0 30px`}>
+        <Button size="small" type="danger" onClick={guideModalToggle}>
+          주의사항
+        </Button>
+        <Wrapper
+          width={`auto`}
+          color={Theme.red_C}
+          fontSize={`14px`}
+          margin={`0 0 0 5px`}
+        >
+          * 주의사항 열람 후 조작해주세요!
+        </Wrapper>
+      </ColWrapper>
+
       <AdminContent>
         <Table
           rowKey="id"
@@ -282,6 +315,40 @@ const Type = () => {
           <Wrapper>삭제 된 데이터는 다시 복구할 수 없습니다.</Wrapper>
           <Wrapper>정말 삭제하시겠습니까?</Wrapper>
         </Wrapper>
+      </Modal>
+
+      {/* Guide Modal */}
+      <Modal
+        visible={faqGuideModal}
+        width="900px"
+        onOk={guideModalToggle}
+        onCancel={guideModalToggle}
+        title="주의사항"
+        footer={null}
+      >
+        <GuideUl>
+          <GuideLi>
+            사용자에게 제공하는 자주묻는질문의 질문 유형을 관리하는 관리자 전산
+            시스템입니다.
+          </GuideLi>
+          <GuideLi isImpo={true}>
+            유형 생성 시 오른쪽 상단 "+"버튼을 클릭 후 유형의 이름을 입력합니다.
+          </GuideLi>
+          <GuideLi isImpo={true}>
+            유형의 이름은 최대 6글자를 추천드리며, 그 이상으로 입력시 화면에
+            보여지는 디자인이 제작된 화면과 다르게 보일 수 있습니다.
+          </GuideLi>
+          <GuideLi isImpo={true}>
+            UPDATE 버튼으로 기존에 입력한 유형의 이름을 수정할 수 있습니다.
+          </GuideLi>
+          <GuideLi isImpo={true}>
+            DEL 버튼으로 생성한 유형을 삭제할 수 있으며, 삭제시 복구할 수
+            없습니다.
+          </GuideLi>
+          <GuideLi>
+            기능 및 시스템 관련 문의 : 1600 - 4198 [4LEAFSOFTWARE 솔루션개발팀]
+          </GuideLi>
+        </GuideUl>
       </Modal>
     </AdminLayout>
   );
