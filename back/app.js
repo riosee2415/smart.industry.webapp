@@ -53,7 +53,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(helmet());
   app.use(
     cors({
-      origin: [process.env.DEPLOY_DOMAIN, "*"],
+      origin: ["https://kor09.com", "https://www.kor09.com", "*"],
       credentials: true,
     })
   );
