@@ -315,14 +315,14 @@ const ProductList = () => {
 
   useEffect(() => {
     if (st_productDetailUploadDone) {
-      if (updateData && productDetailImagePath) {
+      if (updateData && st_productDetailUploadDone) {
         let imageArr = productImages && productImages.map((data) => data.sort);
 
         dispatch({
           type: PRODUCT_CREATE_IMAGE_REQUEST,
           data: {
             imagePath: productDetailImagePath,
-            sort: parseInt(Math.max.apply(imageArr)) + 1,
+            sort: Math.max(...imageArr) + 1,
             prodId: updateData.id,
           },
         });
