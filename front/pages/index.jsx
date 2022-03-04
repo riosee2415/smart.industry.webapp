@@ -230,6 +230,7 @@ const Home = ({}) => {
   );
   const { menuList } = useSelector((state) => state.menu);
 
+  const [mouseOver, setMouseOver] = useState(false);
   const [isHeart, setIsHeart] = useState(false);
   const [selectCat, setSelectCat] = useState(
     categoryList && categoryList.length > 0 && categoryList[0].id
@@ -389,9 +390,21 @@ const Home = ({}) => {
     [selectCat]
   );
 
-  const moveLinkHandler = useCallback((link) => {
-    router.push(link);
-  }, []);
+  const moveLinkHandler = useCallback(
+    (link) => {
+      if (!mouseOver) {
+        router.push(link);
+      }
+    },
+    [mouseOver]
+  );
+
+  const changeOverHander = useCallback(
+    (data) => {
+      setMouseOver(data);
+    },
+    [mouseOver]
+  );
 
   ////// DATAVIEW //////
 
@@ -505,7 +518,10 @@ const Home = ({}) => {
                   ) : (
                     productList.slice(0, 8).map((data) => {
                       return (
-                        <ProductWrapper key={data.id}>
+                        <ProductWrapper
+                          key={data.id}
+                          onClick={() => moveLinkHandler(`/product/${data.id}`)}
+                        >
                           <Wrapper
                             // border={`1px solid ${Theme.lightGrey_C}`}
                             position={`relative`}
@@ -554,6 +570,8 @@ const Home = ({}) => {
                                   width={`auto`}
                                   dr={`row`}
                                   margin={`8px 0 0`}
+                                  onMouseOver={() => changeOverHander(true)}
+                                  onMouseOut={() => changeOverHander(false)}
                                 >
                                   <Text
                                     fontSize={`12px`}
@@ -592,9 +610,6 @@ const Home = ({}) => {
                           <Wrapper
                             dr={width < 900 ? `column` : `row`}
                             fontSize={width < 900 ? `16px` : `18px`}
-                            onClick={() =>
-                              moveLinkHandler(`/product/${data.id}`)
-                            }
                           >
                             {data.discount > 0 && (
                               <Text
