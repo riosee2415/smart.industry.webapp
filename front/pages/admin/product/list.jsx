@@ -1113,7 +1113,11 @@ const ProductList = () => {
         footer={null}
       >
         <Wrapper al={`flex-end`} margin={`0 0 10px`}>
-          <Button size="small" type="primary" onClick={prodCompanyCreateToggle}>
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => prodCompanyCreateToggle(null)}
+          >
             + 생성
           </Button>
         </Wrapper>
