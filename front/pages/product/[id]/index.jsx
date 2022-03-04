@@ -580,13 +580,10 @@ const DetailProduct = () => {
                           textDecoration={`line-through`}
                           lineHeight={`1.22`}
                         >
-                          {String(
-                            parseInt(
-                              (productDetailData[0].price *
-                                productDetailData[0].discount) /
-                                100
-                            )
-                          ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          {String(productDetailData[0].price).replace(
+                            /\B(?=(\d{3})+(?!\d))/g,
+                            ","
+                          )}
                           원
                         </Text>
                       </>

@@ -590,9 +590,10 @@ const ProductList = () => {
                                 textDecoration={`line-through`}
                                 color={Theme.grey_C}
                               >
-                                {String(
-                                  parseInt(data.price * (data.discount / 100))
-                                ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                {String(data.price).replace(
+                                  /\B(?=(\d{3})+(?!\d))/g,
+                                  ","
+                                )}
                                 원
                               </Text>
                             )}

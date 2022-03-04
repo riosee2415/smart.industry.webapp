@@ -602,9 +602,10 @@ const Home = ({}) => {
                                 textDecoration={`line-through`}
                                 color={Theme.grey_C}
                               >
-                                {String(
-                                  parseInt(data.price * (data.discount / 100))
-                                ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                {String(data.price).replace(
+                                  /\B(?=(\d{3})+(?!\d))/g,
+                                  ","
+                                )}
                                 원
                               </Text>
                             )}
@@ -619,6 +620,20 @@ const Home = ({}) => {
                               원
                             </Text>
                           </Wrapper>
+                          {data.discount > 0 && (
+                            <Wrapper
+                              position={`absolute`}
+                              top={`5px`}
+                              left={`5px`}
+                              color={Theme.white_C}
+                              bgColor={Theme.red_C}
+                              width={`46px`}
+                              height={`46px`}
+                              radius={`200px`}
+                            >
+                              {data.discount}%
+                            </Wrapper>
+                          )}
                         </ProductWrapper>
                       );
                     })
