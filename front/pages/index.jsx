@@ -293,7 +293,7 @@ const Home = ({}) => {
   useEffect(() => {
     const mapScript = document.createElement("script");
     mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=2f9e8df5229744fc8a341bf9209e4f7d&autoload=false`;
+    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=74cf733d21b766ff9437af7888d19ded&autoload=false`;
     document.head.appendChild(mapScript);
 
     mapScript.onload = () => {
