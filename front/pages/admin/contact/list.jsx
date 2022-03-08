@@ -270,7 +270,7 @@ const List = ({ location }) => {
       <PageHeader
         breadcrumbs={["문의 관리", "문의 리스트"]}
         title={`문의 리스트`}
-        subTitle={`홈페이지의 임대문의, 사업자문의, 장비판매의뢰를 관리할 수 있습니다.`}
+        subTitle={`홈페이지의 임대문의, 장비수리문의, 장비판매의뢰를 관리할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
@@ -316,7 +316,7 @@ const List = ({ location }) => {
               value={selectValue}
             >
               <Select.Option value={"임대문의"}>임대문의</Select.Option>
-              <Select.Option value={"사업자문의"}>사업자문의</Select.Option>
+              <Select.Option value={"장비수리문의"}>장비수리문의</Select.Option>
               <Select.Option value={"장비판매의뢰"}>장비판매의뢰</Select.Option>
             </Select>
           </Col>
