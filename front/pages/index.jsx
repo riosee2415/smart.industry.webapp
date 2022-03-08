@@ -310,7 +310,7 @@ const Home = ({}) => {
         map.setZoomable(false);
 
         // 마커가 표시될 위치입니다
-        let markerPosition = new kakao.maps.LatLng(37.5198311, 126.9122);
+        let markerPosition = new kakao.maps.LatLng(37.5198311, 126.8821536);
 
         // 마커를 생성합니다
         let marker = new kakao.maps.Marker({
@@ -324,12 +324,12 @@ const Home = ({}) => {
         let content =
           '<div class="customoverlay">' +
           '  <a href="http://kko.to/RDeNLHq4j" target="_blank">' +
-          '    <span class="title">국회대로 54길 73</span>' +
+          '    <span class="title">서울특별시 구로구 신도림동 383-7</span>' +
           "  </a>" +
           "</div>";
 
         // 커스텀 오버레이가 표시될 위치입니다
-        let position = new kakao.maps.LatLng(37.5198311, 126.9122);
+        let position = new kakao.maps.LatLng(37.5082408, 126.9122);
 
         // 커스텀 오버레이를 생성합니다
         let customOverlay = new kakao.maps.CustomOverlay({
