@@ -25,6 +25,7 @@ import { saveAs } from "file-saver";
 import Theme from "../../../components/Theme";
 import {
   CONTACT_COMPLETED_REQUEST,
+  CONTACT_DELETE_REQUEST,
   CONTACT_GET_REQUEST,
   CREATE_MODAL_TOGGLE,
 } from "../../../reducers/contact";
@@ -66,6 +67,9 @@ const List = ({ location }) => {
     //
     st_contactCompletedDone,
     st_contactCompletedError,
+    //
+    st_contactDeleteDone,
+    st_contactDeleteError,
   } = useSelector((state) => state.contact);
 
   const dispatch = useDispatch();
@@ -111,10 +115,32 @@ const List = ({ location }) => {
   }, [st_contactCompletedDone]);
 
   useEffect(() => {
+    if (st_contactDeleteDone) {
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: currentPage,
+          listType: selectType,
+          type: selectValue,
+        },
+      });
+
+      answerInput.setValue("");
+      return message.success("삭제되었습니다.");
+    }
+  }, [st_contactDeleteDone]);
+
+  useEffect(() => {
     if (st_contactCompletedError) {
       return message.error(st_contactCompletedError);
     }
   }, [st_contactCompletedError]);
+
+  useEffect(() => {
+    if (st_contactDeleteError) {
+      return message.error(st_contactDeleteError);
+    }
+  }, [st_contactDeleteError]);
 
   ////// TOGGLE //////
 
@@ -177,6 +203,15 @@ const List = ({ location }) => {
     },
     [selectType, currentPage]
   );
+
+  const onDeleteHandler = useCallback((id) => {
+    dispatch({
+      type: CONTACT_DELETE_REQUEST,
+      data: {
+        leaseId: id,
+      },
+    });
+  }, []);
   ////// DATAVIEW //////
 
   // Table
@@ -221,6 +256,22 @@ const List = ({ location }) => {
         </Button>
       ),
     },
+    {
+      title: "삭제",
+      render: (data) => (
+        <Popconfirm
+          title="삭제하시겠습니까?"
+          okText="삭제"
+          cancelText="취소"
+          onConfirm={() => onDeleteHandler(data.id)}
+          placement="topRight"
+        >
+          <Button type="danger" size="small">
+            삭제
+          </Button>
+        </Popconfirm>
+      ),
+    },
   ];
   const completedColumns = [
     {
@@ -261,6 +312,22 @@ const List = ({ location }) => {
         >
           상세보기
         </Button>
+      ),
+    },
+    {
+      title: "삭제",
+      render: (data) => (
+        <Popconfirm
+          title="삭제하시겠습니까?"
+          okText="삭제"
+          cancelText="취소"
+          onConfirm={() => onDeleteHandler(data.id)}
+          placement="topRight"
+        >
+          <Button type="danger" size="small">
+            삭제
+          </Button>
+        </Popconfirm>
       ),
     },
   ];

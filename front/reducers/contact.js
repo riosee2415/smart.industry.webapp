@@ -27,6 +27,10 @@ export const initailState = {
   st_contactCompletedDone: false,
   st_contactCompletedError: null,
   //
+  st_contactDeleteLoading: false, // 문의 삭제
+  st_contactDeleteDone: false,
+  st_contactDeleteError: null,
+  //
 };
 
 export const CONTACT_GET_REQUEST = "CONTACT_GET_REQUEST";
@@ -44,6 +48,10 @@ export const CONTACT_CREATE_FAILURE = "CONTACT_CREATE_FAILURE";
 export const CONTACT_COMPLETED_REQUEST = "CONTACT_COMPLETED_REQUEST";
 export const CONTACT_COMPLETED_SUCCESS = "CONTACT_COMPLETED_SUCCESS";
 export const CONTACT_COMPLETED_FAILURE = "CONTACT_COMPLETED_FAILURE";
+
+export const CONTACT_DELETE_REQUEST = "CONTACT_DELETE_REQUEST";
+export const CONTACT_DELETE_SUCCESS = "CONTACT_DELETE_SUCCESS";
+export const CONTACT_DELETE_FAILURE = "CONTACT_DELETE_FAILURE";
 
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
@@ -128,6 +136,28 @@ const reducer = (state = initailState, action) =>
         draft.st_contactCompletedError = action.error;
         break;
       }
+
+      ///////////////////////////////////////////////////////
+
+      case CONTACT_DELETE_REQUEST: {
+        draft.st_contactDeleteLoading = true;
+        draft.st_contactDeleteDone = null;
+        draft.st_contactDeleteError = false;
+        break;
+      }
+      case CONTACT_DELETE_SUCCESS: {
+        draft.st_contactDeleteLoading = false;
+        draft.st_contactDeleteDone = true;
+        break;
+      }
+      case CONTACT_DELETE_FAILURE: {
+        draft.st_contactDeleteLoading = false;
+        draft.st_contactDeleteDone = false;
+        draft.st_contactDeleteError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
 
       case CREATE_MODAL_TOGGLE: {
         draft.createModal = !draft.createModal;
