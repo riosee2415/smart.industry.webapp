@@ -687,9 +687,9 @@ const AppHeader = () => {
               </SubMenuCol>
               <SubMenuCol
                 width={`calc(100% / 7)`}
-                onClick={() => moveLinkHandler(`/lease?type=사업자문의`)}
+                onClick={() => moveLinkHandler(`/lease?type=장비수리문의`)}
               >
-                <Text>사업자문의</Text>
+                <Text>장비수리문의</Text>
               </SubMenuCol>
               <SubMenuCol
                 width={`calc(100% / 7)`}
@@ -832,10 +832,10 @@ const AppHeader = () => {
           <Wrapper
             minWidth={`80px`}
             margin={`0 5px`}
-            onClick={() => moveLinkHandler(`/lease?type=사업자문의`)}
+            onClick={() => moveLinkHandler(`/lease?type=장비수리문의`)}
             cursor={`pointer`}
           >
-            사업자문의
+            장비수리문의
           </Wrapper>
           <Wrapper
             minWidth={`80px`}
