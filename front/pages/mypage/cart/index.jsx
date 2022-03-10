@@ -185,12 +185,12 @@ const Cart = () => {
 
   ////// USEEFFECT //////
 
-  useEffect(() => {
-    if (!me) {
-      message.error("로그인 후 이용해주세요.");
-      router.push(`/`);
-    }
-  }, [me]);
+  // useEffect(() => {
+  //   if (!me) {
+  //     message.error("로그인 후 이용해주세요.");
+  //     router.push(`/`);
+  //   }
+  // }, [me]);
 
   useEffect(() => {
     dispatch({
@@ -228,9 +228,6 @@ const Cart = () => {
     if (me) {
       inputName.setValue(me.username);
       inputMobile.setValue(me.mobile);
-    } else {
-      message.error(`로그인 후애 이용 가능합니다.`);
-      router.push(`/`);
     }
   }, []);
 
