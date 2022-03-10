@@ -291,10 +291,59 @@ router.post("/user/wishcreate", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.post("/notUser/list", async (req, res, next) => {
+  const { delPassword } = req.body;
+
+  try {
+    if (delPassword === "-") {
+      return res.status(401).send("올바른 주문 비밀번호를 입력하여 주십시오.");
+    }
+
+    let boughtArr = [];
+
+    const notUserList = await BoughtHistory.findOne({
+      where: {
+        delPassword: delPassword,
+      },
+      include: [
+        {
+          model: WishItem,
+          include: [
+            {
+              model: Product,
+            },
+          ],
+        },
+      ],
+    });
+
+    boughtArr.push(notUserList);
+
+    if (!notUserList) {
+      return res.status(401).send("일치하지 않는 주문 비밀번호 입니다.");
+    }
+
+    const delivery = await deliverySearch(boughtArr);
+
+    return res.status(200).json({ notUserList, delivery });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("비회원 결제 목록을 불러올 수 없습니다.");
+  }
+});
+
 router.post("/notUser/create", async (req, res, next) => {
   // 비회원 주문
-  const { orderNum, price, discount, deliveryPrice, name, content, mobile } =
-    req.body;
+  const {
+    orderNum,
+    price,
+    discount,
+    deliveryPrice,
+    name,
+    content,
+    mobile,
+    delPassword,
+  } = req.body;
 
   try {
     const exBought = await BoughtHistory.findOne({
@@ -315,6 +364,7 @@ router.post("/notUser/create", async (req, res, next) => {
       price,
       discount,
       deliveryPrice,
+      delPassword,
       name,
       content,
       mobile,
