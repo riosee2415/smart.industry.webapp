@@ -2,6 +2,7 @@ import produce from "../util/produce";
 
 export const initailState = {
   boughtHistorys: null,
+  notUserBoughtHistorys: null,
   adminBoughtList: null,
   delivery: null,
   boughtHistoryDetail: null,
@@ -15,9 +16,17 @@ export const initailState = {
   st_wishListDone: false,
   st_wishListError: null,
   //
+  st_wishNotUserListLoading: false, // 구매 리스트
+  st_wishNotUserListDone: false,
+  st_wishNotUserListError: null,
+  //
   st_wishListDetailLoading: false, // 구매 디테일 리스트
   st_wishListDetailDone: false,
   st_wishListDetailError: null,
+  //
+  st_wishListNotUserDetailLoading: false, // 구매 디테일 리스트
+  st_wishListNotUserDetailDone: false,
+  st_wishListNotUserDetailError: null,
   //
   st_wishAdminListLoading: false, // 어드민 구매 리스트
   st_wishAdminListDone: false,
@@ -35,10 +44,13 @@ export const initailState = {
   st_boughtHistoryNotUserCreateDone: false,
   st_boughtHistoryNotUserCreateError: null,
   //
-  st_boughtHistoryWishCreateLoading: false, // 비회원 구매 내역 만들기
-  st_boughtHistoryWishCreateDone: false,
-  st_boughtHistoryWishCreateError: null,
-
+  st_boughtHistoryWishFinishLoading: false,
+  st_boughtHistoryWishFinishDone: false,
+  st_boughtHistoryWishFinishError: null,
+  //
+  st_boughtHistoryNotUserWishFinishLoading: false,
+  st_boughtHistoryNotUserWishFinishDone: false,
+  st_boughtHistoryNotUserWishFinishError: null,
   //
 };
 
@@ -54,13 +66,31 @@ export const WISH_WISH_CREATE_REQUEST = "WISH_WISH_CREATE_REQUEST";
 export const WISH_WISH_CREATE_SUCCESS = "WISH_WISH_CREATE_SUCCESS";
 export const WISH_WISH_CREATE_FAILURE = "WISH_WISH_CREATE_FAILURE";
 
+export const WISH_WISH_NOT_USER_CREATE_REQUEST =
+  "WISH_WISH_NOT_USER_CREATE_REQUEST";
+export const WISH_WISH_NOT_USER_CREATE_SUCCESS =
+  "WISH_WISH_NOT_USER_CREATE_SUCCESS";
+export const WISH_WISH_NOT_USER_CREATE_FAILURE =
+  "WISH_WISH_NOT_USER_CREATE_FAILURE";
+
 export const WISH_LIST_REQUEST = "WISH_LIST_REQUEST";
 export const WISH_LIST_SUCCESS = "WISH_LIST_SUCCESS";
 export const WISH_LIST_FAILURE = "WISH_LIST_FAILURE";
 
+export const WISH_LIST_NOT_USER_REQUEST = "WISH_LIST_NOT_USER_REQUEST";
+export const WISH_LIST_NOT_USER_SUCCESS = "WISH_LIST_NOT_USER_SUCCESS";
+export const WISH_LIST_NOT_USER_FAILURE = "WISH_LIST_NOT_USER_FAILURE";
+
 export const WISH_LIST_DETAIL_REQUEST = "WISH_LIST_DETAIL_REQUEST";
 export const WISH_LIST_DETAIL_SUCCESS = "WISH_LIST_DETAIL_SUCCESS";
 export const WISH_LIST_DETAIL_FAILURE = "WISH_LIST_DETAIL_FAILURE";
+
+export const WISH_LIST_DETAIL_NOT_USER_REQUEST =
+  "WISH_LIST_DETAIL_NOT_USER_REQUEST";
+export const WISH_LIST_DETAIL_NOT_USER_SUCCESS =
+  "WISH_LIST_DETAIL_NOT_USER_SUCCESS";
+export const WISH_LIST_DETAIL_NOT_USER_FAILURE =
+  "WISH_LIST_DETAIL_NOT_USER_FAILURE";
 
 export const WISH_ADMIN_LIST_REQUEST = "WISH_ADMIN_LIST_REQUEST";
 export const WISH_ADMIN_LIST_SUCCESS = "WISH_ADMIN_LIST_SUCCESS";
@@ -93,6 +123,26 @@ const reducer = (state = initailState, action) =>
         draft.st_wishListLoading = false;
         draft.st_wishListDone = false;
         draft.st_wishListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case WISH_LIST_NOT_USER_REQUEST: {
+        draft.st_wishNotUserListLoading = true;
+        draft.st_wishNotUserListDone = null;
+        draft.st_wishNotUserListError = false;
+        break;
+      }
+      case WISH_LIST_NOT_USER_SUCCESS: {
+        draft.st_wishNotUserListLoading = false;
+        draft.st_wishNotUserListDone = true;
+        draft.notUserBoughtHistorys = action.data.notUserList;
+        draft.delivery = action.data.delivery;
+        break;
+      }
+      case WISH_LIST_NOT_USER_FAILURE: {
+        draft.st_wishNotUserListLoading = false;
+        draft.st_wishNotUserListDone = false;
+        draft.st_wishNotUserListError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
@@ -154,6 +204,27 @@ const reducer = (state = initailState, action) =>
         draft.st_wishListDetailError = action.error;
         break;
       }
+
+      case WISH_LIST_DETAIL_NOT_USER_REQUEST: {
+        draft.st_wishListNotUserDetailLoading = true;
+        draft.st_wishListNotUserDetailDone = null;
+        draft.st_wishListNotUserDetailError = false;
+        break;
+      }
+      case WISH_LIST_DETAIL_NOT_USER_SUCCESS: {
+        draft.st_wishListNotUserDetailLoading = false;
+        draft.st_wishListNotUserDetailDone = true;
+        draft.boughtHistoryDetail = action.data.boughtHistorys;
+        draft.deliveryDetail = action.data.delivery;
+
+        break;
+      }
+      case WISH_LIST_DETAIL_NOT_USER_FAILURE: {
+        draft.st_wishListNotUserDetailLoading = false;
+        draft.st_wishListNotUserDetailDone = false;
+        draft.st_wishListNotUserDetailError = action.error;
+        break;
+      }
       ///////////////////////////////////////////////////////
       case WISH_CREATE_REQUEST: {
         draft.st_boughtHistoryCreateLoading = true;
@@ -209,6 +280,25 @@ const reducer = (state = initailState, action) =>
         draft.st_boughtHistoryWishFinishLoading = false;
         draft.st_boughtHistoryWishFinishDone = false;
         draft.st_boughtHistoryNotUserCreateError = action.error;
+        break;
+
+      ///////////////////////////////////////////////////////
+
+      case WISH_WISH_NOT_USER_CREATE_REQUEST:
+        draft.st_boughtHistoryNotUserWishFinishLoading = true;
+        draft.st_boughtHistoryNotUserWishFinishDone = null;
+        draft.st_boughtHistoryNotUserWishFinishError = false;
+        break;
+
+      case WISH_WISH_NOT_USER_CREATE_SUCCESS:
+        draft.st_boughtHistoryNotUserWishFinishLoading = false;
+        draft.st_boughtHistoryNotUserWishFinishDone = true;
+        break;
+
+      case WISH_WISH_NOT_USER_CREATE_FAILURE:
+        draft.st_boughtHistoryNotUserWishFinishLoading = false;
+        draft.st_boughtHistoryNotUserWishFinishDone = false;
+        draft.st_boughtHistoryNotUserWishFinishError = action.error;
         break;
 
       ///////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import { SEO_LIST_REQUEST } from "../../../reducers/seo";
 import Head from "next/head";
@@ -13,16 +13,22 @@ import {
   Wrapper,
   Image,
   CommonButton,
+  Text,
+  TextInput,
 } from "../../../components/commonComponents";
 import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { Empty, message } from "antd";
+import { Empty, message, Modal } from "antd";
 import { RightOutlined } from "@ant-design/icons";
 import styled from "styled-components";
-import { WISH_LIST_REQUEST } from "../../../reducers/wish";
+import {
+  WISH_LIST_NOT_USER_REQUEST,
+  WISH_LIST_REQUEST,
+} from "../../../reducers/wish";
 import { numberWithCommas } from "../../../components/commonUtils";
+import useInput from "../../../hooks/useInput";
 
 const RightArrow = styled(RightOutlined)`
   width: auto;
@@ -40,23 +46,65 @@ const Order = () => {
   const router = useRouter();
 
   ////// HOOKS //////
+  const [modal, setModal] = useState(false);
+  const [showList, setShowList] = useState([]);
   ////// REDUX //////
-  const { boughtHistorys } = useSelector((state) => state.wish);
+  const {
+    boughtHistorys,
+    st_wishListDone,
+
+    notUserBoughtHistorys,
+    st_wishNotUserListDone,
+    st_wishNotUserListError,
+  } = useSelector((state) => state.wish);
   const dispatch = useDispatch();
+  const inputDelPassword = useInput(``);
   ////// USEEFFECT //////
 
   useEffect(() => {
-    if (!me) {
-      message.error("로그인 후 이용해주세요.");
-      router.push(`/`);
+    if (st_wishNotUserListDone) {
+      let tempArr = [];
+      tempArr.push(notUserBoughtHistorys);
+      setShowList(tempArr);
     }
-  }, [me]);
+  }, [st_wishNotUserListDone, notUserBoughtHistorys]);
+
+  console.log(showList);
 
   useEffect(() => {
+    if (st_wishListDone) {
+      setShowList(boughtHistorys);
+    }
+  }, [st_wishListDone, boughtHistorys]);
+
+  useEffect(() => {
+    if (st_wishNotUserListError) {
+      message.error(st_wishNotUserListError);
+      inputDelPassword.setValue(``);
+    }
+  }, [st_wishNotUserListError]);
+
+  useEffect(() => {
+    if (me) {
+      dispatch({
+        type: WISH_LIST_REQUEST,
+      });
+    }
+  }, [router.query, me]);
+
+  const notUserListHandler = useCallback(() => {
+    if (!inputDelPassword.value || inputDelPassword.value.trim() === "") {
+      return message.error("비회원주문번호를 입력해주세요.");
+    }
     dispatch({
-      type: WISH_LIST_REQUEST,
+      type: WISH_LIST_NOT_USER_REQUEST,
+      data: {
+        delPassword: inputDelPassword.value,
+      },
     });
-  }, [router.query]);
+
+    setModal((prev) => !prev);
+  }, [router.query, me, inputDelPassword]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -179,20 +227,24 @@ const Order = () => {
             <Wrapper
               fontSize={`20px`}
               fontWeight={`bold`}
-              al={`flex-start`}
+              dr={`row`}
+              ju={`flex-start`}
               padding={`0 0 10px`}
               borderBottom={`1px solid ${Theme.grey2_C}`}
               margin={`0 0 40px`}
             >
-              주문내역조회
+              <Text margin={`0 10px 0 0`}>주문내역조회</Text>
+              <CommonButton onClick={() => setModal((prev) => !prev)}>
+                비회원 주문번호로 조회
+              </CommonButton>
             </Wrapper>
 
             <Wrapper margin={`0 0 110px`}>
-              {boughtHistorys && boughtHistorys.length === 0 ? (
+              {showList && showList.length === 0 ? (
                 <Empty description="주문내역이 없습니다." />
               ) : (
-                boughtHistorys &&
-                boughtHistorys.map((data) => {
+                showList &&
+                showList.map((data) => {
                   return (
                     <>
                       <Wrapper al={`flex-start`}>
@@ -212,7 +264,11 @@ const Order = () => {
                         dr={`row`}
                         cursor={`pointer`}
                         onClick={() =>
-                          moveLinkHandler(`./order/detail/${data.id}`)
+                          moveLinkHandler(
+                            data.type === "비회원주문"
+                              ? `./order/detail/${data.delPassword}`
+                              : `./order/detail/${data.id}`
+                          )
                         }
                       >
                         <Wrapper al={`flex-start`} width={`auto`}>
@@ -277,6 +333,25 @@ const Order = () => {
               )}
             </Wrapper>
           </RsWrapper>
+          <Modal
+            visible={modal}
+            footer={null}
+            onCancel={() => setModal((prev) => !prev)}
+          >
+            <Text margin={`0 0 30px`}>비회원 주문번호 입력</Text>
+            <Wrapper dr={`row`} ju={`flex-start`}>
+              <TextInput
+                border={`1px solid ${Theme.grey2_C}`}
+                width={`calc(100% - 60px - 10px)`}
+                placeholder={`비회원주문번호를 입력해주세요.`}
+                margin={`0 10px 0 0`}
+                {...inputDelPassword}
+              />
+              <CommonButton width={`60px`} onClick={notUserListHandler}>
+                입력
+              </CommonButton>
+            </Wrapper>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

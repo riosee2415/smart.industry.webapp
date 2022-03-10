@@ -22,7 +22,7 @@ import { useCallback } from "react";
 import useWidth from "../../../hooks/useWidth";
 import Theme from "../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
-import { Checkbox, Empty, message, notification } from "antd";
+import { Checkbox, Empty, message, Modal, notification } from "antd";
 import styled from "styled-components";
 import { MinusOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
@@ -30,9 +30,11 @@ import { INTEREST_CREATE_REQUEST } from "../../../reducers/interest";
 import { numberWithCommas } from "../../../components/commonUtils";
 import useInput from "../../../hooks/useInput";
 import {
+  WISH_CREATE_NOT_USER_REQUEST,
   WISH_CREATE_REQUEST,
   WISH_LIST_REQUEST,
   WISH_WISH_CREATE_REQUEST,
+  WISH_WISH_NOT_USER_CREATE_REQUEST,
 } from "../../../reducers/wish";
 
 const LoadNotification = (msg, content) => {
@@ -167,6 +169,9 @@ const Cart = () => {
 
   const [deleteIndex, setDeleteIndex] = useState(0);
 
+  const [modal, setModal] = useState(false);
+  const [delPass, setDelPass] = useState(null);
+
   // 문의
   const inputName = useInput(``);
   const inputMobile = useInput(``);
@@ -179,13 +184,15 @@ const Cart = () => {
   );
   const { me } = useSelector((state) => state.user);
 
-  const { historyId, st_boughtHistoryCreateDone, boughtHistorys } = useSelector(
-    (state) => state.wish
-  );
+  const {
+    historyId,
+    st_boughtHistoryCreateDone,
+    st_boughtHistoryNotUserCreateDone,
+    boughtHistorys,
+  } = useSelector((state) => state.wish);
 
   ////// USEEFFECT //////
 
-<<<<<<< HEAD
   // useEffect(() => {
   //   if (!me) {
   //     message.error("로그인 후 이용해주세요.");
@@ -193,13 +200,13 @@ const Cart = () => {
   //   }
   // }, [me]);
 
-=======
->>>>>>> refs/remotes/origin/master
   useEffect(() => {
-    dispatch({
-      type: WISH_LIST_REQUEST,
-    });
-  }, [router.query]);
+    if (me) {
+      dispatch({
+        type: WISH_LIST_REQUEST,
+      });
+    }
+  }, [router.query, me]);
 
   useEffect(() => {
     let len = 0;
@@ -231,12 +238,6 @@ const Cart = () => {
     if (me) {
       inputName.setValue(me.username);
       inputMobile.setValue(me.mobile);
-<<<<<<< HEAD
-=======
-    } else {
-      message.error(`로그인 후 이용 가능합니다.`);
-      router.push(`/`);
->>>>>>> refs/remotes/origin/master
     }
   }, []);
 
@@ -333,10 +334,7 @@ const Cart = () => {
   //order
 
   useEffect(() => {
-    if (
-      st_boughtHistoryCreateDone
-      // || st_boughtHistoryNotUserCreateDone
-    ) {
+    if (st_boughtHistoryCreateDone) {
       const prodId = [];
       const count = [];
       orderDatum.map((data) => {
@@ -364,13 +362,35 @@ const Cart = () => {
       localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
       moveLinkHandler(`/mypage/cart`);
     }
-  }, [
-    st_boughtHistoryCreateDone,
-    // st_boughtHistoryNotUserCreateDone,
-    historyId,
-    orderDatum,
-    datum,
-  ]);
+  }, [st_boughtHistoryCreateDone, historyId, orderDatum, datum]);
+
+  useEffect(() => {
+    if (st_boughtHistoryNotUserCreateDone) {
+      const prodId = [];
+      const count = [];
+      orderDatum.map((data) => {
+        prodId.push(data.id);
+        count.push(data.productNum);
+      });
+
+      dispatch({
+        type: WISH_WISH_NOT_USER_CREATE_REQUEST,
+        data: {
+          BoughtHistoryId: historyId,
+          prodId,
+          count,
+        },
+      });
+
+      let tempArr = datum.map(JSON.stringify);
+      let tempArr2 = orderDatum.map(JSON.stringify);
+
+      const difference = tempArr.filter((x) => !tempArr2.includes(x));
+      const result = difference.map(JSON.parse);
+
+      localStorage.setItem("WKDQKRNSL", JSON.stringify(result));
+    }
+  }, [st_boughtHistoryNotUserCreateDone, historyId, orderDatum, datum]);
 
   useEffect(() => {
     if (st_boughtHistoryCreateDone) {
@@ -385,6 +405,12 @@ const Cart = () => {
   ////// TOGGLE //////
 
   ////// HANDLER //////
+
+  const modalOkHandler = useCallback(() => {
+    inputContent.setValue(``);
+    moveLinkHandler(`/mypage/cart`);
+    setModal((prev) => !prev);
+  }, []);
 
   const interestHandler = useCallback((ProductId) => {
     dispatch({
@@ -608,18 +634,36 @@ const Cart = () => {
 
     let orderPK = "ORD" + year + month + date + hour + min + sec + mSec;
 
-    dispatch({
-      type: WISH_CREATE_REQUEST,
-      data: {
-        orderNum: orderPK,
-        price: originPrice,
-        discount: discountPrice,
-        deliveryPrice: delPrice,
-        name: inputName.value,
-        content: inputContent.value,
-        mobile: inputMobile.value,
-      },
-    });
+    if (me) {
+      dispatch({
+        type: WISH_CREATE_REQUEST,
+        data: {
+          orderNum: orderPK,
+          price: originPrice,
+          discount: discountPrice,
+          deliveryPrice: delPrice,
+          name: inputName.value,
+          content: inputContent.value,
+          mobile: inputMobile.value,
+        },
+      });
+    } else {
+      setDelPass(orderPK);
+      setModal(true);
+      dispatch({
+        type: WISH_CREATE_NOT_USER_REQUEST,
+        data: {
+          orderNum: orderPK,
+          price: originPrice,
+          discount: discountPrice,
+          deliveryPrice: delPrice,
+          name: inputName.value,
+          content: inputContent.value,
+          mobile: inputMobile.value,
+          delPassword: orderPK,
+        },
+      });
+    }
   }, [
     allPrice,
     delPrice,
@@ -628,6 +672,7 @@ const Cart = () => {
     inputName,
     inputContent,
     orderDatum,
+    me,
   ]);
 
   ////// DATAVIEW //////
@@ -746,7 +791,7 @@ const Cart = () => {
                 radius={`0`}
                 onClick={() => moveLinkHandler(`/mypage/order`)}
               >
-                배송상품 ({len})
+                배송상품 {me && `(${len})`}
               </CommonButton>
             </Wrapper>
             <Wrapper
@@ -1349,6 +1394,21 @@ const Cart = () => {
                 </Wrapper>
               )}
             </Wrapper>
+            <Modal visible={modal} footer={null} closable={false}>
+              <Wrapper>
+                <Text margin={`0 0 10px`} fontSize={`16px`}>
+                  비회원 주문번호 : {delPass}
+                </Text>
+                <Text>
+                  <SpanText color={Theme.red_C}>*&nbsp;</SpanText>
+                  주문조회시 필요합니다.
+                </Text>
+
+                <Text margin={`0 0 10px`} fontSize={`16px`}></Text>
+
+                <CommonButton onClick={modalOkHandler}>확인</CommonButton>
+              </Wrapper>
+            </Modal>
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>

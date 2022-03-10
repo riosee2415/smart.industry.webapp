@@ -5,9 +5,17 @@ import {
   WISH_LIST_SUCCESS,
   WISH_LIST_FAILURE,
   //
+  WISH_LIST_NOT_USER_REQUEST,
+  WISH_LIST_NOT_USER_SUCCESS,
+  WISH_LIST_NOT_USER_FAILURE,
+  //
   WISH_LIST_DETAIL_REQUEST,
   WISH_LIST_DETAIL_SUCCESS,
   WISH_LIST_DETAIL_FAILURE,
+  //
+  WISH_LIST_DETAIL_NOT_USER_REQUEST,
+  WISH_LIST_DETAIL_NOT_USER_SUCCESS,
+  WISH_LIST_DETAIL_NOT_USER_FAILURE,
   //
   WISH_CREATE_REQUEST,
   WISH_CREATE_SUCCESS,
@@ -20,6 +28,10 @@ import {
   WISH_WISH_CREATE_REQUEST,
   WISH_WISH_CREATE_SUCCESS,
   WISH_WISH_CREATE_FAILURE,
+  //
+  WISH_WISH_NOT_USER_CREATE_REQUEST,
+  WISH_WISH_NOT_USER_CREATE_SUCCESS,
+  WISH_WISH_NOT_USER_CREATE_FAILURE,
   //
   WISH_ADMIN_LIST_REQUEST,
   WISH_ADMIN_LIST_SUCCESS,
@@ -48,6 +60,33 @@ function* wishList(action) {
     console.error(err);
     yield put({
       type: WISH_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function wishNotUserListAPI(data) {
+  return axios.post(`/api/wish/notUser/list`, data);
+}
+
+function* wishNotUserList(action) {
+  try {
+    const result = yield call(wishNotUserListAPI, action.data);
+
+    yield put({
+      type: WISH_LIST_NOT_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: WISH_LIST_NOT_USER_FAILURE,
       error: err.response.data,
     });
   }
@@ -140,6 +179,33 @@ function* wishDetailList(action) {
 
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
+function wishDetailNotUserListAPI(data) {
+  return axios.post(`/api/wish/notUser/detail`, data);
+}
+
+function* wishDetailNotUserList(action) {
+  try {
+    const result = yield call(wishDetailNotUserListAPI, action.data);
+
+    yield put({
+      type: WISH_LIST_DETAIL_NOT_USER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: WISH_LIST_DETAIL_NOT_USER_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
 function wishCreateAPI(data) {
   return axios.post(`/api/wish/user/create`, data);
 }
@@ -219,10 +285,41 @@ function* wishWishCreate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function wishWishNotUserCreateAPI(data) {
+  return axios.post(`/api/wish/notUser/wishcreate`, data);
+}
+
+function* wishWishNotUserCreate(action) {
+  try {
+    const result = yield call(wishWishNotUserCreateAPI, action.data);
+
+    yield put({
+      type: WISH_WISH_NOT_USER_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: WISH_WISH_NOT_USER_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchWishList() {
   yield takeLatest(WISH_LIST_REQUEST, wishList);
+}
+
+function* watchWishNotUserList() {
+  yield takeLatest(WISH_LIST_NOT_USER_REQUEST, wishNotUserList);
 }
 
 function* watchWishAdminList() {
@@ -237,6 +334,10 @@ function* watchWishDetailList() {
   yield takeLatest(WISH_LIST_DETAIL_REQUEST, wishDetailList);
 }
 
+function* watchWishNotUserDetailList() {
+  yield takeLatest(WISH_LIST_DETAIL_NOT_USER_REQUEST, wishDetailNotUserList);
+}
+
 function* watchWishCreate() {
   yield takeLatest(WISH_CREATE_REQUEST, wishCreate);
 }
@@ -249,15 +350,22 @@ function* watchWishCreateWish() {
   yield takeLatest(WISH_WISH_CREATE_REQUEST, wishWishCreate);
 }
 
+function* watchWishNotUserCreateWish() {
+  yield takeLatest(WISH_WISH_NOT_USER_CREATE_REQUEST, wishWishNotUserCreate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* wishSaga() {
   yield all([
     fork(watchWishList),
+    fork(watchWishNotUserList),
     fork(watchWishAdminList),
     fork(watchWishCompleted),
     fork(watchWishDetailList),
     fork(watchWishCreate),
     fork(watchWishCreateNotUser),
     fork(watchWishCreateWish),
+    fork(watchWishNotUserCreateWish),
+    fork(watchWishNotUserDetailList),
   ]);
 }

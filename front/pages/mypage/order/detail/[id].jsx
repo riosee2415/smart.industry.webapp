@@ -20,7 +20,10 @@ import Theme from "../../../../components/Theme";
 import { useRouter } from "next/dist/client/router";
 import styled from "styled-components";
 import { useCallback } from "react";
-import { WISH_LIST_DETAIL_REQUEST } from "../../../../reducers/wish";
+import {
+  WISH_LIST_DETAIL_NOT_USER_REQUEST,
+  WISH_LIST_DETAIL_REQUEST,
+} from "../../../../reducers/wish";
 import { numberWithCommas } from "../../../../components/commonUtils";
 import { message, Modal } from "antd";
 
@@ -34,6 +37,8 @@ const Order = () => {
   const { seo_keywords, seo_desc, seo_ogImage, seo_title } = useSelector(
     (state) => state.seo
   );
+
+  const { me } = useSelector((state) => state.user);
 
   const width = useWidth();
   const router = useRouter();
@@ -86,13 +91,26 @@ const Order = () => {
   }, [boughtHistoryDetail]);
 
   useEffect(() => {
-    dispatch({
-      type: WISH_LIST_DETAIL_REQUEST,
-      data: {
-        boughtId: router.query.id,
-      },
-    });
-  }, [router.query]);
+    if (me) {
+      dispatch({
+        type: WISH_LIST_DETAIL_REQUEST,
+        data: {
+          boughtId: router.query.id,
+        },
+      });
+    }
+  }, [router.query, me]);
+
+  useEffect(() => {
+    if (!me) {
+      dispatch({
+        type: WISH_LIST_DETAIL_NOT_USER_REQUEST,
+        data: {
+          delPassword: router.query.id,
+        },
+      });
+    }
+  }, [router.query, me]);
 
   useEffect(() => {
     let pay = 0;
