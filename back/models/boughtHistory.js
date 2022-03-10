@@ -29,6 +29,10 @@ module.exports = class BoughtHistory extends Model {
           type: DataTypes.STRING(50), // 전화번호
           allowNull: false,
         },
+        delPassword: {
+          type: DataTypes.STRING(50), // 주문조회 비밀번호
+          allowNull: false,
+        },
         deliveryCom: {
           type: DataTypes.STRING(300), // 배송 회사 (택배사)
           allowNull: true,
