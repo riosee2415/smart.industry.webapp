@@ -332,6 +332,50 @@ router.post("/notUser/list", async (req, res, next) => {
   }
 });
 
+router.post("/notUser/detail", async (req, res, next) => {
+  const { delPassword } = req.body;
+
+  try {
+    const exBought = await BoughtHistory.findOne({
+      where: { delPassword },
+    });
+
+    if (!exBought) {
+      return res.status(401).send("주문 비밀번호를 잘못 입력하였습니다.");
+    }
+
+    let boughtHistorys = [];
+
+    boughtHistorys.push(
+      await BoughtHistory.findOne({
+        where: {
+          delPassword,
+        },
+        include: [
+          {
+            model: WishItem,
+            include: [
+              {
+                model: Product,
+              },
+            ],
+          },
+        ],
+      })
+    );
+
+    const delivery = await deliverySearch(boughtHistorys);
+
+    return res.status(200).json({
+      boughtHistorys,
+      delivery,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("견적서 정보를 불러올 수 없습니다.");
+  }
+});
+
 router.post("/notUser/create", async (req, res, next) => {
   // 비회원 주문
   const {
