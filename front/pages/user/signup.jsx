@@ -130,6 +130,8 @@ const SignUp = () => {
 
   const [userType, setUserType] = useState(false);
 
+  const [selectEmailBack, setSelectEmailBack] = useState(null);
+
   const formRef = useRef();
 
   ////// REDUX //////
@@ -201,9 +203,8 @@ const SignUp = () => {
 
   const signupHandler = useCallback(
     (data) => {
-      let reg = /^[a-z0-9]{4,16}$/;
-
-      console.log(reg.test(data.password));
+      let reg =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{10,16}/;
 
       if (!reg.test(data.password)) {
         return message.error({
@@ -282,7 +283,9 @@ const SignUp = () => {
           userId: data.userId,
           password: data.password,
           username: data.username,
-          email: `${data.email}${data.emailBack}`,
+          email: `${data.email}${
+            data.emailBack === "직접입력" ? "" : emailBack
+          }`,
           mobile: `${data.mobile_1}${data.mobile_2}${data.mobile_3}`,
           normalMobile: normalMobile,
           zoneCode: data.zoneCode,
@@ -330,7 +333,13 @@ const SignUp = () => {
 
   const mobileArr = ["010", "011", "016", "017", "018", "019"];
 
-  const emailArr = ["@naver.com", "@hanmail.com", "@nate.com", "@gmail.com"];
+  const emailArr = [
+    "@naver.com",
+    "@hanmail.com",
+    "@nate.com",
+    "@gmail.com",
+    "직접입력",
+  ];
 
   return (
     <>

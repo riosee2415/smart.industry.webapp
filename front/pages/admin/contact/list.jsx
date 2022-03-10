@@ -434,7 +434,6 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
-                height={`30px`}
                 color={Theme.white_C}
               >
                 문의 제목
@@ -446,7 +445,6 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
-                height={`30px`}
                 color={Theme.white_C}
               >
                 작성자
@@ -458,7 +456,6 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
-                height={`30px`}
                 color={Theme.white_C}
               >
                 연락처
