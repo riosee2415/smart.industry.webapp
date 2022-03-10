@@ -16,6 +16,10 @@ import {
   CONTACT_COMPLETED_REQUEST,
   CONTACT_COMPLETED_SUCCESS,
   CONTACT_COMPLETED_FAILURE,
+  //
+  CONTACT_DELETE_REQUEST,
+  CONTACT_DELETE_SUCCESS,
+  CONTACT_DELETE_FAILURE,
 } from "../reducers/contact";
 
 // SAGA AREA ********************************************************************************************************
@@ -126,6 +130,33 @@ function* contactCompleted(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function contactDeleteAPI(data) {
+  return axios.delete(`/api/lease/delete/${data.leaseId}`);
+}
+
+function* contactDelete(action) {
+  try {
+    const result = yield call(contactDeleteAPI, action.data);
+
+    yield put({
+      type: CONTACT_DELETE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: CONTACT_DELETE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchContactList() {
@@ -144,6 +175,10 @@ function* watchContactCompleted() {
   yield takeLatest(CONTACT_COMPLETED_REQUEST, contactCompleted);
 }
 
+function* watchContactDelete() {
+  yield takeLatest(CONTACT_DELETE_REQUEST, contactDelete);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* contactSaga() {
   yield all([
@@ -151,6 +186,7 @@ export default function* contactSaga() {
     fork(watchContactDetail),
     fork(watchContactCreate),
     fork(watchContactCompleted),
+    fork(watchContactDelete),
 
     //
   ]);

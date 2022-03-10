@@ -14,6 +14,7 @@ const Chart = dynamic(() => import("react-apexcharts"), {
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const { TabPane } = Tabs;
 
@@ -72,6 +73,8 @@ const AcceptLogs = () => {
       },
     },
   });
+
+  const router = useRouter();
 
   const setDataToConfig = useCallback(() => {
     const tempData = acceptList.map((data) => data.count);

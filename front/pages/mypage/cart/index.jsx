@@ -185,6 +185,7 @@ const Cart = () => {
 
   ////// USEEFFECT //////
 
+<<<<<<< HEAD
   // useEffect(() => {
   //   if (!me) {
   //     message.error("로그인 후 이용해주세요.");
@@ -192,6 +193,8 @@ const Cart = () => {
   //   }
   // }, [me]);
 
+=======
+>>>>>>> refs/remotes/origin/master
   useEffect(() => {
     dispatch({
       type: WISH_LIST_REQUEST,
@@ -228,6 +231,12 @@ const Cart = () => {
     if (me) {
       inputName.setValue(me.username);
       inputMobile.setValue(me.mobile);
+<<<<<<< HEAD
+=======
+    } else {
+      message.error(`로그인 후 이용 가능합니다.`);
+      router.push(`/`);
+>>>>>>> refs/remotes/origin/master
     }
   }, []);
 
@@ -646,7 +655,9 @@ const Cart = () => {
         <meta
           name="description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         {/* <!-- OG tag  --> */}
@@ -665,7 +676,9 @@ const Cart = () => {
         <meta
           property="og:description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         <meta property="og:keywords" content={seo_keywords} />

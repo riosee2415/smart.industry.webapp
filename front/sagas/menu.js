@@ -24,6 +24,14 @@ import {
   MENU_UPLOAD_REQUEST,
   MENU_UPLOAD_SUCCESS,
   MENU_UPLOAD_FAILURE,
+  //
+  MENU_BANNER_UPLOAD_REQUEST,
+  MENU_BANNER_UPLOAD_SUCCESS,
+  MENU_BANNER_UPLOAD_FAILURE,
+  //
+  MENU_DETAIL_REQUEST,
+  MENU_DETAIL_SUCCESS,
+  MENU_DETAIL_FAILURE,
 } from "../reducers/menu";
 
 // SAGA AREA ********************************************************************************************************
@@ -188,6 +196,60 @@ function* menuUpload(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function menuBannerUploadAPI(data) {
+  return axios.post(`/api/menu/image`, data);
+}
+
+function* menuBannerUpload(action) {
+  try {
+    const result = yield call(menuBannerUploadAPI, action.data);
+
+    yield put({
+      type: MENU_BANNER_UPLOAD_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MENU_BANNER_UPLOAD_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+function menuDetailAPI(data) {
+  return axios.get(`/api/menu/detail/${data.menuId}`);
+}
+
+function* menuDetail(action) {
+  try {
+    const result = yield call(menuDetailAPI, action.data);
+
+    yield put({
+      type: MENU_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MENU_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchMenuHeaderList() {
   yield takeLatest(MENU_HEADER_LIST_REQUEST, menuHeaderList);
@@ -213,6 +275,14 @@ function* watchMenuImageUpload() {
   yield takeLatest(MENU_UPLOAD_REQUEST, menuUpload);
 }
 
+function* watchMenuImageBannerUpload() {
+  yield takeLatest(MENU_BANNER_UPLOAD_REQUEST, menuBannerUpload);
+}
+
+function* watchMenuDetail() {
+  yield takeLatest(MENU_DETAIL_REQUEST, menuDetail);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* menuSaga() {
   yield all([
@@ -222,6 +292,8 @@ export default function* menuSaga() {
     fork(watchMenuUpdate),
     fork(watchMenuDelete),
     fork(watchMenuImageUpload),
+    fork(watchMenuImageBannerUpload),
+    fork(watchMenuDetail),
     //
   ]);
 }

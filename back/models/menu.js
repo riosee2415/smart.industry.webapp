@@ -13,6 +13,14 @@ module.exports = class Menu extends Model {
           type: DataTypes.STRING(600),
           allowNull: false,
         },
+        imagePath2: {
+          type: DataTypes.STRING(600),
+          allowNull: false,
+        },
+        content: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
         isDelete: {
           type: DataTypes.BOOLEAN,
           allowNull: false,

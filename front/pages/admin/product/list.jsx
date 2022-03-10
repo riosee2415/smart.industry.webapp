@@ -315,14 +315,14 @@ const ProductList = () => {
 
   useEffect(() => {
     if (st_productDetailUploadDone) {
-      if (updateData && productDetailImagePath) {
+      if (updateData && st_productDetailUploadDone) {
         let imageArr = productImages && productImages.map((data) => data.sort);
 
         dispatch({
           type: PRODUCT_CREATE_IMAGE_REQUEST,
           data: {
             imagePath: productDetailImagePath,
-            sort: parseInt(Math.max.apply(imageArr)) + 1,
+            sort: Math.max(...imageArr) + 1,
             prodId: updateData.id,
           },
         });
@@ -650,17 +650,6 @@ const ProductList = () => {
           ProdCompanyId: data.prodCompany,
         },
       });
-
-      for (let i = 0; i < data.image.length; i++) {
-        const formData = new FormData();
-
-        formData.append("image", data.image[i].originFileObj);
-
-        dispatch({
-          type: PRODUCT_DETAIL_UPLOAD_REQUEST,
-          data: formData,
-        });
-      }
     },
     [productImagePath]
   );
@@ -907,6 +896,7 @@ const ProductList = () => {
               onChange={(data) => setSelectCategory(data)}
             >
               {categoryList &&
+                categoryList.length > 0 &&
                 categoryList.map((data) => {
                   return (
                     <Select.Option value={data.id}>{data.value}</Select.Option>
@@ -1061,6 +1051,7 @@ const ProductList = () => {
           >
             <Select>
               {categoryList &&
+                categoryList.length > 0 &&
                 categoryList.map((data) => {
                   return (
                     <Select.Option value={data.id}>{data.value}</Select.Option>
@@ -1122,7 +1113,11 @@ const ProductList = () => {
         footer={null}
       >
         <Wrapper al={`flex-end`} margin={`0 0 10px`}>
-          <Button size="small" type="primary" onClick={prodCompanyCreateToggle}>
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => prodCompanyCreateToggle(null)}
+          >
             + 생성
           </Button>
         </Wrapper>
@@ -1173,7 +1168,7 @@ const ProductList = () => {
       >
         <GuideUl>
           <GuideLi>베스트상품은 총 4개까지만 존재할 수 있습니다.</GuideLi>
-          <GuideLi>가겨, 할인율, 배송비는 숫자만 입력가능합니다.</GuideLi>
+          <GuideLi>가격, 할인율, 배송비는 숫자만 입력가능합니다.</GuideLi>
           <GuideLi>상품상세링크에는 유튜브 링크만 입력가능합니다.</GuideLi>
           <GuideLi isImpo={true}>
             조작의 실수 및 기능문의는 (주)4LEAF SOFTWARE 1600-4198로

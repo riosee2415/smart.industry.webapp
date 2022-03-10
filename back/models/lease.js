@@ -47,6 +47,11 @@ module.exports = class Lease extends Model {
           type: DataTypes.DATE,
           allowNull: true,
         },
+        isDelete: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
       },
       {
         modelName: "Lease",

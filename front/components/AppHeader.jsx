@@ -538,57 +538,61 @@ const AppHeader = () => {
                         color={Theme.black_C}
                         al={`flex-start`}
                       >
-                        <Title>마이페이지</Title>
-                        <Link href={`/mypage/order`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              주문내역 조회
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
-                        <Link href={`/mypage/profile`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              회원 정보
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
-                        <Link href={`/mypage/cart`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              장바구니
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
-                        <Link href={`/mypage/wishlist`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              관심상품
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
-                        <Link href={`/mypage/board`}>
-                          <a>
-                            <SubMenuTextCol
-                              margin={`0 0 12px`}
-                              fontSize={`12px`}
-                            >
-                              1:1 문의 내역
-                            </SubMenuTextCol>
-                          </a>
-                        </Link>
+                        {me && (
+                          <>
+                            <Title>마이페이지</Title>
+                            <Link href={`/mypage/order`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  주문내역 조회
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                            <Link href={`/mypage/profile`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  회원 정보
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                            <Link href={`/mypage/cart`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  장바구니
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                            <Link href={`/mypage/wishlist`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  관심상품
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                            <Link href={`/mypage/board`}>
+                              <a>
+                                <SubMenuTextCol
+                                  margin={`0 0 12px`}
+                                  fontSize={`12px`}
+                                >
+                                  1:1 문의 내역
+                                </SubMenuTextCol>
+                              </a>
+                            </Link>
+                          </>
+                        )}
                       </Wrapper>
                     </Wrapper>
                   </AllMenu>
@@ -683,9 +687,9 @@ const AppHeader = () => {
               </SubMenuCol>
               <SubMenuCol
                 width={`calc(100% / 7)`}
-                onClick={() => moveLinkHandler(`/lease?type=사업자문의`)}
+                onClick={() => moveLinkHandler(`/lease?type=장비수리문의`)}
               >
-                <Text>사업자문의</Text>
+                <Text>장비수리문의</Text>
               </SubMenuCol>
               <SubMenuCol
                 width={`calc(100% / 7)`}
@@ -747,11 +751,13 @@ const AppHeader = () => {
           fontSize={`1.6rem`}
           padding={`0 10px`}
         >
-          <Link href={`/login`}>
-            <a>
-              <UserOutlined />
-            </a>
-          </Link>
+          {!me && (
+            <Link href={`/login`}>
+              <a>
+                <UserOutlined />
+              </a>
+            </Link>
+          )}
         </ColWrapper>
         <ColWrapper span={16}>
           <ATag width={`auto`} href="/">
@@ -786,8 +792,14 @@ const AppHeader = () => {
             onClick={() =>
               moveLinkHandler(
                 `/product?menu=${
-                  headerCategoryList && headerCategoryList[0].MenuId
-                }&category=${headerCategoryList && headerCategoryList[0].id}`
+                  headerCategoryList &&
+                  headerCategoryList.length > 0 &&
+                  headerCategoryList[0].MenuId
+                }&category=${
+                  headerCategoryList &&
+                  headerCategoryList.length > 0 &&
+                  headerCategoryList[0].id
+                }`
               )
             }
           >
@@ -820,10 +832,10 @@ const AppHeader = () => {
           <Wrapper
             minWidth={`80px`}
             margin={`0 5px`}
-            onClick={() => moveLinkHandler(`/lease?type=사업자문의`)}
+            onClick={() => moveLinkHandler(`/lease?type=장비수리문의`)}
             cursor={`pointer`}
           >
-            사업자문의
+            장비수리문의
           </Wrapper>
           <Wrapper
             minWidth={`80px`}
@@ -929,19 +941,37 @@ const AppHeader = () => {
                 카테고리
                 <DownOutlined style={{ color: Theme.basicTheme_C }} />
               </Wrapper>
-              {subMenu === 0 && (
-                <Wrapper bgColor={Theme.lightGrey_C}>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    건설기계
-                  </Wrapper>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    건설기계
-                  </Wrapper>
-                  <Wrapper al={`flex-start`} padding={`5px`}>
-                    건설기계
-                  </Wrapper>
-                </Wrapper>
-              )}
+              {subMenu === 0 &&
+                headerMenuList &&
+                (headerMenuList.length === 0 ? (
+                  <Empty description="카테고리가 없습니다." />
+                ) : (
+                  headerMenuList.map((data) => {
+                    return (
+                      <Wrapper>
+                        <Wrapper bgColor={Theme.lightGrey_C}>
+                          {data.value}
+                        </Wrapper>
+
+                        {data.Categories.map((value) => {
+                          return (
+                            <Wrapper
+                              al={`flex-start`}
+                              padding={`5px`}
+                              onClick={() =>
+                                moveLinkHandler(
+                                  `/product?menu=${data.id}&category=${value.id}`
+                                )
+                              }
+                            >
+                              {value.value}
+                            </Wrapper>
+                          );
+                        })}
+                      </Wrapper>
+                    );
+                  })
+                ))}
               <Wrapper
                 dr={`row`}
                 ju={`space-between`}

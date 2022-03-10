@@ -230,9 +230,10 @@ const Home = ({}) => {
   );
   const { menuList } = useSelector((state) => state.menu);
 
+  const [mouseOver, setMouseOver] = useState(false);
   const [isHeart, setIsHeart] = useState(false);
   const [selectCat, setSelectCat] = useState(
-    categoryList && categoryList[0].id
+    categoryList && categoryList.length > 0 && categoryList[0].id
   );
 
   const router = useRouter();
@@ -293,15 +294,15 @@ const Home = ({}) => {
   useEffect(() => {
     const mapScript = document.createElement("script");
     mapScript.async = true;
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=2f9e8df5229744fc8a341bf9209e4f7d&autoload=false`;
+    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=74cf733d21b766ff9437af7888d19ded&autoload=false`;
     document.head.appendChild(mapScript);
 
     mapScript.onload = () => {
       kakao.maps.load(() => {
         const mapContainer = document.getElementById("map");
         const mapOption = {
-          center: new kakao.maps.LatLng(37.5198311, 126.9122), // 지도의 중심좌표
-          level: 5, // 지도의 확대 레벨
+          center: new kakao.maps.LatLng(37.5082366, 126.8843476), // 지도의 중심좌표
+          level: 3, // 지도의 확대 레벨
         };
         const map = new kakao.maps.Map(mapContainer, mapOption);
 
@@ -309,7 +310,7 @@ const Home = ({}) => {
         map.setZoomable(false);
 
         // 마커가 표시될 위치입니다
-        let markerPosition = new kakao.maps.LatLng(37.5198311, 126.9122);
+        let markerPosition = new kakao.maps.LatLng(37.5082366, 126.8843476);
 
         // 마커를 생성합니다
         let marker = new kakao.maps.Marker({
@@ -323,12 +324,12 @@ const Home = ({}) => {
         let content =
           '<div class="customoverlay">' +
           '  <a href="http://kko.to/RDeNLHq4j" target="_blank">' +
-          '    <span class="title">국회대로 54길 73</span>' +
+          '    <span class="title">서울특별시 구로구 신도림동 383-7</span>' +
           "  </a>" +
           "</div>";
 
         // 커스텀 오버레이가 표시될 위치입니다
-        let position = new kakao.maps.LatLng(37.5198311, 126.9122);
+        let position = new kakao.maps.LatLng(37.5082366, 126.8843476);
 
         // 커스텀 오버레이를 생성합니다
         let customOverlay = new kakao.maps.CustomOverlay({
@@ -389,9 +390,21 @@ const Home = ({}) => {
     [selectCat]
   );
 
-  const moveLinkHandler = useCallback((link) => {
-    router.push(link);
-  }, []);
+  const moveLinkHandler = useCallback(
+    (link) => {
+      if (!mouseOver) {
+        router.push(link);
+      }
+    },
+    [mouseOver]
+  );
+
+  const changeOverHander = useCallback(
+    (data) => {
+      setMouseOver(data);
+    },
+    [mouseOver]
+  );
 
   ////// DATAVIEW //////
 
@@ -422,7 +435,9 @@ const Home = ({}) => {
         <meta
           name="description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         {/* <!-- OG tag  --> */}
@@ -441,7 +456,9 @@ const Home = ({}) => {
         <meta
           property="og:description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         <meta property="og:keywords" content={seo_keywords} />
@@ -474,6 +491,7 @@ const Home = ({}) => {
               </Text>
               <Wrapper dr={`row`} ju={width < 900 && `space-between`}>
                 {categoryList &&
+                  categoryList.length > 0 &&
                   categoryList.slice(0, 5).map((data) => {
                     return (
                       <MainProductTypeBtn
@@ -500,7 +518,10 @@ const Home = ({}) => {
                   ) : (
                     productList.slice(0, 8).map((data) => {
                       return (
-                        <ProductWrapper key={data.id}>
+                        <ProductWrapper
+                          key={data.id}
+                          onClick={() => moveLinkHandler(`/product/${data.id}`)}
+                        >
                           <Wrapper
                             // border={`1px solid ${Theme.lightGrey_C}`}
                             position={`relative`}
@@ -549,6 +570,8 @@ const Home = ({}) => {
                                   width={`auto`}
                                   dr={`row`}
                                   margin={`8px 0 0`}
+                                  onMouseOver={() => changeOverHander(true)}
+                                  onMouseOut={() => changeOverHander(false)}
                                 >
                                   <Text
                                     fontSize={`12px`}
@@ -587,9 +610,6 @@ const Home = ({}) => {
                           <Wrapper
                             dr={width < 900 ? `column` : `row`}
                             fontSize={width < 900 ? `16px` : `18px`}
-                            onClick={() =>
-                              moveLinkHandler(`/product/${data.id}`)
-                            }
                           >
                             {data.discount > 0 && (
                               <Text
@@ -597,9 +617,10 @@ const Home = ({}) => {
                                 textDecoration={`line-through`}
                                 color={Theme.grey_C}
                               >
-                                {String(
-                                  parseInt(data.price * (data.discount / 100))
-                                ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                {String(data.price).replace(
+                                  /\B(?=(\d{3})+(?!\d))/g,
+                                  ","
+                                )}
                                 원
                               </Text>
                             )}
@@ -614,6 +635,20 @@ const Home = ({}) => {
                               원
                             </Text>
                           </Wrapper>
+                          {data.discount > 0 && (
+                            <Wrapper
+                              position={`absolute`}
+                              top={`5px`}
+                              left={`5px`}
+                              color={Theme.white_C}
+                              bgColor={Theme.red_C}
+                              width={`46px`}
+                              height={`46px`}
+                              radius={`200px`}
+                            >
+                              {data.discount}%
+                            </Wrapper>
+                          )}
                         </ProductWrapper>
                       );
                     })
@@ -626,6 +661,7 @@ const Home = ({}) => {
                   moveLinkHandler(
                     `/product?menu=${
                       categoryList &&
+                      categoryList.length > 0 &&
                       categoryList.find((data) => data.id === selectCat).MenuId
                     }`
                   )
@@ -649,7 +685,7 @@ const Home = ({}) => {
 
               <Wrapper dr={`row`}>
                 {productBestList &&
-                  (productBestList.lenght === 0 ? (
+                  (productBestList.length === 0 ? (
                     <Wrapper>
                       <Empty description="베스트상품이 없습니다." />
                     </Wrapper>

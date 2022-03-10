@@ -291,85 +291,85 @@ router.post("/user/wishcreate", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// router.post("/notUser/create", async (req, res, next) => {
-//   // 비회원 주문
-//   const { orderNum, price, discount, deliveryPrice, name, content, mobile } =
-//     req.body;
+router.post("/notUser/create", async (req, res, next) => {
+  // 비회원 주문
+  const { orderNum, price, discount, deliveryPrice, name, content, mobile } =
+    req.body;
 
-//   try {
-//     const exBought = await BoughtHistory.findOne({
-//       where: { delPassword },
-//     });
+  try {
+    const exBought = await BoughtHistory.findOne({
+      where: { delPassword },
+    });
 
-//     if (exBought) {
-//       return res
-//         .status(401)
-//         .send(
-//           "이미 존재하는 주문 비밀번호 입니다. 다른 주문 비밀번호를 입력 해주세요."
-//         );
-//     }
+    if (exBought) {
+      return res
+        .status(401)
+        .send(
+          "이미 존재하는 주문 비밀번호 입니다. 다른 주문 비밀번호를 입력 해주세요."
+        );
+    }
 
-//     const createResult = await BoughtHistory.create({
-//       type: "비회원주문",
-//       orderNum,
-//       price,
-//       discount,
-//       deliveryPrice,
-//       name,
-//       content,
-//       mobile,
-//       UserId: null,
-//     });
+    const createResult = await BoughtHistory.create({
+      type: "비회원주문",
+      orderNum,
+      price,
+      discount,
+      deliveryPrice,
+      name,
+      content,
+      mobile,
+      UserId: null,
+    });
 
-//     if (!createResult) {
-//       return res.status(401).send("처리중 문제가 발생하였습니다.");
-//     }
+    if (!createResult) {
+      return res.status(401).send("처리중 문제가 발생하였습니다.");
+    }
 
-//     return res.status(201).json({ result: true, id: createResult.id });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(401).send("상품을 결제할 수 없습니다.");
-//   }
-// });
+    return res.status(201).json({ result: true, id: createResult.id });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품을 결제할 수 없습니다.");
+  }
+});
 
-// router.post("/notUser/wishcreate", async (req, res, next) => {
-//   const { BoughtHistoryId, prodId, count } = req.body;
+router.post("/notUser/wishcreate", async (req, res, next) => {
+  const { BoughtHistoryId, prodId, count } = req.body;
 
-//   if (!Array.isArray(prodId)) {
-//     return res
-//       .status(401)
-//       .send("잘못된 요청입니다. 확인 후 다시 시도하여 주십시오.");
-//   }
+  if (!Array.isArray(prodId)) {
+    return res
+      .status(401)
+      .send("잘못된 요청입니다. 확인 후 다시 시도하여 주십시오.");
+  }
 
-//   if (!Array.isArray(count)) {
-//     return res
-//       .status(401)
-//       .send("잘못된 요청입니다. 확인 후 다시 시도하여 주십시오.");
-//   }
+  if (!Array.isArray(count)) {
+    return res
+      .status(401)
+      .send("잘못된 요청입니다. 확인 후 다시 시도하여 주십시오.");
+  }
 
-//   try {
-//     for (let i = 0; i < prodId.length; i++) {
-//       const exProd = await Product.findOne({
-//         where: { id: parseInt(prodId[i]) },
-//       });
+  try {
+    for (let i = 0; i < prodId.length; i++) {
+      const exProd = await Product.findOne({
+        where: { id: parseInt(prodId[i]) },
+      });
 
-//       if (!exProd) {
-//         return res.status(401).send("존재하지 않는 상품입니다.");
-//       }
+      if (!exProd) {
+        return res.status(401).send("존재하지 않는 상품입니다.");
+      }
 
-//       await WishItem.create({
-//         count: parseInt(count[i]),
-//         ProductId: parseInt(prodId[i]),
-//         BoughtHistoryId: parseInt(BoughtHistoryId),
-//       });
-//     }
+      await WishItem.create({
+        count: parseInt(count[i]),
+        ProductId: parseInt(prodId[i]),
+        BoughtHistoryId: parseInt(BoughtHistoryId),
+      });
+    }
 
-//     return res.status(201).json({ result: true });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(401).send("잠시후 다시 시도하여 주십시오.");
-//   }
-// });
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("잠시후 다시 시도하여 주십시오.");
+  }
+});
 
 router.patch("/update", isAdminCheck, async (req, res, next) => {
   const { id } = req.body;

@@ -2,7 +2,9 @@ import produce from "../util/produce";
 
 export const initailState = {
   menuList: null,
+  menuDetail: null,
   menuImagePath: null,
+  menuImageBannerPath: null,
 
   headerMenuList: null,
 
@@ -16,6 +18,10 @@ export const initailState = {
   st_menuListLoading: false, // 메뉴 가져오기
   st_menuListDone: false,
   st_menuListError: null,
+  //
+  st_menuDetailLoading: false, // 메뉴 하나 가져오기
+  st_menuDetailDone: false,
+  st_menuDetailError: null,
   //
   st_menuCreateLoading: false, // 메뉴 가져오기
   st_menuCreateDone: false,
@@ -32,6 +38,10 @@ export const initailState = {
   st_menuUploadLoading: false,
   st_menuUploadDone: false,
   st_menuUploadError: null,
+  //
+  st_menuBannerUploadLoading: false,
+  st_menuBannerUploadDone: false,
+  st_menuBannerUploadError: null,
 };
 
 export const MENU_HEADER_LIST_REQUEST = "MENU_HEADER_LIST_REQUEST";
@@ -41,6 +51,10 @@ export const MENU_HEADER_LIST_FAILURE = "MENU_HEADER_LIST_FAILURE";
 export const MENU_LIST_REQUEST = "MENU_LIST_REQUEST";
 export const MENU_LIST_SUCCESS = "MENU_LIST_SUCCESS";
 export const MENU_LIST_FAILURE = "MENU_LIST_FAILURE";
+//
+export const MENU_DETAIL_REQUEST = "MENU_DETAIL_REQUEST";
+export const MENU_DETAIL_SUCCESS = "MENU_DETAIL_SUCCESS";
+export const MENU_DETAIL_FAILURE = "MENU_DETAIL_FAILURE";
 //
 export const MENU_CREATE_REQUEST = "MENU_CREATE_REQUEST";
 export const MENU_CREATE_SUCCESS = "MENU_CREATE_SUCCESS";
@@ -58,9 +72,16 @@ export const MENU_UPLOAD_REQUEST = "MENU_UPLOAD_REQUEST";
 export const MENU_UPLOAD_SUCCESS = "MENU_UPLOAD_SUCCESS";
 export const MENU_UPLOAD_FAILURE = "MENU_UPLOAD_FAILURE";
 //
+export const MENU_BANNER_UPLOAD_REQUEST = "MENU_BANNER_UPLOAD_REQUEST";
+export const MENU_BANNER_UPLOAD_SUCCESS = "MENU_BANNER_UPLOAD_SUCCESS";
+export const MENU_BANNER_UPLOAD_FAILURE = "MENU_BANNER_UPLOAD_FAILURE";
+//
 export const CREATE_MODAL_TOGGLE = "CREATE_MODAL_TOGGLE";
 
 export const MENU_IMAGE_PATH = "MENU_IMAGE_PATH";
+export const MENU_BANNER_IMAGE_PATH = "MENU_BANNER_IMAGE_PATH";
+
+export const MENU_RESET_REQUEST = "MENU_RESET_REQUEST";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -100,6 +121,25 @@ const reducer = (state = initailState, action) =>
         draft.st_menuListLoading = false;
         draft.st_menuListDone = false;
         draft.st_menuListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      case MENU_DETAIL_REQUEST: {
+        draft.st_menuDetailLoading = true;
+        draft.st_menuDetailDone = null;
+        draft.st_menuDetailError = false;
+        break;
+      }
+      case MENU_DETAIL_SUCCESS: {
+        draft.st_menuDetailLoading = false;
+        draft.st_menuDetailDone = true;
+        draft.menuDetail = action.data;
+        break;
+      }
+      case MENU_DETAIL_FAILURE: {
+        draft.st_menuDetailLoading = false;
+        draft.st_menuDetailDone = false;
+        draft.st_menuDetailError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
@@ -176,15 +216,47 @@ const reducer = (state = initailState, action) =>
         break;
       }
       ///////////////////////////////////////////////////////
+      case MENU_BANNER_UPLOAD_REQUEST: {
+        draft.st_menuBannerUploadLoading = true;
+        draft.st_menuBannerUploadDone = null;
+        draft.st_menuBannerUploadError = false;
+        break;
+      }
+      case MENU_BANNER_UPLOAD_SUCCESS: {
+        draft.st_menuBannerUploadLoading = false;
+        draft.st_menuBannerUploadDone = true;
+        draft.menuImageBannerPath = action.data.path;
+        break;
+      }
+      case MENU_BANNER_UPLOAD_FAILURE: {
+        draft.st_menuBannerUploadLoading = false;
+        draft.st_menuBannerUploadDone = false;
+        draft.st_menuBannerUploadError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
 
       case CREATE_MODAL_TOGGLE: {
         draft.createModal = !draft.createModal;
+        break;
       }
 
       case MENU_IMAGE_PATH: {
         draft.menuImagePath = action.data;
+        break;
+      }
+
+      case MENU_BANNER_IMAGE_PATH: {
+        draft.menuImageBannerPath = action.data;
+        break;
+      }
+
+      case MENU_RESET_REQUEST: {
+        draft.st_menuUploadLoading = false;
+        draft.st_menuBannerUploadLoading = false;
+        break;
       }
 
       default:

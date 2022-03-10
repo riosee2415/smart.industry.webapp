@@ -75,6 +75,7 @@ router.post("/list", async (req, res, next) => {
             answerdAt
       FROM  leases
      WHERE  1 = 1
+       AND  isDelete = FALSE
        AND  (
                   title  LIKE "%${_searchTitle}%"
                          AND
@@ -111,6 +112,7 @@ router.post("/list", async (req, res, next) => {
             answerdAt
       FROM  leases
      WHERE  1 = 1
+       AND  isDelete = FALSE
        AND  (
               title  LIKE "%${_searchTitle}%"
                     AND
@@ -161,7 +163,7 @@ router.get("/detail/:leaseId", async (req, res, next) => {
   }
   try {
     const exLease = await Lease.findOne({
-      where: { id: parseInt(leaseId) },
+      where: { id: parseInt(leaseId), isDelete: false },
     });
 
     if (!exLease) {
@@ -232,6 +234,40 @@ router.patch("/update", isAdminCheck, async (req, res, next) => {
     );
 
     if (updateResult[0] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(200).json({ result: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("문의를 처리할 수 없습니다.");
+  }
+});
+router.delete("/delete/:leaseId", isAdminCheck, async (req, res, next) => {
+  const { leaseId } = req.params;
+
+  if (isNanCheck(leaseId)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+  try {
+    const exLease = await Lease.findOne({
+      where: { id: parseInt(leaseId) },
+    });
+
+    if (!exLease) {
+      return res.status(401).send("존재하지 않는 문의입니다.");
+    }
+
+    const deleteResult = await Lease.update(
+      {
+        isDelete: true,
+      },
+      {
+        where: { id: parseInt(leaseId) },
+      }
+    );
+
+    if (deleteResult[0] > 0) {
       return res.status(200).json({ result: true });
     } else {
       return res.status(200).json({ result: false });

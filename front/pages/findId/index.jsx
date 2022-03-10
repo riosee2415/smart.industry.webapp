@@ -137,7 +137,9 @@ const Index = () => {
         <meta
           name="description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         {/* <!-- OG tag  --> */}
@@ -156,7 +158,9 @@ const Index = () => {
         <meta
           property="og:description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         <meta property="og:keywords" content={seo_keywords} />

@@ -29,6 +29,7 @@ import {
 import { useRouter } from "next/router";
 import { Pagination } from "antd";
 import { DoubleLeftOutlined, DoubleRightOutlined } from "@ant-design/icons";
+import { MENU_DETAIL_REQUEST } from "../../reducers/menu";
 
 const CustomSelect = styled(Select)`
   width: 138px;
@@ -164,6 +165,8 @@ const ProductList = () => {
     (state) => state.product
   );
 
+  const { menuDetail } = useSelector((state) => state.menu);
+
   ////// HOOKS //////
 
   const dispatch = useDispatch();
@@ -185,6 +188,12 @@ const ProductList = () => {
     if (router.query.menu) {
       dispatch({
         type: CATEGORY_INMENU_LIST_REQUEST,
+        data: {
+          menuId: router.query.menu,
+        },
+      });
+      dispatch({
+        type: MENU_DETAIL_REQUEST,
         data: {
           menuId: router.query.menu,
         },
@@ -251,10 +260,6 @@ const ProductList = () => {
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
-
-  console.log(
-    router.asPath.substring(0, router.asPath.indexOf("category") + 9)
-  );
 
   const productTypeChangeHandler = useCallback(
     (type) => {
@@ -342,7 +347,9 @@ const ProductList = () => {
         <meta
           name="description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         {/* <!-- OG tag  --> */}
@@ -361,7 +368,9 @@ const ProductList = () => {
         <meta
           property="og:description"
           content={
-            seo_desc.length < 1 ? "undefined description" : seo_desc[0].content
+            seo_desc.length < 1
+              ? "대한민국 No.1 친환경 건설장비 전문기업 건설기계 제조/판매/임대/수리"
+              : seo_desc[0].content
           }
         />
         <meta property="og:keywords" content={seo_keywords} />
@@ -391,7 +400,9 @@ const ProductList = () => {
                   onClick={() =>
                     moveLinkHandler(
                       `/product?menu=${
-                        productDetailData && productDetailData[0].MenuId
+                        productDetailData &&
+                        productDetailData.length > 0 &&
+                        productDetailData[0].MenuId
                       }`
                     )
                   }
@@ -405,7 +416,9 @@ const ProductList = () => {
                   width={`100%`}
                   height={width < 700 ? `200px` : `320px`}
                   src={
-                    "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/product_bg.png"
+                    menuDetail
+                      ? menuDetail[0].imagePath2
+                      : "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/smart/assets/images/product/product_bg.png"
                   }
                 />
 
@@ -422,7 +435,14 @@ const ProductList = () => {
                     fontWeight={`bold`}
                     lineHeight={`1.43`}
                   >
-                    건설기계
+                    {menuDetail && menuDetail.length > 0
+                      ? menuDetail[0].value
+                      : router.query &&
+                        (router.query.isSale
+                          ? "특가상품"
+                          : router.query.isUsed
+                          ? "중고장비"
+                          : router.query.search && "상품검색")}
                   </Text>
                   <Wrapper
                     width={`24px`}
@@ -431,10 +451,9 @@ const ProductList = () => {
                     margin={`5px 0 25px`}
                   />
                   <Text lineHeight={`1.19`}>
-                    건설기계 관련 내용이 들어갑니다.
-                  </Text>
-                  <Text lineHeight={`1.19`}>
-                    건설기계 관련 내용이 들어갑니다.
+                    {menuDetail &&
+                      menuDetail.length > 0 &&
+                      menuDetail[0].content}
                   </Text>
                 </Wrapper>
               </Wrapper>
@@ -474,6 +493,7 @@ const ProductList = () => {
                 </Text>
                 <Wrapper dr={`row`}>
                   {categoryList &&
+                    categoryList.length > 0 &&
                     categoryList.map((data) => {
                       return (
                         <ProductTypeWrapper
@@ -570,9 +590,10 @@ const ProductList = () => {
                                 textDecoration={`line-through`}
                                 color={Theme.grey_C}
                               >
-                                {String(
-                                  parseInt(data.price * (data.discount / 100))
-                                ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                {String(data.price).replace(
+                                  /\B(?=(\d{3})+(?!\d))/g,
+                                  ","
+                                )}
                                 원
                               </Text>
                             )}

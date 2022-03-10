@@ -25,6 +25,7 @@ import { saveAs } from "file-saver";
 import Theme from "../../../components/Theme";
 import {
   CONTACT_COMPLETED_REQUEST,
+  CONTACT_DELETE_REQUEST,
   CONTACT_GET_REQUEST,
   CREATE_MODAL_TOGGLE,
 } from "../../../reducers/contact";
@@ -66,6 +67,9 @@ const List = ({ location }) => {
     //
     st_contactCompletedDone,
     st_contactCompletedError,
+    //
+    st_contactDeleteDone,
+    st_contactDeleteError,
   } = useSelector((state) => state.contact);
 
   const dispatch = useDispatch();
@@ -111,10 +115,32 @@ const List = ({ location }) => {
   }, [st_contactCompletedDone]);
 
   useEffect(() => {
+    if (st_contactDeleteDone) {
+      dispatch({
+        type: CONTACT_GET_REQUEST,
+        data: {
+          page: currentPage,
+          listType: selectType,
+          type: selectValue,
+        },
+      });
+
+      answerInput.setValue("");
+      return message.success("삭제되었습니다.");
+    }
+  }, [st_contactDeleteDone]);
+
+  useEffect(() => {
     if (st_contactCompletedError) {
       return message.error(st_contactCompletedError);
     }
   }, [st_contactCompletedError]);
+
+  useEffect(() => {
+    if (st_contactDeleteError) {
+      return message.error(st_contactDeleteError);
+    }
+  }, [st_contactDeleteError]);
 
   ////// TOGGLE //////
 
@@ -177,6 +203,15 @@ const List = ({ location }) => {
     },
     [selectType, currentPage]
   );
+
+  const onDeleteHandler = useCallback((id) => {
+    dispatch({
+      type: CONTACT_DELETE_REQUEST,
+      data: {
+        leaseId: id,
+      },
+    });
+  }, []);
   ////// DATAVIEW //////
 
   // Table
@@ -221,6 +256,22 @@ const List = ({ location }) => {
         </Button>
       ),
     },
+    {
+      title: "삭제",
+      render: (data) => (
+        <Popconfirm
+          title="삭제하시겠습니까?"
+          okText="삭제"
+          cancelText="취소"
+          onConfirm={() => onDeleteHandler(data.id)}
+          placement="topRight"
+        >
+          <Button type="danger" size="small">
+            삭제
+          </Button>
+        </Popconfirm>
+      ),
+    },
   ];
   const completedColumns = [
     {
@@ -263,6 +314,22 @@ const List = ({ location }) => {
         </Button>
       ),
     },
+    {
+      title: "삭제",
+      render: (data) => (
+        <Popconfirm
+          title="삭제하시겠습니까?"
+          okText="삭제"
+          cancelText="취소"
+          onConfirm={() => onDeleteHandler(data.id)}
+          placement="topRight"
+        >
+          <Button type="danger" size="small">
+            삭제
+          </Button>
+        </Popconfirm>
+      ),
+    },
   ];
 
   return (
@@ -270,7 +337,7 @@ const List = ({ location }) => {
       <PageHeader
         breadcrumbs={["문의 관리", "문의 리스트"]}
         title={`문의 리스트`}
-        subTitle={`홈페이지의 임대문의, 사업자문의, 장비판매의뢰를 관리할 수 있습니다.`}
+        subTitle={`홈페이지의 임대문의, 장비수리문의, 장비판매의뢰를 관리할 수 있습니다.`}
       />
       {/* <AdminTop createButton={true} createButtonAction={() => {})} /> */}
 
@@ -316,7 +383,7 @@ const List = ({ location }) => {
               value={selectValue}
             >
               <Select.Option value={"임대문의"}>임대문의</Select.Option>
-              <Select.Option value={"사업자문의"}>사업자문의</Select.Option>
+              <Select.Option value={"장비수리문의"}>장비수리문의</Select.Option>
               <Select.Option value={"장비판매의뢰"}>장비판매의뢰</Select.Option>
             </Select>
           </Col>
@@ -367,7 +434,6 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
-                height={`30px`}
                 color={Theme.white_C}
               >
                 문의 제목
@@ -379,7 +445,6 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
-                height={`30px`}
                 color={Theme.white_C}
               >
                 작성자
@@ -391,7 +456,6 @@ const List = ({ location }) => {
                 width={`120px`}
                 height={`30px`}
                 bgColor={Theme.basicTheme_C}
-                height={`30px`}
                 color={Theme.white_C}
               >
                 연락처
