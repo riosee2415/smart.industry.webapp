@@ -1394,7 +1394,7 @@ const Cart = () => {
                 </Wrapper>
               )}
             </Wrapper>
-            <Modal visible={modal} footer={null} closable={false}>
+            <Modal visible={modal} footer={null} closable={false} centered>
               <Wrapper>
                 <Text margin={`0 0 10px`} fontSize={`16px`}>
                   비회원 주문번호 : {delPass}
