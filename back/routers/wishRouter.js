@@ -238,6 +238,7 @@ router.post("/user/create", isLoggedIn, async (req, res, next) => {
       content,
       mobile,
       UserId: parseInt(req.user.id),
+      delPassword: "-",
     });
 
     if (!createResult) {
