@@ -175,7 +175,7 @@ const Cart = () => {
   // 문의
   const inputName = useInput(``);
   const inputMobile = useInput(``);
-  const inputContent = useInput(``);
+  const inputContent = useInput(`상품명 :\n\n회사명 :\n\n문의내용 :`);
   ////// REDUX //////
   const dispatch = useDispatch();
 
@@ -333,13 +333,77 @@ const Cart = () => {
 
   //order
 
-  useEffect(() => {
+  useEffect(async () => {
     if (st_boughtHistoryCreateDone) {
       const prodId = [];
       const count = [];
       orderDatum.map((data) => {
         prodId.push(data.id);
         count.push(data.productNum);
+      });
+
+      orderDatum.map(async (data) => {
+        await axios({
+          url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            userid: "koentek1224",
+          },
+          data: [
+            {
+              profile: "288bcc889a4fc2b86f2e270061ce60ffbc6b867f", // 발신프로필 키
+              tmplId: "order",
+              message_type: "AT",
+              phn: "821052667205",
+              msg: `대한기계공구 사이트에 상품문의가 접수 되었습니다!\n주문 내용 :\n${inputContent.value}`,
+              header: "",
+              button1: {
+                name: "사이트 바로가기",
+                type: "WL",
+                url_pc: "https://kor09.com/",
+                url_mobile: "https://kor09.com/",
+              },
+              reserveDt: "00000000000000", // 발송시간
+              items: {
+                item: {
+                  list: [
+                    {
+                      title: "상품이름",
+                      description: data.title,
+                    },
+                    {
+                      title: "가격",
+                      description: `${numberWithCommas(
+                        String(
+                          (data.price - data.price * (data.discount / 100)) *
+                            data.productNum +
+                            data.deliveryPay
+                        )
+                      )}원`,
+                    },
+                    {
+                      title: "개수",
+                      description: `${data.productNum}개`,
+                    },
+                    {
+                      title: "주문자",
+                      description: `${inputName.value}님`,
+                    },
+                    {
+                      title: "연락처",
+                      description: inputMobile.value,
+                    },
+                  ],
+                },
+                itemHighlight: {
+                  title: "대한기계공구",
+                  description: "상품문의가 접수 되었습니다.",
+                },
+              },
+            },
+          ],
+        });
       });
 
       dispatch({
@@ -351,7 +415,7 @@ const Cart = () => {
         },
       });
 
-      inputContent.setValue(``);
+      inputContent.setValue(`상품명 :\n\n회사명 :\n\n문의내용 :`);
 
       let tempArr = datum.map(JSON.stringify);
       let tempArr2 = orderDatum.map(JSON.stringify);
@@ -364,13 +428,77 @@ const Cart = () => {
     }
   }, [st_boughtHistoryCreateDone, historyId, orderDatum, datum]);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (st_boughtHistoryNotUserCreateDone) {
       const prodId = [];
       const count = [];
       orderDatum.map((data) => {
         prodId.push(data.id);
         count.push(data.productNum);
+      });
+
+      orderDatum.map(async (data) => {
+        await axios({
+          url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+            userid: "koentek1224",
+          },
+          data: [
+            {
+              profile: "288bcc889a4fc2b86f2e270061ce60ffbc6b867f", // 발신프로필 키
+              tmplId: "order",
+              message_type: "AT",
+              phn: "821052667205",
+              msg: `대한기계공구 사이트에 상품문의가 접수 되었습니다!\n주문 내용 :\n${inputContent.value}`,
+              header: "",
+              button1: {
+                name: "사이트 바로가기",
+                type: "WL",
+                url_pc: "https://kor09.com/",
+                url_mobile: "https://kor09.com/",
+              },
+              reserveDt: "00000000000000", // 발송시간
+              items: {
+                item: {
+                  list: [
+                    {
+                      title: "상품이름",
+                      description: data.title,
+                    },
+                    {
+                      title: "가격",
+                      description: `${numberWithCommas(
+                        String(
+                          (data.price - data.price * (data.discount / 100)) *
+                            data.productNum +
+                            data.deliveryPay
+                        )
+                      )}원`,
+                    },
+                    {
+                      title: "개수",
+                      description: `${data.productNum}개`,
+                    },
+                    {
+                      title: "주문자",
+                      description: `${inputName.value}님`,
+                    },
+                    {
+                      title: "연락처",
+                      description: inputMobile.value,
+                    },
+                  ],
+                },
+                itemHighlight: {
+                  title: "대한기계공구",
+                  description: "상품문의가 접수 되었습니다.",
+                },
+              },
+            },
+          ],
+        });
       });
 
       dispatch({
@@ -407,7 +535,7 @@ const Cart = () => {
   ////// HANDLER //////
 
   const modalOkHandler = useCallback(() => {
-    inputContent.setValue(``);
+    inputContent.setValue(`상품명 :\n\n회사명 :\n\n문의내용 :`);
     moveLinkHandler(`/mypage/cart`);
     setModal((prev) => !prev);
   }, []);
@@ -1355,6 +1483,7 @@ const Cart = () => {
                 </Wrapper>
               </Wrapper>
             )}
+            {console.log(inputContent)}
             <Wrapper dr={`row`} position={`relative`} margin={`0 0 120px`}>
               {isOrderForm ? (
                 <CommonButton

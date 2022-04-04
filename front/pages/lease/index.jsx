@@ -98,6 +98,8 @@ const Index = () => {
   const secretInput = useInput("");
   const searchInput = useInput("");
 
+  const [talkData, setTalkData] = useState(null);
+
   const [form] = Form.useForm();
   const formRef = useRef();
 
@@ -117,6 +119,8 @@ const Index = () => {
       },
     });
   }, [router.query]);
+
+  const b = {};
 
   useEffect(() => {
     if (st_contactCreateDone) {
@@ -140,6 +144,65 @@ const Index = () => {
       return message.success("생성되었습니다.");
     }
   }, [st_contactCreateDone]);
+
+  // 비즈엠 알림톡
+  useEffect(async () => {
+    if (talkData) {
+      await axios({
+        url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          userid: "koentek1224",
+        },
+        data: [
+          {
+            profile: "288bcc889a4fc2b86f2e270061ce60ffbc6b867f", // 발신프로필 키
+            tmplId: "question",
+            message_type: "AT",
+            phn: "821052667205",
+            msg: `대한기계공구 사이트에 문의가 접수되었습니다!\n문의 내용 :\n${talkData.content}`,
+            header: "",
+            button1: {
+              name: "사이트 바로가기",
+              type: "WL",
+              url_pc: "https://kor09.com/",
+              url_mobile: "https://kor09.com/",
+            },
+            reserveDt: "00000000000000", // 발송시간
+            items: {
+              item: {
+                list: [
+                  {
+                    title: "문의유형",
+                    description: talkData.type,
+                  },
+                  {
+                    title: "제목",
+                    description: talkData.title,
+                  },
+                  {
+                    title: "작성자",
+                    description: talkData.author,
+                  },
+                  {
+                    title: "이메일",
+                    description: talkData.email,
+                  },
+                ],
+              },
+              itemHighlight: {
+                title: "대한기계공구",
+                description: "문의가 접수 되었습니다.",
+              },
+            },
+          },
+        ],
+      });
+
+      setTalkData(null);
+    }
+  }, [talkData]);
 
   useEffect(() => {
     if (st_contactCreateError) {
@@ -226,6 +289,21 @@ const Index = () => {
       if (!router.query.type) {
         return message.error("올바른 주소가 아닙니다.");
       }
+
+      const checkSecret = data.secret.search(/[0-9]{8,10}/g);
+
+      if (checkSecret) {
+        return message.error("비밀번호는 숫자로 8~10자리를 입력해주세요.");
+      }
+
+      setTalkData({
+        type: router.query && router.query.type,
+        title: data.title,
+        author: me ? me.username : data.author,
+        content: data.content,
+        email: data.email,
+      });
+
       dispatch({
         type: CONTACT_CREATE_REQUEST,
         data: {
@@ -238,7 +316,7 @@ const Index = () => {
         },
       });
     },
-    [router.query]
+    [router.query, talkData]
   );
 
   const otherPageCall = useCallback(
@@ -721,7 +799,10 @@ const Index = () => {
                       { required: true, message: "문의내용을 입력해주세요." },
                     ]}
                   >
-                    <ContentInput placeholder="문의내용을 입력해주세요." />
+                    <ContentInput
+                      defaultValue={"상품명 :\n\n회사명 :\n\n문의내용 :"}
+                      placeholder="문의내용을 입력해주세요."
+                    />
                   </Form.Item>
                 </Wrapper>
 
@@ -754,7 +835,14 @@ const Index = () => {
                   </Form.Item>
                 </Wrapper>
                 <Wrapper al={`flex-start`}>
-                  <Text margin={`0 0 10px`}>비밀번호</Text>
+                  <Text>비밀번호</Text>
+                  <Text
+                    fontSize={`12px`}
+                    color={Theme.red_C}
+                    margin={`0 0 10px`}
+                  >
+                    ● 비밀번호는 숫자로 8~10자리를 입력해주세요.
+                  </Text>
                   <Form.Item
                     name="secret"
                     rules={[
@@ -805,14 +893,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: SEO_LIST_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: CONTACT_GET_REQUEST,
-      data: {
-        page: 1,
-        type: "임대문의",
-      },
     });
 
     // 구현부 종료
