@@ -342,76 +342,16 @@ const Cart = () => {
         count.push(data.productNum);
       });
 
-      orderDatum.map(async (data) => {
-        await axios({
-          url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-            userid: "koentek1224",
-          },
-          data: [
-            {
-              profile: "288bcc889a4fc2b86f2e270061ce60ffbc6b867f", // 발신프로필 키
-              tmplId: "order",
-              message_type: "AT",
-              phn: "821052667205",
-              msg: `대한기계공구 사이트에 상품문의가 접수 되었습니다!\n주문 내용 :\n${inputContent.value}`,
-              header: "",
-              button1: {
-                name: "사이트 바로가기",
-                type: "WL",
-                url_pc: "https://kor09.com/",
-                url_mobile: "https://kor09.com/",
-              },
-              reserveDt: "00000000000000", // 발송시간
-              items: {
-                item: {
-                  list: [
-                    {
-                      title: "상품이름",
-                      description: data.title,
-                    },
-                    {
-                      title: "가격",
-                      description: `${numberWithCommas(
-                        String(
-                          (data.price - data.price * (data.discount / 100)) *
-                            data.productNum +
-                            data.deliveryPay
-                        )
-                      )}원`,
-                    },
-                    {
-                      title: "개수",
-                      description: `${data.productNum}개`,
-                    },
-                    {
-                      title: "주문자",
-                      description: `${inputName.value}님`,
-                    },
-                    {
-                      title: "연락처",
-                      description: inputMobile.value,
-                    },
-                  ],
-                },
-                itemHighlight: {
-                  title: "대한기계공구",
-                  description: "상품문의가 접수 되었습니다.",
-                },
-              },
-            },
-          ],
-        });
-      });
-
       dispatch({
         type: WISH_WISH_CREATE_REQUEST,
         data: {
           BoughtHistoryId: historyId,
           prodId,
           count,
+          orderDatum,
+          name: inputName.value,
+          mobile: inputMobile.value,
+          content: inputContent.value,
         },
       });
 
@@ -437,76 +377,16 @@ const Cart = () => {
         count.push(data.productNum);
       });
 
-      orderDatum.map(async (data) => {
-        await axios({
-          url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-            userid: "koentek1224",
-          },
-          data: [
-            {
-              profile: "288bcc889a4fc2b86f2e270061ce60ffbc6b867f", // 발신프로필 키
-              tmplId: "order",
-              message_type: "AT",
-              phn: "821052667205",
-              msg: `대한기계공구 사이트에 상품문의가 접수 되었습니다!\n주문 내용 :\n${inputContent.value}`,
-              header: "",
-              button1: {
-                name: "사이트 바로가기",
-                type: "WL",
-                url_pc: "https://kor09.com/",
-                url_mobile: "https://kor09.com/",
-              },
-              reserveDt: "00000000000000", // 발송시간
-              items: {
-                item: {
-                  list: [
-                    {
-                      title: "상품이름",
-                      description: data.title,
-                    },
-                    {
-                      title: "가격",
-                      description: `${numberWithCommas(
-                        String(
-                          (data.price - data.price * (data.discount / 100)) *
-                            data.productNum +
-                            data.deliveryPay
-                        )
-                      )}원`,
-                    },
-                    {
-                      title: "개수",
-                      description: `${data.productNum}개`,
-                    },
-                    {
-                      title: "주문자",
-                      description: `${inputName.value}님`,
-                    },
-                    {
-                      title: "연락처",
-                      description: inputMobile.value,
-                    },
-                  ],
-                },
-                itemHighlight: {
-                  title: "대한기계공구",
-                  description: "상품문의가 접수 되었습니다.",
-                },
-              },
-            },
-          ],
-        });
-      });
-
       dispatch({
         type: WISH_WISH_NOT_USER_CREATE_REQUEST,
         data: {
           BoughtHistoryId: historyId,
           prodId,
           count,
+          orderDatum,
+          name: inputName.value,
+          mobile: inputMobile.value,
+          content: inputContent.value,
         },
       });
 

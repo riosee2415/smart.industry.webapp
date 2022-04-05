@@ -280,7 +280,6 @@ const Index = () => {
                   ju={`flex-start`}
                   padding={`20px`}
                   bgColor={Theme.lightGrey2_C}
-                  dr={`row`}
                 >
                   <Wrapper
                     width={`20px`}

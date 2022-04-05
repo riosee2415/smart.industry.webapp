@@ -146,63 +146,6 @@ const Index = () => {
   }, [st_contactCreateDone]);
 
   // 비즈엠 알림톡
-  useEffect(async () => {
-    if (talkData) {
-      await axios({
-        url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-          userid: "koentek1224",
-        },
-        data: [
-          {
-            profile: "288bcc889a4fc2b86f2e270061ce60ffbc6b867f", // 발신프로필 키
-            tmplId: "question",
-            message_type: "AT",
-            phn: "821052667205",
-            msg: `대한기계공구 사이트에 문의가 접수되었습니다!\n문의 내용 :\n${talkData.content}`,
-            header: "",
-            button1: {
-              name: "사이트 바로가기",
-              type: "WL",
-              url_pc: "https://kor09.com/",
-              url_mobile: "https://kor09.com/",
-            },
-            reserveDt: "00000000000000", // 발송시간
-            items: {
-              item: {
-                list: [
-                  {
-                    title: "문의유형",
-                    description: talkData.type,
-                  },
-                  {
-                    title: "제목",
-                    description: talkData.title,
-                  },
-                  {
-                    title: "작성자",
-                    description: talkData.author,
-                  },
-                  {
-                    title: "이메일",
-                    description: talkData.email,
-                  },
-                ],
-              },
-              itemHighlight: {
-                title: "대한기계공구",
-                description: "문의가 접수 되었습니다.",
-              },
-            },
-          },
-        ],
-      });
-
-      setTalkData(null);
-    }
-  }, [talkData]);
 
   useEffect(() => {
     if (st_contactCreateError) {
@@ -295,14 +238,6 @@ const Index = () => {
       if (checkSecret) {
         return message.error("비밀번호는 숫자로 8~10자리를 입력해주세요.");
       }
-
-      setTalkData({
-        type: router.query && router.query.type,
-        title: data.title,
-        author: me ? me.username : data.author,
-        content: data.content,
-        email: data.email,
-      });
 
       dispatch({
         type: CONTACT_CREATE_REQUEST,

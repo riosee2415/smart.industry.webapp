@@ -3,6 +3,7 @@ const isAdminCheck = require("../middlewares/isAdminCheck");
 const isNanCheck = require("../middlewares/isNanCheck");
 const { Lease } = require("../models");
 const models = require("../models");
+const axios = require("axios");
 
 const router = express.Router();
 
@@ -203,6 +204,58 @@ router.post("/create", async (req, res, next) => {
     if (!createResult) {
       return res.status(401).send("처리중 문제가 발생하였습니다.");
     }
+
+    await axios({
+      url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        userid: process.env.BIZ_TALK_USERID,
+      },
+      data: [
+        {
+          profile: process.env.BIZ_TALK_PROFILE, // 발신프로필 키
+          tmplId: "question",
+          message_type: "AT",
+          phn: "821052667205",
+          msg: `대한기계공구 사이트에 문의가 접수되었습니다!\n문의 내용 :\n${content}`,
+          header: "",
+          button1: {
+            name: "사이트 바로가기",
+            type: "WL",
+            url_pc: "https://kor09.com/",
+            url_mobile: "https://kor09.com/",
+          },
+          reserveDt: "00000000000000", // 발송시간
+          items: {
+            item: {
+              list: [
+                {
+                  title: "문의유형",
+                  description: type,
+                },
+                {
+                  title: "제목",
+                  description: title,
+                },
+                {
+                  title: "작성자",
+                  description: author,
+                },
+                {
+                  title: "이메일",
+                  description: email,
+                },
+              ],
+            },
+            itemHighlight: {
+              title: "대한기계공구",
+              description: "문의가 접수 되었습니다.",
+            },
+          },
+        },
+      ],
+    });
 
     return res.status(201).json({ result: true });
   } catch (error) {

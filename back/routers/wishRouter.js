@@ -5,6 +5,7 @@ const isNanCheck = require("../middlewares/isNanCheck");
 const { Product, BoughtHistory, WishItem } = require("../models");
 const deliverySearch = require("../utils/deliverySearch");
 const router = express.Router();
+const axios = require("axios");
 
 //////////////////🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀
 // BOUGHT HISTORY 🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀
@@ -254,7 +255,8 @@ router.post("/user/create", isLoggedIn, async (req, res, next) => {
 
 // prodId, count는 배열로 보내주세요 !
 router.post("/user/wishcreate", isLoggedIn, async (req, res, next) => {
-  const { BoughtHistoryId, prodId, count } = req.body;
+  const { BoughtHistoryId, prodId, count, orderDatum, name, mobile, content } =
+    req.body;
 
   if (!Array.isArray(prodId)) {
     return res
@@ -282,6 +284,67 @@ router.post("/user/wishcreate", isLoggedIn, async (req, res, next) => {
         count: parseInt(count[i]),
         ProductId: parseInt(prodId[i]),
         BoughtHistoryId: parseInt(BoughtHistoryId),
+      });
+
+      await axios({
+        url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          userid: process.env.BIZ_TALK_USERID,
+        },
+        data: [
+          {
+            profile: process.env.BIZ_TALK_PROFILE, // 발신프로필 키
+            tmplId: "order",
+            message_type: "AT",
+            phn: "821049233908",
+            msg: `대한기계공구 사이트에 상품문의가 접수 되었습니다!\n주문 내용 :\n${content}`,
+            header: "",
+            button1: {
+              name: "사이트 바로가기",
+              type: "WL",
+              url_pc: "https://kor09.com/",
+              url_mobile: "https://kor09.com/",
+            },
+            reserveDt: "00000000000000", // 발송시간
+            items: {
+              item: {
+                list: [
+                  {
+                    title: "상품이름",
+                    description: orderDatum[i].title,
+                  },
+                  {
+                    title: "가격",
+                    description: `${
+                      (orderDatum[i].price -
+                        orderDatum[i].price * (orderDatum[i].discount / 100)) *
+                        orderDatum[i].productNum +
+                      orderDatum[i].deliveryPay
+                    }원`,
+                  },
+                  {
+                    title: "개수",
+                    description: `${orderDatum[i].productNum}개`,
+                  },
+                  {
+                    title: "주문자",
+                    description: `${name}님`,
+                  },
+                  {
+                    title: "연락처",
+                    description: mobile,
+                  },
+                ],
+              },
+              itemHighlight: {
+                title: "대한기계공구",
+                description: "상품문의가 접수 되었습니다.",
+              },
+            },
+          },
+        ],
       });
     }
 
@@ -428,7 +491,8 @@ router.post("/notUser/create", async (req, res, next) => {
 });
 
 router.post("/notUser/wishcreate", async (req, res, next) => {
-  const { BoughtHistoryId, prodId, count } = req.body;
+  const { BoughtHistoryId, prodId, count, orderDatum, name, mobile, content } =
+    req.body;
 
   if (!Array.isArray(prodId)) {
     return res
@@ -442,8 +506,14 @@ router.post("/notUser/wishcreate", async (req, res, next) => {
       .send("잘못된 요청입니다. 확인 후 다시 시도하여 주십시오.");
   }
 
+  if (!Array.isArray(orderDatum)) {
+    return res
+      .status(401)
+      .send("잘못된 요청입니다. 확인 후 다시 시도하여 주십시오.");
+  }
+
   try {
-    for (let i = 0; i < prodId.length; i++) {
+    for (let i = 0; i < orderDatum.length; i++) {
       const exProd = await Product.findOne({
         where: { id: parseInt(prodId[i]) },
       });
@@ -456,6 +526,67 @@ router.post("/notUser/wishcreate", async (req, res, next) => {
         count: parseInt(count[i]),
         ProductId: parseInt(prodId[i]),
         BoughtHistoryId: parseInt(BoughtHistoryId),
+      });
+
+      await axios({
+        url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          userid: process.env.BIZ_TALK_USERID,
+        },
+        data: [
+          {
+            profile: process.env.BIZ_TALK_PROFILE, // 발신프로필 키
+            tmplId: "order",
+            message_type: "AT",
+            phn: "821052667205",
+            msg: `대한기계공구 사이트에 상품문의가 접수 되었습니다!\n주문 내용 :\n${content}`,
+            header: "",
+            button1: {
+              name: "사이트 바로가기",
+              type: "WL",
+              url_pc: "https://kor09.com/",
+              url_mobile: "https://kor09.com/",
+            },
+            reserveDt: "00000000000000", // 발송시간
+            items: {
+              item: {
+                list: [
+                  {
+                    title: "상품이름",
+                    description: orderDatum[i].title,
+                  },
+                  {
+                    title: "가격",
+                    description: `${
+                      (orderDatum[i].price -
+                        orderDatum[i].price * (orderDatum[i].discount / 100)) *
+                        orderDatum[i].productNum +
+                      orderDatum[i].deliveryPay
+                    }원`,
+                  },
+                  {
+                    title: "개수",
+                    description: `${orderDatum[i].productNum}개`,
+                  },
+                  {
+                    title: "주문자",
+                    description: `${name}님`,
+                  },
+                  {
+                    title: "연락처",
+                    description: mobile,
+                  },
+                ],
+              },
+              itemHighlight: {
+                title: "대한기계공구",
+                description: "상품문의가 접수 되었습니다.",
+              },
+            },
+          },
+        ],
       });
     }
 
@@ -537,6 +668,72 @@ router.patch("/delivery/update", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("결제 정보를 수정할 수 없습니다.");
+  }
+});
+
+router.post("/orderTalk", async (req, res, next) => {
+  const { content, title, price, count, author, mobile } = req.body;
+
+  try {
+    await axios({
+      url: "https://alimtalk-api.bizmsg.kr/v2/sender/send",
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        userid: "koentek1224",
+      },
+      data: [
+        {
+          profile: "288bcc889a4fc2b86f2e270061ce60ffbc6b867f", // 발신프로필 키
+          tmplId: "order",
+          message_type: "AT",
+          phn: "821052667205",
+          msg: `대한기계공구 사이트에 상품문의가 접수 되었습니다!\n주문 내용 :\n${content}`,
+          header: "",
+          button1: {
+            name: "사이트 바로가기",
+            type: "WL",
+            url_pc: "https://kor09.com/",
+            url_mobile: "https://kor09.com/",
+          },
+          reserveDt: "00000000000000", // 발송시간
+          items: {
+            item: {
+              list: [
+                {
+                  title: "상품이름",
+                  description: title,
+                },
+                {
+                  title: "가격",
+                  description: price,
+                },
+                {
+                  title: "개수",
+                  description: `${count}개`,
+                },
+                {
+                  title: "주문자",
+                  description: `${author}님`,
+                },
+                {
+                  title: "연락처",
+                  description: mobile,
+                },
+              ],
+            },
+            itemHighlight: {
+              title: "대한기계공구",
+              description: "상품문의가 접수 되었습니다.",
+            },
+          },
+        },
+      ],
+    });
+
+    return res.status(200).json({ result: true });
+  } catch (e) {
+    return res.status(400).send("알림톡을 전송할 수 없습니다.");
   }
 });
 
