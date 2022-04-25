@@ -88,14 +88,6 @@ router.get("/cat/list", async (req, res, next) => {
 router.post("/cat/create", isAdminCheck, async (req, res, next) => {
   const { value, MenuId } = req.body;
   try {
-    const exCat = await Category.findOne({
-      where: { value },
-    });
-
-    if (exCat) {
-      return res.status(401).send("이미 존재하는 유형입니다.");
-    }
-
     const exMenu = await Menu.findOne({
       where: { id: parseInt(MenuId) },
     });
