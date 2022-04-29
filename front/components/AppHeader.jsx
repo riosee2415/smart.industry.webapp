@@ -69,6 +69,7 @@ const Title = styled(Text)`
   position: relative;
   margin: 0 0 20px;
   color: ${Theme.black_C};
+  font-size: ${(props) => props.fontSize};
 
   &::after {
     content: "";
@@ -177,7 +178,7 @@ const MenuWrapper = styled(Wrapper)`
 `;
 
 const InMenu = styled(Wrapper)`
-  width: 390px;
+  width: 280px;
   padding: 30px;
   background: ${Theme.white_C};
   position: absolute;
@@ -461,12 +462,12 @@ const AppHeader = () => {
                               al={`flex-start`}
                               color={Theme.black_C}
                             >
-                              <Title>{data.value}</Title>
+                              <Title fontSize={`18px`}>{data.value}</Title>
                               {data.Categories.map((value) => {
                                 return (
                                   <SubMenuTextCol
                                     margin={`0 0 12px`}
-                                    fontSize={`12px`}
+                                    // fontSize={`12px`}
                                     onClick={() =>
                                       moveLinkHandler(
                                         `/product?menu=${data.id}&category=${value.id}`
@@ -636,7 +637,7 @@ const AppHeader = () => {
                               </SubMenuTextCol>
                               <InMenu dr={`row`}>
                                 <Wrapper
-                                  width={`calc(100% - 194px)`}
+                                  // width={`calc(100% - 194px)`}
                                   al={`flex-start`}
                                   color={Theme.black_C}
                                 >
@@ -655,9 +656,9 @@ const AppHeader = () => {
                                     );
                                   })}
                                 </Wrapper>
-                                <Wrapper width={`194px`}>
+                                {/* <Wrapper width={`194px`}>
                                   <Image alt="image" src={data.imagePath} />
-                                </Wrapper>
+                                </Wrapper> */}
                               </InMenu>
                             </SubMenuWrapper>
                           );

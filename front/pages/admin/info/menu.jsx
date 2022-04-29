@@ -292,9 +292,9 @@ const MenuList = () => {
 
   const menuCreateSubmit = useCallback(
     (data) => {
-      if (!menuImagePath) {
-        return LoadNotification("ADMIN SYSTEM ERROR", "이미지를 등록해주세요");
-      }
+      // if (!menuImagePath) {
+      //   return LoadNotification("ADMIN SYSTEM ERROR", "이미지를 등록해주세요");
+      // }
       if (!menuImageBannerPath) {
         return LoadNotification(
           "ADMIN SYSTEM ERROR",
@@ -305,21 +305,26 @@ const MenuList = () => {
       dispatch({
         type: MENU_CREATE_REQUEST,
         data: {
-          imagePath: menuImagePath,
+          imagePath:
+            // menuImagePath
+            "-",
           imagePath2: menuImageBannerPath,
           value: data.value,
           content: data.content,
         },
       });
     },
-    [menuImagePath, menuImageBannerPath]
+    [
+      // menuImagePath
+      menuImageBannerPath,
+    ]
   );
 
   const menuUpdateSubmit = useCallback(
     (data) => {
-      if (!menuImagePath) {
-        return LoadNotification("ADMIN SYSTEM ERROR", "이미지를 등록해주세요");
-      }
+      // if (!menuImagePath) {
+      //   return LoadNotification("ADMIN SYSTEM ERROR", "이미지를 등록해주세요");
+      // }
       if (!menuImageBannerPath) {
         return LoadNotification(
           "ADMIN SYSTEM ERROR",
@@ -331,14 +336,20 @@ const MenuList = () => {
         type: MENU_UPDATE_REQUEST,
         data: {
           id: updateMenuData.id,
-          imagePath: menuImagePath,
+          imagePath:
+            // menuImagePath
+            "-",
           imagePath2: menuImageBannerPath,
           value: data.value,
           content: data.content,
         },
       });
     },
-    [menuImagePath, updateMenuData, menuImageBannerPath]
+    [
+      // menuImagePath
+      updateMenuData,
+      menuImageBannerPath,
+    ]
   );
 
   const menuDeleteSubmit = useCallback((data) => {
@@ -363,10 +374,9 @@ const MenuList = () => {
     {
       title: "이미지",
       render: (data) => (
-        <Image width={`100px`} src={data.imagePath} alt="menu_image" />
+        <Image width={`100px`} src={data.imagePath2} alt="menu_image" />
       ),
     },
-
     {
       title: "수정",
       render: (data) => (
@@ -429,7 +439,7 @@ const MenuList = () => {
         footer={null}
         onCancel={() => createModalToggle(null)}
       >
-        <GuideWrapper>
+        {/* <GuideWrapper>
           <GuideText>
             이미지 사이즈는 가로 {MENU_WIDTH}px 과 세로
             {MENU_HEIGHT}px을 기준으로 합니다.
@@ -471,7 +481,7 @@ const MenuList = () => {
           >
             UPLOAD
           </Button>
-        </UploadWrapper>
+        </UploadWrapper> */}
 
         <GuideWrapper>
           <GuideText>
